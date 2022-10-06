@@ -1,0 +1,189 @@
+require:
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 3.0.1
+  NewCops: enable
+  Exclude:
+    - '.git/**/*'
+    - '.idea/**/*'
+    - 'init/*'
+    - 'Rakefile'
+    - '*.gemspec'
+    - 'spec/**/*'
+    - 'vendor/**/*'
+    - 'scratch*.rb'
+    - 'snippets*.rb'
+
+# Align the elements of a hash literal if they span more than one line.
+Layout/HashAlignment:
+  EnforcedLastArgumentHashStyle: always_ignore
+
+# Alignment of parameters in multi-line method definition.
+#   The `with_fixed_indentation` style aligns the following lines with one
+#   level of indentation relative to the start of the line with the method
+#   definition.
+#
+#   def my_method(a,
+#     b)
+Layout/ParameterAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+# Alignment of parameters in multi-line method call.
+#   The `with_fixed_indentation` style aligns the following lines with one
+#   level of indentation relative to the start of the line with the method call.
+#
+#   my_method(a,
+#     b)
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+# a = case n
+# when 0
+#   x * 2
+# else
+#   y / 3
+# end
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
+# Enforces a configured order of definitions within a class body
+Layout/ClassStructure:
+  Enabled: true
+
+# Align `end` with the matching keyword or starting expression except for
+#   assignments, where it should be aligned with the LHS.
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+  AutoCorrect: true
+
+# The `consistent` style enforces that the first element in an array
+#   literal where the opening bracket and the first element are on
+#   seprate lines is indented the same as an array literal which is not
+#   defined inside a method call.
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+# The `consistent` style enforces that the first key in a hash
+#   literal where the opening brace and the first key are on
+#   seprate lines is indented the same as a hash literal which is not
+#   defined inside a method call.
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+# Indent multi-line methods instead of aligning with periods
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Allow `debug` in tasks for now
+Lint/Debugger:
+  Exclude:
+    - 'RakeFile'
+
+# A calculated magnitude based on number of assignments, branches, and
+#   conditions.
+# NOTE: This is temporarily disabled until we can eliminate existing Rubocop
+#   complaints
+Metrics/AbcSize:
+  Enabled: false
+
+# Avoid long blocks with many lines.
+Metrics/BlockLength:
+  Exclude:
+    - 'RakeFile'
+    - 'db/seeds.rb'
+    - 'spec/**/*.rb'
+
+# Avoid classes longer than 100 lines of code.
+# NOTE: This is temporarily disabled until we can eliminate existing Rubocop
+#   complaints
+Metrics/ClassLength:
+  Max: 200
+  Exclude:
+    - 'spec/**/*.rb'
+
+# A complexity metric that is strongly correlated to the number of test cases
+#   needed to validate a method.
+Metrics/CyclomaticComplexity:
+  Max: 9
+
+# Limit lines to 80 characters
+Layout/LineLength:
+  Exclude:
+    - 'RakeFile'
+    - 'spec/**/*.rb'
+
+# Avoid methods longer than 15 lines of code.
+Metrics/MethodLength:
+  Max: 20
+  AllowedMethods:
+    - swagger_path
+    - operation
+
+
+# A complexity metric geared towards measuring complexity for a human reader.
+Metrics/PerceivedComplexity:
+  Max: 10
+
+# Naming/FileName:
+#  Exclude:
+#    - 'lib/file.rb'
+
+# Allow `downcase == ` instead of forcing `casecmp`
+Performance/Casecmp:
+  Enabled: false
+
+# Require children definitions to be nested or compact in classes and modules
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+# Document classes and non-namespace modules.
+#   (Disabled for now, may revisit later)
+Style/Documentation:
+  Enabled: false
+
+# Checks the formatting of empty method definitions.
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+# Add the frozen_string_literal comment to the top of files to help transition
+#   to frozen string literals by default.
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+
+# Check for conditionals that can be replaced with guard clauses
+Style/GuardClause:
+  Enabled: false
+
+Style/MixinUsage:
+  Exclude:
+    - 'RakeFile'
+
+# Avoid multi-line method signatures.
+Style/MultilineMethodSignature:
+  Enabled: true
+
+# Don't use option hashes when you can use keyword arguments.
+Style/OptionHash:
+  Enabled: true
+
+# Use return instead of return nil.
+Style/ReturnNil:
+  Enabled: true
+
+# Allow code like `return x, y` as it's occasionally handy.
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+# Prefer symbols instead of strings as hash keys.
+Style/StringHashKeys:
+  Enabled: true
+
+# Checks if configured preferred methods are used over non-preferred.
+Style/StringMethods:
+  Enabled: true
+
+# Checks for use of parentheses around ternary conditions.
+Style/TernaryParentheses:
+  EnforcedStyle: require_parentheses_when_complex

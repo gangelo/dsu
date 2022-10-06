@@ -1,0 +1,20 @@
+exclude_paths:
+  - vendor
+  - spec
+  - scratch*.rb
+  - snippets*.rb
+detectors:
+  # TooManyInstanceVariables:
+  #  exclude:
+  #    - "Class1"
+  #    - "Class2"
+  # private methods do not have to depend on instance state
+  # https://github.com/troessner/reek/blob/master/docs/Utility-Function.md
+  UtilityFunction:
+    public_methods_only: true
+  # Check for variable name that doesn't communicate its intent well enough
+  # https://github.com/troessner/reek/blob/master/docs/Uncommunicative-Variable-Name.md
+  UncommunicativeVariableName:
+    accept:
+      - /^_$/
+      - /^e$/
