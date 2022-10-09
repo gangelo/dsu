@@ -1,0 +1,20 @@
+{
+  "version": "v0.1.0",
+  "date": "2022-10-01 00:00:00 UTC",
+  "entries": [
+    {
+      "version": "v0.1.0",
+      "order": 0,
+      "time": "2022-10-01 00:00:00 UTC",
+      "description": "0 description",
+      "long_description": "0 long description"
+    },
+    {
+      "version": "v0.1.0",
+      "order": 1,
+      "time": "2022-10-01 00:00:00 UTC",
+      "description": "1 description",
+      "long_description": "1 long description"
+    }
+  ]
+}
