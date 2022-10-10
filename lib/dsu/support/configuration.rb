@@ -52,7 +52,7 @@ module Dsu
         end
       end
 
-      #private
+      private
 
       def create_config_file(config_file:)
         folder = File.dirname(config_file)
