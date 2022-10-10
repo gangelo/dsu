@@ -10,12 +10,12 @@ module Dsu
                   "\"#{color}\" was returned."
           end
 
-          puts text.public_send color
+          puts text.public_send(color)
         end
       end
 
       def say(text, color = nil)
-        Say.say text, color
+        Say.say(text, color)
       end
     end
   end

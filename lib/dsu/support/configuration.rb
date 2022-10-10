@@ -67,7 +67,7 @@ module Dsu
         end
 
         File.write(config_file, DEFAULT_DSU_OPTIONS.to_yaml)
-        puts "Configuration file (#{config_file}) created.", SUCCESS
+        say "Configuration file (#{config_file}) created.", SUCCESS
 
         true
       end

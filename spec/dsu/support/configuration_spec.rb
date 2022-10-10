@@ -64,7 +64,7 @@ RSpec.describe Dsu::Support::Configuration do
     end
   end
 
-  describe '.create_config_file!' do
+  describe '#create_config_file!' do
     context 'make sure the config file does not exist' do
       it 'does not exist' do
         expect(config.config_file?).to be false
@@ -74,6 +74,39 @@ RSpec.describe Dsu::Support::Configuration do
     it 'creates the config file' do
       config.create_config_file!
       expect(config.config_file?).to be true
+    end
+  end
+
+  describe '#delete_config_file!' do
+    before do
+      config.create_config_file!
+    end
+
+    context 'make sure the config file exists' do
+      it 'exists' do
+        expect(config.config_file?).to be true
+      end
+    end
+
+    it 'deletes the config file' do
+      config.delete_config_file!
+      expect(config.config_file?).to be false
+    end
+  end
+
+  describe '#print_config_file' do
+    before do
+      config.create_config_file!
+    end
+
+    context 'make sure the config file exists' do
+      it 'exists' do
+        expect(config.config_file?).to be true
+      end
+    end
+
+    it 'prints the config file' do
+      expect { config.print_config_file }.to output(/Config file/).to_stdout
     end
   end
 end
