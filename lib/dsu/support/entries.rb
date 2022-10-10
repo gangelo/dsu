@@ -16,39 +16,53 @@ module Dsu
       include ValidateTime
       include ValidateVersion
 
-      validates :date, presence: true
-      validate :validate_date
       validate :validate_entries
 
-      def initialize(date: Time.now.utc)
-        validate_date! date: date
+      def initialize(time: nil)
+        time ||= Time.now.utc
 
-        date = date.utc unless date.utc?
-        entries = entries_for(date: date)
-        hydrated_entries = hydrate_entries(entries_hash: entries, date: date)
+        unless time.is_a? Time
+          raise ':time is the wrong object type. ' \
+                "\"Time\" was expected, but \"#{time.class}\" was received."
+        end
+
+        time = time.utc unless time.utc?
+        entries = entries_for(time: time)
+        hydrated_entries = hydrate_entries(entries_hash: entries, time: time)
         super(hash: hydrated_entries)
       end
 
       def required_fields
-        %i[date entries version]
+        %i[time entries version]
       end
 
       def to_h
         hash = super
-        hash[:entries].each_with_index do |entry, index|
-          hash[:entries][index] = entry.to_h
+        hash[:entries].tap do |entries|
+          entries.each_with_index do |entry, index|
+            entries[index] = entry.to_h
+          end
+          sort_entries! entries if entries.present?
+        end
+        hash
+      end
+
+      def to_h_localized
+        hash = to_h
+        hash[:time] = hash[:time].localtime
+        hash[:entries].tap do |entries|
+          entries.each do |entry|
+            entry[:time] = entry[:time].localtime
+          end
+          sort_entries! entries if entries.present?
         end
         hash
       end
 
       private
 
-      def validate_date
-        return if date.is_a? Time
-
-        errors.add(:date, 'is the wrong object type. ' \
-                          "\"Time\" was expected, but \"#{date.class}\" was received.",
-          type: FIELD_TYPE_ERROR)
+      def sort_entries!(entries)
+        entries.sort! { |entry| entry[:order] }
       end
 
       def validate_entries

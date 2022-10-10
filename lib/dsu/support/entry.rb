@@ -2,17 +2,13 @@
 
 require 'deco_lite'
 require_relative 'entries_version'
-# require_relative 'field_errors'
 require_relative 'validate_time'
-# require_relative 'validate_version'
 
 module Dsu
   module Support
     class Entry < DecoLite::Model
       include EntriesVersion
-      # include FieldErrors
       include ValidateTime
-      # include ValidateVersion
 
       validates :description, presence: true, length: { minimum: 2, maximum: 80 }
       validates :long_description, length: { minimum: 2, maximum: 256 }, allow_nil: true
@@ -23,7 +19,10 @@ module Dsu
       def initialize(description:, long_description: nil, time: nil, order: nil, version: nil)
         time ||= Time.now.utc
 
-        # validate_time! time: time
+        unless time.is_a? Time
+          raise ':time is the wrong object type. ' \
+                "\"Time\" was expected, but \"#{time.class}\" was received."
+        end
 
         time = time.utc unless time.utc?
 
@@ -43,6 +42,11 @@ module Dsu
 
       def ==(other)
         to_h == other.to_h
+      end
+
+      def to_h_localized
+        hash = to_h
+        hash.merge({ time: hash[:time].localtime })
       end
     end
   end

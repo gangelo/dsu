@@ -1,31 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'an error is raised' do
-  it 'raises an error' do
-    expect { entry }.to raise_error expected_error
-  end
-end
-
-RSpec.shared_examples 'no error is raised' do
-  it 'does not raise an error' do
-    expect { entry }.not_to raise_error
-  end
-end
-
-RSpec.shared_examples 'the validation fails' do
-  it 'fails validation' do
-    expect(entry.errors.full_messages).to eq expected_errors
-  end
-end
-
-RSpec.shared_examples 'the validation passes' do
-  it 'passes validation' do
-    expect(entry.valid?).to be true
-  end
-end
-
 RSpec.describe Dsu::Support::Entry do
   subject(:entry) do
+    # All defaults are set up to instantiate without errors
+    # or vailidation errors by default.
     described_class.new(
       description: description,
       order: order,
@@ -35,20 +13,15 @@ RSpec.describe Dsu::Support::Entry do
     )
   end
 
-  let(:arguments) do
-    {
-      description: description,
-      order: order,
-      time: time,
-      long_description: long_description,
-      version: version
-    }
+  before do
+    stub_entries_version
   end
-  let(:description) { 'description' }
-  let(:order) { 0 }
-  let(:time) { time_utc }
-  let(:long_description) { nil }
-  let(:version) { Dsu::Support::EntriesVersion::ENTRIES_VERSION }
+
+  let(:description) { entry_0_hash[:description] }
+  let(:order) { entry_0_hash[:order] }
+  let(:time) { entry_0_hash[:time] }
+  let(:long_description) { entry_0_hash[:long_description] }
+  let(:version) { entry_0_hash[:version] }
 
   describe 'validations' do
     before do
@@ -197,38 +170,72 @@ RSpec.describe Dsu::Support::Entry do
     end
 
     describe '#time' do
-    end
-
-    describe '#version' do
-    end
-  end
-
-  describe '#initialize' do
-    describe 'arguments' do
       context 'when time is nil' do
         let(:time) { nil }
 
-        it_behaves_like 'no error is raised'
+        it_behaves_like 'the validation passes'
 
         it 'uses Time.now.utc' do
           expect(entry.time).to eq time_utc
         end
       end
+    end
 
-      context 'when time is not a Time object' do
-        let(:time) { :bad }
-        let(:expected_error) { /:time is not a Time object/ }
+    describe '#version' do
+      context 'when version is nil' do
+        let(:version) { nil }
 
-        it_behaves_like 'an error is raised'
-      end
+        it_behaves_like 'the validation passes'
 
-      describe ':order' do
-        context 'when order is nil' do
-          it 'does something awesome' do
-            binding.pry
-          end
+        it 'uses the current entries version' do
+          expect(entry.version).to eq Dsu::Support::EntriesVersion::ENTRIES_VERSION
         end
       end
+
+      context 'when version is blank?' do
+        let(:version) { '' }
+        let(:expected_errors) do
+          [
+            "Version can't be blank",
+            'Version is the wrong format. /v\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when version is the wrong format' do
+        let(:version) { 'v0..1.0' }
+        let(:expected_errors) do
+          [
+            'Version is the wrong format. /v\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+  end
+
+  describe '#initialize' do
+    context 'when :time is not a Time object' do
+      let(:time) { :bad }
+      let(:expected_error) { /time is the wrong object type/ }
+
+      it_behaves_like 'an error is raised'
+    end
+  end
+
+  describe '#to_h' do
+    it 'returns a Hash representing the Entry' do
+      expect(entry.to_h).to eq(entry_0_hash)
+    end
+  end
+
+  describe '#to_h_localized' do
+    it 'returns a Hash representing the Entry with dates/times localized' do
+      expect(entry.to_h_localized).to \
+        eq entry_0_hash.merge({ time: entry_0_hash[:time].localtime })
     end
   end
 end
