@@ -4,58 +4,57 @@ require 'colorize'
 require 'fileutils'
 require 'yaml'
 require_relative 'colors'
-require_relative 'location'
+require_relative 'entries_version'
+require_relative 'folder_locations'
+require_relative 'say'
 
 module Dsu
   module Support
     module Configuration
       include Colors
-      include Location
+      include FolderLocations
+      include Say
 
       CONFIG_FILENAME = '.dsu'
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_DSU_OPTIONS = {
-        'entries' => {
-          'entries_location' => "#{Location.entries_folder}/dsu/entries",
-          # https://apidock.com/ruby/Time/strftime
-          'entries_file_name' => '%Y-%m-%d.json'
-        }
+        'version' => Dsu::Support::EntriesVersion::ENTRIES_VERSION,
+        'entries_folder' => "#{Dsu::Support::FolderLocations.root_folder}/dsu/entries",
+        'entries_file_name' => '%Y-%m-%d.json'
       }.freeze
       # rubocop:enable Style/StringHashKeys
 
-      module_function
-
-      def global_config_file
-        File.join(global_folder, CONFIG_FILENAME)
+      def config_file
+        File.join(root_folder, CONFIG_FILENAME)
       end
 
-      def global_config_file?
-        File.exist? global_config_file
+      def config_file?
+        File.exist? config_file
       end
 
-      def create_global_config_file!
-        create_config_file global_config_file
-        print_global_config_file
+      def create_config_file!
+        create_config_file config_file: config_file
+        print_config_file
       end
 
-      def delete_global_config_file!
-        delete_config_file global_config_file
+      def delete_config_file!
+        delete_config_file config_file: config_file
       end
 
-      def print_global_config_file
-        config_file = global_config_file
-        if global_config_file?
-          say "Global config file (#{config_file}) contents:", SUCCESS
-          print_config_file config_file
+      def print_config_file
+        if config_file?
+          say "Config file (#{config_file}) contents:", SUCCESS
+          hash = YAML.safe_load(File.open(config_file))
+          say hash.to_yaml.gsub("\n-", "\n\n-"), SUCCESS
         else
-          say "Global config file (#{config_file}) does not exist.", WARNING
+          say "Config file (#{config_file}) does not exist.", WARNING
         end
       end
 
-      private
+      #private
 
-      def create_config_file(config_file)
+      def create_config_file(config_file:)
         folder = File.dirname(config_file)
         unless Dir.exist?(folder)
           say "Destination folder for configuration file (#{folder}) does not exist", ERROR
@@ -67,13 +66,13 @@ module Dsu
           return false
         end
 
-        File.write(config_file, DEFAULT_BRANCH_NAME_OPTIONS.to_yaml)
-        say "Configuration file (#{config_file}) created.", SUCCESS
+        File.write(config_file, DEFAULT_DSU_OPTIONS.to_yaml)
+        puts "Configuration file (#{config_file}) created.", SUCCESS
 
         true
       end
 
-      def delete_config_file(config_file)
+      def delete_config_file(config_file:)
         unless File.exist?(config_file)
           say "Configuration file (#{config_file}) does not exist", WARNING
           return false
@@ -83,11 +82,6 @@ module Dsu
         say "Configuration file (#{config_file}) deleted", SUCCESS
 
         true
-      end
-
-      def print_config_file(config_file)
-        hash = YAML.safe_load(File.open(config_file))
-        say hash.to_yaml.gsub("\n-", "\n\n-"), SUCCESS
       end
     end
   end

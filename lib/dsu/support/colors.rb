@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Dsu
-  module Name
+  module Support
     module Colors
       SUCCESS = :green
       WARNING = :yellow

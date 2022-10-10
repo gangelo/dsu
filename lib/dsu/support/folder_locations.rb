@@ -6,19 +6,11 @@ require 'pathname'
 
 module Dsu
   module Support
-    module Location
+    module FolderLocations
       module_function
 
-      def home_folder
+      def root_folder
         Dir.home
-      end
-      alias global_folder home_folder
-      singleton_class.alias_method :global_folder, :home_folder
-
-      def entries_folder(options: {})
-        return home_folder if options.blank?
-
-        home_folder
       end
 
       def temp_folder

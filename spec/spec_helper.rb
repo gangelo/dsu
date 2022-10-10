@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'fileutils'
 require 'pry-byebug'
 require 'time'
 require 'simplecov'
