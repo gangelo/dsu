@@ -64,48 +64,120 @@ RSpec.describe Dsu::Support::Configuration do
   end
 
   describe '#create_config_file!' do
-    context 'when creating the config file it should not exist' do
-      it 'does not exist' do
-        expect(config.config_file?).to be false
+    context 'when the config file does not exist' do
+      context 'when creating the config file it should not exist' do
+        it 'does not exist' do
+          expect(config.config_file?).to be false
+        end
+      end
+
+      it 'creates the config file' do
+        config.create_config_file!
+        expect(config.config_file?).to be true
       end
     end
 
-    it 'creates the config file' do
-      config.create_config_file!
-      expect(config.config_file?).to be true
+    context 'when the config file destination folder does not exist' do
+      before do
+        folder = File.dirname(config.config_file)
+        bad_config_file = config.config_file.gsub(folder, Random.uuid())
+        allow(config).to receive(:config_file).and_return(bad_config_file)
+      end
+
+      context 'when creating the config file it should not exist' do
+        it 'does not exist' do
+          expect(config.config_file?).to be false
+        end
+      end
+
+      it 'displays a message to the console' do
+        expected_output = /Destination folder\x20.+\x20does not exist/
+        expect { config.create_config_file! }.to output(expected_output).to_stdout
+      end
+    end
+
+    context 'when the config file already exists' do
+      before do
+        config.create_config_file!
+      end
+
+      context 'when creating the config file it should exist' do
+        it 'exists' do
+          expect(config.config_file?).to be true
+        end
+      end
+
+      it 'displays a message to the console' do
+        expect { config.create_config_file! }.to output(/already exists/).to_stdout
+      end
     end
   end
 
   describe '#delete_config_file!' do
-    before do
-      config.create_config_file!
-    end
+    context 'when the config file exists' do
+      before do
+        config.create_config_file!
+      end
 
-    context 'when creating the config file it should not exist' do
-      it 'exists' do
-        expect(config.config_file?).to be true
+      context 'when deleting the config file it should exist' do
+        it 'exists' do
+          expect(config.config_file?).to be true
+        end
+      end
+
+      it 'deletes the config file' do
+        config.delete_config_file!
+        expect(config.config_file?).to be false
       end
     end
 
-    it 'deletes the config file' do
-      config.delete_config_file!
-      expect(config.config_file?).to be false
+    context 'when the config file does not exist' do
+      before do
+        folder = File.dirname(config.config_file)
+        bad_config_file = config.config_file.gsub(folder, Random.uuid())
+        allow(config).to receive(:config_file).and_return(bad_config_file)
+      end
+
+      context 'when deleting the config file it should not exist' do
+        it 'does not exist' do
+          expect(config.config_file?).to be false
+        end
+      end
+
+      it 'displays a message to the console' do
+        expected_output = /Configuration file\x20.+\x20does not exist/
+        expect { config.delete_config_file! }.to output(expected_output).to_stdout
+      end
     end
   end
 
   describe '#print_config_file' do
-    before do
-      config.create_config_file!
-    end
+    context 'when the configuration file exists' do
+      before do
+        config.create_config_file!
+      end
 
-    context 'when deleting the config file it should first exist' do
-      it 'exists' do
-        expect(config.config_file?).to be true
+      context 'when setting up this test the config file should exist' do
+        it 'exists' do
+          expect(config.config_file?).to be true
+        end
+      end
+
+      it 'prints the config file' do
+        expect { config.print_config_file }.to output(/Config file/).to_stdout
       end
     end
 
-    it 'prints the config file' do
-      expect { config.print_config_file }.to output(/Config file/).to_stdout
+    context 'when the configuration file does not exists' do
+      context 'when setting up this test the config file should not exist' do
+        it 'does not exist' do
+          expect(config.config_file?).to be false
+        end
+      end
+
+      it 'prints the config file' do
+        expect { config.print_config_file }.to output(/does not exist/).to_stdout
+      end
     end
   end
 end

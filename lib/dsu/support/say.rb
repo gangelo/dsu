@@ -5,12 +5,18 @@ module Dsu
     module Say
       class << self
         def say(text, color = nil)
-          unless color.is_a? Symbol
+          puts say_string_for(text, color)
+        end
+
+        def say_string_for(text, color = nil)
+          unless color.nil? || color.is_a?(Symbol)
             raise ':color is the wrong type. "Symbol" was expected, but ' \
-                  "\"#{color}\" was returned."
+                  "\"#{color.class}\" was returned."
           end
 
-          puts text.public_send(color)
+          return text if color.nil?
+
+          text.public_send(color)
         end
       end
 
