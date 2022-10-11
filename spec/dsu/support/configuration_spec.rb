@@ -2,10 +2,9 @@
 
 RSpec.describe Dsu::Support::Configuration do
   subject(:config) do
-    class Klass
+    Class.new do
       include Dsu::Support::Configuration
-    end
-    Klass.new
+    end.new
   end
 
   before do
@@ -65,7 +64,7 @@ RSpec.describe Dsu::Support::Configuration do
   end
 
   describe '#create_config_file!' do
-    context 'make sure the config file does not exist' do
+    context 'when creating the config file it should not exist' do
       it 'does not exist' do
         expect(config.config_file?).to be false
       end
@@ -82,7 +81,7 @@ RSpec.describe Dsu::Support::Configuration do
       config.create_config_file!
     end
 
-    context 'make sure the config file exists' do
+    context 'when creating the config file it should not exist' do
       it 'exists' do
         expect(config.config_file?).to be true
       end
@@ -99,7 +98,7 @@ RSpec.describe Dsu::Support::Configuration do
       config.create_config_file!
     end
 
-    context 'make sure the config file exists' do
+    context 'when deleting the config file it should first exist' do
       it 'exists' do
         expect(config.config_file?).to be true
       end

@@ -126,6 +126,9 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 10
 
+NestedGroups:
+  Max: 4
+
 # Naming/FileName:
 #  Exclude:
 #    - 'lib/file.rb'

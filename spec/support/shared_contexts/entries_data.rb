@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.shared_context 'entries data' do
+# rubocop:disable RSpec/MultipleMemoizedHelpers
+RSpec.shared_context 'with entries data' do
   let(:stub_entries_version) do
     stub_const('Dsu::Support::EntriesVersion::ENTRIES_VERSION', 'v0.0.1')
   end
@@ -43,7 +44,8 @@ RSpec.shared_context 'entries data' do
     }
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers
 
 RSpec.configure do |config|
-  config.include_context 'entries data'
+  config.include_context 'with entries data'
 end

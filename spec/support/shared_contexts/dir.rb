@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_context 'dir' do
+RSpec.shared_context 'with dir' do
   before do
     stub_dir_home
     stub_dir_tmpdir
@@ -16,5 +16,5 @@ RSpec.shared_context 'dir' do
 end
 
 RSpec.configure do |config|
-  config.include_context 'dir'
+  config.include_context 'with dir'
 end

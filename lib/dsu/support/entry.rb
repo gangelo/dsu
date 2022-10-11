@@ -13,8 +13,13 @@ module Dsu
       validates :description, presence: true, length: { minimum: 2, maximum: 80 }
       validates :long_description, length: { minimum: 2, maximum: 256 }, allow_nil: true
       validates :order, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-      validates :version, presence: true, format: { with: ENTRIES_VERSION_REGEXP, message: 'is the wrong format. ' \
-                                                                                           "/#{ENTRIES_VERSION_REGEXP.source}/ format was expected, but the version format did not match." }
+      validates :version, presence: true,
+        format: {
+          with: ENTRIES_VERSION_REGEXP,
+          message: 'is the wrong format. ' \
+                   "/#{ENTRIES_VERSION_REGEXP.source}/ " \
+                   'format was expected, but the version format did not match.'
+        }
 
       def initialize(description:, long_description: nil, time: nil, order: nil, version: nil)
         time ||= Time.now.utc

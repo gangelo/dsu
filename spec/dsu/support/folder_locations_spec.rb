@@ -18,13 +18,13 @@ RSpec.describe Dsu::Support::FolderLocations do
   describe 'class methods' do
     describe '.root_folder' do
       it 'returns the users home folder' do
-        expect(subject.root_folder).to eq Dir.home
+        expect(described_class.root_folder).to eq Dir.home
       end
     end
 
     describe '.temp_folder' do
       it 'returns the temp folder' do
-        expect(subject.temp_folder).to eq Dir.tmpdir
+        expect(described_class.temp_folder).to eq Dir.tmpdir
       end
     end
   end
