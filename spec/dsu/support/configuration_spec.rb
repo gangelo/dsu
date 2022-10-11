@@ -80,7 +80,7 @@ RSpec.describe Dsu::Support::Configuration do
     context 'when the config file destination folder does not exist' do
       before do
         folder = File.dirname(config.config_file)
-        bad_config_file = config.config_file.gsub(folder, Random.uuid())
+        bad_config_file = config.config_file.gsub(folder, Random.uuid)
         allow(config).to receive(:config_file).and_return(bad_config_file)
       end
 
@@ -134,7 +134,7 @@ RSpec.describe Dsu::Support::Configuration do
     context 'when the config file does not exist' do
       before do
         folder = File.dirname(config.config_file)
-        bad_config_file = config.config_file.gsub(folder, Random.uuid())
+        bad_config_file = config.config_file.gsub(folder, Random.uuid)
         allow(config).to receive(:config_file).and_return(bad_config_file)
       end
 

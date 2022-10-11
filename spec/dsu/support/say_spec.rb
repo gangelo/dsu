@@ -10,7 +10,7 @@ RSpec.describe Dsu::Support::Say do
 
       context 'when argument :color is nil' do
         it 'puts the text to stdout' do
-          expect { subject }.to output("#{text}\n").to_stdout
+          expect { say }.to output("#{text}\n").to_stdout
         end
       end
     end
@@ -20,7 +20,7 @@ RSpec.describe Dsu::Support::Say do
 
       context 'when argument :color is nil' do
         it 'returns the text unaltered' do
-          expect(subject).to eq text
+          expect(say).to eq text
         end
       end
 
@@ -28,7 +28,7 @@ RSpec.describe Dsu::Support::Say do
         let(:color) { 1 }
         let(:expected_error) do
           ':color is the wrong type. "Symbol" was expected, but ' \
-                  "\"Integer\" was returned."
+            '"Integer" was returned.'
         end
 
         it_behaves_like 'an error is raised'
@@ -39,7 +39,7 @@ RSpec.describe Dsu::Support::Say do
         let(:expected_text) { /.+#{text}.+/ }
 
         it 'puts the text to stdout' do
-          expect(subject).to include(expected_text).once
+          expect(say).to include(expected_text).once
         end
       end
     end
