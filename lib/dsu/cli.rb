@@ -16,7 +16,7 @@ module Dsu
     map %w[--version -v] => :version
     #    map %w[--interactive -i] => :interactive
 
-    default_command :interactive
+    default_command :help
 
     desc 'interactive', 'Opens a dsu interactive session.'
     long_desc ''
