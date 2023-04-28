@@ -50,7 +50,7 @@ module Dsu
 
       private
 
-      # This is our used interaction loop. Commands that are NOT help or
+      # This is our interaction loop. Commands that are NOT help or
       # back or exit commands are yielded to the subclass to execute. Help
       # commands simply display help; back (or exit) commands transfer control
       # back to the parent cli (if parent? is true) or exits the current

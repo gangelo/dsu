@@ -4,6 +4,7 @@ require 'active_support'
 require 'active_support/core_ext/object/blank'
 require 'bundler'
 require 'thor'
+require_relative 'subcommands/config'
 require_relative 'version'
 
 module Dsu
@@ -18,7 +19,7 @@ module Dsu
 
     default_command :help
 
-    desc 'interactive', 'Opens a dsu interactive session.'
+    desc 'interactive', 'Opens a dsu interactive session'
     long_desc ''
     method_option :interactive, type: :boolean, aliases: '-i'
 
@@ -28,10 +29,14 @@ module Dsu
       display_interactive_help
       loop do
         command = ask('dsu > ')
+        display_interactive_help if command == 'h'
         break if exit_commands.include? command
       end
       say 'Done.'
     end
+
+    desc 'config SUBCOMMAND', 'Manage configuration file for this gem'
+    subcommand :config, Dsu::Subcommands::Config
 
     private
 

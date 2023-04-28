@@ -7,7 +7,9 @@ gemspec
 
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.0'
-gem 'rubocop', '~> 0.81.0'
+gem 'rubocop', '~> 1.50', '>= 1.50.2'
+gem 'rubocop-performance', '~> 1.17', '>= 1.17.1'
+gem 'rubocop-rspec', '~> 2.20'
 
 gem 'pry-byebug', '~> 3.9'
 gem 'reek', '~> 6.1', '>= 6.1.1'
