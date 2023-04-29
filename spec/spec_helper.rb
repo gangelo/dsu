@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'pry-byebug'
+require 'securerandom'
 require 'time'
 require 'simplecov'
 

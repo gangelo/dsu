@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'deco_lite'
+require 'securerandom'
 require_relative 'entries_version'
 require_relative 'validate_time'
 
@@ -10,6 +11,11 @@ module Dsu
       include EntriesVersion
       include ValidateTime
 
+      validates :uuid, presence: true, format: {
+        with: /\A[0-9a-f]{8}\z/i,
+        message: 'is the wrong format. ' \
+                 '0-9, a-f, and 8 characters were expected.' \
+      }
       validates :description, presence: true, length: { minimum: 2, maximum: 80 }
       validates :long_description, length: { minimum: 2, maximum: 256 }, allow_nil: true
       validates :order, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
@@ -21,7 +27,8 @@ module Dsu
                    'format was expected, but the version format did not match.'
         }
 
-      def initialize(description:, long_description: nil, time: nil, order: nil, version: nil)
+      def initialize(description:, uuid: nil, long_description: nil, time: nil, order: nil, version: nil)
+        uuid ||= SecureRandom.uuid[0..7]
         time ||= Time.now.utc
 
         unless time.is_a? Time
@@ -32,6 +39,7 @@ module Dsu
         time = time.utc unless time.utc?
 
         hash = {
+          uuid: uuid,
           order: order,
           time: time,
           description: description,
@@ -42,10 +50,12 @@ module Dsu
       end
 
       def required_fields
-        %i[order time description version]
+        %i[uuid order time description version]
       end
 
       def ==(other)
+        return false unless other.respond_to?(:to_h)
+
         to_h == other.to_h
       end
 

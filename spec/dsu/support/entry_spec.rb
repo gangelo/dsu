@@ -6,6 +6,7 @@ RSpec.describe Dsu::Support::Entry do
     # All defaults are set up to instantiate without errors
     # or vailidation errors by default.
     described_class.new(
+      uuid: uuid,
       description: description,
       order: order,
       time: time,
@@ -18,6 +19,7 @@ RSpec.describe Dsu::Support::Entry do
     stub_entries_version
   end
 
+  let(:uuid) { entry_0_hash[:uuid] }
   let(:description) { entry_0_hash[:description] }
   let(:order) { entry_0_hash[:order] }
   let(:time) { entry_0_hash[:time] }
@@ -27,6 +29,30 @@ RSpec.describe Dsu::Support::Entry do
   describe 'validations' do
     before do
       entry.validate
+    end
+
+    describe '#uuid' do
+      context 'when uuid is nil' do
+        let(:uuid) { nil }
+
+        it_behaves_like 'the validation passes'
+      end
+
+      context 'when uuid is not nil and valid' do
+        it_behaves_like 'the validation passes'
+      end
+
+      context 'when uuid is not nil and invalid' do
+        let(:uuid) { 'invalid' }
+
+        let(:expected_errors) do
+          [
+            'Uuid is the wrong format. 0-9, a-f, and 8 characters were expected.'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
     end
 
     describe '#description' do
@@ -237,6 +263,38 @@ RSpec.describe Dsu::Support::Entry do
     it 'returns a Hash representing the Entry with dates/times localized' do
       expect(entry.to_h_localized).to \
         eq entry_0_hash.merge({ time: entry_0_hash[:time].localtime })
+    end
+  end
+
+  describe '#==' do
+    context 'when the entries are equal' do
+      let(:equal_entry) { described_class.new(**entry_0_hash) }
+
+      it 'returns true' do
+        expect(entry == equal_entry).to be true
+      end
+    end
+
+    context 'when the entry is not equal' do
+      context 'when the entry is nil' do
+        it 'returns false' do
+          expect(entry.nil?).to be false
+        end
+      end
+
+      context 'when the entry is not an Entry' do
+        it 'returns false' do
+          expect(entry == 'not an entry').to be false
+        end
+      end
+
+      context 'when the entries are not equal' do
+        let(:not_equal_entry) { described_class.new(description: 'not equal entry') }
+
+        it 'returns false' do
+          expect(entry == not_equal_entry).to be false
+        end
+      end
     end
   end
 end

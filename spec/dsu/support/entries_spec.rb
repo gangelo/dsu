@@ -33,9 +33,9 @@ RSpec.describe Dsu::Support::Entries do
 
     context 'when there are entries to load' do
       let(:time) { local_time }
-      let(:hydrated_entry_data) do
-        Dsu::Support::EntriesLoader.hydrate_entries(entries_hash: entries_hash, time: time_utc)
-      end
+      # let(:hydrated_entry_data) do
+      #   Dsu::Support::EntriesLoader.hydrate_entries(entries_hash: entries_hash, time: time_utc)
+      # end
       let(:expected_entries) do
         entries_hash[:entries].map do |entry|
           Dsu::Support::Entry.new(**entry)

@@ -3,6 +3,7 @@
   "time": "2022-10-01 00:00:00 UTC",
   "entries": [
     {
+      "uuid": "00000000",
       "version": "v0.0.1",
       "order": 0,
       "time": "2022-10-01 00:00:00 UTC",
@@ -10,6 +11,7 @@
       "long_description": "0 long description"
     },
     {
+      "uuid": "11111111",
       "version": "v0.0.1",
       "order": 1,
       "time": "2022-10-01 00:00:00 UTC",

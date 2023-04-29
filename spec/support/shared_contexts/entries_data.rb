@@ -27,6 +27,7 @@ RSpec.shared_context 'with entries data' do
   end
   let(:entry_0_hash) do
     {
+      uuid: '00000000',
       order: 0,
       time: time_utc,
       description: '0 description',
@@ -36,6 +37,7 @@ RSpec.shared_context 'with entries data' do
   end
   let(:entry_1_hash) do
     {
+      uuid: '11111111',
       order: 1,
       time: time_utc,
       description: '1 description',
