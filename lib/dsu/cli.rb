@@ -15,13 +15,21 @@ module Dsu
     class_option :debug, type: :boolean, default: false
 
     map %w[--version -v] => :version
-    #    map %w[--interactive -i] => :interactive
+    # map %w[--interactive -i] => :interactive
 
     default_command :help
 
+    class << self
+      def exit_on_failure?
+        false
+      end
+    end
+
     desc 'interactive', 'Opens a dsu interactive session'
     long_desc ''
-    method_option :interactive, type: :boolean, aliases: '-i'
+    option :next_day, type: :boolean, aliases: '-n'
+    option :previous_day, type: :boolean, aliases: '-p'
+    option :today, type: :boolean, aliases: '-t'
 
     # https://stackoverflow.com/questions/4604905/interactive-prompt-with-thor
     def interactive
@@ -37,6 +45,11 @@ module Dsu
 
     desc 'config SUBCOMMAND', 'Manage configuration file for this gem'
     subcommand :config, Dsu::Subcommands::Config
+
+    desc '--version, -v', 'Displays this gem version'
+    def version
+      say Dsu::VERSION
+    end
 
     private
 
