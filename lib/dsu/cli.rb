@@ -4,6 +4,7 @@ require 'active_support'
 require 'active_support/core_ext/object/blank'
 require 'bundler'
 require 'thor'
+require_relative 'command_services/add'
 require_relative 'subcommands/config'
 require_relative 'version'
 
@@ -23,6 +24,20 @@ module Dsu
       def exit_on_failure?
         false
       end
+    end
+
+    desc 'add [OPTIONS] DESCRIPTION [LONG-DESCRIPTION]',
+      'Adds a dsu entry for the date associated with the given option.'
+    long_desc <<-LONG_DESC
+      TBD
+    LONG_DESC
+    option :date, type: :string, aliases: '-d'
+    option :next_day, type: :boolean, aliases: '-n'
+    option :previous_day, type: :boolean, aliases: '-p'
+    option :today, type: :boolean, aliases: '-t'
+
+    def add(description, long_description = nil)
+      Dsu::CommandServices::Add.new(options: options, description: description, long_description: long_description).call
     end
 
     desc 'interactive', 'Opens a dsu interactive session'

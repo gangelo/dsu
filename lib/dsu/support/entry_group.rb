@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'deco_lite'
-require_relative 'entries_loader'
+require_relative 'entry_group_loadable'
 require_relative 'entries_version'
 require_relative 'field_errors'
 require_relative 'validate_time'
@@ -9,8 +9,8 @@ require_relative 'validate_version'
 
 module Dsu
   module Support
-    class Entries < DecoLite::Model
-      include EntriesLoader
+    class EntryGroup < DecoLite::Model
+      include EntryGroupLoadable
       include EntriesVersion
       include FieldErrors
       include ValidateTime
@@ -27,9 +27,7 @@ module Dsu
         end
 
         time = time.utc unless time.utc?
-        entries = entries_for(time: time)
-        hydrated_entries = hydrate_entries(entries_hash: entries, time: time)
-        super(hash: hydrated_entries)
+        super(hash: hydrated_entry_group_hash_for(time: time))
       end
 
       def required_fields
@@ -42,7 +40,6 @@ module Dsu
           entries.each_with_index do |entry, index|
             entries[index] = entry.to_h
           end
-          sort_entries! entries if entries.present?
         end
         hash
       end
@@ -54,15 +51,15 @@ module Dsu
           entries.each do |entry|
             entry[:time] = entry[:time].localtime
           end
-          sort_entries! entries if entries.present?
         end
         hash
       end
 
       private
 
-      def sort_entries!(entries)
-        entries.sort! { |entry| entry[:order] }
+      def hydrated_entry_group_hash_for(time:)
+        entry_group_hash = entry_group_hash_for(time: time)
+        hydrate_entry_group_hash(entry_group_hash: entry_group_hash, time: time)
       end
 
       def validate_entries

@@ -1,9 +1,16 @@
 # frozen_string_literal: true
 
+require 'dotenv/load'
 require 'fileutils'
 require 'pry-byebug'
 require 'securerandom'
 require 'time'
+require 'factory_bot'
+require 'ffaker'
+
+require_relative './support/configuration_helpers'
+require_relative './support/entry_group_helpers'
+
 require 'simplecov'
 
 SimpleCov.start
@@ -26,4 +33,14 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  # FactoryBot
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions
+  end
+
+  config.include ConfigurationHelpers
+  config.include EntryGroupHelpers
 end

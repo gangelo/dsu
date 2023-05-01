@@ -59,9 +59,16 @@ module Dsu
         to_h == other.to_h
       end
 
+      def to_h
+        hash = super
+        hash[:time] = Time.parse(hash[:time]) unless hash[:time].is_a? Time
+        hash
+      end
+
       def to_h_localized
         hash = to_h
-        hash.merge({ time: hash[:time].localtime })
+        hash[:time] = hash[:time].localtime
+        hash
       end
     end
   end

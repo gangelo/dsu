@@ -224,7 +224,7 @@ RSpec.describe Dsu::Support::Entry do
         let(:expected_errors) do
           [
             "Version can't be blank",
-            'Version is the wrong format. /v\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
+            'Version is the wrong format. /\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
           ]
         end
 
@@ -235,7 +235,7 @@ RSpec.describe Dsu::Support::Entry do
         let(:version) { 'v0..1.0' }
         let(:expected_errors) do
           [
-            'Version is the wrong format. /v\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
+            'Version is the wrong format. /\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
           ]
         end
 

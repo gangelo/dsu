@@ -1,10 +1,18 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Support::Entries do
-  subject(:entries) { described_class.new time: time }
+RSpec.describe Dsu::Support::EntryGroup do
+  subject(:entry_group) { described_class.new time: time }
 
   before do
     stub_entries_version
+  end
+
+  before do
+    config.create_config_file!
+  end
+
+  after do
+    config.delete_config_file!
   end
 
   describe '#initialize' do
@@ -19,7 +27,7 @@ RSpec.describe Dsu::Support::Entries do
       let(:time) { nil }
 
       it 'uses Time.now.utc' do
-        expect(entries.time).to eq time_utc
+        expect(entry_group.time).to eq time_utc
       end
     end
 
@@ -27,23 +35,20 @@ RSpec.describe Dsu::Support::Entries do
       let(:time) { local_time }
 
       it 'uses the time passed converted to utc' do
-        expect(entries.time).to eq local_time.utc
+        expect(entry_group.time).to eq local_time.utc
       end
     end
 
     context 'when there are entries to load' do
       let(:time) { local_time }
-      # let(:hydrated_entry_data) do
-      #   Dsu::Support::EntriesLoader.hydrate_entries(entries_hash: entries_hash, time: time_utc)
-      # end
       let(:expected_entries) do
-        entries_hash[:entries].map do |entry|
+        entry_group_hash[:entries].map do |entry|
           Dsu::Support::Entry.new(**entry)
         end
       end
 
       it 'loads the entries and #entries returns the entries as an Array' do
-        expect(entries.entries).to match_array expected_entries
+        expect(entry_group.entries).to match_array expected_entries
       end
     end
 
@@ -52,15 +57,15 @@ RSpec.describe Dsu::Support::Entries do
       let(:time_utc) { Time.parse('1900-01-01 00:00:00 UTC') }
 
       it '#version returns the current version' do
-        expect(entries.version).to eq Dsu::Support::EntriesVersion::ENTRIES_VERSION
+        expect(entry_group.version).to eq Dsu::Support::EntriesVersion::ENTRIES_VERSION
       end
 
       it '#time returns the time' do
-        expect(entries.time).to eq time_utc
+        expect(entry_group.time).to eq time_utc
       end
 
       it '#entries returns an empty Array ([])' do
-        expect(entries.entries).to eq []
+        expect(entry_group.entries).to eq []
       end
     end
   end
@@ -74,8 +79,8 @@ RSpec.describe Dsu::Support::Entries do
   describe '#time' do
     context 'when time is blank or the wrong object type' do
       before do
-        entries.time = nil
-        entries.validate
+        entry_group.time = nil
+        entry_group.validate
       end
 
       let(:time) { time_utc }
@@ -94,8 +99,8 @@ RSpec.describe Dsu::Support::Entries do
   describe '#entries' do
     context 'when entries is nil' do
       before do
-        entries.entries = nil
-        entries.validate
+        entry_group.entries = nil
+        entry_group.validate
       end
 
       let(:time) { time_utc }
@@ -111,8 +116,8 @@ RSpec.describe Dsu::Support::Entries do
 
     context 'when entries is the wrong object type' do
       before do
-        entries.entries = :bad
-        entries.validate
+        entry_group.entries = :bad
+        entry_group.validate
       end
 
       let(:time) { time_utc }
@@ -128,8 +133,8 @@ RSpec.describe Dsu::Support::Entries do
 
     context 'when entries elements are the wrong object type' do
       before do
-        entries.entries = entries_array
-        entries.validate
+        entry_group.entries = entries_array
+        entry_group.validate
       end
 
       let(:time) { time_utc }
@@ -154,8 +159,8 @@ RSpec.describe Dsu::Support::Entries do
   describe '#version' do
     context 'when version is nil' do
       before do
-        entries.version = nil
-        entries.validate
+        entry_group.version = nil
+        entry_group.validate
       end
 
       let(:time) { time_utc }
@@ -171,8 +176,8 @@ RSpec.describe Dsu::Support::Entries do
 
     context 'when version is blank?' do
       before do
-        entries.version = ''
-        entries.validate
+        entry_group.version = ''
+        entry_group.validate
       end
 
       let(:time) { time_utc }
@@ -187,15 +192,15 @@ RSpec.describe Dsu::Support::Entries do
 
     context 'when version is the wrong format' do
       before do
-        entries.version = 'v1..0.0'
-        entries.validate
+        entry_group.version = '1..0.0'
+        entry_group.validate
       end
 
       let(:time) { time_utc }
       let(:expected_errors) do
         [
           'Version is the wrong format. ' \
-          'v\d+\.\d+\.\d+ format was expected, but "v1..0.0" was received.'
+          'v\d+\.\d+\.\d+ format was expected, but "1..0.0" was received.'
         ]
       end
 
@@ -207,7 +212,7 @@ RSpec.describe Dsu::Support::Entries do
     let(:time) { time_utc }
 
     it 'returns the entries data has a Hash' do
-      expect(entries.to_h).to match entries_hash_with_sorted_entries
+      expect(entry_group.to_h).to match entries_hash_with_sorted_entries
     end
   end
 
@@ -215,7 +220,7 @@ RSpec.describe Dsu::Support::Entries do
     let(:time) { time_utc }
 
     it 'returns a Hash representing the Entries with dates/times localized' do
-      expect(entries.to_h_localized).to eq entries_hash_with_sorted_entries
+      expect(entry_group.to_h_localized).to eq entries_hash_with_sorted_entries
     end
   end
 
@@ -224,7 +229,7 @@ RSpec.describe Dsu::Support::Entries do
       let(:time) { time_utc }
 
       it 'passes validation' do
-        expect(entries.valid?).to be true
+        expect(entry_group.valid?).to be true
       end
     end
   end

@@ -11,14 +11,6 @@ RSpec.describe Dsu::Support::Configuration do
     stub_entries_version
   end
 
-  after do
-    File.delete(config.config_file) if config.config_file?
-  end
-
-  let(:stub_dir_home) do
-    allow(Dir).to receive(:home).and_return(File.join(Dir.tmpdir, 'dsu/test_folders').to_s)
-  end
-
   describe 'constants' do
     describe 'DEFAULT_DSU_OPTIONS' do
       let(:expected_options) do
@@ -45,10 +37,11 @@ RSpec.describe Dsu::Support::Configuration do
   describe '#config_file?' do
     context 'when the config file exists' do
       before do
-        config_file = config.config_file
-        directory = File.dirname config_file
-        FileUtils.mkdir_p(directory) unless File.directory?(directory)
-        FileUtils.touch config_file
+        config.create_config_file!
+      end
+
+      after do
+        config.delete_config_file!
       end
 
       it 'returns true' do
@@ -65,13 +58,12 @@ RSpec.describe Dsu::Support::Configuration do
 
   describe '#create_config_file!' do
     context 'when the config file does not exist' do
-      context 'when creating the config file it should not exist' do
-        it 'does not exist' do
-          expect(config.config_file?).to be false
-        end
+      after do
+        config.delete_config_file!
       end
 
       it 'creates the config file' do
+        expect(config.config_file?).to be false
         config.create_config_file!
         expect(config.config_file?).to be true
       end
@@ -155,6 +147,10 @@ RSpec.describe Dsu::Support::Configuration do
     context 'when the configuration file exists' do
       before do
         config.create_config_file!
+      end
+
+      after do
+        config.delete_config_file!
       end
 
       context 'when setting up this test the config file should exist' do

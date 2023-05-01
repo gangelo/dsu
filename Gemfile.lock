@@ -31,6 +31,10 @@ GEM
       mad_flatter (~> 2.0)
     diff-lcs (1.5.0)
     docile (1.4.0)
+    dotenv (2.8.1)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
+    ffaker (2.21.0)
     i18n (1.13.0)
       concurrent-ruby (~> 1.0)
     immutable_struct_ex (0.2.3)
@@ -109,7 +113,10 @@ PLATFORMS
   x86_64-darwin-19
 
 DEPENDENCIES
+  dotenv (~> 2.8, >= 2.8.1)
   dsu!
+  factory_bot (~> 6.2, >= 6.2.1)
+  ffaker (~> 2.21)
   pry-byebug (~> 3.9)
   rake (~> 13.0)
   reek (~> 6.1, >= 6.1.1)

@@ -4,7 +4,7 @@
   "entries": [
     {
       "uuid": "00000000",
-      "version": "v0.0.1",
+      "version": "0.0.1",
       "order": 0,
       "time": "2022-10-01 00:00:00 UTC",
       "description": "0 description",
@@ -12,7 +12,7 @@
     },
     {
       "uuid": "11111111",
-      "version": "v0.0.1",
+      "version": "0.0.1",
       "order": 1,
       "time": "2022-10-01 00:00:00 UTC",
       "description": "1 description",

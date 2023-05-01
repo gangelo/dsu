@@ -4,5 +4,12 @@
 require 'bundler/setup'
 require 'dsu'
 
+
 require 'pry-byebug'
+
+# So we can use FactoryBot in the console.
+require 'factory_bot'
+require 'ffaker'
+FactoryBot.find_definitions
+
 Pry.start

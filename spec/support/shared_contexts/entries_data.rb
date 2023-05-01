@@ -8,11 +8,12 @@ RSpec.shared_context 'with entries data' do
 
   let(:entries_version) { Dsu::Support::EntriesVersion::ENTRIES_VERSION }
   let(:entries_hash_with_sorted_entries) do
-    entries_hash_sorted = entries_hash.dup
+    entries_hash_sorted = entry_group_hash.dup
     entries_hash_sorted[:entries].sort! { |entry| entry[:order] }
     entries_hash_sorted
   end
-  let(:entries_hash) do
+  # The hash equivalent of an EntryGroup model.
+  let(:entry_group_hash) do
     {
       version: entries_version,
       time: time_utc,
@@ -25,6 +26,7 @@ RSpec.shared_context 'with entries data' do
       entry_0_hash
     ]
   end
+  # The hash equivalent of an Entry model.
   let(:entry_0_hash) do
     {
       uuid: '00000000',
