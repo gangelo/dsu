@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::Support::EntryGroup do
-  subject(:entry_group) { described_class.new time: time }
+  subject(:entry_group) { build(:entry_group, time: time) }
 
-  before do
-    stub_entries_version
-  end
-
-  before do
+  before(:all) do
     config.create_config_file!
   end
 
-  after do
+  before do
+    stub_entries_version
+    delete_entry_group_file!(time: time.utc)
+  end
+
+  after(:all) do
     config.delete_config_file!
   end
 
@@ -40,15 +41,23 @@ RSpec.describe Dsu::Support::EntryGroup do
     end
 
     context 'when there are entries to load' do
+      before do
+        # Write our entry group to the file system so that when we
+        # call our subject , it will load the entries from the file system.
+        entry_group_to_load = build(:entry_group, time: time, entries: entries)
+        Dsu::Services::EntryGroupWriterService.new(entry_group: entry_group_to_load).call
+      end
+
       let(:time) { local_time }
-      let(:expected_entries) do
-        entry_group_hash[:entries].map do |entry|
-          Dsu::Support::Entry.new(**entry)
-        end
+      let(:entries) do
+        [
+          build(:entry, time: time, uuid: '01234567'),
+          build(:entry, time: time, uuid: '89abcdef')
+        ]
       end
 
       it 'loads the entries and #entries returns the entries as an Array' do
-        expect(entry_group.entries).to match_array expected_entries
+        expect(entry_group.entries).to match_array entries
       end
     end
 

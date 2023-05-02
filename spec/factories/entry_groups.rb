@@ -22,7 +22,7 @@ FactoryBot.define do
     end
 
     after(:build) do |entry_group, evaluator|
-      evaluator.entries.each do |entry|
+      evaluator.entries&.each do |entry|
         entry_group.entries << entry.clone
       end
     end

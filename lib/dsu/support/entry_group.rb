@@ -16,7 +16,7 @@ module Dsu
       include ValidateTime
       include ValidateVersion
 
-      validate :validate_entries
+      validate :validate_entries, :validate_unique_uuids
 
       def initialize(time: nil)
         time ||= Time.now.utc
@@ -57,6 +57,9 @@ module Dsu
 
       private
 
+      # This function returns a hash whose :time and :entries
+      # key values are hydrated with instantiated Time and Entry
+      # objects.
       def hydrated_entry_group_hash_for(time:)
         entry_group_hash = entry_group_hash_for(time: time)
         hydrate_entry_group_hash(entry_group_hash: entry_group_hash, time: time)
@@ -78,6 +81,14 @@ module Dsu
         errors.add(:entries, 'is the wrong object type. ' \
                              "\"Array\" was expected, but \"#{entries.class}\" was received.",
           type: FIELD_TYPE_ERROR)
+      end
+
+      def validate_unique_uuids
+        entries.map(&:uuid).tap do |uuids|
+          return if uuids.uniq.length == uuids.length
+        end
+
+        errors.add(:entries, 'contains duplicate UUIDs.', type: FIELD_DUPLICATE_ERROR)
       end
     end
   end

@@ -51,7 +51,7 @@ RSpec.describe Dsu::CommandServices::Add do
 
       it 'adds the entry to the entry group for the date' do
         Dsu::Support::EntryGroup.new(time: date).tap do |entry_group|
-          expect(entry_group[:entries]).to include entry
+          expect(entry_group.entries).to include entry
         end
       end
     end

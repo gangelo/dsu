@@ -3,6 +3,7 @@
 require 'pathname'
 require_relative '../services/entry_group_reader_service'
 require_relative 'entries_version'
+require_relative 'entry'
 
 module Dsu
   module Support
@@ -55,10 +56,7 @@ module Dsu
         time = Time.parse(time) unless time.is_a? Time
         version = entry_group_hash.fetch(:version, ENTRIES_VERSION)
         entries = entry_group_hash.fetch(:entries, [])
-        entries = entries.map do |entry|
-          entry[:time] = Time.parse(entry[:time]) unless entry[:time].is_a? Time
-          Entry.new(**entry)
-        end
+        entries = entries.map { |entry_hash| Entry.new **entry_hash }
 
         { time: time, version: version, entries: entries }
       end
