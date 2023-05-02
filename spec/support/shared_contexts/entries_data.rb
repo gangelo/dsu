@@ -3,15 +3,10 @@
 # rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.shared_context 'with entries data' do
   let(:stub_entries_version) do
-    stub_const('Dsu::Support::EntriesVersion::ENTRIES_VERSION', 'v0.0.1')
+    stub_const('Dsu::Support::EntriesVersion::ENTRIES_VERSION', '0.0.1')
   end
 
   let(:entries_version) { Dsu::Support::EntriesVersion::ENTRIES_VERSION }
-  let(:entries_hash_with_sorted_entries) do
-    entries_hash_sorted = entry_group_hash.dup
-    entries_hash_sorted[:entries].sort! { |entry| entry[:order] }
-    entries_hash_sorted
-  end
   # The hash equivalent of an EntryGroup model.
   let(:entry_group_hash) do
     {

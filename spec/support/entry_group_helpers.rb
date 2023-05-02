@@ -1,8 +1,8 @@
 # These helpers are used to create and delete the entry group data
 # file as needed for tests.
 module EntryGroupHelpers
-  def create_entry_group_file!
-    raise 'TODO: create the entry group file'
+  def create_entry_group_file!(entry_group:)
+    Dsu::Services::EntryGroupWriterService.new(entry_group: entry_group).call
   end
 
   def delete_entry_group_file!(time:)

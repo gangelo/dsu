@@ -23,6 +23,8 @@ FactoryBot.define do
 
     after(:build) do |entry_group, evaluator|
       evaluator.entries&.each do |entry|
+        raise 'Entry must be an instance of Dsu::Support::Entry' unless entry.is_a?(Dsu::Support::Entry)
+
         entry_group.entries << entry.clone
       end
     end

@@ -9,12 +9,14 @@ RSpec.describe Dsu::Support::EntryGroup do
 
   before do
     stub_entries_version
-    delete_entry_group_file!(time: time.utc)
+    delete_entry_group_file!(time: time.utc) if time.is_a?(Time)
   end
 
   after(:all) do
     config.delete_config_file!
   end
+
+  let(:time) { nil }
 
   describe '#initialize' do
     context 'when argument :time is not a Time object' do
@@ -43,21 +45,24 @@ RSpec.describe Dsu::Support::EntryGroup do
     context 'when there are entries to load' do
       before do
         # Write our entry group to the file system so that when we
-        # call our subject , it will load the entries from the file system.
-        entry_group_to_load = build(:entry_group, time: time, entries: entries)
-        Dsu::Services::EntryGroupWriterService.new(entry_group: entry_group_to_load).call
+        # call our subject, it will load the entries from the file system.
+        build(:entry_group, time: time, entries: entries).tap do |entry_group|
+          create_entry_group_file!(entry_group: entry_group)
+        end
       end
 
       let(:time) { local_time }
-      let(:entries) do
-        [
-          build(:entry, time: time, uuid: '01234567'),
-          build(:entry, time: time, uuid: '89abcdef')
-        ]
+      let(:entries) { build_list(:entry, 2, time: time) }
+      let(:entry_group_hash) do
+        {
+          version: entries_version,
+          time: time.utc,
+          entries: entries.map(&:to_h)
+        }
       end
 
       it 'loads the entries and #entries returns the entries as an Array' do
-        expect(entry_group.entries).to match_array entries
+        expect(entry_group.to_h).to match_array entry_group_hash
       end
     end
 
@@ -149,15 +154,15 @@ RSpec.describe Dsu::Support::EntryGroup do
       let(:time) { time_utc }
       let(:entries_array) do
         [
-          Dsu::Support::Entry.new(**entry_1_hash),
-          { bad: :element },
-          Dsu::Support::Entry.new(**entry_0_hash)
+          build(:entry, time: time),
+          :not_an_entry,
+          build(:entry, time: time)
         ]
       end
       let(:expected_errors) do
         [
           'Entries entry Array element is the wrong object type. ' \
-          '"Entry" was expected, but "Hash" was received.'
+          '"Entry" was expected, but "Symbol" was received.'
         ]
       end
 
@@ -209,7 +214,7 @@ RSpec.describe Dsu::Support::EntryGroup do
       let(:expected_errors) do
         [
           'Version is the wrong format. ' \
-          'v\d+\.\d+\.\d+ format was expected, but "1..0.0" was received.'
+          '\d+\.\d+\.\d+ format was expected, but "1..0.0" was received.'
         ]
       end
 
@@ -218,18 +223,44 @@ RSpec.describe Dsu::Support::EntryGroup do
   end
 
   describe '#to_h' do
+    subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
+
     let(:time) { time_utc }
+    let(:entries) { build_list(:entry, 2, time: time) }
+    let(:entry_group_hash) do
+      {
+        version: entries_version,
+        time: time,
+        entries: [
+          entries[0].to_h,
+          entries[1].to_h
+        ]
+      }
+    end
 
     it 'returns the entries data has a Hash' do
-      expect(entry_group.to_h).to match entries_hash_with_sorted_entries
+      expect(entry_group.to_h).to match entry_group_hash
     end
   end
 
   describe '#to_h_localized' do
-    let(:time) { time_utc }
+    subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
-    it 'returns a Hash representing the Entries with dates/times localized' do
-      expect(entry_group.to_h_localized).to eq entries_hash_with_sorted_entries
+    let(:time) { time_utc }
+    let(:entries) { build_list(:entry, 2, time: time) }
+    let(:localized_entry_group_hash) do
+      {
+        version: entries_version,
+        time: time.localtime,
+        entries: [
+          entries[0].to_h_localized,
+          entries[1].to_h_localized
+        ]
+      }
+    end
+
+    it 'returns a Hash representing the entry group with dates/times localized' do
+      expect(entry_group.to_h_localized).to eq localized_entry_group_hash
     end
   end
 

@@ -16,16 +16,15 @@ module Dsu
       include ValidateTime
       include ValidateVersion
 
-      validate :validate_entries, :validate_unique_uuids
+      validate :validate_entry_types, :validate_unique_entry_uuids
 
       def initialize(time: nil)
-        time ||= Time.now.utc
-
-        unless time.is_a? Time
+        unless time.nil? || time.is_a?(Time)
           raise ':time is the wrong object type. ' \
                 "\"Time\" was expected, but \"#{time.class}\" was received."
         end
 
+        time ||= Time.now.utc
         time = time.utc unless time.utc?
         super(hash: hydrated_entry_group_hash_for(time: time))
       end
@@ -65,7 +64,7 @@ module Dsu
         hydrate_entry_group_hash(entry_group_hash: entry_group_hash, time: time)
       end
 
-      def validate_entries
+      def validate_entry_types
         if entries.is_a? Array
           entries.each do |entry|
             next if entry.is_a? Entry
@@ -83,8 +82,10 @@ module Dsu
           type: FIELD_TYPE_ERROR)
       end
 
-      def validate_unique_uuids
-        entries.map(&:uuid).tap do |uuids|
+      def validate_unique_entry_uuids
+        return unless entries.is_a? Array
+
+        entries.select { |entry| entry.is_a?(Entry) }.map(&:uuid).tap do |uuids|
           return if uuids.uniq.length == uuids.length
         end
 
