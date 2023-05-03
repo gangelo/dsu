@@ -15,7 +15,7 @@ RSpec.describe Dsu::Support::Configuration do
     describe 'DEFAULT_DSU_OPTIONS' do
       let(:expected_options) do
         {
-          version: Dsu::Support::EntriesVersion::ENTRIES_VERSION,
+          version: entries_version,
           entries_folder: "#{Dsu::Support::FolderLocations.root_folder}/dsu/entries",
           entries_file_name: '%Y-%m-%d.json'
         }

@@ -215,7 +215,7 @@ RSpec.describe Dsu::Support::Entry do
         it_behaves_like 'the validation passes'
 
         it 'uses the current entries version' do
-          expect(entry.version).to eq Dsu::Support::EntriesVersion::ENTRIES_VERSION
+          expect(entry.version).to eq entries_version
         end
       end
 
