@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'json'
+require 'active_support/core_ext/module/delegation'
 require_relative '../support/entry_group_fileable'
 
 module Dsu

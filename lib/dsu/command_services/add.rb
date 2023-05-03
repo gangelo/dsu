@@ -1,20 +1,24 @@
 # frozen_string_literal: true
 
+require_relative '../services/entry_group_writer_service'
 require_relative '../support/entry'
 require_relative '../support/entry_group_loadable'
 require_relative '../support/folder_locations'
 
 module Dsu
   module CommandServices
+    # This class adds (does NOT update) an entry to an entry group.
     class Add
       include Dsu::Support::EntryGroupLoadable
       include Dsu::Support::FolderLocations
 
-      attr_reader :entry, :date
+      attr_reader :entry, :time
 
-      def initialize(entry:, date:)
+      # :entry is an Entry object
+      # :time is a Time object; the time of the entry group.
+      def initialize(entry:, time:)
         @entry = entry
-        @date = date
+        @time = time
       end
 
       def call
@@ -28,22 +32,22 @@ module Dsu
 
       private
 
-      attr_writer :entry, :date
+      attr_writer :entry, :time
 
       def entry_exists?
         @entry_exists ||= entry_group_hash[:entries].any? { |e| e[:uuid] == entry.uuid }
       end
 
       def entry_group_hash
-        @entry_group_hash ||= entry_group_hash_for time: date
+        @entry_group_hash ||= entry_group_hash_for time: time
       end
 
       def save_entry_group!
-        raise "Entry #{entry.uuid} already exists in entry group #{date}" if entry_exists?
+        raise "Entry #{entry.uuid} already exists in entry group #{time}" if entry_exists?
 
         entry_group_hash[:entries] << entry.to_h
 
-        binding.pry
+        Dsu::Services::EntryGroupWriterService.new(entry_group: entry_group_hash).call
       end
     end
   end

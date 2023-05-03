@@ -18,14 +18,14 @@ FactoryBot.define do
     end
 
     initialize_with do
-      new(time: time)
+      new(time: time, entries: entries, version: version)
     end
 
     after(:build) do |entry_group, evaluator|
-      evaluator.entries&.each do |entry|
+      evaluator.entries&.each_with_index do |entry, index|
         raise 'Entry must be an instance of Dsu::Support::Entry' unless entry.is_a?(Dsu::Support::Entry)
 
-        entry_group.entries << entry.clone
+        entry_group.entries[index] = entry.clone
       end
     end
   end

@@ -1,18 +1,10 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::CommandServices::Add do
-  subject(:add) { described_class.new(entry: entry, date: date) }
+  subject(:add) { described_class.new(entry: entry, time: time) }
 
   let(:entry) { build(:entry) }
-  let(:date) { Time.now }
-
-  let(:stub_dir_home) do
-    allow(Dir).to receive(:home).and_return(Dir.tmpdir)
-  end
-
-  let(:stub_dir_tmpdir) do
-    allow(Dir).to receive(:tmpdir).and_call_original
-  end
+  let(:time) { Time.now }
 
   describe '#initialize' do
     context 'when the arguments are valid' do
@@ -31,7 +23,7 @@ RSpec.describe Dsu::CommandServices::Add do
   end
 
   describe '#call' do
-    subject(:add) { described_class.new(entry: entry, date: date).call }
+    subject(:add) { described_class.new(entry: entry, time: time).call }
 
     context 'when the entry is not added' do
       let(:entry) { build(:entry, :invalid) }
@@ -49,8 +41,8 @@ RSpec.describe Dsu::CommandServices::Add do
         expect(add).to eq entry.uuid
       end
 
-      it 'adds the entry to the entry group for the date' do
-        Dsu::Support::EntryGroup.new(time: date).tap do |entry_group|
+      it 'adds the entry to the entry group for the time' do
+        Dsu::Support::EntryGroup.new(time: time).tap do |entry_group|
           expect(entry_group.entries).to include entry
         end
       end

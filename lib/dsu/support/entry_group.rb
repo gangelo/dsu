@@ -10,7 +10,7 @@ require_relative 'validate_version'
 module Dsu
   module Support
     class EntryGroup < DecoLite::Model
-      include EntryGroupLoadable
+      extend EntryGroupLoadable
       include EntriesVersion
       include FieldErrors
       include ValidateTime
@@ -18,7 +18,7 @@ module Dsu
 
       validate :validate_entry_types, :validate_unique_entry_uuids
 
-      def initialize(time: nil)
+      def initialize(time:, entries: [], version: EntriesVersion::ENTRIES_VERSION)
         unless time.nil? || time.is_a?(Time)
           raise ':time is the wrong object type. ' \
                 "\"Time\" was expected, but \"#{time.class}\" was received."
@@ -26,7 +26,43 @@ module Dsu
 
         time ||= Time.now.utc
         time = time.utc unless time.utc?
-        super(hash: hydrated_entry_group_hash_for(time: time))
+
+        unless entries.is_a?(Array)
+          raise ':entries is the wrong object type. ' \
+                "\"Array\" was expected, but \"#{entries.class}\" was received."
+        end
+
+        unless version.is_a?(String)
+          raise ':version is the wrong object type. ' \
+                "\"String\" was expected, but \"#{version.class}\" was received."
+        end
+
+        super(hash: {
+          time: time,
+          entries: entries,
+          version: version
+        })
+      end
+
+      class << self
+        def load(time: nil)
+          unless time.nil? || time.is_a?(Time)
+            raise ':time is the wrong object type. ' \
+                  "\"Time\" was expected, but \"#{time.class}\" was received."
+          end
+
+          time ||= Time.now.utc
+          time = time.utc unless time.utc?
+          new **hydrated_entry_group_hash_for(time: time)
+        end
+
+        # This function returns a hash whose :time and :entries
+        # key values are hydrated with instantiated Time and Entry
+        # objects.
+        def hydrated_entry_group_hash_for(time:)
+          entry_group_hash = entry_group_hash_for(time: time)
+          hydrate_entry_group_hash(entry_group_hash: entry_group_hash, time: time)
+        end
       end
 
       def required_fields
@@ -35,10 +71,9 @@ module Dsu
 
       def to_h
         hash = super
-        hash[:entries].tap do |entries|
-          entries.each_with_index do |entry, index|
-            entries[index] = entry.to_h
-          end
+        hash[:entries] = hash[:entries].dup
+        hash[:entries].each_with_index do |entry, index|
+          hash[:entries][index] = entry.to_h
         end
         hash
       end
@@ -46,23 +81,13 @@ module Dsu
       def to_h_localized
         hash = to_h
         hash[:time] = hash[:time].localtime
-        hash[:entries].tap do |entries|
-          entries.each do |entry|
-            entry[:time] = entry[:time].localtime
-          end
+        hash[:entries].each do |entry, index|
+          entry[:time] = entry[:time].localtime
         end
         hash
       end
 
       private
-
-      # This function returns a hash whose :time and :entries
-      # key values are hydrated with instantiated Time and Entry
-      # objects.
-      def hydrated_entry_group_hash_for(time:)
-        entry_group_hash = entry_group_hash_for(time: time)
-        hydrate_entry_group_hash(entry_group_hash: entry_group_hash, time: time)
-      end
 
       def validate_entry_types
         if entries.is_a? Array

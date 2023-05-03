@@ -1,5 +1,17 @@
 # frozen_string_literal: true
 
+RSpec.shared_examples 'the entry group has entries' do
+  it 'has entries' do
+    expect(entry_group.entries).not_to be_empty
+  end
+end
+
+RSpec.shared_examples 'the entry group has no entries' do
+  it 'has no entries' do
+    expect(entry_group.entries).to be_empty
+  end
+end
+
 RSpec.shared_examples 'the entry group file is written' do
   it 'writes the entry group to the entry group file' do
     expect(entry_group_file_exists?(time: time)).to be true
@@ -42,6 +54,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
         entry_group_writer_service
       end
 
+      it_behaves_like 'the entry group has no entries'
       it_behaves_like 'the entry group file is written'
     end
 
@@ -57,6 +70,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
         ]
       end
 
+      it_behaves_like 'the entry group has entries'
       it_behaves_like 'the entry group file is written'
     end
 
@@ -64,9 +78,9 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
       before do
         entry_group_writer_service
         entry_group.entries.each_with_index do |entry, index|
-          entry[:description] = "Updated description #{index}"
-          entry[:long_description] = "Updated long description #{index}"
-          entry_group.entries[index] = Dsu::Support::Entry.new **entry
+          entry.description = "Updated description #{index}"
+          entry.long_description = "Updated long description #{index}"
+          #entry_group.entries[index] = Dsu::Support::Entry.new **entry
         end
         described_class.new(entry_group: entry_group, options: options).call
       end
@@ -78,6 +92,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
         ]
       end
 
+      it_behaves_like 'the entry group has entries'
       it_behaves_like 'the entry group file is written'
     end
 
@@ -90,6 +105,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
       end
       let(:expected_error) { /Entries contains duplicate UUIDs/ }
 
+      it_behaves_like 'the entry group has entries'
       it_behaves_like 'an error is raised'
     end
   end
