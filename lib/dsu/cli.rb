@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_support'
-require 'active_support/core_ext/object/blank'
 require 'bundler'
 require 'thor'
 require_relative 'command_services/add_entry_service'
@@ -34,10 +32,22 @@ module Dsu
     option :date, type: :string, aliases: '-d'
     option :next_day, type: :boolean, aliases: '-n'
     option :previous_day, type: :boolean, aliases: '-p'
-    option :today, type: :boolean, aliases: '-t'
+    option :today, type: :boolean, aliases: '-t', default: true
 
     def add(description, long_description = nil)
-      Dsu::CommandServices::Add.new(options: options, description: description, long_description: long_description).call
+      entry = Dsu::Support::Entry.new(description: description, long_description: long_description)
+      time = if options[:date].present?
+        Time.parse(options[:date])
+      elsif options[:next_day].present?
+        1.day.from_now
+      elsif options[:previous_day].present?
+        1.day.ago
+      elsif options[:today].present?
+        Time.now
+      else
+        raise 'No date option specified.'
+      end
+      Dsu::CommandServices::AddEntryService.new(entry: entry, time: time).call
     end
 
     desc 'interactive', 'Opens a dsu interactive session'

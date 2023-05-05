@@ -50,6 +50,7 @@ module Dsu
 
       def save_entry_group!
         raise "Entry #{entry.uuid} already exists in entry group #{time}" if entry_exists?
+
         entry_group.entries << entry
         entry_group.validate!
 
