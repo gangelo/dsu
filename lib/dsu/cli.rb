@@ -3,6 +3,9 @@
 require 'bundler'
 require 'thor'
 require_relative 'command_services/add_entry_service'
+require_relative 'services/entry_group_hydrator_service'
+require_relative 'services/entry_group_displayer_service'
+require_relative 'services/entry_group_reader_service'
 require_relative 'subcommands/config'
 require_relative 'version'
 
@@ -47,7 +50,11 @@ module Dsu
       else
         raise 'No date option specified.'
       end
+      #require 'pry-byebug'
+      #binding.pry
+      display_entry_group(time: 1.day.ago(time))
       Dsu::CommandServices::AddEntryService.new(entry: entry, time: time).call
+      display_entry_group(time: time)
     end
 
     desc 'interactive', 'Opens a dsu interactive session'
@@ -86,6 +93,12 @@ module Dsu
       say '[p]: previous day'
       say '[t]: today'
       say '[x|q|exit|quit]: Exit interactive mode'
+    end
+
+    def display_entry_group(time:)
+      entry_group_json = Dsu::Services::EntryGroupReaderService.new(time: time).call
+      entry_group = Dsu::Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
+      Dsu::Services::EntryGroupDisplayerService.new(entry_group: entry_group).call
     end
   end
 end

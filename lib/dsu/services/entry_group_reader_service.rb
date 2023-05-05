@@ -29,9 +29,7 @@ module Dsu
       def read_entry_group_file
         return {} unless entry_group_file_exists?
 
-        File.open(entry_group_file_path, 'r') do |file|
-          file.read
-        end
+        File.read(entry_group_file_path)
       end
     end
   end

@@ -33,6 +33,10 @@ module Dsu
         %i[uuid description]
       end
 
+      def long_description?
+        long_description.present?
+      end
+
       def ==(other)
         return false unless other.is_a?(Entry)
 
