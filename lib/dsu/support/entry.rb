@@ -15,6 +15,7 @@ module Dsu
       validates :long_description, length: { minimum: 2, maximum: 256 }, allow_nil: true
 
       def initialize(description:, uuid: nil, long_description: nil)
+        raise ArgumentError, 'description is nil' if description.nil?
         raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
         raise ArgumentError, 'uuid is the wrong object type' unless uuid.is_a?(String) || uuid.nil?
         raise ArgumentError, 'long_description is the wrong object type' unless long_description.is_a?(String) || long_description.nil?

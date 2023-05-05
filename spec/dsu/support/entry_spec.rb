@@ -22,6 +22,42 @@ RSpec.describe Dsu::Support::Entry do
       expect(subject.description).to eq description
       expect(subject.long_description).to eq long_description
     end
+
+    context 'with invalid arguments' do
+      describe ':description' do
+        context 'when description is nil' do
+          let(:description) { nil }
+          let(:expected_error) { /description is nil/ }
+
+          it_behaves_like 'an error is raised'
+        end
+
+        context 'when desdcription is the wrong type' do
+          let(:description) { :invalid }
+          let(:expected_error) { /description is the wrong object type/ }
+
+          it_behaves_like 'an error is raised'
+        end
+      end
+
+      describe ':uuid' do
+        context 'when uuid is the wrong type' do
+          let(:uuid) { :invalid }
+          let(:expected_error) { /uuid is the wrong object type/ }
+
+          it_behaves_like 'an error is raised'
+        end
+      end
+
+      describe ':long_description' do
+        context 'when long_description is the wrong type' do
+          let(:long_description) { :invalid }
+          let(:expected_error) { /long_description is the wrong object type/ }
+
+          it_behaves_like 'an error is raised'
+        end
+      end
+    end
   end
 
   describe 'validations' do
