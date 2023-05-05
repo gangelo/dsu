@@ -10,6 +10,10 @@ Dir.glob("#{__dir__}/dsu/support/**/*.rb").each do |file|
   require file
 end
 
+Dir.glob("#{__dir__}/dsu/validators/**/*.rb").each do |file|
+  require file
+end
+
 require_relative 'dsu/cli'
 require_relative 'dsu/version'
 

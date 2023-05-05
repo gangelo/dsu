@@ -9,7 +9,6 @@ RSpec.shared_context 'with configuration' do
 
   let(:configuration_default_dsu_options) do
     {
-      'version' => Dsu::Support::EntriesVersion::ENTRIES_VERSION,
       'entries_folder' => "#{Dir.tmpdir}/dsu/entries",
       'entries_file_name' => '%Y-%m-%d.json'
     }

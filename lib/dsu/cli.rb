@@ -4,7 +4,7 @@ require 'active_support'
 require 'active_support/core_ext/object/blank'
 require 'bundler'
 require 'thor'
-require_relative 'command_services/add'
+require_relative 'command_services/add_entry_service'
 require_relative 'subcommands/config'
 require_relative 'version'
 

@@ -7,20 +7,15 @@ RSpec.describe Dsu::Support::Configuration do
     end.new
   end
 
-  before do
-    stub_entries_version
-  end
-
   describe 'constants' do
     describe 'DEFAULT_DSU_OPTIONS' do
       let(:expected_options) do
         {
-          version: entries_version,
           entries_folder: "#{Dsu::Support::FolderLocations.root_folder}/dsu/entries",
           entries_file_name: '%Y-%m-%d.json'
         }
       end
-      let(:expected_keys) { %w[version entries_folder entries_file_name] }
+      let(:expected_keys) { %w[entries_folder entries_file_name] }
 
       it 'defines the right values' do
         expect(described_class::DEFAULT_DSU_OPTIONS.keys).to match expected_keys

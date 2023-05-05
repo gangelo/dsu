@@ -19,7 +19,16 @@ module EntryGroupHelpers
 
   def entry_group_file_matches?(time:, entry_group_hash:)
     time = utc_for(time)
+    return false unless entry_group_file_exists?(time: time)
+
     Dsu::Support::EntryGroupLoadable.entry_group_hash_for(time: time) == entry_group_hash
+  end
+
+  def entry_group_file_entries_matches?(time:, entry_group_entries_hash:)
+    time = utc_for(time)
+    return false unless entry_group_file_exists?(time: time)
+
+    Dsu::Support::EntryGroupLoadable.entry_group_hash_for(time: time)[:entries] == entry_group_entries_hash
   end
 
   def utc_for(time)

@@ -3,9 +3,6 @@ FactoryBot.define do
     uuid { SecureRandom.uuid[0..7] }
     description { FFaker::Lorem.words(rand(2..80)).join(' ')[0...80] }
     long_description {}
-    order { 0 }
-    time {}
-    version { Dsu::Support::EntriesVersion::ENTRIES_VERSION }
 
     trait :invalid do
       description { nil }
@@ -14,10 +11,7 @@ FactoryBot.define do
     initialize_with do
       new(uuid: uuid,
         description: description,
-        long_description: long_description,
-        order: order,
-        time: time,
-        version: version)
+        long_description: long_description)
     end
   end
 end

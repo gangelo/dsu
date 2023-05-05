@@ -2,37 +2,26 @@
 
 require 'pathname'
 require_relative '../services/entry_group_reader_service'
-require_relative 'entries_version'
 require_relative 'entry'
 
 module Dsu
   module Support
     module EntryGroupLoadable
-      include EntriesVersion
-
       module_function
 
-      # returns a Hash having :time, :version and :entries
+      # returns a Hash having :time and :entries
       # where entries == an Array of Entry Hashes
-      # representing the JSON Entry objects for :time and
-      # :version.
+      # representing the JSON Entry objects for :time.
       def entry_group_hash_for(time:)
-        # TODO: If the entry data version is not current, update the entry? or
-        # do this in bin/setup?
-        # entry_group = entry_group_json_for time: time
         entry_group_json = Dsu::Services::EntryGroupReaderService.new(time: time).call
         if entry_group_json.present?
           return JSON.parse(entry_group_json, symbolize_names: true).tap do |hash|
             hash[:time] = Time.parse(hash[:time])
-            hash[:entries].each do |entry|
-              entry[:time] = Time.parse(entry[:time])
-            end
           end
         end
 
         {
           time: time,
-          version: ENTRIES_VERSION,
           entries: []
         }
       end
@@ -43,7 +32,6 @@ module Dsu
       # hydrated entry group hash:
       #
       # {
-      #   version: 'xxx',
       #   time: <Time object>,
       #   entries [
       #     <Entry object 0>,
@@ -54,11 +42,10 @@ module Dsu
       def hydrate_entry_group_hash(entry_group_hash:, time:)
         time = entry_group_hash.fetch(:time, time)
         time = Time.parse(time) unless time.is_a? Time
-        version = entry_group_hash.fetch(:version, ENTRIES_VERSION)
         entries = entry_group_hash.fetch(:entries, [])
         entries = entries.map { |entry_hash| Entry.new **entry_hash }
 
-        { time: time, version: version, entries: entries }
+        { time: time, entries: entries }
       end
     end
   end

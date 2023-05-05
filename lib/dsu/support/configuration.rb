@@ -4,7 +4,6 @@ require 'colorize'
 require 'fileutils'
 require 'yaml'
 require_relative 'colors'
-require_relative 'entries_version'
 require_relative 'folder_locations'
 require_relative 'say'
 
@@ -19,7 +18,6 @@ module Dsu
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_DSU_OPTIONS = {
-        'version' => Dsu::Support::EntriesVersion::ENTRIES_VERSION,
         'entries_folder' => "#{Dsu::Support::FolderLocations.root_folder}/dsu/entries",
         'entries_file_name' => '%Y-%m-%d.json'
       }.freeze

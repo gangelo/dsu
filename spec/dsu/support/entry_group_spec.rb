@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::Support::EntryGroup do
-  subject(:entry_group) { build(:entry_group, time: time, entries: entries, version: version) }
+  subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
   before(:all) do
     config.create_config_file!
   end
 
   before do
-    stub_entries_version
     delete_entry_group_file!(time: time.utc) if time.is_a?(Time)
   end
 
@@ -18,38 +17,62 @@ RSpec.describe Dsu::Support::EntryGroup do
 
   let(:time) { time_utc }
   let(:entries) { [] }
-  let(:version) { entries_version }
 
   describe '#initialize' do
-    context 'when argument :time is not a Time object' do
-      let(:time) { :bad }
-      let(:expected_error) { /time is the wrong object type/ }
+    describe 'argument :time' do
+      context 'when not a Time object' do
+        let(:time) { :bad }
+        let(:expected_error) { /time is the wrong object type/ }
 
-      it_behaves_like 'an error is raised'
-    end
-
-    context 'when argument :time is nil' do
-      let(:time) { nil }
-
-      it 'uses Time.now.utc' do
-        expect(entry_group.time).to eq time_utc
+        it_behaves_like 'an error is raised'
       end
-    end
 
-    context 'when argument :time is passed' do
-      context 'when :time is utc' do
-        let(:time) { time_utc }
+      context 'when nil' do
+        let(:time) { nil }
 
-        it 'uses the time passed and keeps it utc' do
+        it 'uses Time.now.utc' do
           expect(entry_group.time).to eq time_utc
         end
       end
 
-      context 'when :time is localized' do
+      context 'when utc' do
+        let(:time) { time_utc }
+
+        it 'uses it' do
+          expect(entry_group.time).to eq time_utc
+        end
+      end
+
+      context 'when localized' do
         let(:time) { local_time }
 
-        it 'uses the time passed converted to utc' do
+        it 'converts it to utc' do
           expect(entry_group.time).to eq time.utc
+        end
+      end
+    end
+
+    describe 'argument :entries' do
+      context 'when not an Array' do
+        let(:entries) { :bad }
+        let(:expected_error) { /entries is the wrong object type/ }
+
+        it_behaves_like 'an error is raised'
+      end
+
+      context 'when nil' do
+        let(:entries) { nil }
+
+        it 'uses an empty Array' do
+          expect(entry_group.entries).to eq []
+        end
+      end
+
+      context 'when an Array' do
+        let(:entries) { [build(:entry)] }
+
+        it 'uses it' do
+          expect(entry_group.entries).to eq entries
         end
       end
     end
@@ -57,12 +80,12 @@ RSpec.describe Dsu::Support::EntryGroup do
 
   describe '#required_fields' do
     it 'returns the correct required fields' do
-      expect(described_class.new(time: time).required_fields).to match_array %i[time entries version]
+      expect(described_class.new(time: time).required_fields).to match_array %i[time entries]
     end
   end
 
   describe '#time' do
-    context 'when time is blank or the wrong object type' do
+    context 'when time is nil?' do
       before do
         entry_group.time = nil
         entry_group.validate
@@ -70,9 +93,23 @@ RSpec.describe Dsu::Support::EntryGroup do
 
       let(:expected_errors) do
         [
-          "Time can't be blank",
+          "Time can't be blank"
+        ]
+      end
+
+      it_behaves_like 'the validation fails'
+    end
+
+    context 'when time is the wrong object type' do
+      before do
+        entry_group.time = :wrong_type
+        entry_group.validate
+      end
+
+      let(:expected_errors) do
+        [
           'Time is the wrong object type. "Time" ' \
-          'was expected, but "NilClass" was received.'
+            'was expected, but "Symbol" was received.'
         ]
       end
 
@@ -121,9 +158,9 @@ RSpec.describe Dsu::Support::EntryGroup do
 
       let(:entries_array) do
         [
-          build(:entry, time: time),
+          build(:entry),
           :not_an_entry,
-          build(:entry, time: time)
+          build(:entry)
         ]
       end
       let(:expected_errors) do
@@ -137,62 +174,12 @@ RSpec.describe Dsu::Support::EntryGroup do
     end
   end
 
-  describe '#version' do
-    context 'when version is nil' do
-      before do
-        entry_group.version = nil
-        entry_group.validate
-      end
-
-      let(:expected_errors) do
-        [
-          'Version is the wrong object type. "String" ' \
-          'was expected, but "NilClass" was received.'
-        ]
-      end
-
-      it_behaves_like 'the validation fails'
-    end
-
-    context 'when version is blank?' do
-      before do
-        entry_group.version = ''
-        entry_group.validate
-      end
-
-      let(:expected_errors) do
-        [
-          "Version can't be blank"
-        ]
-      end
-
-      it_behaves_like 'the validation fails'
-    end
-
-    context 'when version is the wrong format' do
-      before do
-        entry_group.version = '1..0.0'
-        entry_group.validate
-      end
-
-      let(:expected_errors) do
-        [
-          'Version is the wrong format. ' \
-          '\d+\.\d+\.\d+ format was expected, but "1..0.0" was received.'
-        ]
-      end
-
-      it_behaves_like 'the validation fails'
-    end
-  end
-
   describe '#to_h' do
     subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
-    let(:entries) { build_list(:entry, 2, time: time) }
+    let(:entries) { build_list(:entry, 2) }
     let(:entry_group_hash) do
       {
-        version: entries_version,
         time: time,
         entries: [
           entries[0].to_h,
@@ -209,14 +196,13 @@ RSpec.describe Dsu::Support::EntryGroup do
   describe '#to_h_localized' do
     subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
-    let(:entries) { build_list(:entry, 2, time: time) }
+    let(:entries) { build_list(:entry, 2) }
     let(:localized_entry_group_hash) do
       {
-        version: entries_version,
         time: time.localtime,
         entries: [
-          entries[0].to_h_localized,
-          entries[1].to_h_localized
+          entries[0].to_h,
+          entries[1].to_h
         ]
       }
     end
@@ -249,10 +235,9 @@ RSpec.describe Dsu::Support::EntryGroup do
             end
           end
 
-          let(:entries) { build_list(:entry, 2, time: time) }
+          let(:entries) { build_list(:entry, 2) }
           let(:entry_group_hash) do
             {
-              version: entries_version,
               time: time.utc,
               entries: entries.map(&:to_h)
             }
@@ -268,7 +253,6 @@ RSpec.describe Dsu::Support::EntryGroup do
             let(:entries) { [] }
             let(:entry_group_hash) do
               {
-                version: entries_version,
                 time: time.utc,
                 entries: entries
               }
@@ -284,10 +268,6 @@ RSpec.describe Dsu::Support::EntryGroup do
       context 'when an entry group file does NOT exists for :time' do
         let(:time) { time_utc }
         let(:time_utc) { Time.parse('1900-01-01 00:00:00 UTC') }
-
-        it '#version returns the current version' do
-          expect(entry_group.version).to eq entries_version
-        end
 
         it '#time returns the time' do
           expect(entry_group.time).to eq time_utc

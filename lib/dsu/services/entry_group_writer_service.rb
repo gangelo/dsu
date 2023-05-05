@@ -2,6 +2,7 @@
 
 require 'json'
 require 'active_support/core_ext/module/delegation'
+require_relative '../support/entry_group'
 require_relative '../support/entry_group_fileable'
 
 module Dsu
@@ -12,8 +13,11 @@ module Dsu
       delegate :time, to: :entry_group
 
       def initialize(entry_group:, options: {})
-        # TODO: Check entry_group is a hash?
-        # TODO: Or accept a hash OR an EntryGroup object?
+        raise ArgumentError, 'entry_group is nil' if entry_group.nil?
+        raise ArgumentError, 'entry_group is the wrong object type' unless entry_group.is_a?(Dsu::Support::EntryGroup)
+        raise ArgumentError, 'options is nil' if options.nil?
+        raise ArgumentError, 'options is the wrong object type' unless options.is_a?(Hash)
+
         @entry_group = entry_group
         @options = options || {}
       end

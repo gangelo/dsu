@@ -8,23 +8,21 @@ RSpec.describe Dsu::Support::Entry do
     described_class.new(
       uuid: uuid,
       description: description,
-      order: order,
-      time: time,
-      long_description: long_description,
-      version: version
+      long_description: long_description
     )
-  end
-
-  before do
-    stub_entries_version
   end
 
   let(:uuid) { entry_0_hash[:uuid] }
   let(:description) { entry_0_hash[:description] }
-  let(:order) { entry_0_hash[:order] }
-  let(:time) { entry_0_hash[:time] }
   let(:long_description) { entry_0_hash[:long_description] }
-  let(:version) { entry_0_hash[:version] }
+
+  describe '#initialize' do
+    it 'initializes the model attributes' do
+      expect(subject.uuid).to eq uuid
+      expect(subject.description).to eq description
+      expect(subject.long_description).to eq long_description
+    end
+  end
 
   describe 'validations' do
     before do
@@ -57,7 +55,11 @@ RSpec.describe Dsu::Support::Entry do
 
     describe '#description' do
       context 'when description is nil' do
-        let(:description) { nil }
+        before do
+          entry.description = nil
+          entry.validate
+        end
+
         let(:expected_errors) do
           [
             "Description can't be blank",
@@ -69,7 +71,11 @@ RSpec.describe Dsu::Support::Entry do
       end
 
       context 'when description is blank?' do
-        let(:description) { '' }
+        before do
+          entry.description = ''
+          entry.validate
+        end
+
         let(:expected_errors) do
           [
             "Description can't be blank",
@@ -81,7 +87,11 @@ RSpec.describe Dsu::Support::Entry do
       end
 
       context 'when description is < 2 chars in length' do
-        let(:description) { 'x' }
+        before do
+          entry.description = 'x'
+          entry.validate
+        end
+
         let(:expected_errors) do
           [
             'Description is too short (minimum is 2 characters)'
@@ -92,7 +102,11 @@ RSpec.describe Dsu::Support::Entry do
       end
 
       context 'when description is > 80 chars in length' do
-        let(:description) { 'x' * 81 }
+        before do
+          entry.description = 'x' * 81
+          entry.validate
+        end
+
         let(:expected_errors) do
           [
             'Description is too long (maximum is 80 characters)'
@@ -105,13 +119,20 @@ RSpec.describe Dsu::Support::Entry do
 
     describe '#long_description' do
       context 'when long_description is nil' do
-        let(:long_description) { nil }
+        before do
+          entry.long_description = nil
+          entry.validate
+        end
 
         it_behaves_like 'the validation passes'
       end
 
       context 'when long_description is blank?' do
-        let(:long_description) { '' }
+        before do
+          entry.long_description = ''
+          entry.validate
+        end
+
         let(:expected_errors) do
           [
             'Long description is too short (minimum is 2 characters)'
@@ -122,7 +143,11 @@ RSpec.describe Dsu::Support::Entry do
       end
 
       context 'when long_description is < 2 chars in length' do
-        let(:long_description) { 'x' }
+        before do
+          entry.long_description = 'x'
+          entry.validate
+        end
+
         let(:expected_errors) do
           [
             'Long description is too short (minimum is 2 characters)'
@@ -133,7 +158,11 @@ RSpec.describe Dsu::Support::Entry do
       end
 
       context 'when long_description is > 256 chars in length' do
-        let(:long_description) { 'x' * 257 }
+        before do
+          entry.long_description = 'x' * 257
+          entry.validate
+        end
+
         let(:expected_errors) do
           [
             'Long description is too long (maximum is 256 characters)'
@@ -143,126 +172,11 @@ RSpec.describe Dsu::Support::Entry do
         it_behaves_like 'the validation fails'
       end
     end
-
-    describe '#order' do
-      context 'when order is nil' do
-        let(:order) { nil }
-        let(:expected_errors) do
-          [
-            'Order is not a number'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when order is blank?' do
-        let(:order) { '' }
-        let(:expected_errors) do
-          [
-            'Order is not a number'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when order is >= 0' do
-        let(:order) { 0 }
-
-        it_behaves_like 'the validation passes'
-      end
-
-      context 'when order is < 0' do
-        let(:order) { -1 }
-        let(:expected_errors) do
-          [
-            'Order must be greater than or equal to 0'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when order is not an integer' do
-        let(:order) { 1.0 }
-        let(:expected_errors) do
-          [
-            'Order must be an integer'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-    end
-
-    describe '#time' do
-      context 'when time is nil' do
-        let(:time) { nil }
-
-        it_behaves_like 'the validation passes'
-
-        it 'uses Time.now.utc' do
-          expect(entry.time).to eq time_utc
-        end
-      end
-    end
-
-    describe '#version' do
-      context 'when version is nil' do
-        let(:version) { nil }
-
-        it_behaves_like 'the validation passes'
-
-        it 'uses the current entries version' do
-          expect(entry.version).to eq entries_version
-        end
-      end
-
-      context 'when version is blank?' do
-        let(:version) { '' }
-        let(:expected_errors) do
-          [
-            "Version can't be blank",
-            'Version is the wrong format. /\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when version is the wrong format' do
-        let(:version) { 'v0..1.0' }
-        let(:expected_errors) do
-          [
-            'Version is the wrong format. /\\d+\\.\\d+\\.\\d+/ format was expected, but the version format did not match.'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-    end
-  end
-
-  describe '#initialize' do
-    context 'when :time is not a Time object' do
-      let(:time) { :bad }
-      let(:expected_error) { /time is the wrong object type/ }
-
-      it_behaves_like 'an error is raised'
-    end
   end
 
   describe '#to_h' do
     it 'returns a Hash representing the Entry' do
       expect(entry.to_h).to eq(entry_0_hash)
-    end
-  end
-
-  describe '#to_h_localized' do
-    it 'returns a Hash representing the Entry with dates/times localized' do
-      expect(entry.to_h_localized).to \
-        eq entry_0_hash.merge({ time: entry_0_hash[:time].localtime })
     end
   end
 
