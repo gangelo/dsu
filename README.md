@@ -61,10 +61,10 @@ If you need to add a DSU entry for a date other than yesterday, today or tomorro
 ### Display DSU Entries
 You can display DSU entries for a particular day or date (`date`) using any of the following commands. When displaying DSU entries for a particular day or date (`date`), `dsu` will display the given day or date's (`date`) DSU entries, as well as the DSU entries for the _previous_ day, relative to the given day or date (see [WIP Notes](#wip-notes) for caveats when displaying DSU entries for a particular day or date):
 
-`dsu today`
-`dsu tomorrow`
-`dsu yesterday`
-`dsu date`
+- `$ dsu today`
+- `$ dsu tomorrow`
+- `$ dsu yesterday`
+- `$ dsu date`
 
 #### Examples
 The following displays the entries for "Today", where `Time.now == '2023-05-06 08:54:57.6861 -0400'`
@@ -117,7 +117,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/dsu. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/dsu/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/gangelo/dsu. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/dsu/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
