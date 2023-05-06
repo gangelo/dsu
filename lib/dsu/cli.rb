@@ -20,6 +20,7 @@ module Dsu
 
     map %w[--version -v] => :version
     # map %w[--interactive -i] => :interactive
+    # map %w[--today -t] => :today
 
     default_command :help
 
@@ -46,7 +47,6 @@ module Dsu
     option :today, type: :boolean, aliases: '-t', default: true
 
     def add(description, long_description = nil)
-      entry = Models::Entry.new(description: description, long_description: long_description)
       time = if options[:date].present?
         Time.parse(options[:date])
       elsif options[:next_day].present?
@@ -58,10 +58,12 @@ module Dsu
       else
         raise 'No date option specified.'
       end
-      display_entry_group(time: 1.day.ago(time))
-      puts
+      entry = Models::Entry.new(description: description, long_description: long_description)
       CommandServices::AddEntryService.new(entry: entry, time: time).call
-      display_entry_group(time: time)
+      sort_times(times: [1.day.ago(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
+        display_entry_group(time: time)
+        puts
+      end
     end
 
     desc 'today',
