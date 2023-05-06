@@ -9,9 +9,13 @@ Gem::Specification.new do |spec|
   spec.authors      = ['Gene M. Angelo, Jr.']
   spec.email        = ['public.gma@gmail.com']
 
-  spec.summary      = 'Daily Stand Up (DSU) mini-manager.'
+  spec.summary      = 'dsu (Agile Daily Stand Up/DSU) mini-manager.'
   spec.description  = <<-DESC
-    dsu is little gem that helps me manage my dsu participation.
+    dsu is little gem that helps manage your Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows you to create, read, update, and delete (CRUD) noteworthy activities that you performed during your day. During your DSU, you can then easily recall and share these these activities with your team. Activities are grouped by day and can be viewed in simple text format from the command line. When viewing a particular day, dsu will automatically display the previous day's activities as well. This is useful for remembering what you did yesterday, so you can share your "Today" and "Yesterday" activities with your team during your DSU.
+
+    NOTE: This gem is currently in development (alpha release) and does not provide the ability to UPDATE or DELETE activities. These features will be added in future releases.
+
+    IN ADDITION TO THIS: dsu's current behavior when viewing a particular day is to display the previous day's activities. This behavior is not necessarily ideal when sharing activities for a DSU that occurs on a Monday. This is because Monday's DSU typically includes sharing what you did on last FRIDAY (not necessarily "Yesterday"), as well as what you plan on doing "Today". This behavior will be changed in a future release as well, to display the previous Friday's activities (as well as Saturday and Sunday) if "Today" happens to be Monday.
   DESC
   spec.homepage = 'https://github.com/gangelo/dsu'
   spec.license = 'MIT'

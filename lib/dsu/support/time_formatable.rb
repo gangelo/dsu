@@ -11,7 +11,7 @@ module Dsu
       module_function
 
       def formatted_time(time:)
-        time = time.localtime
+        time = time.localtime if time.utc?
 
         today_yesterday_or_tomorrow = if today?(time: time)
           'Today'
@@ -23,7 +23,6 @@ module Dsu
 
         return time.strftime('%A, %Y-%m-%d') unless today_yesterday_or_tomorrow
 
-        # "#{today_yesterday_or_tomorrow} #{time.strftime('(%A), %Y-%m-%d')}"
         time.strftime("%A, (#{today_yesterday_or_tomorrow}) %Y-%m-%d")
       end
 

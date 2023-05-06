@@ -43,7 +43,7 @@ module Dsu
         time = entry_group_hash.fetch(:time, time)
         time = Time.parse(time) unless time.is_a? Time
         entries = entry_group_hash.fetch(:entries, [])
-        entries = entries.map { |entry_hash| Models::Entry.new **entry_hash }
+        entries = entries.map { |entry_hash| Models::Entry.new(**entry_hash) }
 
         { time: time, entries: entries }
       end

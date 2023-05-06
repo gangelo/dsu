@@ -34,6 +34,7 @@ module Dsu
           puts "Error(s) encountered: #{entry_group.errors.full_messages}"
           raise
         end
+        alias display call
 
         private
 
@@ -45,8 +46,12 @@ module Dsu
 
           entry_group.entries.each_with_index do |entry, index|
             prefix = "#{format('%03s', index + 1)}. #{entry.uuid}"
-            say "#{prefix}: #{entry.description}"
-            say "#{''.ljust(prefix.length)}: #{entry.long_description}" if entry.long_description?
+            description = colorize_string(string: entry.description, mode: :bold)
+            say "#{prefix} #{description}"
+            next unless entry.long_description?
+
+            long_description = colorize_string(string: entry.long_description, mode: :bold)
+            say "#{''.ljust(prefix.length)} #{long_description}"
           end
         end
       end

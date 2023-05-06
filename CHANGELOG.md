@@ -1,5 +1,2 @@
-## [Unreleased]
-
-## [0.1.0] - 2022-10-06
-
-- Initial release
+## [0.1.0.alpha.1] - 2023-05-06
+- Initial (alpha) release. See README.md for instructions.

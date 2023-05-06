@@ -18,8 +18,11 @@ module Dsu
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_DSU_OPTIONS = {
+        # The order by which entries should be displayed by default:
+        # asc or desc, ascending or descending, respectively.
+        'entries_display_order' => 'desc',
+        'entries_file_name' => '%Y-%m-%d.json',
         'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries",
-        'entries_file_name' => '%Y-%m-%d.json'
       }.freeze
       # rubocop:enable Style/StringHashKeys
 

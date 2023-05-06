@@ -4,6 +4,7 @@ require 'bundler'
 require 'thor'
 require_relative 'command_services/add_entry_service'
 require_relative 'models/entry_group'
+require_relative 'services/configuration_loader_service'
 require_relative 'services/entry_group_hydrator_service'
 require_relative 'services/entry_group_reader_service'
 require_relative 'subcommands/config'
@@ -26,6 +27,12 @@ module Dsu
       def exit_on_failure?
         false
       end
+    end
+
+    def initialize(*args)
+      super
+
+      @configuration = Services::ConfigurationLoaderService.new.call
     end
 
     desc 'add [OPTIONS] DESCRIPTION [LONG-DESCRIPTION]',
@@ -64,9 +71,10 @@ module Dsu
     LONG_DESC
     def today
       time = Time.now
-      display_entry_group(time: 1.day.ago(time))
-      puts
-      display_entry_group(time: time)
+      sort_times(times: [1.day.ago(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
+        display_entry_group(time: time)
+        puts
+      end
     end
 
     desc 'tomorrow',
@@ -75,10 +83,11 @@ module Dsu
       Displays the dsu entries for tomorrow. This command has no options.
     LONG_DESC
     def tomorrow
-      time = 1.day.from_now(Time.now)
-      display_entry_group(time: 1.day.ago(time))
-      puts
-      display_entry_group(time: time)
+      time = Time.now
+      sort_times(times: [1.day.from_now(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
+        display_entry_group(time: time)
+        puts
+      end
     end
 
     desc 'yesterday',
@@ -87,29 +96,44 @@ module Dsu
       Displays the dsu entries for yesterday. This command has no options.
     LONG_DESC
     def yesterday
-      time = 1.day.ago(Time.now)
-      display_entry_group(time: 1.day.ago(time))
-      puts
-      display_entry_group(time: time)
-    end
-
-    desc 'interactive', 'Opens a dsu interactive session'
-    long_desc ''
-    option :next_day, type: :boolean, aliases: '-n'
-    option :previous_day, type: :boolean, aliases: '-p'
-    option :today, type: :boolean, aliases: '-t'
-
-    # https://stackoverflow.com/questions/4604905/interactive-prompt-with-thor
-    def interactive
-      exit_commands = %w[x q exit quit]
-      display_interactive_help
-      loop do
-        command = ask('dsu > ')
-        display_interactive_help if command == 'h'
-        break if exit_commands.include? command
+      time = Time.now
+      sort_times(times: [1.day.ago(time), 2.days.ago(time)]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
+        display_entry_group(time: time)
+        puts
       end
-      say 'Done.'
     end
+
+    desc 'date',
+      'Displays the dsu entries for DATE.'
+    long_desc <<-LONG_DESC
+      Displays the dsu entries for DATE, where DATE is any date string that can be parsed using `Time.parse`. For example: `require 'time'; Time.parse("2023-01-01")`.
+    LONG_DESC
+    def date(date)
+      time = Time.parse(date)
+      sort_times(times: [1.day.ago(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
+        display_entry_group(time: time)
+        puts
+      end
+    end
+
+    # TODO: Implement this.
+    # desc 'interactive', 'Opens a dsu interactive session'
+    # long_desc ''
+    # option :next_day, type: :boolean, aliases: '-n'
+    # option :previous_day, type: :boolean, aliases: '-p'
+    # option :today, type: :boolean, aliases: '-t'
+
+    # # https://stackoverflow.com/questions/4604905/interactive-prompt-with-thor
+    # def interactive
+    #   exit_commands = %w[x q exit quit]
+    #   display_interactive_help
+    #   loop do
+    #     command = ask('dsu > ')
+    #     display_interactive_help if command == 'h'
+    #     break if exit_commands.include? command
+    #   end
+    #   say 'Done.'
+    # end
 
     desc 'config SUBCOMMAND', 'Manage configuration file for this gem'
     subcommand :config, Subcommands::Config
@@ -120,6 +144,8 @@ module Dsu
     end
 
     private
+
+    attr_reader :configuration
 
     def display_interactive_help
       say 'Interactive Mode Commands:'
@@ -138,7 +164,15 @@ module Dsu
       else
         Models::EntryGroup.new(time: time)
       end
-      Views::EntryGroup::Show.new(entry_group: entry_group).call
+      Views::EntryGroup::Show.new(entry_group: entry_group).display
+    end
+
+    def sort_times(times:)
+      if configuration[:entries_display_order] == 'asc'
+        times.sort # sort ascending
+      elsif configuration[:entries_display_order] == 'desc'
+        times.sort.reverse # sort descending
+      end
     end
   end
 end
