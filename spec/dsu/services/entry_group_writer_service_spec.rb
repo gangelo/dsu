@@ -28,7 +28,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
   let(:options) { {} }
 
   before do
-    delete_entry_group_file!(time: time.utc)
+    delete_entry_group_file!(time: time)
   end
 
   describe '#initialize' do

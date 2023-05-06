@@ -23,7 +23,7 @@ module Dsu
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time)
 
         @entry = entry
-        @time = time.utc
+        @time = time
         @entry_group = Dsu::Support::EntryGroup.load(time: time)
       end
 

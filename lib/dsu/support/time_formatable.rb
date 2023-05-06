@@ -28,15 +28,15 @@ module Dsu
       end
 
       def today?(time:)
-        time.utc.strftime('%Y%m%d') == Time.now.utc.strftime('%Y%m%d')
+        time.strftime('%Y%m%d') == Time.now.strftime('%Y%m%d')
       end
 
       def yesterday?(time:)
-        time.utc.strftime('%Y%m%d') == 1.day.ago(Time.now).utc.strftime('%Y%m%d')
+        time.strftime('%Y%m%d') == 1.day.ago(Time.now).strftime('%Y%m%d')
       end
 
       def tomorrow?(time:)
-        time.utc.strftime('%Y%m%d') == 1.day.from_now(Time.now).utc.strftime('%Y%m%d')
+        time.strftime('%Y%m%d') == 1.day.from_now(Time.now).strftime('%Y%m%d')
       end
     end
   end

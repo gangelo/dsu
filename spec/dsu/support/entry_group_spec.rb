@@ -8,7 +8,7 @@ RSpec.describe Dsu::Support::EntryGroup do
   end
 
   before do
-    delete_entry_group_file!(time: time.utc) if time.is_a?(Time)
+    delete_entry_group_file!(time: time) if time.is_a?(Time)
   end
 
   after(:all) do
@@ -30,7 +30,7 @@ RSpec.describe Dsu::Support::EntryGroup do
       context 'when nil' do
         let(:time) { nil }
 
-        it 'uses Time.now.utc' do
+        it 'uses Time.now' do
           expect(entry_group.time).to eq time_utc
         end
       end
@@ -47,7 +47,7 @@ RSpec.describe Dsu::Support::EntryGroup do
         let(:time) { local_time }
 
         it 'converts it to utc' do
-          expect(entry_group.time).to eq time.utc
+          expect(entry_group.time).to eq time
         end
       end
     end
@@ -238,7 +238,7 @@ RSpec.describe Dsu::Support::EntryGroup do
           let(:entries) { build_list(:entry, 2) }
           let(:entry_group_hash) do
             {
-              time: time.utc,
+              time: time,
               entries: entries.map(&:to_h)
             }
           end
@@ -253,7 +253,7 @@ RSpec.describe Dsu::Support::EntryGroup do
             let(:entries) { [] }
             let(:entry_group_hash) do
               {
-                time: time.utc,
+                time: time,
                 entries: entries
               }
             end

@@ -7,7 +7,7 @@ module Dsu
       def validate(record)
         raise 'options[:fields] is not defined.' unless options.key? :fields
         raise 'options[:fields] is not an Array.' unless options[:fields].is_a? Array
-        raise 'options[:fields] elements are not Symbols.' unless options[:fields].all? { |field| field.is_a? Symbol }
+        raise 'options[:fields] elements are not Symbols.' unless options[:fields].all?(Symbol)
 
         options[:fields].each do |field|
           time = record.send(field)
@@ -19,12 +19,12 @@ module Dsu
 
           unless time.is_a?(Time)
             record.errors.add(field, 'is the wrong object type. ' \
-              "\"Time\" was expected, but \"#{time.class}\" was received.")
+                                     "\"Time\" was expected, but \"#{time.class}\" was received.")
             next
           end
 
-          unless time.utc?
-            record.errors.add(field, 'is not in UTC format.')
+          if time.utc?
+            record.errors.add(field, 'is not in localtime format.')
             next
           end
         end

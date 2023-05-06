@@ -52,6 +52,7 @@ module Dsu
         raise 'No date option specified.'
       end
       display_entry_group(time: 1.day.ago(time))
+      puts
       Dsu::CommandServices::AddEntryService.new(entry: entry, time: time).call
       display_entry_group(time: time)
     end
@@ -97,7 +98,7 @@ module Dsu
     def display_entry_group(time:)
       entry_group = if Dsu::Support::EntryGroup.exists?(time: time)
         entry_group_json = Dsu::Services::EntryGroupReaderService.new(time: time).call
-        entry_group = Dsu::Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
+        Dsu::Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
       else
         Dsu::Support::EntryGroup.new(time: time)
       end

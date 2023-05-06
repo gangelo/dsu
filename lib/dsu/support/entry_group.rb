@@ -18,8 +18,8 @@ module Dsu
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?
         raise ArgumentError, 'entries is the wrong object type' unless entries.is_a?(Array) || entries.nil?
 
-        time ||= Time.now.utc
-        time = time.utc unless time.utc?
+        time ||= Time.now
+        time = time.localtime if time.utc?
 
         entries ||= []
 

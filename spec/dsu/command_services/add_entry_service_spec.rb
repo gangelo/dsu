@@ -62,7 +62,7 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
 
     context 'when the entry is added' do
       before do
-        delete_entry_group_file!(time: time.utc)
+        delete_entry_group_file!(time: time)
         add_entry_service
       end
 
@@ -71,15 +71,15 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
       end
 
       it 'creates the entry group file' do
-        expect(entry_group_file_exists?(time: time.utc)).to be true
+        expect(entry_group_file_exists?(time: time)).to be true
       end
 
       it 'creates the entry group file with the correct json' do
         expected_entry_group_hash = {
-          time: time.utc,
+          time: time,
           entries: [entry.to_h]
         }
-        expect(entry_group_file_matches?(time: time.utc, entry_group_hash: expected_entry_group_hash)).to be true
+        expect(entry_group_file_matches?(time: time, entry_group_hash: expected_entry_group_hash)).to be true
       end
     end
   end
