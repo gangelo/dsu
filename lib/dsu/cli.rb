@@ -2,6 +2,7 @@
 
 require 'bundler'
 require 'thor'
+require_relative 'support/entry_group'
 require_relative 'command_services/add_entry_service'
 require_relative 'services/entry_group_hydrator_service'
 require_relative 'services/entry_group_displayer_service'
@@ -50,8 +51,6 @@ module Dsu
       else
         raise 'No date option specified.'
       end
-      #require 'pry-byebug'
-      #binding.pry
       display_entry_group(time: 1.day.ago(time))
       Dsu::CommandServices::AddEntryService.new(entry: entry, time: time).call
       display_entry_group(time: time)
@@ -96,8 +95,12 @@ module Dsu
     end
 
     def display_entry_group(time:)
-      entry_group_json = Dsu::Services::EntryGroupReaderService.new(time: time).call
-      entry_group = Dsu::Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
+      entry_group = if Dsu::Support::EntryGroup.exists?(time: time)
+        entry_group_json = Dsu::Services::EntryGroupReaderService.new(time: time).call
+        entry_group = Dsu::Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
+      else
+        Dsu::Support::EntryGroup.new(time: time)
+      end
       Dsu::Services::EntryGroupDisplayerService.new(entry_group: entry_group).call
     end
   end

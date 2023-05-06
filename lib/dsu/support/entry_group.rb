@@ -2,6 +2,7 @@
 
 require 'deco_lite'
 require_relative 'entry_group_loadable'
+require_relative '../services/entry_group_reader_service'
 require_relative '../validators/entries_validator'
 require_relative '../validators/time_validator'
 
@@ -29,8 +30,12 @@ module Dsu
       end
 
       class << self
+        def exists?(time:)
+          Dsu::Services::EntryGroupReaderService.entry_group_file_exists?(time: time)
+        end
+
         def load(time: nil)
-          new **hydrated_entry_group_hash_for(time: time)
+          new(**hydrated_entry_group_hash_for(time: time))
         end
 
         # This function returns a hash whose :time and :entries

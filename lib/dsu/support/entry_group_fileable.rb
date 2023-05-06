@@ -5,6 +5,8 @@ require_relative '../services/configuration_loader_service'
 module Dsu
   module Support
     module EntryGroupFileable
+      module_function
+
       def entry_group_file_exists?
         File.exist?(entry_group_file_path)
       end

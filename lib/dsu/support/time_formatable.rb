@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'time'
+require 'active_support/core_ext/numeric/time'
+
 module Dsu
   module Support
     # This module provides functions for formatting Time objects
@@ -20,7 +23,8 @@ module Dsu
 
         return time.strftime('%A, %Y-%m-%d') unless today_yesterday_or_tomorrow
 
-        "#{today_yesterday_or_tomorrow} #{time.strftime('(%A, %Y-%m-%d)')}"
+        # "#{today_yesterday_or_tomorrow} #{time.strftime('(%A), %Y-%m-%d')}"
+        time.strftime("%A, (#{today_yesterday_or_tomorrow}) %Y-%m-%d")
       end
 
       def today?(time:)
@@ -32,7 +36,7 @@ module Dsu
       end
 
       def tomorrow?(time:)
-        time.utc.strftime('%Y%m%d') == 1.from_now(Time.now).utc.strftime('%Y%m%d')
+        time.utc.strftime('%Y%m%d') == 1.day.from_now(Time.now).utc.strftime('%Y%m%d')
       end
     end
   end
