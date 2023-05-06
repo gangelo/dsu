@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :entry, class: 'Dsu::Support::Entry' do
+  factory :entry, class: 'Dsu::Models::Entry' do
     uuid { SecureRandom.uuid[0..7] }
     description { FFaker::Lorem.words(rand(2..80)).join(' ')[0...80] }
     long_description {}

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../support/entry'
+require_relative '../models/entry'
 
 module Dsu
   module Services
@@ -16,7 +16,7 @@ module Dsu
       end
 
       def call
-        Dsu::Support::Entry.new(**entry_hash)
+        Dsu::Models::Entry.new(**entry_hash)
       end
 
       class << self

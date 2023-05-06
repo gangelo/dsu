@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require_relative '../ask'
-require_relative '../colors'
+require_relative '../colorable'
 require_relative '../say'
 
 module Dsu
   module Interactive
     class Cli
-      include Support::Colors
+      include Support::Colorable
       include Support::Ask
       include Support::Say
 

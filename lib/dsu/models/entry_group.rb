@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 require 'deco_lite'
-require_relative 'entry_group_loadable'
+require_relative '../support/entry_group_loadable'
 require_relative '../services/entry_group_reader_service'
 require_relative '../validators/entries_validator'
 require_relative '../validators/time_validator'
 
 module Dsu
-  module Support
+  module Models
     class EntryGroup < DecoLite::Model
-      extend EntryGroupLoadable
+      extend Support::EntryGroupLoadable
 
-      validates_with Dsu::Validators::EntriesValidator, fields: [:entries]
-      validates_with Dsu::Validators::TimeValidator, fields: [:time]
+      validates_with Validators::EntriesValidator, fields: [:entries]
+      validates_with Validators::TimeValidator, fields: [:time]
 
       def initialize(time: nil, entries: [])
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?

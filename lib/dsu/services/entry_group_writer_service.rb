@@ -2,7 +2,7 @@
 
 require 'json'
 require 'active_support/core_ext/module/delegation'
-require_relative '../support/entry_group'
+require_relative '../models/entry_group'
 require_relative '../support/entry_group_fileable'
 
 module Dsu
@@ -14,7 +14,7 @@ module Dsu
 
       def initialize(entry_group:, options: {})
         raise ArgumentError, 'entry_group is nil' if entry_group.nil?
-        raise ArgumentError, 'entry_group is the wrong object type' unless entry_group.is_a?(Dsu::Support::EntryGroup)
+        raise ArgumentError, 'entry_group is the wrong object type' unless entry_group.is_a?(Dsu::Models::EntryGroup)
         raise ArgumentError, 'options is nil' if options.nil?
         raise ArgumentError, 'options is the wrong object type' unless options.is_a?(Hash)
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Support::EntryGroup do
+RSpec.describe Dsu::Models::EntryGroup do
   subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
   before(:all) do

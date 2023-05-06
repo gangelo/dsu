@@ -4,7 +4,7 @@ require 'deco_lite'
 require 'securerandom'
 
 module Dsu
-  module Support
+  module Models
     class Entry < DecoLite::Model
       validates :uuid, presence: true, format: {
         with: /\A[0-9a-f]{8}\z/i,

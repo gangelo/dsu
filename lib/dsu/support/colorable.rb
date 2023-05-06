@@ -2,7 +2,7 @@
 
 module Dsu
   module Support
-    module Colors
+    module Colorable
       ABORTED = :red
       ERROR = :red
       HIGHLIGHT = :cyan

@@ -2,13 +2,13 @@
 
 require 'bundler'
 require 'thor'
-require_relative 'support/entry_group'
 require_relative 'command_services/add_entry_service'
+require_relative 'models/entry_group'
 require_relative 'services/entry_group_hydrator_service'
-require_relative 'services/entry_group_displayer_service'
 require_relative 'services/entry_group_reader_service'
 require_relative 'subcommands/config'
 require_relative 'version'
+require_relative 'views/entry_group/show'
 
 module Dsu
   #
@@ -39,7 +39,7 @@ module Dsu
     option :today, type: :boolean, aliases: '-t', default: true
 
     def add(description, long_description = nil)
-      entry = Dsu::Support::Entry.new(description: description, long_description: long_description)
+      entry = Models::Entry.new(description: description, long_description: long_description)
       time = if options[:date].present?
         Time.parse(options[:date])
       elsif options[:next_day].present?
@@ -53,7 +53,7 @@ module Dsu
       end
       display_entry_group(time: 1.day.ago(time))
       puts
-      Dsu::CommandServices::AddEntryService.new(entry: entry, time: time).call
+      CommandServices::AddEntryService.new(entry: entry, time: time).call
       display_entry_group(time: time)
     end
 
@@ -112,11 +112,11 @@ module Dsu
     end
 
     desc 'config SUBCOMMAND', 'Manage configuration file for this gem'
-    subcommand :config, Dsu::Subcommands::Config
+    subcommand :config, Subcommands::Config
 
     desc '--version, -v', 'Displays this gem version'
     def version
-      say Dsu::VERSION
+      say VERSION
     end
 
     private
@@ -132,13 +132,13 @@ module Dsu
     end
 
     def display_entry_group(time:)
-      entry_group = if Dsu::Support::EntryGroup.exists?(time: time)
-        entry_group_json = Dsu::Services::EntryGroupReaderService.new(time: time).call
-        Dsu::Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
+      entry_group = if Models::EntryGroup.exists?(time: time)
+        entry_group_json = Services::EntryGroupReaderService.new(time: time).call
+        Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
       else
-        Dsu::Support::EntryGroup.new(time: time)
+        Models::EntryGroup.new(time: time)
       end
-      Dsu::Services::EntryGroupDisplayerService.new(entry_group: entry_group).call
+      Views::EntryGroup::Show.new(entry_group: entry_group).call
     end
   end
 end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable RSpec/MultipleMemoizedHelpers
-RSpec.describe Dsu::Support::Entry do
+RSpec.describe Dsu::Models::Entry do
   subject(:entry) do
     # All defaults are set up to instantiate without errors
     # or vailidation errors by default.

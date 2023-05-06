@@ -17,7 +17,7 @@ module Dsu
 
       def call
         entry_group_hash = to_h
-        Dsu::Support::EntryGroup.new(**entry_group_hash)
+        Dsu::Models::EntryGroup.new(**entry_group_hash)
       end
 
       class << self

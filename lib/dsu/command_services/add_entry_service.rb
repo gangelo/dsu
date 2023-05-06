@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../services/entry_group_writer_service'
-require_relative '../support/entry'
+require_relative '../models/entry'
 require_relative '../support/entry_group_loadable'
 require_relative '../support/folder_locations'
 
@@ -18,13 +18,13 @@ module Dsu
       # :time is a Time object; the time of the entry group.
       def initialize(entry:, time:)
         raise ArgumentError, 'entry is nil' if entry.nil?
-        raise ArgumentError, 'entry is the wrong object type' unless entry.is_a?(Dsu::Support::Entry)
+        raise ArgumentError, 'entry is the wrong object type' unless entry.is_a?(Dsu::Models::Entry)
         raise ArgumentError, 'time is nil' if time.nil?
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time)
 
         @entry = entry
         @time = time
-        @entry_group = Dsu::Support::EntryGroup.load(time: time)
+        @entry_group = Dsu::Models::EntryGroup.load(time: time)
       end
 
       def call

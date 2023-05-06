@@ -34,7 +34,7 @@ module Dsu
       private
 
       def configuration
-        @configuration ||= options[:configuration] || Dsu::Services::ConfigurationLoaderService.new.call
+        @configuration ||= options[:configuration] || Services::ConfigurationLoaderService.new.call
       end
     end
   end

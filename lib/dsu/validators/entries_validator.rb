@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../support/entry'
+require_relative '../models/entry'
 require_relative '../support/field_errors'
 
 # https://guides.rubyonrails.org/active_record_validations.html#validates-with
@@ -32,7 +32,7 @@ module Dsu
 
       def validate_entry_types(field, entries, record)
         entries.each do |entry|
-          next if entry.is_a? Dsu::Support::Entry
+          next if entry.is_a? Dsu::Models::Entry
 
           record.errors.add(field, 'entry Array element is the wrong object type. ' \
                                 "\"Entry\" was expected, but \"#{entry.class}\" was received.",
@@ -45,7 +45,7 @@ module Dsu
       def validate_unique_entry_uuids(field, entries, record)
         return unless entries.is_a? Array
 
-        entry_objects = entries.select { |entry| entry.is_a?(Dsu::Support::Entry) }
+        entry_objects = entries.select { |entry| entry.is_a?(Dsu::Models::Entry) }
 
         entry_objects.map(&:uuid).tap do |uuids|
           return if uuids.uniq.length == uuids.length
