@@ -38,6 +38,8 @@ module Dsu
 
       def display_entry_group!
         say formatted_time(time: entry_group.time), :green
+        say('(no entries available for this day)') and return if entry_group.entries.empty?
+
         entry_group.entries.each_with_index do |entry, index|
           prefix = "#{format('%03d', index + 1)}. #{entry.uuid}"
           say "#{prefix}: #{entry.description}"

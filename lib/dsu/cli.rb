@@ -57,6 +57,42 @@ module Dsu
       display_entry_group(time: time)
     end
 
+    desc 'today',
+      'Displays the dsu entries for today.'
+    long_desc <<-LONG_DESC
+      Displays the dsu entries for today. This command has no options.
+    LONG_DESC
+    def today
+      time = Time.now
+      display_entry_group(time: 1.day.ago(time))
+      puts
+      display_entry_group(time: time)
+    end
+
+    desc 'tomorrow',
+      'Displays the dsu entries for tomorrow.'
+    long_desc <<-LONG_DESC
+      Displays the dsu entries for tomorrow. This command has no options.
+    LONG_DESC
+    def tomorrow
+      time = 1.day.from_now(Time.now)
+      display_entry_group(time: 1.day.ago(time))
+      puts
+      display_entry_group(time: time)
+    end
+
+    desc 'yesterday',
+      'Displays the dsu entries for yesterday.'
+    long_desc <<-LONG_DESC
+      Displays the dsu entries for yesterday. This command has no options.
+    LONG_DESC
+    def yesterday
+      time = 1.day.ago(Time.now)
+      display_entry_group(time: 1.day.ago(time))
+      puts
+      display_entry_group(time: time)
+    end
+
     desc 'interactive', 'Opens a dsu interactive session'
     long_desc ''
     option :next_day, type: :boolean, aliases: '-n'
