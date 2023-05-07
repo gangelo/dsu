@@ -3,6 +3,7 @@
 require 'time'
 require_relative 'base_cli'
 require_relative 'subcommands/config'
+require_relative 'subcommands/edit'
 require_relative 'subcommands/list'
 
 module Dsu
@@ -12,11 +13,12 @@ module Dsu
   class CLI < BaseCLI
     map %w[add -a] => :add
     map %w[config -c] => :config
+    map %w[edit -e] => :edit
     map %w[list -l] => :list
     map %w[version -v] => :version
 
     desc 'add, -a [OPTIONS] DESCRIPTION',
-      'Will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.'
+      'Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION'
     long_desc <<-LONG_DESC
       NAME
       \x5
@@ -69,7 +71,7 @@ module Dsu
     end
 
     desc 'list, -l SUBCOMMAND',
-      'Displays DSU entries for the given SUBCOMMAND.'
+      'Displays DSU entries for the given SUBCOMMAND'
     subcommand :list, Subcommands::List
 
     # TODO: Implement this.
@@ -94,6 +96,10 @@ module Dsu
     desc 'config, -c SUBCOMMAND',
       'Manage configuration file for this gem'
     subcommand :config, Subcommands::Config
+
+    desc 'edit, -e SUBCOMMAND',
+      'Edit DSU entries for the given SUBCOMMAND'
+    subcommand :edit, Subcommands::Edit
 
     desc 'version, -v',
       'Displays this gem version'
