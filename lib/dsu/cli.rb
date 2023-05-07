@@ -2,6 +2,7 @@
 
 require 'time'
 require_relative 'base_cli'
+require_relative 'subcommands/config'
 require_relative 'subcommands/list'
 
 module Dsu
