@@ -7,20 +7,17 @@ RSpec.describe Dsu::Models::Entry do
     # or vailidation errors by default.
     described_class.new(
       uuid: uuid,
-      description: description,
-      long_description: long_description
+      description: description
     )
   end
 
   let(:uuid) { entry_0_hash[:uuid] }
   let(:description) { entry_0_hash[:description] }
-  let(:long_description) { entry_0_hash[:long_description] }
 
   describe '#initialize' do
     it 'initializes the model attributes' do
       expect(subject.uuid).to eq uuid
       expect(subject.description).to eq description
-      expect(subject.long_description).to eq long_description
     end
 
     context 'with invalid arguments' do
@@ -44,15 +41,6 @@ RSpec.describe Dsu::Models::Entry do
         context 'when uuid is the wrong type' do
           let(:uuid) { :invalid }
           let(:expected_error) { /uuid is the wrong object type/ }
-
-          it_behaves_like 'an error is raised'
-        end
-      end
-
-      describe ':long_description' do
-        context 'when long_description is the wrong type' do
-          let(:long_description) { :invalid }
-          let(:expected_error) { /long_description is the wrong object type/ }
 
           it_behaves_like 'an error is raised'
         end
@@ -137,71 +125,15 @@ RSpec.describe Dsu::Models::Entry do
         it_behaves_like 'the validation fails'
       end
 
-      context 'when description is > 80 chars in length' do
+      context 'when description is > 256 chars in length' do
         before do
-          entry.description = 'x' * 81
+          entry.description = 'x' * 257
           entry.validate
         end
 
         let(:expected_errors) do
           [
-            'Description is too long (maximum is 80 characters)'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-    end
-
-    describe '#long_description' do
-      context 'when long_description is nil' do
-        before do
-          entry.long_description = nil
-          entry.validate
-        end
-
-        it_behaves_like 'the validation passes'
-      end
-
-      context 'when long_description is blank?' do
-        before do
-          entry.long_description = ''
-          entry.validate
-        end
-
-        let(:expected_errors) do
-          [
-            'Long description is too short (minimum is 2 characters)'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when long_description is < 2 chars in length' do
-        before do
-          entry.long_description = 'x'
-          entry.validate
-        end
-
-        let(:expected_errors) do
-          [
-            'Long description is too short (minimum is 2 characters)'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when long_description is > 256 chars in length' do
-        before do
-          entry.long_description = 'x' * 257
-          entry.validate
-        end
-
-        let(:expected_errors) do
-          [
-            'Long description is too long (maximum is 256 characters)'
+            'Description is too long (maximum is 256 characters)'
           ]
         end
 

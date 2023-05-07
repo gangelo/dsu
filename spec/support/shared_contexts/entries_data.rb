@@ -19,15 +19,13 @@ RSpec.shared_context 'with entries data' do
   let(:entry_0_hash) do
     {
       uuid: '00000000',
-      description: '0 description',
-      long_description: '0 long description'
+      description: '0 description'
     }
   end
   let(:entry_1_hash) do
     {
       uuid: '11111111',
-      description: '1 description',
-      long_description: '1 long description'
+      description: '1 description'
     }
   end
 end

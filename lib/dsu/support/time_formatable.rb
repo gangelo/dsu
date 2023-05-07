@@ -13,29 +13,23 @@ module Dsu
       def formatted_time(time:)
         time = time.localtime if time.utc?
 
-        today_yesterday_or_tomorrow = if today?(time: time)
+        today_yesterday_or_tomorrow = if time.today?
           'Today'
-        elsif yesterday?(time: time)
+        elsif time.yesterday?
           'Yesterday'
-        elsif tomorrow?(time: time)
+        elsif time.tomorrow?
           'Tomorrow'
         end
 
-        return time.strftime('%A, %Y-%m-%d') unless today_yesterday_or_tomorrow
+        time_zone = timezone_for(time: time)
 
-        time.strftime("%A, (#{today_yesterday_or_tomorrow}) %Y-%m-%d")
+        return time.strftime("%A, %Y-%m-%d #{time_zone}") unless today_yesterday_or_tomorrow
+
+        time.strftime("%A, (#{today_yesterday_or_tomorrow}) %Y-%m-%d #{time_zone}")
       end
 
-      def today?(time:)
-        time.strftime('%Y%m%d') == Time.now.strftime('%Y%m%d')
-      end
-
-      def yesterday?(time:)
-        time.strftime('%Y%m%d') == 1.day.ago(Time.now).strftime('%Y%m%d')
-      end
-
-      def tomorrow?(time:)
-        time.strftime('%Y%m%d') == 1.day.from_now(Time.now).strftime('%Y%m%d')
+      def timezone_for(time:)
+        time.zone
       end
     end
   end

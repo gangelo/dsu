@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'time'
+require 'tzinfo'
 require 'active_support/core_ext/numeric/time'
 require_relative '../../models/entry_group'
 require_relative '../../support/colorable'
@@ -48,10 +49,6 @@ module Dsu
             prefix = "#{format('%03s', index + 1)}. #{entry.uuid}"
             description = colorize_string(string: entry.description, mode: :bold)
             say "#{prefix} #{description}"
-            next unless entry.long_description?
-
-            long_description = colorize_string(string: entry.long_description, mode: :bold)
-            say "#{''.ljust(prefix.length)} #{long_description}"
           end
         end
       end

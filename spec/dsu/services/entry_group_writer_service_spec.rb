@@ -100,15 +100,14 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
         entry_group_writer_service
         entry_group.entries.each_with_index do |entry, index|
           entry.description = "Updated description #{index}"
-          entry.long_description = "Updated long description #{index}"
         end
         described_class.new(entry_group: entry_group, options: options).call
       end
 
       let(:entries) do
         [
-          build(:entry, uuid: '01234567', description: 'description 0', long_description: 'long description 0'),
-          build(:entry, uuid: '89abcdef', description: 'description 1', long_description: 'long description 1')
+          build(:entry, uuid: '01234567', description: 'description 0'),
+          build(:entry, uuid: '89abcdef', description: 'description 1')
         ]
       end
 

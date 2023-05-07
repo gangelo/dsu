@@ -36,7 +36,7 @@ module Dsu
       @configuration = Services::ConfigurationLoaderService.new.call
     end
 
-    desc 'add [OPTIONS] DESCRIPTION [LONG-DESCRIPTION]',
+    desc 'add [OPTIONS] DESCRIPTION',
       'Adds a dsu entry for the date associated with the given option.'
     long_desc <<-LONG_DESC
       TBD
@@ -46,7 +46,7 @@ module Dsu
     option :previous_day, type: :boolean, aliases: '-p'
     option :today, type: :boolean, aliases: '-t', default: true
 
-    def add(description, long_description = nil)
+    def add(description)
       time = if options[:date].present?
         Time.parse(options[:date])
       elsif options[:next_day].present?
@@ -58,7 +58,7 @@ module Dsu
       else
         raise 'No date option specified.'
       end
-      entry = Models::Entry.new(description: description, long_description: long_description)
+      entry = Models::Entry.new(description: description)
       CommandServices::AddEntryService.new(entry: entry, time: time).call
       sort_times(times: [1.day.ago(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
         display_entry_group(time: time)
@@ -108,7 +108,13 @@ module Dsu
     desc 'date',
       'Displays the dsu entries for DATE.'
     long_desc <<-LONG_DESC
-      Displays the dsu entries for DATE, where DATE is any date string that can be parsed using `Time.parse`. For example: `require 'time'; Time.parse("2023-01-01")`.
+      Displays the dsu entries for DATE.
+
+      For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
+
+      Basically, where DATE is any date string that can be parsed using `Time.parse`; consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31).
+
+      This command has no options.
     LONG_DESC
     def date(date)
       time = Time.parse(date)
