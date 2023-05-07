@@ -30,7 +30,7 @@ module Dsu
           # Just in case the entry group is invalid, we'll
           # validate it before displaying it.
           entry_group.validate!
-          display_entry_group!
+          view_entry_group!
         rescue ActiveModel::ValidationError
           puts "Error(s) encountered: #{entry_group.errors.full_messages}"
           raise
@@ -41,7 +41,7 @@ module Dsu
 
         attr_reader :entry_group, :options
 
-        def display_entry_group!
+        def view_entry_group!
           say formatted_time(time: entry_group.time), HIGHLIGHT
           say('(no entries available for this day)') and return if entry_group.entries.empty?
 

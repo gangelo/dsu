@@ -1,53 +1,18 @@
 # frozen_string_literal: true
 
-require 'bundler'
-require 'thor'
-require_relative 'command_services/add_entry_service'
-require_relative 'models/entry_group'
-require_relative 'services/configuration_loader_service'
-require_relative 'services/entry_group_hydrator_service'
-require_relative 'services/entry_group_reader_service'
-require_relative 'support/colorable'
-require_relative 'subcommands/config'
-require_relative 'version'
-require_relative 'views/entry_group/show'
+require 'time'
+require_relative 'base_cli'
+require_relative 'subcommands/list'
 
 module Dsu
   #
   # The `dsu` command.
   #
-  class CLI < ::Thor
-    include Support::Colorable
-
-    class_option :debug, type: :boolean, default: false
-
+  class CLI < BaseCLI
     map %w[add -a] => :add
     map %w[config -c] => :config
-    map %w[date -d] => :date
-    map %w[today -n] => :today
-    map %w[tomorrow -t] => :tomorrow
+    map %w[list -l] => :list
     map %w[version -v] => :version
-    map %w[yesterday -y] => :yesterday
-
-    default_command :help
-
-    class << self
-      def exit_on_failure?
-        false
-      end
-
-      def date_option_description
-        <<-DATE_OPTION_DESC
-          Where DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
-        DATE_OPTION_DESC
-      end
-    end
-
-    def initialize(*args)
-      super
-
-      @configuration = Services::ConfigurationLoaderService.new.call
-    end
 
     desc 'add, -a [OPTIONS] DESCRIPTION',
       'Will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.'
@@ -79,83 +44,32 @@ module Dsu
     option :today, type: :boolean, aliases: '-n', default: true
 
     def add(description)
-      time = if options[:date].present?
-        Time.parse(options[:date])
-      elsif options[:tomorrow].present?
-        1.day.from_now
-      elsif options[:yesterday].present?
-        1.day.ago
-      elsif options[:today].present?
-        Time.now
+      times = if options[:date].present?
+        time = Time.parse(options[:date])
+        [time, time.yesterday]
+      else
+        time = Time.now
+        if options[:tomorrow].present?
+          [time.tomorrow, time.tomorrow.yesterday]
+        elsif options[:yesterday].present?
+          [time.yesterday, time.yesterday.yesterday]
+        elsif options[:today].present?
+          [time, time.yesterday]
+        end
       end
       entry = Models::Entry.new(description: description)
-      CommandServices::AddEntryService.new(entry: entry, time: time).call
-      sort_times(times: [1.day.ago(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
-        display_entry_group(time: time)
+      # NOTE: We need to add the Entry to the date that is the furthest in the future
+      # (time.max) because this is the DSU entry that the user specified.
+      CommandServices::AddEntryService.new(entry: entry, time: times.max).call
+      sorted_dsu_times_for(times: times).each do |t|
+        view_entry_group(time: t)
         puts
       end
     end
 
-    desc 'today, -n',
-      'Displays the DSU entries for today.'
-    long_desc <<-LONG_DESC
-      Displays the DSU entries for today. This command has no options.
-    LONG_DESC
-    def today
-      time = Time.now
-      sort_times(times: [1.day.ago(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
-        display_entry_group(time: time)
-        puts
-      end
-    end
-
-    desc 'tomorrow, -t',
-      'Displays the DSU entries for tomorrow.'
-    long_desc <<-LONG_DESC
-      Displays the DSU entries for tomorrow. This command has no options.
-    LONG_DESC
-    def tomorrow
-      time = Time.now
-      sort_times(times: [1.day.from_now(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
-        display_entry_group(time: time)
-        puts
-      end
-    end
-
-    desc 'yesterday, -y',
-      'Displays the DSU entries for yesterday.'
-    long_desc <<-LONG_DESC
-      Displays the DSU entries for yesterday. This command has no options.
-    LONG_DESC
-    def yesterday
-      time = Time.now
-      sort_times(times: [1.day.ago(time), 2.days.ago(time)]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
-        display_entry_group(time: time)
-        puts
-      end
-    end
-
-    desc 'date, -d DATE',
-      'Displays the DSU entries for DATE.'
-    long_desc <<-LONG_DESC
-      Displays the DSU entries for DATE.
-
-      For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
-
-      Basically, where DATE is any date string that can be parsed using `Time.parse`; consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31).
-
-      This command has no options.
-    LONG_DESC
-    def date(date)
-      time = Time.parse(date)
-      sort_times(times: [1.day.ago(time), time]).each do |time| # rubocop:disable Lint/ShadowingOuterLocalVariable
-        display_entry_group(time: time)
-        puts
-      end
-    rescue ArgumentError => e
-      say "Error: #{e.message}", ERROR
-      exit 1
-    end
+    desc 'list, -l SUBCOMMAND',
+      'Displays DSU entries for the given SUBCOMMAND.'
+    subcommand :list, Subcommands::List
 
     # TODO: Implement this.
     # desc 'interactive', 'Opens a DSU interactive session'
@@ -188,8 +102,6 @@ module Dsu
 
     private
 
-    attr_reader :configuration
-
     def display_interactive_help
       say 'Interactive Mode Commands:'
       say '---'
@@ -198,24 +110,6 @@ module Dsu
       say '[y]: previous day'
       say '[n]: today'
       say '[x|q|exit|quit]: Exit interactive mode'
-    end
-
-    def display_entry_group(time:)
-      entry_group = if Models::EntryGroup.exists?(time: time)
-        entry_group_json = Services::EntryGroupReaderService.new(time: time).call
-        Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
-      else
-        Models::EntryGroup.new(time: time)
-      end
-      Views::EntryGroup::Show.new(entry_group: entry_group).display
-    end
-
-    def sort_times(times:)
-      if configuration[:entries_display_order] == 'asc'
-        times.sort # sort ascending
-      elsif configuration[:entries_display_order] == 'desc'
-        times.sort.reverse # sort descending
-      end
     end
   end
 end
