@@ -14,9 +14,10 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
     # No errors are expected because the options are not
     # considered until #call is invoked.
     context 'when the arguments are invalid' do
-      let(:default_options) { 'invalid' }
+      let(:default_options) { :invalid }
+      let(:expected_error) { /default_options must be a Hash or ActiveSupport::HashWithIndifferentAccess/ }
 
-      it_behaves_like 'no error is raised'
+      it_behaves_like 'an error is raised'
     end
   end
 

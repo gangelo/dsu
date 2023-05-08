@@ -1,5 +1,6 @@
-## [0.1.0.alpha.1] - 2023-05-06
-- Initial (alpha) release. See README.md for instructions.
+## [x.x.x] - 2023--mm-dd
+* Bug fixes
+  - Fix bug that failed to load default configuration values properly when provided (surfaced in specs).
 
 ## [0.1.0.alpha.2] - 2023-05-08
 * ATTENTION: After installing this pre-release, run `dsu config info` and take note of the `entries_folder` config option value (e.g. something like '/Users/<whoami>/dsu/entries' on a nix os). You'll need to delete the entry group files therein ( <YYYY>-<MM>-<DD>.json e.g. 2023-05-07.json) to avoid errors when running this version of `dsu`.
@@ -13,3 +14,6 @@
   - `dsu config info` now displays the default configuration being used if no configuration file is being used.
 * Bug fixes
   - Fix bug that fails to load/use configuration file options when a config file exists.
+
+## [0.1.0.alpha.1] - 2023-05-06
+- Initial (alpha) release. See README.md for instructions.

@@ -15,24 +15,22 @@ module Dsu
         unless default_options.nil? ||
                default_options.is_a?(Hash) ||
                default_options.is_a?(ActiveSupport::HashWithIndifferentAccess)
-          raise ArgumentError, 'default_options must be a Hash'
+          raise ArgumentError, 'default_options must be a Hash or ActiveSupport::HashWithIndifferentAccess'
         end
 
-        @default_options = default_options || Support::Configuration::DEFAULT_DSU_OPTIONS
+        @default_options ||= default_options || {}
         @default_options = @default_options.with_indifferent_access if @default_options.is_a?(Hash)
       end
 
       def call
-        return default_options unless config_file?
-
-        config_options.with_indifferent_access
+        config_options.merge(default_options).with_indifferent_access
       end
 
       private
 
-      attr_writer :default_options
-
       def config_options
+        return Support::Configuration::DEFAULT_DSU_OPTIONS unless config_file?
+
         @config_options ||= YAML.safe_load(ERB.new(File.read(config_file)).result)
       end
     end
