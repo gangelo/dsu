@@ -2,6 +2,7 @@
 - Initial (alpha) release. See README.md for instructions.
 
 ## [x.x.x] - 2023-xx-xx
+* ATTENTION: After installing this pre-release, run `dsu config info` and take note of the `entries_folder` config option value (e.g. something like '/Users/<whoami>/dsu/entries' on a nix os). You'll need to delete the entry group files therein ( <YYYY>-<MM>-<DD>.json e.g. 2023-05-07.json) to avoid errors when running this version of `dsu`.
 * WIP (not fully implemented yet)
   - Added `dsu edit` command to edit an existing entry.
 * Changes
