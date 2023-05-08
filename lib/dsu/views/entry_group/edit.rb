@@ -10,7 +10,7 @@ require_relative '../../support/time_formatable'
 module Dsu
   module Views
     module EntryGroup
-      class Show
+      class Edit
         include Support::Colorable
         include Support::Say
         include Support::TimeFormatable
@@ -41,14 +41,21 @@ module Dsu
         attr_reader :entry_group, :options
 
         def render_entry_group!
-          say formatted_time(time: entry_group.time), HIGHLIGHT
+          say "# Editing DSU Entries for #{formatted_time(time: entry_group.time)}"
           say('(no entries available for this day)') and return if entry_group.entries.empty?
 
-          entry_group.entries.each_with_index do |entry, index|
-            prefix = "#{format('%03s', index + 1)}. #{entry.uuid}"
-            description = colorize_string(string: entry.description, mode: :bold)
-            say "#{prefix} #{description}"
+          say ''
+
+          entry_group.entries.each do |entry|
+            say "#{entry.uuid} #{entry.description}"
           end
+
+          say ''
+          say '# To EDIT a DSU entry, change the description, then save and close your editor.'
+          say "# To DELETE a DSU entry, delete the entry or replace the sha with a 'd', " \
+              'then save and close your editor.'
+          say '# To REORDER a DSU entry, reorder the DSU entries in order preference, ' \
+              'then save and close your editor.'
         end
       end
     end

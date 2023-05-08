@@ -34,6 +34,8 @@ module Dsu
           Dsu::Services::EntryGroupReaderService.entry_group_file_exists?(time: time)
         end
 
+        # Loads the EntryGroup from the file system and returns an
+        # instantiated EntryGroup object.
         def load(time: nil)
           new(**hydrated_entry_group_hash_for(time: time))
         end

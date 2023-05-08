@@ -12,7 +12,7 @@ module Dsu
         else
           Models::EntryGroup.new(time: time)
         end
-        Views::EntryGroup::Show.new(entry_group: entry_group).display
+        Views::EntryGroup::Show.new(entry_group: entry_group).render
       end
     end
   end
