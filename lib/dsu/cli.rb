@@ -11,11 +11,18 @@ module Dsu
   # The `dsu` command.
   #
   class CLI < BaseCLI
-    map %w[add -a] => :add
-    map %w[config -c] => :config
-    map %w[edit -e] => :edit
-    map %w[list -l] => :list
-    map %w[version -v] => :version
+    # map %w[add -a] => :add
+    # map %w[config -c] => :config
+    # map %w[edit -e] => :edit
+    # #map %w[help -h] => :help
+    # map %w[list -l] => :list
+    # map %w[version -v] => :version
+
+    map %w[a -a] => :add
+    map %w[c -c] => :config
+    map %w[e -e] => :edit
+    map %w[l -l] => :list
+    map %w[v -v] => :version
 
     desc 'add, -a [OPTIONS] DESCRIPTION',
       'Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION'

@@ -22,7 +22,7 @@ module Dsu
         # asc or desc, ascending or descending, respectively.
         'entries_display_order' => 'desc',
         'entries_file_name' => '%Y-%m-%d.json',
-        'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries",
+        'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries"
       }.freeze
       # rubocop:enable Style/StringHashKeys
 
@@ -43,6 +43,7 @@ module Dsu
         delete_config_file config_file: config_file
       end
 
+      # TODO: Move this to a view (e.g. views/configuration/show.rb)
       def print_config_file
         if config_file?
           say "Config file (#{config_file}) contents:", SUCCESS
@@ -50,6 +51,11 @@ module Dsu
           say hash.to_yaml.gsub("\n-", "\n\n-"), SUCCESS
         else
           say "Config file (#{config_file}) does not exist.", WARNING
+          say ''
+          say 'The default configuration is being used:'
+          DEFAULT_DSU_OPTIONS.each_with_index do |config_entry, index|
+            say "#{index + 1}. #{config_entry[0]}: '#{config_entry[1]}'"
+          end
         end
       end
 
