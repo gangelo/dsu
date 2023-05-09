@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # These helpers are used to create and delete the entry group data
 # file as needed for tests.
 module EntryGroupHelpers

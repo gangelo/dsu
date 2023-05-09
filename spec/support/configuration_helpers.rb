@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # These helpers are used to create and delete the configuration file
 # typically before and after every test.
 module ConfigurationHelpers

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :entry_group, class: 'Dsu::Models::EntryGroup' do
     transient do
