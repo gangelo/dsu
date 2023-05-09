@@ -7,12 +7,14 @@ RSpec.shared_context 'with configuration' do
     stub_const('Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS', configuration_default_dsu_options)
   end
 
+  # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
   let(:configuration_default_dsu_options) do
     {
       'entries_folder' => "#{Dir.tmpdir}/dsu/entries",
       'entries_file_name' => '%Y-%m-%d.json'
     }
   end
+  # rubocop:enable Style/StringHashKeys
 end
 
 RSpec.configure do |config|

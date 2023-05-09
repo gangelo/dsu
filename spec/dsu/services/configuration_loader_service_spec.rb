@@ -31,6 +31,7 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
     end
 
     context 'when default options are passed and the configuration file does not exist' do
+      # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       let(:default_options) do
         {
           'version' => 'some version',
@@ -38,6 +39,7 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
           'entries_file_name' => 'some file name'
         }
       end
+      # rubocop:enable Style/StringHashKeys
 
       it 'returns the passed options' do
         expect(configuration_loader_service.call).to eq default_options
@@ -70,10 +72,12 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
       end
 
       let(:default_options) do
+        # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
         Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS.merge({
           'version' => 'changed version',
           'entries_file_name' => 'changed entries file name'
         })
+        # rubocop:enable Style/StringHashKeys
       end
 
       it 'returns the default options merged with the configuration file options' do

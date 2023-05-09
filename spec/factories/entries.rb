@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :entry, class: 'Dsu::Models::Entry' do
     uuid { SecureRandom.uuid[0..7] }

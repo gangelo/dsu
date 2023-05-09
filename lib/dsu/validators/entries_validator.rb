@@ -47,16 +47,13 @@ module Dsu
 
         entry_objects = entries.select { |entry| entry.is_a?(Dsu::Models::Entry) }
 
-        entry_objects.map(&:uuid).tap do |uuids|
-          return if uuids.uniq.length == uuids.length
-        end
+        uuids = entry_objects.map(&:uuid)
+        return if uuids.uniq.length == uuids.length
 
-        entry_objects.map(&:uuid).tap do |uuids|
-          non_unique_uuids = uuids.select { |element| uuids.count(element) > 1 }.uniq
-          if non_unique_uuids.any?
-            record.errors.add(field, "contains duplicate UUIDs: #{non_unique_uuids.join(', ')}.",
-              type: Dsu::Support::FieldErrors::FIELD_DUPLICATE_ERROR)
-          end
+        non_unique_uuids = uuids.select { |element| uuids.count(element) > 1 }.uniq
+        if non_unique_uuids.any?
+          record.errors.add(field, "contains duplicate UUIDs: #{non_unique_uuids.join(', ')}.",
+            type: Dsu::Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
       end
     end

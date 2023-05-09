@@ -9,7 +9,7 @@ FactoryBot.define do
       entries { [] }
     end
 
-    time {}
+    time { nil }
 
     # Use this trait if you want to simply add entries to
     # this entry group and do not care about the entry
