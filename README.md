@@ -38,19 +38,19 @@ The next thing you may want to do is `add` some DSU activities (entries) for a p
 Adding DSU entry using this command will _add_ the DSU entry for the given day (or date, `-d`), and also _display_ the given day's (or date's, `-d`) DSU entries, as well as the DSU entries for the previous day relative to the given day or date (`-d`).
 
 #### Today
-If you need to add a DSU entry to the current day (today), you can use the `-t, [--today]` option. Today (`-t`) is the default; therefore, the `-t` flag is optional when adding DSU entries for the current day:
+If you need to add a DSU entry to the current day (today), you can use the `-n`|`--today` option. Today (`-n`) is the default; therefore, the `-n` flag is optional when adding DSU entries for the current day:
 
-`$ dsu add [-t] "Pair with John on ticket IN-12345"`
+`$ dsu add -n|-today "Pair with John on ticket IN-12345"`
 
 #### Yesterday
-If for some reason you need to add a DSU entry for the previous day, you can use the `-p, [--previous-day]` option:
+If for some reason you need to add a DSU entry for yesterday, you can use the `-y`| `--yesterday` option:
 
-`$ dsu add -p "Pick up ticket IN-12345"`
+`$ dsu add -y|--yesterday "Pick up ticket IN-12345"`
 
 #### Tomorrow
-If you need to add a DSU entry for the previous day, you can use the `-n, [--next-day]` option:
+If you need to add a DSU entry for tomorrow, you can use the `-t`|`--tomorrow` option:
 
-`$ dsu add -n "Pick up ticket IN-12345"`
+`$ dsu add -t|--tomorrow "Pick up ticket IN-12345"`
 
 #### Miscellaneous Date
 If you need to add a DSU entry for a date other than yesterday, today or tomorrow, you can use the `-d, [--date=DATE]` option, where DATE is any date string that can be parsed using `Time.parse`. For example: `require 'time'; Time.parse("2023-01-01")`:
