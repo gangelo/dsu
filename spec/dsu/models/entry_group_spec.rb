@@ -109,7 +109,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       let(:expected_errors) do
         [
           'Time is the wrong object type. "Time" ' \
-            'was expected, but "Symbol" was received.'
+          'was expected, but "Symbol" was received.'
         ]
       end
 
@@ -214,7 +214,6 @@ RSpec.describe Dsu::Models::EntryGroup do
 
   describe 'validation' do
     context 'when fields are valid' do
-
       it 'passes validation' do
         expect(entry_group.valid?).to be true
       end

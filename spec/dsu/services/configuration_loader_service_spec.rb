@@ -72,7 +72,7 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
       let(:default_options) do
         Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS.merge({
           'version' => 'changed version',
-          'entries_file_name' => 'changed entries file name',
+          'entries_file_name' => 'changed entries file name'
         })
       end
 

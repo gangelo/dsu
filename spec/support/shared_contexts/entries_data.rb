@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.shared_context 'with entries data' do
   # The hash equivalent of an EntryGroup model.
   let(:entry_group_hash) do
@@ -29,7 +28,6 @@ RSpec.shared_context 'with entries data' do
     }
   end
 end
-# rubocop:enable RSpec/MultipleMemoizedHelpers
 
 RSpec.configure do |config|
   config.include_context 'with entries data'
