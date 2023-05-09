@@ -11,7 +11,7 @@
 
 **NOTE:** This gem is in development (alpha version). Please see the [WIP Notes](#wip-notes) section for current `dsu` features.
 
-## Quick Start
+## Help
 
 After installation (`gem install dsu`), the first thing you may want to do is run the `dsu` help:
 ### Displaying Help
@@ -32,32 +32,33 @@ Options:
 
 The next thing you may want to do is `add` some DSU activities (entries) for a particular day:
 
-### Adding DSU Entries
+## Adding DSU Entries
 `dsu add [OPTIONS] DESCRIPTION`
 
 Adding DSU entry using this command will _add_ the DSU entry for the given day (or date, `-d`), and also _display_ the given day's (or date's, `-d`) DSU entries, as well as the DSU entries for the previous day relative to the given day or date (`-d`).
 
-#### Today
+### Today
 If you need to add a DSU entry to the current day (today), you can use the `-n`|`--today` option. Today (`-n`) is the default; therefore, the `-n` flag is optional when adding DSU entries for the current day:
 
 `$ dsu add -n|-today "Pair with John on ticket IN-12345"`
 
-#### Yesterday
+### Yesterday
 If for some reason you need to add a DSU entry for yesterday, you can use the `-y`| `--yesterday` option:
 
 `$ dsu add -y|--yesterday "Pick up ticket IN-12345"`
 
-#### Tomorrow
+### Tomorrow
 If you need to add a DSU entry for tomorrow, you can use the `-t`|`--tomorrow` option:
 
 `$ dsu add -t|--tomorrow "Pick up ticket IN-12345"`
 
-#### Miscellaneous Date
-If you need to add a DSU entry for a date other than yesterday, today or tomorrow, you can use the `-d, [--date=DATE]` option, where DATE is any date string that can be parsed using `Time.parse`. For example: `require 'time'; Time.parse("2023-01-01")`:
+### Miscellaneous Date
 
 `$ dsu add -d "2022-12-31" "Attend company New Years Coffee Meet & Greet"`
 
-### Displaying DSU Entries
+See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
+
+## Displaying DSU Entries
 You can display DSU entries for a particular day or date (`date`) using any of the following commands. When displaying DSU entries for a particular day or date (`date`), `dsu` will display the given day or date's (`date`) DSU entries, as well as the DSU entries for the _previous_ day, relative to the given day or date. If the date or day you are trying to view falls on a weekend or Monday, `dsu` will display back to, and including the weekend and previous Friday inclusive; this is so that you can share what you did over the weekend (if anything) and the previous Friday at your DSU:
 
 - `$ dsu list today|n`
@@ -65,7 +66,7 @@ You can display DSU entries for a particular day or date (`date`) using any of t
 - `$ dsu list yesterday|y`
 - `$ dsu list date|d DATE`
 
-#### Examples
+### Examples
 The following displays the entries for "Today", where `Time.now == '2023-05-06 08:54:57.6861 -0400'`
 
 `$ dsu list today`
@@ -82,7 +83,7 @@ Friday, (Yesterday) 2023-05-05
 
 `$ dsu list date "2023-05-06"`
 
-Where DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/'' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`:
+See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
 
 ```shell
 #=>
@@ -94,7 +95,7 @@ Friday, (Yesterday) 2023-05-05
   1. edc25a9a Pick up ticket IN-12345
   2. f7d3018c Attend new hire meet & greet
 ```
-### Editing DSU Entries
+## Editing DSU Entries
 
 You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (today|tomorrow|yesterday|date DATE) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries.
 
@@ -105,7 +106,7 @@ Note: See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-c
 - `$ dsu edit yesterday|y`
 - `$ dsu edit date|d DATE`
 
-#### Examples
+### Examples
 
 The following will edit your DSU entry group entries for "Today", where `Time.now == '2023-05-09 12:13:45.8273 -0400'`. Simply follow the directions in the editor file, then save and close your editor to apply the changes:
 
@@ -133,7 +134,7 @@ The following will edit your DSU entry group entries for "Today", where `Time.no
 # *** When you are done, save and close your editor ***
 ```
 
-##### Edit an Entry
+#### Edit an Entry
 
 Simply change the entry descripton text.
 
@@ -143,7 +144,7 @@ from: 3849f0c0 Interative planning meeting 11:00AM.
   to: 3849f0c0 Interative planning meeting 12:00AM.
 ```
 
-##### Add an Entry
+#### Add an Entry
 
 Replace the entry `sha` one of the add commands: `[+|a|add]`.
 
@@ -152,7 +153,7 @@ For example...
 + Add me to this entry group.
 ```
 
-##### Delete an Entry
+#### Delete an Entry
 
 Simply delete the entry or replace the entry `sha` one of the delete commands: `[-|d|delete]`.
 
@@ -167,7 +168,7 @@ from: 3849f0c0 Interative planning meeting 11:00AM.
   to: - Interative planning meeting 11:00AM.
 ```
 
-##### Reorder Entries
+#### Reorder Entries
 
 Simply reorder the entries in the editor.
 
@@ -183,11 +184,11 @@ from: 3849f0c0 Interative planning meeting 11:00AM.
       3849f0c0 Interative planning meeting 11:00AM.
 ```
 
-### Customizing the `dsu` Configuration File
+## Customizing the `dsu` Configuration File
 
 It is **not** recommended that you create and customize a `dsu` configuration file while this gem is in alpha release. This is because changes to what configuration options are available may take place while in alpha that could break `dsu`. If you *do* want to create and customize the `dsu` configuration file reglardless, you may do the following.
 
-#### Initializing/Customizing the `dsu` Configuration File
+### Initializing/Customizing the `dsu` Configuration File
 
 ```shell
 # Creates a dsu configuration file in your home folder.
@@ -207,25 +208,26 @@ Where `<whoami>` would be your username (`$ whoami` on nix systems)
 
 Once the configuration file is created, you can locate where the `dsu` configuration file is located by running `$ dsu config info` and taking note of the confiruration file path. You may then edit this file using your favorite editor.
 
-##### Configuration File Options
-###### editor
+#### Configuration File Options
+
+##### editor
 This is the default editor to use when editing entry groups if the EDITOR environment variable on your system is not set.
 
 Default: `nano` (you'll need to change the default editor on Windows systems)
 
-###### entries_display_order
+##### entries_display_order
 Valid values are 'asc' and 'desc', and will sort listed DSU entries in ascending or descending order respectfully, by day.
 
 Default: `'desc'`
 
-###### entries_file_name
+##### entries_file_name
 The entries file name format. It is recommended that you do not change this. The file name must include `%Y`, `%m` and `%d` `Time` formatting specifiers to make sure the file name is unique and able to be located by `dsu` functions. For example, the default file name is `%Y-%m-%d.json`; however, something like `%m-%d-%Y.json` or `entry-group-%m-%d-%Y.json` would work as well.
 
 ATTENTION: Please keep in mind that if you change this value `dsu` will not recognize entry files using a different format. You would (at this time), have to manually rename any existing entry file names to the new format.
 
 Default: `'%Y-%m-%d.json'`
 
-###### entries_folder
+##### entries_folder
 This is the folder where `dsu` stores entry files. You may change this to anything you want. `dsu` will create this folder for you, as long as your system's write permissions allow this.
 
 ATTENTION: Please keep in mind that if you change this value `dsu` will not be able to find entry files in any previous folder. You would (at this time), have to manually mode any existing entry files to this new folder.
@@ -233,6 +235,12 @@ ATTENTION: Please keep in mind that if you change this value `dsu` will not be a
 Default: `'/Users/<whoami>/dsu/entries'` on nix systems.
 
 Where `<whoami>` would be your username (`$ whoami` on nix systems)
+
+## Dates
+
+These notes apply to anywhere DATE is used...
+
+DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit the year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
 
 ## WIP Notes
 This gem is in development (alpha release).
