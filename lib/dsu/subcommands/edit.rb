@@ -2,8 +2,11 @@
 
 require_relative '../base_cli'
 require_relative '../models/entry_group'
+require_relative '../services/temp_file_reader_service'
+require_relative '../services/temp_file_writer_service'
 require_relative '../support/time_formatable'
 require_relative '../views/entry_group/edit'
+require_relative '../views/entry_group/show'
 
 module Dsu
   module Subcommands
@@ -21,7 +24,7 @@ module Dsu
        Edits the DSU entries for today.
       LONG_DESC
       def today
-        edit_entry_group(time: Time.now)
+        Views::EntryGroup::Show.new(entry_group: edit_entry_group(time: Time.now)).render
       end
 
       desc 'tomorrow, t',
@@ -30,7 +33,7 @@ module Dsu
         Edits the DSU entries for tomorrow.
       LONG_DESC
       def tomorrow
-        edit_entry_group(time: Time.now.tomorrow)
+        Views::EntryGroup::Show.new(entry_group: edit_entry_group(time: Time.now.tomorrow)).render
       end
 
       desc 'yesterday, y',
@@ -39,7 +42,7 @@ module Dsu
         Edits the DSU entries for yesterday.
       LONG_DESC
       def yesterday
-        edit_entry_group(time: Time.now.yesterday)
+        Views::EntryGroup::Show.new(entry_group: edit_entry_group(time: Time.now.yesterday)).render
       end
 
       desc 'date, d DATE',
@@ -50,7 +53,7 @@ module Dsu
         \x5 #{date_option_description}
       LONG_DESC
       def date(date)
-        edit_entry_group(time: Time.parse(date))
+        Views::EntryGroup::Show.new(entry_group: edit_entry_group(time: Time.parse(date))).render
       rescue ArgumentError => e
         say "Error: #{e.message}", ERROR
         exit 1
@@ -67,12 +70,38 @@ module Dsu
 
         say "Editing DSU entries for #{formatted_time}..."
         entry_group = Models::EntryGroup.load(time: time)
-        # system("${EDITOR:-nano} #{file_path}")
 
+        # This renders the view to a string...
         output = capture_stdxxx do
           Views::EntryGroup::Edit.new(entry_group: entry_group).render
         end
-        say output, SUCCESS
+        # ...which is then written to a temp file.
+        Services::TempFileWriterService.new(temp_file_content: output).call do |temp_file_path|
+          system("${EDITOR:-#{configuration[:editor]}} #{temp_file_path}")
+          entries = []
+          Services::TempFileReaderService.new(temp_file_path: temp_file_path).call do |temp_file_line|
+            # Skip comments and blank lines.
+            next if ['#', nil].include? temp_file_line[0]
+
+            match_data = temp_file_line.match(/(\S+)\s(.+)/)
+            # TODO: Error handling if match_data is nil.
+            entry_sha = match_data[1]
+            entry_description = match_data[2]
+
+            next if %w[- d delete].include?(entry_sha) # delete the entry
+
+            entry_sha = nil if %w[+ a add].include?(entry_sha) # add the new entry
+            entries << Models::Entry.new(uuid: entry_sha, description: entry_description)
+          end
+
+          if entries.empty?
+            say 'TODO: If the user deleted all entries, delete the entry group.'
+          else
+            entry_group.entries = entries
+            entry_group.save!
+          end
+        end
+        entry_group
       end
 
       # https://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby/4459463#4459463

@@ -1,9 +1,12 @@
 ## [x.x.x] - 2023--mm-dd
+* Changes
+  - Entry groups are now editable using the `dsu edit SUBCOMMAND` command. See the README.md or `dsu help edit` for more information.
+  - Added `editor` configuration option to specify the editor to use when editing an entry group. This configuration option is used if the $EDITOR environment variable is not set.
 * Bug fixes
   - Fix bug that failed to load default configuration values properly when provided (surfaced in specs).
 
 ## [0.1.0.alpha.2] - 2023-05-08
-* ATTENTION: After installing this pre-release, run `dsu config info` and take note of the `entries_folder` config option value (e.g. something like '/Users/<whoami>/dsu/entries' on a nix os). You'll need to delete the entry group files therein ( <YYYY>-<MM>-<DD>.json e.g. 2023-05-07.json) to avoid errors when running this version of `dsu`.
+* ATTENTION: After installing this pre-release, run `dsu config info` and take note of the `entries_folder` config option value (e.g. something like '/Users/<whoami>/dsu/entries' on a nix os). You'll need to delete the entry group files therein ( \<YYYY\>\-\<MM\>\-\<DD\>.json e.g. 2023-05-07.json) to avoid errors when running this version of `dsu`.
 * WIP (not fully implemented yet)
   - Added `dsu edit` command to edit an existing entry.
 * Changes

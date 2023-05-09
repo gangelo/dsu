@@ -12,14 +12,14 @@ module Dsu
       def validate(record)
         raise 'options[:fields] is not defined.' unless options.key? :fields
         raise 'options[:fields] is not an Array.' unless options[:fields].is_a? Array
-        raise 'options[:fields] elements are not Symbols.' unless options[:fields].all? { |field| field.is_a? Symbol }
+        raise 'options[:fields] elements are not Symbols.' unless options[:fields].all?(Symbol)
 
         options[:fields].each do |field|
           entries = record.send(field)
 
           unless entries.is_a?(Array)
             record.errors.add(field, 'is the wrong object type. ' \
-                  "\"Array\" was expected, but \"#{entries.class}\" was received.")
+                                     "\"Array\" was expected, but \"#{entries.class}\" was received.")
             next
           end
 
@@ -35,7 +35,7 @@ module Dsu
           next if entry.is_a? Dsu::Models::Entry
 
           record.errors.add(field, 'entry Array element is the wrong object type. ' \
-                                "\"Entry\" was expected, but \"#{entry.class}\" was received.",
+                                   "\"Entry\" was expected, but \"#{entry.class}\" was received.",
             type: Dsu::Support::FieldErrors::FIELD_TYPE_ERROR)
 
           next
@@ -52,7 +52,7 @@ module Dsu
         end
 
         entry_objects.map(&:uuid).tap do |uuids|
-          non_unique_uuids = uuids.select{ |element| uuids.count(element) > 1 }.uniq
+          non_unique_uuids = uuids.select { |element| uuids.count(element) > 1 }.uniq
           if non_unique_uuids.any?
             record.errors.add(field, "contains duplicate UUIDs: #{non_unique_uuids.join(', ')}.",
               type: Dsu::Support::FieldErrors::FIELD_DUPLICATE_ERROR)

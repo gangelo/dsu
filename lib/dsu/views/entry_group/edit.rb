@@ -45,17 +45,23 @@ module Dsu
           say('(no entries available for this day)') and return if entry_group.entries.empty?
 
           say ''
+          say '# [SHA/COMMAND] [DESCRIPTION]'
 
           entry_group.entries.each do |entry|
             say "#{entry.uuid} #{entry.description}"
           end
 
           say ''
-          say '# To EDIT a DSU entry, change the description, then save and close your editor.'
-          say "# To DELETE a DSU entry, delete the entry or replace the sha with a 'd', " \
-              'then save and close your editor.'
-          say '# To REORDER a DSU entry, reorder the DSU entries in order preference, ' \
-              'then save and close your editor.'
+          say '# INSTRUCTIONS:'
+          say '# ADD a DSU entry: use one of the following commands: [+|a|add] ' \
+              'followed by the description.'
+          say '# EDIT a DSU entry: change the description.'
+          say '# DELETE a DSU entry: delete the entry or replace the sha with one ' \
+              'of the following commands: [-|d|delete]. NOTE: deleting all the entries ' \
+              'will delete the entry group file; this is preferable if this is what you ' \
+              'want to do :)'
+          say '# REORDER a DSU entry: reorder the DSU entries in order preference.'
+          say '# When you are done, save and close your editor.'
         end
       end
     end

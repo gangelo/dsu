@@ -18,6 +18,7 @@ module Dsu
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_DSU_OPTIONS = {
+        'editor' => 'nano',
         # The order by which entries should be displayed by default:
         # asc or desc, ascending or descending, respectively.
         'entries_display_order' => 'desc',

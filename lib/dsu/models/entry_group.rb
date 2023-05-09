@@ -3,6 +3,7 @@
 require 'deco_lite'
 require_relative '../support/entry_group_loadable'
 require_relative '../services/entry_group_reader_service'
+require_relative '../services/entry_group_writer_service'
 require_relative '../validators/entries_validator'
 require_relative '../validators/time_validator'
 
@@ -51,6 +52,11 @@ module Dsu
 
       def required_fields
         %i[time entries]
+      end
+
+      def save!
+        validate!
+        Dsu::Services::EntryGroupWriterService.new(entry_group: self).call
       end
 
       def to_h
