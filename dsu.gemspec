@@ -11,11 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary      = 'dsu (Agile Daily Stand Up/DSU) mini-manager.'
   spec.description  = <<-DESC
-    dsu is little gem that helps manage your Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows you to create, read, update, and delete (CRUD) noteworthy activities that you performed during your day. During your DSU, you can then easily recall and share these these activities with your team. Activities are grouped by day and can be viewed in simple text format from the command line. When viewing a particular day, dsu will automatically display the previous day's activities as well. This is useful for remembering what you did yesterday, so you can share your "Today" and "Yesterday" activities with your team during your DSU.
-
-    NOTE: This gem is currently in development (alpha release) and does not provide the ability to UPDATE or DELETE activities. These features will be added in future releases.
-
-    IN ADDITION TO THIS: dsu's current behavior when viewing a particular day is to display the previous day's activities. This behavior is not necessarily ideal when sharing activities for a DSU that occurs on a Monday. This is because Monday's DSU typically includes sharing what you did on last FRIDAY (not necessarily "Yesterday"), as well as what you plan on doing "Today". This behavior will be changed in a future release as well, to display the previous Friday's activities (as well as Saturday and Sunday) if "Today" happens to be Monday.
+    dsu is little gem that helps manage your Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows you to create, read, update, and delete (CRUD) noteworthy activities that you performed during your day. During your DSU, you can then easily recall and share these these activities with your team. Activities are grouped by day and can be viewed in simple text format from the command line. When displaying DSU entries for a particular day or date (date), dsu will display the given day or date's (date) DSU entries, as well as the DSU entries for the previous day, relative to the given day or date. If the date or day you are trying to view falls on a weekend or Monday, dsu will display back to, and including the weekend and previous Friday inclusive; this is so that you can share what you did over the weekend (if anything) and the previous Friday at your DSU.
   DESC
   spec.homepage = 'https://github.com/gangelo/dsu'
   spec.license = 'MIT'

@@ -1,3 +1,6 @@
+## [0.1.0.alpha.4] - 2023-05-09
+* Changes
+  - Gemfile gemspec description changes.
 ## [0.1.0.alpha.3] - 2023-05-09
 * Changes
   - Entry groups are now editable using the `dsu edit SUBCOMMAND` command. See the README.md or `dsu help edit` for more information.
