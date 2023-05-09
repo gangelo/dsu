@@ -94,6 +94,94 @@ Friday, (Yesterday) 2023-05-05
   1. edc25a9a Pick up ticket IN-12345
   2. f7d3018c Attend new hire meet & greet
 ```
+### Editing DSU Entries
+
+You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (today|tomorrow|yesterday|date DATE) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries.
+
+Note: See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-configuration-file)"" section to configure `dsu` to use the editor of your choice.
+
+- `$ dsu edit today|n`
+- `$ dsu edit tomorrow|t`
+- `$ dsu edit yesterday|y`
+- `$ dsu edit date|d DATE`
+
+#### Examples
+
+The following will edit your DSU entry group entries for "Today", where `Time.now == '2023-05-09 12:13:45.8273 -0400'`. Simply follow the directions in the editor file, then save and close your editor to apply the changes:
+
+`$ dsu edit today`
+`$ dsu e n`
+
+```shell
+#=> In your editor, you will see...
+# Editing DSU Entries for Tuesday, (Today) 2023-05-09 EDT
+
+# [SHA/COMMAND] [DESCRIPTION]
+3849f0c0 Interative planning meeting 11:00AM.
+586478f5 Pair with Chad on ticket 31211.
+9e5f82c8 Investigate spike ticket 31255.
+59b25ca7 Review Kelsey's PR ticket 30721.
+
+# INSTRUCTIONS:
+# ADD a DSU entry: use one of the following commands: [+|a|add] followed by the description.
+# EDIT a DSU entry: change the description.
+# DELETE a DSU entry: delete the entry or replace the sha with one of the following commands: [-|d|delete].
+# NOTE: deleting all the entries will delete the entry group file;
+#       this is preferable if this is what you want to do :)
+# REORDER a DSU entry: reorder the DSU entries in order preference.
+#
+# *** When you are done, save and close your editor ***
+```
+
+##### Edit an Entry
+
+Simply change the entry descripton text.
+
+For example...
+```
+from: 3849f0c0 Interative planning meeting 11:00AM.
+  to: 3849f0c0 Interative planning meeting 12:00AM.
+```
+
+##### Add an Entry
+
+Replace the entry `sha` one of the add commands: `[+|a|add]`.
+
+For example...
+```
++ Add me to this entry group.
+```
+
+##### Delete an Entry
+
+Simply delete the entry or replace the entry `sha` one of the delete commands: `[-|d|delete]`.
+
+For example...
+```
+# Delete this this entry from the editor file
+3849f0c0 Interative planning meeting 11:00AM.
+```
+or
+```
+from: 3849f0c0 Interative planning meeting 11:00AM.
+  to: - Interative planning meeting 11:00AM.
+```
+
+##### Reorder Entries
+
+Simply reorder the entries in the editor.
+
+For example...
+```
+from: 3849f0c0 Interative planning meeting 11:00AM.
+      586478f5 Pair with Chad on ticket 31211.
+      9e5f82c8 Investigate spike ticket 31255.
+      59b25ca7 Review Kelsey's PR ticket 30721.
+  to: 59b25ca7 Review Kelsey's PR ticket 30721.
+      9e5f82c8 Investigate spike ticket 31255.
+      586478f5 Pair with Chad on ticket 31211.
+      3849f0c0 Interative planning meeting 11:00AM.
+```
 
 ### Customizing the `dsu` Configuration File
 
@@ -109,6 +197,7 @@ $ dsu config init
 Configuration file (/Users/<whoami>/.dsu) created.
 Config file (/Users/<whoami>/.dsu) contents:
 ---
+editor: nano
 entries_display_order: desc
 entries_file_name: "%Y-%m-%d.json"
 entries_folder: "/Users/<whoami>/dsu/entries"
@@ -119,6 +208,11 @@ Where `<whoami>` would be your username (`$ whoami` on nix systems)
 Once the configuration file is created, you can locate where the `dsu` configuration file is located by running `$ dsu config info` and taking note of the confiruration file path. You may then edit this file using your favorite editor.
 
 ##### Configuration File Options
+###### editor
+This is the default editor to use when editing entry groups if the EDITOR environment variable on your system is not set.
+
+Default: `nano` (you'll need to change the default editor on Windows systems)
+
 ###### entries_display_order
 Valid values are 'asc' and 'desc', and will sort listed DSU entries in ascending or descending order respectfully, by day.
 
@@ -141,7 +235,7 @@ Default: `'/Users/<whoami>/dsu/entries'` on nix systems.
 Where `<whoami>` would be your username (`$ whoami` on nix systems)
 
 ## WIP Notes
-This gem is in development (alpha release) and currently does not provide the ability to UPDATE or DELETE activities. These features will be added in future releases.
+This gem is in development (alpha release).
 
 ## Installation
 

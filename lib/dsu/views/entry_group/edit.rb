@@ -57,11 +57,12 @@ module Dsu
               'followed by the description.'
           say '# EDIT a DSU entry: change the description.'
           say '# DELETE a DSU entry: delete the entry or replace the sha with one ' \
-              'of the following commands: [-|d|delete]. NOTE: deleting all the entries ' \
-              'will delete the entry group file; this is preferable if this is what you ' \
-              'want to do :)'
+              'of the following commands: [-|d|delete].'
+          say '# NOTE: deleting all the entries will delete the entry group file; '
+          say '#       this is preferable if this is what you want to do :)'
           say '# REORDER a DSU entry: reorder the DSU entries in order preference.'
-          say '# When you are done, save and close your editor.'
+          say '#'
+          say '# *** When you are done, save and close your editor ***'
         end
       end
     end

@@ -18,6 +18,10 @@ module Dsu
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_DSU_OPTIONS = {
+        # The default editor to use when editing entry groups if the EDITOR
+        # environment variable on your system is not set. On nix systmes,
+        # the default editor is`nano`. You need to change this default on
+        # Windows systems.
         'editor' => 'nano',
         # The order by which entries should be displayed by default:
         # asc or desc, ascending or descending, respectively.

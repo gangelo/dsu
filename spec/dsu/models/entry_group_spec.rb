@@ -221,46 +221,96 @@ RSpec.describe Dsu::Models::EntryGroup do
   end
 
   describe 'class methods' do
+    describe '.delete' do
+      context 'when an entry group file exists for :time' do
+        before do
+          create_entry_group_file!(entry_group: create(:entry_group, :with_entries, time: time))
+        end
+
+        after do
+          delete_entry_group_file!(time: time)
+        end
+
+        it 'exists before it is deleted' do
+          expect(described_class.exists?(time: time)).to be true
+        end
+
+        it 'deletes the file' do
+          described_class.delete(time: time)
+          expect(described_class.exists?(time: time)).to be false
+        end
+      end
+
+      context 'when an entry group file does NOT exist for :time' do
+        it 'does not exist before it is deleted' do
+          expect(described_class.exists?(time: time)).to be false
+        end
+
+        it 'does NOT raise an error' do
+          expect { described_class.delete(time: time) }.not_to raise_error
+        end
+      end
+    end
+
+    describe '.exists?' do
+      context 'when an entry group file exists for :time' do
+        after do
+          delete_entry_group_file!(time: time)
+        end
+
+        it 'returns true' do
+          create_entry_group_file!(entry_group: create(:entry_group, :with_entries, time: time))
+          expect(described_class.exists?(time: time)).to be true
+        end
+      end
+
+      context 'when an entry group file does NOT exist for :time' do
+        before do
+          delete_entry_group_file!(time: time)
+        end
+
+        it 'returns false' do
+          expect(described_class.exists?(time: time)).to be false
+        end
+      end
+    end
+
     describe '.load' do
       subject(:entry_group) { described_class.load(time: time) }
 
-      context 'when an entry group file exists for :time' do
-        context 'when the entry group file has entries' do
-          before do
-            # Write our entry group to the file system so that when we
-            # call our subject, it will load the entries from the file system.
-            build(:entry_group, time: time, entries: entries).tap do |entry_group|
-              create_entry_group_file!(entry_group: entry_group)
-            end
-          end
-
-          let(:entries) { build_list(:entry, 2) }
-          let(:entry_group_hash) do
-            {
-              time: time,
-              entries: entries.map(&:to_h)
-            }
-          end
-
-          it 'loads the entry group and entries' do
-            expect(entry_group.to_h).to match_array entry_group_hash
+      context 'when an entry group file exists for :time and the entry group file has entries' do
+        before do
+          # Write our entry group to the file system so that when we
+          # call our subject, it will load the entries from the file system.
+          build(:entry_group, time: time, entries: entries).tap do |entry_group|
+            create_entry_group_file!(entry_group: entry_group)
           end
         end
 
-        context 'when the entry group file does NOT have entries' do
-          context 'when the entry group file has entries' do
-            let(:entries) { [] }
-            let(:entry_group_hash) do
-              {
-                time: time,
-                entries: entries
-              }
-            end
+        let(:entries) { build_list(:entry, 2) }
+        let(:entry_group_hash) do
+          {
+            time: time,
+            entries: entries.map(&:to_h)
+          }
+        end
 
-            it 'loads the entry group and entries is initialized to an empty Array' do
-              expect(entry_group.to_h).to match_array entry_group_hash
-            end
-          end
+        it 'loads the entry group and entries' do
+          expect(entry_group.to_h).to match_array entry_group_hash
+        end
+      end
+
+      context 'when an entry group file exists for :time and the entry group file does NOT have entries' do
+        let(:entries) { [] }
+        let(:entry_group_hash) do
+          {
+            time: time,
+            entries: entries
+          }
+        end
+
+        it 'loads the entry group and entries is initialized to an empty Array' do
+          expect(entry_group.to_h).to match_array entry_group_hash
         end
       end
 

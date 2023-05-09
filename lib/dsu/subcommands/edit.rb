@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'English'
 require_relative '../base_cli'
 require_relative '../models/entry_group'
 require_relative '../services/temp_file_reader_service'
@@ -77,7 +78,15 @@ module Dsu
         end
         # ...which is then written to a temp file.
         Services::TempFileWriterService.new(temp_file_content: output).call do |temp_file_path|
-          system("${EDITOR:-#{configuration[:editor]}} #{temp_file_path}")
+          unless system("${EDITOR:-#{configuration[:editor]}} #{temp_file_path}")
+            say "Failed to open temporary file in editor '#{configuration[:editor]}';" \
+                "the system error returned was: '#{$CHILD_STATUS}'.", ERROR
+            say 'Either set the EDITOR environment variable ' \
+                'or set the dsu editor configuration option (`$ dsu config init`).', ERROR
+            say 'Run `$ dsu help config` for more information.', ERROR
+            system('dsu help config')
+            exit 1
+          end
           entries = []
           Services::TempFileReaderService.new(temp_file_path: temp_file_path).call do |temp_file_line|
             # Skip comments and blank lines.
@@ -94,12 +103,11 @@ module Dsu
             entries << Models::Entry.new(uuid: entry_sha, description: entry_description)
           end
 
-          if entries.empty?
-            say 'TODO: If the user deleted all entries, delete the entry group.'
-          else
-            entry_group.entries = entries
-            entry_group.save!
-          end
+          entry_group.entries = entries
+
+          return entry_group.delete if entries.empty?
+
+          entry_group.save!
         end
         entry_group
       end

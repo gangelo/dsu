@@ -2,6 +2,7 @@
 
 require 'deco_lite'
 require_relative '../support/entry_group_loadable'
+require_relative '../services/entry_group_deleter_service'
 require_relative '../services/entry_group_reader_service'
 require_relative '../services/entry_group_writer_service'
 require_relative '../validators/entries_validator'
@@ -31,6 +32,10 @@ module Dsu
       end
 
       class << self
+        def delete(time:, options: {})
+          Services::EntryGroupDeleterService.new(time: time, options: options).call
+        end
+
         def exists?(time:)
           Dsu::Services::EntryGroupReaderService.entry_group_file_exists?(time: time)
         end
@@ -56,7 +61,14 @@ module Dsu
 
       def save!
         validate!
-        Dsu::Services::EntryGroupWriterService.new(entry_group: self).call
+        Services::EntryGroupWriterService.new(entry_group: self).call
+        self
+      end
+
+      # Deletes the entry group file from the file system.
+      def delete
+        self.class.delete(time: time)
+        self
       end
 
       def to_h

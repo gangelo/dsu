@@ -1,4 +1,4 @@
-## [x.x.x] - 2023--mm-dd
+## [0.1.0.alpha.3] - 2023-05-09
 * Changes
   - Entry groups are now editable using the `dsu edit SUBCOMMAND` command. See the README.md or `dsu help edit` for more information.
   - Added `editor` configuration option to specify the editor to use when editing an entry group. This configuration option is used if the $EDITOR environment variable is not set.
