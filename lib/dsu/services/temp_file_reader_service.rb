@@ -18,13 +18,9 @@ module Dsu
       def call
         raise ArgumentError, 'no block given' unless block_given?
 
-        results = []
-
         File.foreach(tmp_file_path) do |line|
-          results << yield(line.strip)
+          yield line.strip
         end
-
-        results.compact
       end
 
       private

@@ -9,8 +9,6 @@ module Dsu
     class ConfigurationLoaderService
       include Dsu::Support::Configuration
 
-      attr_reader :default_options
-
       def initialize(default_options: nil)
         unless default_options.nil? ||
                default_options.is_a?(Hash) ||
@@ -18,7 +16,7 @@ module Dsu
           raise ArgumentError, 'default_options must be a Hash or ActiveSupport::HashWithIndifferentAccess'
         end
 
-        @default_options ||= default_options || {}
+        @default_options = default_options || {}
         @default_options = @default_options.with_indifferent_access if @default_options.is_a?(Hash)
       end
 
@@ -27,6 +25,8 @@ module Dsu
       end
 
       private
+
+      attr_reader :default_options
 
       def config_options
         return Support::Configuration::DEFAULT_DSU_OPTIONS unless config_file?

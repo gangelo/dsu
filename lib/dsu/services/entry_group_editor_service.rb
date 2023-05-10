@@ -54,7 +54,8 @@ module Dsu
       end
 
       def update_entry_group!(tmp_file_path:)
-        entries = Services::TempFileReaderService.new(tmp_file_path: tmp_file_path).call do |tmp_file_line|
+        entries = []
+        Services::TempFileReaderService.new(tmp_file_path: tmp_file_path).call do |tmp_file_line|
           next if skip?(tmp_file_line: tmp_file_line)
 
           entry_info = editor_entry_info_from(tmp_file_line: tmp_file_line)
@@ -63,7 +64,7 @@ module Dsu
 
           entry_info[:sha] = nil if add_entry?(sha: entry_info[:sha])
 
-          Models::Entry.new(uuid: entry_info[:sha], description: entry_info[:description])
+          entries << Models::Entry.new(uuid: entry_info[:sha], description: entry_info[:description])
         end
 
         entry_group.entries = entries
