@@ -192,7 +192,7 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
         expect(entry_group.time).to eq(original_entry_group_hash[:time])
       end
 
-      it 'does not change the entry group existing entry uuids' do
+      it 'does not change the existing entry uuids' do
         original_uuids = original_entry_group_hash[:entries].map { |entry| entry[:uuid] }
         entry_group_uuids = entry_group.entries.map(&:uuid)
         expect(original_uuids.all? { |uuid| entry_group_uuids.include?(uuid) }).to be true
