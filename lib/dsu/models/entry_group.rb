@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'deco_lite'
+require_relative '../services/entry_group_editor_service'
 require_relative '../services/entry_group_deleter_service'
 require_relative '../services/entry_group_reader_service'
 require_relative '../services/entry_group_writer_service'
@@ -39,9 +40,9 @@ module Dsu
         end
 
         def edit(time:, options: {})
-          return unless exists?(time: time)
+          return new(time: time) unless exists?(time: time)
 
-          return load(time: time).tap do |entry_group|
+          load(time: time).tap do |entry_group|
             entry_group.edit(options: options)
           end
         end
@@ -67,6 +68,11 @@ module Dsu
 
       def required_fields
         %i[time entries]
+      end
+
+      def edit(options: {})
+        Services::EntryGroupEditorService.new(entry_group: self, options: options).call
+        self
       end
 
       # Deletes the entry group file from the file system.
