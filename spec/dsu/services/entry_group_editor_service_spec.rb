@@ -143,7 +143,7 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
       end
     end
 
-    context 'when all the entries are deleted' do
+    context 'when all the entries are deleted' do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:delete_cmds) { %w[- d delete] }
       let(:entry_group) { build(:entry_group, entries: build_list(:entry, delete_cmds.length)) }
       let(:entry_group_hash) { entry_group.to_h }
@@ -170,7 +170,7 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
       end
     end
 
-    context 'when entries are added' do
+    context 'when entries are added' do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:add_cmds) { %w[+ a add] }
       let(:tmp_file_contents) do
         entry_group_clone = entry_group.clone
