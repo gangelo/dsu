@@ -4,11 +4,17 @@
 # points to a temporary folder for all our tests
 RSpec.shared_context 'with configuration' do
   before do
-    stub_const('Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS', configuration_default_dsu_options)
+    stub_default_dsu_options
+  end
+
+  # Override this in your tests if you want to use a different folder or stop
+  # stubbing the default options.
+  let(:stub_default_dsu_options) do
+    stub_const('Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS', mocked_default_dsu_options)
   end
 
   # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
-  let(:configuration_default_dsu_options) do
+  let(:mocked_default_dsu_options) do
     {
       'editor' => 'nano',
       'entries_display_order' => 'desc',

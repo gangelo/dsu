@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+RSpec.shared_examples 'the configuration file does not exist' do
+  it 'does not exist' do
+    expect(config.config_file?).to be false
+  end
+end
+
 RSpec.describe Dsu::Services::ConfigurationLoaderService do
   subject(:configuration_loader_service) { described_class.new(default_options: default_options) }
 
@@ -34,12 +40,15 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       let(:default_options) do
         {
-          'version' => 'some version',
-          'entries_folder' => '/some/folder',
-          'entries_file_name' => 'some file name'
+          'editor' => 'editor',
+          'entries_display_order' => 'entries_display_order',
+          'entries_folder' => 'entries_folder',
+          'entries_file_name' => 'entries_file_name'
         }
       end
       # rubocop:enable Style/StringHashKeys
+
+      it_behaves_like 'the configuration file does not exist'
 
       it 'returns the passed options' do
         expect(configuration_loader_service.call).to eq default_options
