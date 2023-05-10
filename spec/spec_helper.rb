@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require 'dotenv/load'
+require 'factory_bot'
+require 'ffaker'
 require 'fileutils'
 require 'pry-byebug'
 require 'securerandom'
+require 'tempfile'
 require 'time'
-require 'factory_bot'
-require 'ffaker'
 
 require_relative './support/configuration_helpers'
 require_relative './support/entry_group_helpers'

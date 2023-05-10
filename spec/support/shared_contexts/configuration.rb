@@ -10,6 +10,8 @@ RSpec.shared_context 'with configuration' do
   # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
   let(:configuration_default_dsu_options) do
     {
+      'editor' => 'nano',
+      'entries_display_order' => 'desc',
       'entries_folder' => "#{Dir.tmpdir}/dsu/entries",
       'entries_file_name' => '%Y-%m-%d.json'
     }

@@ -48,7 +48,7 @@ module Dsu
           say '# [SHA/COMMAND] [DESCRIPTION]'
 
           entry_group.entries.each do |entry|
-            say "#{entry.uuid} #{entry.description}"
+            say "#{entry.uuid} #{entry.description.strip}"
           end
 
           say ''

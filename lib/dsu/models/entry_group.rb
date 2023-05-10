@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require 'deco_lite'
-require_relative '../support/entry_group_loadable'
 require_relative '../services/entry_group_deleter_service'
 require_relative '../services/entry_group_reader_service'
 require_relative '../services/entry_group_writer_service'
+require_relative '../support/entry_group_loadable'
+require_relative '../support/time_formatable'
 require_relative '../validators/entries_validator'
 require_relative '../validators/time_validator'
 
@@ -12,6 +13,7 @@ module Dsu
   module Models
     class EntryGroup < DecoLite::Model
       extend Support::EntryGroupLoadable
+      include Support::TimeFormatable
 
       validates_with Validators::EntriesValidator, fields: [:entries]
       validates_with Validators::TimeValidator, fields: [:time]
@@ -34,6 +36,14 @@ module Dsu
       class << self
         def delete(time:, options: {})
           Services::EntryGroupDeleterService.new(time: time, options: options).call
+        end
+
+        def edit(time:, options: {})
+          return unless exists?(time: time)
+
+          return load(time: time).tap do |entry_group|
+            entry_group.edit(options: options)
+          end
         end
 
         def exists?(time:)
@@ -59,15 +69,19 @@ module Dsu
         %i[time entries]
       end
 
-      def save!
-        validate!
-        Services::EntryGroupWriterService.new(entry_group: self).call
-        self
-      end
-
       # Deletes the entry group file from the file system.
       def delete
         self.class.delete(time: time)
+        self
+      end
+
+      def entries?
+        entries.any?
+      end
+
+      def save!
+        validate!
+        Services::EntryGroupWriterService.new(entry_group: self).call
         self
       end
 

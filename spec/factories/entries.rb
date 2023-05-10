@@ -10,7 +10,7 @@ FactoryBot.define do
     end
 
     initialize_with do
-      new(uuid: uuid, description: description)
+      new(uuid: uuid, description: description.strip)
     end
   end
 end
