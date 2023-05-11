@@ -2,6 +2,7 @@
 
 require_relative '../support/colorable'
 require_relative '../support/say'
+require_relative '../support/time_formatable'
 require_relative 'configuration_loader_service'
 
 module Dsu
@@ -9,6 +10,7 @@ module Dsu
     class EntryGroupEditorService
       include Support::Colorable
       include Support::Say
+      include Support::TimeFormatable
 
       def initialize(entry_group:, options: {})
         raise ArgumentError, 'entry_group is nil' if entry_group.nil?
@@ -22,6 +24,10 @@ module Dsu
       def call
         edit_view = render_edit_view
         edit!(edit_view: edit_view)
+      rescue StandardError => e
+        say "An error occurred while editing the entry group: #{e.message}", ERROR
+      ensure
+        entry_group
       end
 
       private
@@ -31,6 +37,7 @@ module Dsu
       # Renders the edit view to a string so we can write it to a temporary file
       # and edit it. The edits will be used to update the entry group.
       def render_edit_view
+        say "Editing entry group #{formatted_time(time: entry_group.time)}...", HIGHLIGHT
         capture_stdxxx { Views::EntryGroup::Edit.new(entry_group: entry_group).render }
       end
 
