@@ -122,7 +122,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
           build(:entry, uuid: '11111111', description: 'duplicate uuid')
         ]
       end
-      let(:expected_error) { /Entries contains duplicate UUIDs/ }
+      let(:expected_error) { /Entries contains duplicate #uuids/ }
 
       it_behaves_like 'the entry group has entries'
       it_behaves_like 'an error is raised'

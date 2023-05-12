@@ -193,30 +193,20 @@ RSpec.describe Dsu::Models::EntryGroup do
     end
   end
 
-  describe '#to_h_localized' do
-    subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
-
-    let(:entries) { build_list(:entry, 2) }
-    let(:localized_entry_group_hash) do
-      {
-        time: time.localtime,
-        entries: [
-          entries[0].to_h,
-          entries[1].to_h
-        ]
-      }
-    end
-
-    it 'returns a Hash representing the entry group with dates/times localized' do
-      expect(entry_group.to_h_localized).to eq localized_entry_group_hash
-    end
-  end
-
   describe 'validation' do
     context 'when fields are valid' do
       it 'passes validation' do
         expect(entry_group.valid?).to be true
       end
+    end
+
+    context 'when there are duplicate entry descriptions' do
+      subject(:entry_group) { build(:entry_group, time: time, entries: entries).validate! }
+
+      let(:entries) { build_list(:entry, 2, description: 'duplicate') }
+      let(:expected_error) { /Entries contains duplicate #descriptions/ }
+
+      it_behaves_like 'an error is raised'
     end
   end
 
@@ -252,6 +242,10 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
     end
 
+    describe '.edit' do
+      it 'does something'
+    end
+
     describe '.exists?' do
       context 'when an entry group file exists for :time' do
         after do
@@ -273,6 +267,10 @@ RSpec.describe Dsu::Models::EntryGroup do
           expect(described_class.exists?(time: time)).to be false
         end
       end
+    end
+
+    describe '.hydrated_entry_group_hash_for' do
+      it 'does something'
     end
 
     describe '.load' do

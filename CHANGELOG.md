@@ -1,3 +1,9 @@
+## [0.1.0.alpha.5] - 2023-05-12
+* Changes
+  - `dsu edit SUBCOMMAND` will now allow editing of an entry group for a date that does not yet exist. This will allow you to add entries in the editor using `+|a|add DESCRIPTION`. Be sure to follow the instructions in the editor when editing entry group entries.
+  - `dsu edit SUBCOMMAND` will gracefully display an error if the entry sha (Entry#uuid) or entry discription (Entry#description) are not unique. In this case, the entry will not be added to the entry group.
+  NOTE: Not all edge cases are being handled currently by `dsu edit SUBCOMMAND`.
+  - `dsu add OPTION` will raise an error if the entry discription (Entry#description) are not unique. This will be handled gracefully in a future release.
 ## [0.1.0.alpha.4] - 2023-05-09
 * Changes
   - Gemfile gemspec description changes.

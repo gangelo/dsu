@@ -2,12 +2,17 @@
 
 require 'deco_lite'
 require 'securerandom'
+require_relative '../support/descriptable'
 
 module Dsu
   module Models
     class Entry < DecoLite::Model
+      include Support::Descriptable
+
+      ENTRY_UUID_REGEX = /\A[0-9a-f]{8}\z/i
+
       validates :uuid, presence: true, format: {
-        with: /\A[0-9a-f]{8}\z/i,
+        with: ENTRY_UUID_REGEX,
         message: 'is the wrong format. ' \
                  '0-9, a-f, and 8 characters were expected.' \
       }

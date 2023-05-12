@@ -26,13 +26,7 @@ module Dsu
         end
 
         def call
-          # Just in case the entry group is invalid, we'll
-          # validate it before displaying it.
-          entry_group.validate!
           render_entry_group!
-        rescue ActiveModel::ValidationError
-          puts "Error(s) encountered: #{entry_group.errors.full_messages}"
-          raise
         end
         alias render call
 
@@ -47,7 +41,9 @@ module Dsu
           entry_group.entries.each_with_index do |entry, index|
             prefix = "#{format('%03s', index + 1)}. #{entry.uuid}"
             description = colorize_string(string: entry.description, mode: :bold)
-            say "#{prefix} #{description}"
+            entry_info = "#{prefix} #{description}"
+            entry_info = "#{entry_info} (validation failed)" unless entry.valid?
+            say entry_info
           end
         end
       end

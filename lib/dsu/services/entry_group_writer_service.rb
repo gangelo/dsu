@@ -26,6 +26,7 @@ module Dsu
         entry_group.validate!
         create_entry_group_path_if!
         write_entry_group_to_file!
+        entry_group
       rescue ActiveModel::ValidationError
         puts "Error(s) encountered: #{entry_group.errors.full_messages}"
         raise

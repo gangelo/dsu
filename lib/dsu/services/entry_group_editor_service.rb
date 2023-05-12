@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../models/entry'
 require_relative '../support/colorable'
 require_relative '../support/say'
 require_relative '../support/time_formatable'
@@ -24,9 +25,8 @@ module Dsu
       def call
         edit_view = render_edit_view
         edit!(edit_view: edit_view)
-      rescue StandardError => e
-        say "An error occurred while editing the entry group: #{e.message}", ERROR
-      ensure
+        # NOTE: Return the original entry group object as any permanent changes
+        # will have been applied to it.
         entry_group
       end
 
@@ -53,55 +53,77 @@ module Dsu
 
             system('dsu help config')
 
-            return false
+            return # rubocop:disable Lint/NonLocalExitFromIterator: This is not an iterator.
           end
 
           update_entry_group!(tmp_file_path: tmp_file_path)
         end
       end
 
+      # TODO: Clean this up
       def update_entry_group!(tmp_file_path:)
-        entries = []
+        errors = []
+        entry_group.entries = entries = []
         Services::TempFileReaderService.new(tmp_file_path: tmp_file_path).call do |tmp_file_line|
-          next if skip?(tmp_file_line: tmp_file_line)
+          next if comment_or_empty?(tmp_file_line: tmp_file_line)
 
           entry_info = editor_entry_info_from(tmp_file_line: tmp_file_line)
           next if entry_info.empty?
-          next if delete_entry?(sha: entry_info[:sha])
+          next if delete_entry_cmd?(sha: entry_info[:sha])
+          next unless add_entry_cmd?(sha: entry_info[:sha]) || sha?(sha: entry_info[:sha])
 
-          entry_info[:sha] = nil if add_entry?(sha: entry_info[:sha])
+          entry_info[:sha_or_editor_command] = entry_info[:sha]
+          entry_info[:sha] = nil if add_entry_cmd?(sha: entry_info[:sha])
 
-          entries << Models::Entry.new(uuid: entry_info[:sha], description: entry_info[:description])
+          entry = Models::Entry.new(uuid: entry_info[:sha], description: entry_info[:description])
+          entry_group.check_unique(sha_or_editor_command: entry_info[:sha_or_editor_command],
+            description: entry_info[:description]).tap do |status|
+            entries << entry and next if status.unique?
+
+            errors << status.messages
+          end
         end
 
+        # Display any errors encountered.
+        if errors.any?
+          say 'Error: one or more entry values were not unique within the entry group entries:', ERROR
+          errors.flatten.each { |message| say "Error: #{message}", ERROR }
+        end
+
+        # Save or delete any entries.
         entry_group.entries = entries
         entry_group.delete and return unless entry_group.entries?
 
         entry_group.save!
       end
 
-      def delete_entry?(sha:)
+      def sha?(sha:)
+        sha.match?(Models::Entry::ENTRY_UUID_REGEX)
+      end
+
+      def delete_entry_cmd?(sha:)
         %w[- d delete].include?(sha)
       end
 
-      def add_entry?(sha:)
+      def add_entry_cmd?(sha:)
         %w[+ a add].include?(sha)
       end
 
-      def skip?(tmp_file_line:)
+      def comment_or_empty?(tmp_file_line:)
         ['#', nil].include? tmp_file_line[0]
       end
 
       def editor_entry_info_from(tmp_file_line:)
         match_data = tmp_file_line.match(/(\S+)\s(.+)/)
         {
-          sha: match_data[1],
-          description: match_data[2]
+          sha: match_data[1]&.strip,
+          description: match_data[2]&.strip
         }
       rescue StandardError
         {}
       end
 
+      # TODO: Add this to a module.
       # https://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby/4459463#4459463
       def capture_stdxxx
         # The output stream must be an IO-like object. In this case we capture it in

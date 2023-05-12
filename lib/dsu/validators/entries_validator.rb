@@ -24,7 +24,8 @@ module Dsu
           end
 
           validate_entry_types field, entries, record
-          validate_unique_entry_uuids field, entries, record
+          validate_unique_entry_attr :uuid, field, entries, record
+          validate_unique_entry_attr :description, field, entries, record
         end
       end
 
@@ -42,17 +43,17 @@ module Dsu
         end
       end
 
-      def validate_unique_entry_uuids(field, entries, record)
+      def validate_unique_entry_attr(attr, field, entries, record)
         return unless entries.is_a? Array
 
         entry_objects = entries.select { |entry| entry.is_a?(Dsu::Models::Entry) }
 
-        uuids = entry_objects.map(&:uuid)
-        return if uuids.uniq.length == uuids.length
+        attrs = entry_objects.map(&attr)
+        return if attrs.uniq.length == attrs.length
 
-        non_unique_uuids = uuids.select { |element| uuids.count(element) > 1 }.uniq
-        if non_unique_uuids.any?
-          record.errors.add(field, "contains duplicate UUIDs: #{non_unique_uuids.join(', ')}.",
+        non_unique_attrs = attrs.select { |attr| attrs.count(attr) > 1 }.uniq # rubocop:disable Lint/ShadowingOuterLocalVariable
+        if non_unique_attrs.any?
+          record.errors.add(field, "contains duplicate ##{attr}s: #{non_unique_attrs.join(', ')}.",
             type: Dsu::Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
       end

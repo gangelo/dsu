@@ -42,8 +42,10 @@ module Dsu
 
         def render_entry_group!
           say "# Editing DSU Entries for #{formatted_time(time: entry_group.time)}"
-          say('(no entries available for this day)') and return if entry_group.entries.empty?
-
+          # TODO: Display entry group entries from the previous DSU date so they can be
+          # easily copied over; or, add them to the current entry group entries below as
+          # a "# [+|a|add] <entry group from previous DSU entry description>" (e.g. commented
+          # out) by default?
           say ''
           say '# [SHA/COMMAND] [DESCRIPTION]'
 

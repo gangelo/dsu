@@ -19,7 +19,7 @@ After installation (`gem install dsu`), the first thing you may want to do is ru
 ```shell
 #=>
 Commands:
-  dsu add, -a [OPTIONS] DESCRIPTION  # Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION
+  dsu add, -a [OPTIONS] DESCRIPTION  # Adds a DSU entry...
   dsu config, -c SUBCOMMAND          # Manage configuration...
   dsu edit, -e SUBCOMMAND            # Edit DSU entries...
   dsu help [COMMAND]                 # Describe available...
@@ -35,7 +35,7 @@ The next thing you may want to do is `add` some DSU activities (entries) for a p
 ## Adding DSU Entries
 `dsu add [OPTIONS] DESCRIPTION`
 
-Adding DSU entry using this command will _add_ the DSU entry for the given day (or date, `-d`), and also _display_ the given day's (or date's, `-d`) DSU entries, as well as the DSU entries for the previous day relative to the given day or date (`-d`).
+Adding DSU entry using this command will _add_ the DSU entry for the given day (or date, `-d`), and also _display_ the given day's (or date's, `-d`) DSU entries, as well as the DSU entries for the previous day relative to the given day or date (`-d`). *NOTE: You cannot add duplicate entry group entries; that is, the entry DESCRIPTION needs to be unique within an entry group.*
 
 ### Today
 If you need to add a DSU entry to the current day (today), you can use the `-n`|`--today` option. Today (`-n`) is the default; therefore, the `-n` flag is optional when adding DSU entries for the current day:
@@ -97,7 +97,7 @@ Friday, (Yesterday) 2023-05-05
 ```
 ## Editing DSU Entries
 
-You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (today|tomorrow|yesterday|date DATE) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries.
+You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (today|tomorrow|yesterday|date DATE) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries. If no entries exist in the entry group, you can add entries using any of the the *add* (`+|a|add`) editor commands, followed by the entry description. *NOTE: you cannot add duplicate entries; that is, the entry SHA and DESCRIPTION need to be unique within an entry group. Non-unique entries will not be added to the entry group.*
 
 Note: See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-configuration-file)"" section to configure `dsu` to use the editor of your choice.
 
@@ -244,6 +244,9 @@ DATE may be any date string that can be parsed using `Time.parse`. Consequently,
 
 ## WIP Notes
 This gem is in development (alpha release).
+
+- Not all edge cases are being handled currently by `dsu edit SUBCOMMAND`.
+- `dsu add OPTION` will raise an error if the entry discription (Entry#description) are not unique. This will be handled gracefully in a future release.
 
 ## Installation
 
