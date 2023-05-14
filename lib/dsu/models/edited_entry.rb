@@ -8,16 +8,14 @@ module Dsu
     class EditedEntry
       include ActiveModel::Model
 
-      ENTRY_CMD_TOKEN_REGEX = /\A([+-]|a(?:dd)?|d(?:elete)?\z)/i
-      ENTRY_CMD_REGEX = /\A([+-]|a(?:dd)?|d(?:elete)?)\s+.*\z/i
+      # Check a single editor command token.
+      ENTRY_CMD_REGEX = /\A([+-]|a(?:dd)?|d(?:elete)?\z)/i
+      # Checks for a single uuid token.
+      ENTRY_UUID_REGEX = /\A(\h{8})\z/i
+      # Checks for a description within the editor line that may or may not
+      # include an editor command or uuid.
+      ENTRY_DESCRIPTION_REGEX = /\A(?:(?<uuid>\h{8})\s|(?<cmd>[+\-]|a|add|d|delete)\s)?(?<description>.*)\z/i
 
-      ENTRY_UUID_TOKEN_REGEX = /\A(\h{8})\z/i
-      ENTRY_UUID_REGEX = /\A(\h{8})\s+.*\z/i
-
-      ENTRY_DESCRIPTION_REGEX = /\A(?:(?:\b|[+-]|a(?:dd)?|d(?:elete)?)\b)?(.*)\z/i
-
-      validate :validate_uuid, if: :uuid?
-      validate :validate_cmd, if: :cmd?
       validate :validate_uuid_or_cmd_present, unless: proc { |e| e.uuid? || e.cmd? }
       validates :description, presence: true, length: { minimum: 2, maximum: 256 }
 
@@ -27,14 +25,16 @@ module Dsu
       def initialize(editor_line)
         raise ArgumentError, 'editor_line is not a string' unless editor_line.is_a?(String) || editor_line.blank?
 
-        @editor_line = editor_line&.strip&.gsub(/\s+/, ' ')
-        @uuid = ENTRY_UUID_REGEX.match(@editor_line).try(:[], 1)
-        @cmd = ENTRY_CMD_REGEX.match(@editor_line).try(:[], 1)
-        @description = ENTRY_DESCRIPTION_REGEX.match(@editor_line).try(:[], 1)
-      end
+        # Append a space to the end of the editor line to make regex matching
+        # match into the proper groups.
+        @editor_line = editor_line&.strip&.gsub(/\s+/, ' ').try(:<<, ' ')
 
-      def required_fields
-        %i[]
+        match = ENTRY_DESCRIPTION_REGEX.match(@editor_line)
+        @cmd = match.try(:[], :cmd)
+        @uuid = match.try(:[], :uuid)
+        @description = match.try(:[], :description)&.strip
+        # Just making things consistent since uuid and cmd are nil if not present.
+        @description = nil if @description.blank?
       end
 
       def cmd?
@@ -69,24 +69,6 @@ module Dsu
         return if uuid? || cmd?
 
         errors.add(:uuid, 'or cmd must be present.')
-      end
-
-      def validate_uuid
-        return if ENTRY_UUID_TOKEN_REGEX.match?(uuid)
-
-        #errors.add(:uuid, "can't be blank.") and return if uuid.blank?
-
-        errors.add(:uuid, 'is the wrong format. ' \
-                          '0-9, a-f, and 8 characters were expected.')
-      end
-
-      def validate_cmd
-        return if ENTRY_CMD_TOKEN_REGEX.match?(cmd)
-
-        #errors.add(:cmd, "can't be blank.") and return if cmd.blank?
-
-        errors.add(:cmd, 'is an invalid command. ' \
-                         '+, a, add, -, d or delete were expected.')
       end
     end
   end
