@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+RSpec.shared_examples 'the entry is ignored and not saved' do
+  it 'does something'
+end
+
 RSpec.describe Dsu::Services::EntryGroupEditorService do
   subject(:entry_group_editor_service) { described_class.new(entry_group: entry_group) }
 
@@ -200,6 +204,22 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
 
       it 'saves the changes to the entry group file' do
         expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
+      end
+    end
+
+    context 'when the entry group file is edited incorrectly' do
+      before do
+        allow(Dsu::Views::EntryGroup::Edit).to receive(:entry_group_entry_lines).and_return(edit_entry_groups)
+      end
+
+      context 'when then entry line has no sha or editor command' do
+        let(:edit_entry_groups) do
+          [
+            'This is an entry with no sha or editor command'
+          ]
+        end
+
+        it_behaves_like 'the entry is ignored and not saved'
       end
     end
   end

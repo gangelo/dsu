@@ -3,8 +3,6 @@
 require 'time'
 require 'active_support/core_ext/numeric/time'
 require_relative '../../models/entry_group'
-require_relative '../../support/colorable'
-require_relative '../../support/say'
 require_relative '../../support/time_formatable'
 
 module Dsu
@@ -29,8 +27,10 @@ module Dsu
           # Just in case the entry group is invalid, we'll
           # validate it before displaying it.
           entry_group.validate!
-          render_entry_group!
+          render!
         rescue ActiveModel::ValidationError
+          # TODO: Don't like how this is catching, printing and raising.
+          # Change this.
           puts "Error(s) encountered: #{entry_group.errors.full_messages}"
           raise
         end
@@ -40,31 +40,35 @@ module Dsu
 
         attr_reader :entry_group, :options
 
-        def render_entry_group!
-          say "# Editing DSU Entries for #{formatted_time(time: entry_group.time)}"
+        def render!
+          puts "# Editing DSU Entries for #{formatted_time(time: entry_group.time)}"
           # TODO: Display entry group entries from the previous DSU date so they can be
           # easily copied over; or, add them to the current entry group entries below as
           # a "# [+|a|add] <entry group from previous DSU entry description>" (e.g. commented
           # out) by default?
-          say ''
-          say '# [SHA/COMMAND] [DESCRIPTION]'
+          puts ''
+          puts '# [SHA/COMMAND] [DESCRIPTION]'
 
-          entry_group.entries.each do |entry|
-            say "#{entry.uuid} #{entry.description.strip}"
+          entry_group_entry_lines.each { |entry_line| puts entry_line }
+
+          puts ''
+          puts '# INSTRUCTIONS:'
+          puts '# ADD a DSU entry: use one of the following commands: [+|a|add] ' \
+               'followed by the description.'
+          puts '# EDIT a DSU entry: change the description.'
+          puts '# DELETE a DSU entry: delete the entry or replace the sha with one ' \
+               'of the following commands: [-|d|delete].'
+          puts '# NOTE: deleting all the entries will delete the entry group file; '
+          puts '#       this is preferable if this is what you want to do :)'
+          puts '# REORDER a DSU entry: reorder the DSU entries in order preference.'
+          puts '#'
+          puts '# *** When you are done, save and close your editor ***'
+        end
+
+        def entry_group_entry_lines
+          entry_group.entries.map do |entry|
+            "#{entry.uuid} #{entry.description.strip}"
           end
-
-          say ''
-          say '# INSTRUCTIONS:'
-          say '# ADD a DSU entry: use one of the following commands: [+|a|add] ' \
-              'followed by the description.'
-          say '# EDIT a DSU entry: change the description.'
-          say '# DELETE a DSU entry: delete the entry or replace the sha with one ' \
-              'of the following commands: [-|d|delete].'
-          say '# NOTE: deleting all the entries will delete the entry group file; '
-          say '#       this is preferable if this is what you want to do :)'
-          say '# REORDER a DSU entry: reorder the DSU entries in order preference.'
-          say '#'
-          say '# *** When you are done, save and close your editor ***'
         end
       end
     end

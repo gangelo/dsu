@@ -106,10 +106,10 @@ module Dsu
         end
       end
 
-      def check_unique(sha_or_editor_command:, description:)
-        raise ArgumentError, 'sha_or_editor_command is nil' if sha_or_editor_command.nil?
+      def check_unique(sha_or_editor_cmd:, description:)
+        raise ArgumentError, 'sha_or_editor_cmd is nil' if sha_or_editor_cmd.nil?
         raise ArgumentError, 'description is nil' if description.nil?
-        raise ArgumentError, 'sha_or_editor_command is the wrong object type' unless sha_or_editor_command.is_a?(String)
+        raise ArgumentError, 'sha_or_editor_cmd is the wrong object type' unless sha_or_editor_cmd.is_a?(String)
         raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
 
         if entries.blank?
@@ -121,11 +121,11 @@ module Dsu
           hash[entry_group_entry.uuid] = entry_group_entry.description
         end
 
-        # It is possible that sha_or_editor_command may have an editor command (e.g. +|a|add). If this
+        # It is possible that sha_or_editor_cmd may have an editor command (e.g. +|a|add). If this
         # is the case, just treat it as unique because when the entry is added, it will get a unique uuid.
-        uuid_unique = !sha_or_editor_command.match?(Entry::ENTRY_UUID_REGEX) || !entry_hash.key?(sha_or_editor_command)
+        uuid_unique = !sha_or_editor_cmd.match?(Entry::ENTRY_UUID_REGEX) || !entry_hash.key?(sha_or_editor_cmd)
         entry_unique_hash = entry_unique_hash_for(
-          uuid: sha_or_editor_command,
+          uuid: sha_or_editor_cmd,
           uuid_unique: uuid_unique,
           description: description,
           description_unique: !entry_hash.value?(description)

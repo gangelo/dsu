@@ -9,13 +9,9 @@ module Dsu
     class Entry < DecoLite::Model
       include Support::Descriptable
 
-      ENTRY_UUID_REGEX = /\A[0-9a-f]{8}\z/i
+      ENTRY_UUID_REGEX = /\A(\h{8})\s+/i
 
-      validates :uuid, presence: true, format: {
-        with: ENTRY_UUID_REGEX,
-        message: 'is the wrong format. ' \
-                 '0-9, a-f, and 8 characters were expected.' \
-      }
+      validate :validate_uuid
       validates :description, presence: true, length: { minimum: 2, maximum: 256 }
 
       def initialize(description:, uuid: nil)
@@ -39,6 +35,17 @@ module Dsu
         return false unless other.is_a?(Entry)
 
         uuid == other.uuid && description == other.description
+      end
+
+      private
+
+      def validate_uuid
+        return if uuid.match?(ENTRY_UUID_REGEX)
+
+        errors.add(:uuid, "can't be blank.") and return if uuid.blank?
+
+        errors.add(:uuid, 'is the wrong format. ' \
+                          '0-9, a-f, and 8 characters were expected.')
       end
     end
   end

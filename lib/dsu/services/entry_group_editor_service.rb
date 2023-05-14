@@ -45,11 +45,12 @@ module Dsu
       def edit!(edit_view:)
         Services::TempFileWriterService.new(tmp_file_content: edit_view).call do |tmp_file_path|
           unless Kernel.system("${EDITOR:-#{configuration[:editor]}} #{tmp_file_path}")
-            say "Failed to open temporary file in editor '#{configuration[:editor]}';" \
+            say "Failed to open temporary file in editor '#{configuration[:editor]}'; " \
                 "the system error returned was: '#{$CHILD_STATUS}'.", ERROR
             say 'Either set the EDITOR environment variable ' \
                 'or set the dsu editor configuration option (`$ dsu config init`).', ERROR
-            say 'Run `$ dsu help config` for more information.', ERROR
+            say 'Run `$ dsu help config` for more information:', ERROR
+            say ''
 
             system('dsu help config')
 
@@ -60,24 +61,16 @@ module Dsu
         end
       end
 
-      # TODO: Clean this up
       def update_entry_group!(tmp_file_path:)
         errors = []
         entry_group.entries = entries = []
         Services::TempFileReaderService.new(tmp_file_path: tmp_file_path).call do |tmp_file_line|
-          next if comment_or_empty?(tmp_file_line: tmp_file_line)
+          editor_line = Support::EntryGroupEditorLine.new(tmp_file_line)
+          next if editor_line.skip?
 
-          entry_info = editor_entry_info_from(tmp_file_line: tmp_file_line)
-          next if entry_info.empty?
-          next if delete_entry_cmd?(sha: entry_info[:sha])
-          next unless add_entry_cmd?(sha: entry_info[:sha]) || sha?(sha: entry_info[:sha])
-
-          entry_info[:sha_or_editor_command] = entry_info[:sha]
-          entry_info[:sha] = nil if add_entry_cmd?(sha: entry_info[:sha])
-
-          entry = Models::Entry.new(uuid: entry_info[:sha], description: entry_info[:description])
-          entry_group.check_unique(sha_or_editor_command: entry_info[:sha_or_editor_command],
-            description: entry_info[:description]).tap do |status|
+          entry = Models::Entry.new(uuid: editor_line.sha, description: editor_line.description)
+          entry_group.check_unique(sha_or_editor_cmd: editor_line.sha_or_editor_cmd,
+            description: editor_line.description).tap do |status|
             entries << entry and next if status.unique?
 
             errors << status.messages
@@ -95,32 +88,6 @@ module Dsu
         entry_group.delete and return unless entry_group.entries?
 
         entry_group.save!
-      end
-
-      def sha?(sha:)
-        sha.match?(Models::Entry::ENTRY_UUID_REGEX)
-      end
-
-      def delete_entry_cmd?(sha:)
-        %w[- d delete].include?(sha)
-      end
-
-      def add_entry_cmd?(sha:)
-        %w[+ a add].include?(sha)
-      end
-
-      def comment_or_empty?(tmp_file_line:)
-        ['#', nil].include? tmp_file_line[0]
-      end
-
-      def editor_entry_info_from(tmp_file_line:)
-        match_data = tmp_file_line.match(/(\S+)\s(.+)/)
-        {
-          sha: match_data[1]&.strip,
-          description: match_data[2]&.strip
-        }
-      rescue StandardError
-        {}
       end
 
       # TODO: Add this to a module.
