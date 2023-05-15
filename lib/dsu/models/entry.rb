@@ -1,51 +1,38 @@
 # frozen_string_literal: true
 
-require 'deco_lite'
+require 'active_model'
 require 'securerandom'
 require_relative '../support/descriptable'
+require_relative '../validators/description_validator'
 
 module Dsu
   module Models
-    class Entry < DecoLite::Model
+    class Entry
+      include ActiveModel::Model
       include Support::Descriptable
 
-      ENTRY_UUID_REGEX = /\A(\h{8})\s+/i
+      # validates :description, presence: true
+      # validate :validate_description, if: proc { |entry| entry.description.present? }
+      validates_with Validators::DescriptionValidator, fields: [:description]
 
-      validate :validate_uuid
-      validates :description, presence: true, length: { minimum: 2, maximum: 256 }
+      attr_reader :description
 
-      def initialize(description:, uuid: nil)
+      def initialize(description:)
         raise ArgumentError, 'description is nil' if description.nil?
         raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
-        raise ArgumentError, 'uuid is the wrong object type' unless uuid.is_a?(String) || uuid.nil?
+        raise ArgumentError, 'description is blank' if description.blank?
 
-        uuid ||= SecureRandom.uuid[0..7]
-
-        super(hash: {
-          uuid: uuid,
-          description: description
-        })
+        @description = description.strip
       end
 
-      def required_fields
-        %i[uuid description]
+      def to_h
+        { description: description }
       end
 
       def ==(other)
         return false unless other.is_a?(Entry)
 
-        uuid == other.uuid && description == other.description
-      end
-
-      private
-
-      def validate_uuid
-        return if uuid.match?(ENTRY_UUID_REGEX)
-
-        errors.add(:uuid, "can't be blank.") and return if uuid.blank?
-
-        errors.add(:uuid, 'is the wrong format. ' \
-                          '0-9, a-f, and 8 characters were expected.')
+        description == other.description
       end
     end
   end

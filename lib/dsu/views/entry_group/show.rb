@@ -39,12 +39,16 @@ module Dsu
           say('(no entries available for this day)') and return if entry_group.entries.empty?
 
           entry_group.entries.each_with_index do |entry, index|
-            prefix = "#{format('%03s', index + 1)}. #{entry.uuid}"
+            prefix = "#{format('%03s', index + 1)}. "
             description = colorize_string(string: entry.description, mode: :bold)
             entry_info = "#{prefix} #{description}"
-            entry_info = "#{entry_info} (validation failed)" unless entry.valid?
+            entry_info = "#{entry_info} (validation failed: #{entry_errors(entry_group_deleter_service)})" unless entry.valid?
             say entry_info
           end
+        end
+
+        def entry_errors(entry)
+          entry.errors.full_messages.join(', ')
         end
       end
     end

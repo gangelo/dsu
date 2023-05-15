@@ -17,13 +17,11 @@ RSpec.shared_context 'with entries data' do
   # The hash equivalent of an Entry model.
   let(:entry_0_hash) do
     {
-      uuid: '00000000',
       description: '0 description'
     }
   end
   let(:entry_1_hash) do
     {
-      uuid: '11111111',
       description: '1 description'
     }
   end

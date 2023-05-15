@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'deco_lite'
+require 'active_model'
 require_relative '../services/entry_group_editor_service'
 require_relative '../services/entry_group_deleter_service'
 require_relative '../services/entry_group_reader_service'
@@ -13,30 +13,26 @@ require_relative 'entry'
 
 module Dsu
   module Models
-    class EntryGroup < DecoLite::Model
+    class EntryGroup
+      include ActiveModel::Model
       extend Support::EntryGroupLoadable
       include Support::TimeFormatable
+
+      attr_accessor :time
+      attr_reader :entries
 
       validates_with Validators::EntriesValidator, fields: [:entries]
       validates_with Validators::TimeValidator, fields: [:time]
 
       def initialize(time: nil, entries: [])
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?
-        raise ArgumentError, 'entries is the wrong object type' unless entries.is_a?(Array) || entries.nil?
 
-        time ||= Time.now
-        time = time.localtime if time.utc?
-
-        entries ||= []
-
-        super(hash: {
-          time: time,
-          entries: entries
-        })
+        @time = ensure_local_time(time)
+        self.entries = entries || []
       end
 
       class << self
-        def delete(time:, options: {})
+        def delete!(time:, options: {})
           Services::EntryGroupDeleterService.new(time: time, options: options).call
         end
 
@@ -67,14 +63,13 @@ module Dsu
           entry_group_hash = entry_group_hash_for(time: time)
           hydrate_entry_group_hash(entry_group_hash: entry_group_hash, time: time)
         end
-
-        def unique?(entry:)
-
-        end
       end
 
-      def required_fields
-        %i[time entries]
+      def clone
+        clone = super
+
+        clone.entries = clone.entries.map(&:clone)
+        clone
       end
 
       def edit(options: {})
@@ -82,9 +77,19 @@ module Dsu
         self
       end
 
+      def entries=(entries)
+        entries ||= []
+
+        raise ArgumentError, 'entries is the wrong object type' unless entries.is_a?(Array)
+        raise ArgumentError, 'entries contains the wrong object type' unless entries.all?(Entry)
+
+        @entries = entries.map(&:clone)
+      end
+
       # Deletes the entry group file from the file system.
-      def delete
-        self.class.delete(time: time)
+      def delete!
+        self.class.delete!(time: time)
+        self.entries = []
         self
       end
 
@@ -93,80 +98,24 @@ module Dsu
       end
 
       def save!
+        delete and return if entries.empty?
+
         validate!
         Services::EntryGroupWriterService.new(entry_group: self).call
+        self
       end
 
       def to_h
-        super.tap do |hash|
-          hash[:entries] = hash[:entries].dup
-          hash[:entries].each_with_index do |entry, index|
-            hash[:entries][index] = entry.to_h
-          end
-        end
-      end
-
-      def check_unique(sha_or_editor_cmd:, description:)
-        raise ArgumentError, 'sha_or_editor_cmd is nil' if sha_or_editor_cmd.nil?
-        raise ArgumentError, 'description is nil' if description.nil?
-        raise ArgumentError, 'sha_or_editor_cmd is the wrong object type' unless sha_or_editor_cmd.is_a?(String)
-        raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
-
-        if entries.blank?
-          entry_unique_hash = entry_unique_hash_for(uuid_unique: true, description_unique: true)
-          return entry_unique_struct_from(entry_unique_hash: entry_unique_hash)
-        end
-
-        entry_hash = entries.each_with_object({}) do |entry_group_entry, hash|
-          hash[entry_group_entry.uuid] = entry_group_entry.description
-        end
-
-        # It is possible that sha_or_editor_cmd may have an editor command (e.g. +|a|add). If this
-        # is the case, just treat it as unique because when the entry is added, it will get a unique uuid.
-        uuid_unique = !sha_or_editor_cmd.match?(Entry::ENTRY_UUID_REGEX) || !entry_hash.key?(sha_or_editor_cmd)
-        entry_unique_hash = entry_unique_hash_for(
-          uuid: sha_or_editor_cmd,
-          uuid_unique: uuid_unique,
-          description: description,
-          description_unique: !entry_hash.value?(description)
-        )
-        entry_unique_struct_from(entry_unique_hash: entry_unique_hash)
-      end
-
-      def entry_unique_hash_for(uuid_unique:, description_unique:, uuid: nil, description: nil)
         {
-          uuid: uuid,
-          uuid_unique: uuid_unique,
-          description: description,
-          description_unique: description_unique,
-          formatted_time: Support::TimeFormatable.formatted_time(time: time)
+          time: time.dup,
+          entries: entries.map(&:to_h)
         }
       end
 
-      def entry_unique_struct_from(entry_unique_hash:)
-        Struct.new(*entry_unique_hash.keys, keyword_init: true) do
-          def unique?
-            uuid_unique? && description_unique?
-          end
+      private
 
-          def uuid_unique?
-            uuid_unique
-          end
-
-          def description_unique?
-            description_unique
-          end
-
-          def messages
-            return [] if unique?
-
-            short_description = Models::Entry.short_description(string: description)
-
-            messages = []
-            messages << "#uuid is not unique: \"#{uuid} #{short_description}\"" unless uuid_unique?
-            messages << "#description is not unique: \"#{uuid} #{short_description}\""
-          end
-        end.new(**entry_unique_hash)
+      def ensure_local_time(time)
+        time.nil? ? Time.now : time.dup.localtime
       end
     end
   end

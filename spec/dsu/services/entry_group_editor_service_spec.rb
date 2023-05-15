@@ -101,10 +101,8 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
         expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
       end
 
-      it 'does not change the original time or entry uuids' do
-        changed_entry_group_info = { time: entry_group.to_h[:time], uuids: entry_group.to_h[:entries].map { |entry| entry[:uuid] } }
-        original_entry_group_info = { time: original_entry_group_hash[:time], uuids: original_entry_group_hash[:entries].map { |entry| entry[:uuid] } }
-        expect(changed_entry_group_info).to match_array(original_entry_group_info)
+      it 'does not change the original time' do
+        expect(entry_group.to_h).to match(original_entry_group_hash)
       end
     end
 
@@ -128,18 +126,9 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
         expect(entry_group.to_h[:entries].first).to eq(original_entry_group_hash[:entries].first)
       end
 
-      it 'does not change the original entry group time or entry uuids' do # rubocop:disable RSpec/ExampleLength
-        changed_entry_group_info = {
-          time: entry_group.to_h[:time],
-          uuids: entry_group.to_h[:entries].map { |entry| entry[:uuid] }
-        }
-        original_entry_group_info = {
-          time: original_entry_group_hash[:time],
-          uuids: original_entry_group_hash[:entries].filter_map do |entry|
-                   entry[:uuid] if changed_entry_group_info[:uuids].include?(entry[:uuid])
-                 end
-        }
-        expect(changed_entry_group_info).to eq(original_entry_group_info)
+      it 'does not change the original entry group time or entry descriptions' do
+        # TODO: Do I need to clone and remove the the original entry group hash?
+        expect(entry_group.to_h).to match(original_entry_group_hash)
       end
 
       it 'saves the changes to the entry group file' do
@@ -147,17 +136,13 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
       end
     end
 
-    context 'when all the entries are deleted' do # rubocop:disable RSpec/MultipleMemoizedHelpers
-      let(:delete_cmds) { %w[- d delete] }
+    context 'when all the entries are deleted' do
       let(:entry_group) { build(:entry_group, entries: build_list(:entry, delete_cmds.length)) }
       let(:entry_group_hash) { entry_group.to_h }
       let(:tmp_file_contents) do
         Dsu::Views::EntryGroup::Edit.new(entry_group:
           entry_group.clone.tap do |cloned_entry_group|
-            cloned_entry_group.entries.each_with_index do |entry, index|
-              cloned_entry_group.entries[index] = entry.clone
-              cloned_entry_group.entries[index].uuid = delete_cmds[index]
-            end
+            cloned_entry_group.entries = []
           end).render
       end
 
@@ -175,16 +160,16 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     end
 
     context 'when entries are added' do # rubocop:disable RSpec/MultipleMemoizedHelpers
-      let(:add_cmds) { %w[+ a add] }
       let(:tmp_file_contents) do
         entry_group_clone = entry_group.clone
-        entry_group.entries.concat(added_entries)
+        entry_group_clone.entries.concat(added_entries)
         Dsu::Views::EntryGroup::Edit.new(entry_group: entry_group_clone).render
       end
       let(:added_entries) do
-        build_list(:entry, add_cmds.length).each_with_index.map do |entry, index|
-          entry.tap { |e| e.uuid = add_cmds[index] }
-        end
+        [
+          build(:entry, description: 'Added entry 1'),
+          build(:entry, description: 'Added entry 2')
+        ]
       end
 
       it 'adds the entries to the entry group object' do
@@ -194,12 +179,6 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
 
       it 'does not change the entry group time' do
         expect(entry_group.time).to eq(original_entry_group_hash[:time])
-      end
-
-      it 'does not change the existing entry uuids' do
-        original_uuids = original_entry_group_hash[:entries].map { |entry| entry[:uuid] }
-        entry_group_uuids = entry_group.entries.map(&:uuid)
-        expect(original_uuids.all? { |uuid| entry_group_uuids.include?(uuid) }).to be true
       end
 
       it 'saves the changes to the entry group file' do

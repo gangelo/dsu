@@ -78,12 +78,6 @@ RSpec.describe Dsu::Models::EntryGroup do
     end
   end
 
-  describe '#required_fields' do
-    it 'returns the correct required fields' do
-      expect(described_class.new(time: time).required_fields).to match_array %i[time entries]
-    end
-  end
-
   describe '#time' do
     context 'when time is nil?' do
       before do
@@ -117,60 +111,49 @@ RSpec.describe Dsu::Models::EntryGroup do
     end
   end
 
-  describe '#entries' do
+  describe '#entries=' do
     context 'when entries is nil' do
       before do
         entry_group.entries = nil
-        entry_group.validate
       end
 
-      let(:expected_errors) do
-        [
-          'Entries is the wrong object type. "Array" ' \
-          'was expected, but "NilClass" was received.'
-        ]
+      it 'uses an empty Array' do
+        expect(entry_group.entries).to eq []
       end
-
-      it_behaves_like 'the validation fails'
     end
 
-    context 'when entries is the wrong object type' do
+    context 'when entries is an empty Array' do
       before do
-        entry_group.entries = :bad
-        entry_group.validate
+        entry_group.entries = []
       end
 
-      let(:expected_errors) do
-        [
-          'Entries is the wrong object type. "Array" ' \
-          'was expected, but "Symbol" was received.'
-        ]
+      it 'uses the empty Array' do
+        expect(entry_group.entries).to eq []
       end
-
-      it_behaves_like 'the validation fails'
     end
 
-    context 'when entries elements are the wrong object type' do
-      before do
-        entry_group.entries = entries_array
-        entry_group.validate
-      end
+    context 'when entries is not an Array' do
+      subject(:entry_group) { build(:entry_group).entries = entries }
 
-      let(:entries_array) do
+      let(:entries) { :not_an_array }
+      let(:expected_error) { /entries is the wrong object type/ }
+
+      it_behaves_like 'an error is raised'
+    end
+
+    context 'when entries contains non-Entry objects' do
+      subject(:entry_group) { build(:entry_group).entries = entries }
+
+      let(:entries) do
         [
           build(:entry),
           :not_an_entry,
           build(:entry)
         ]
-      end
-      let(:expected_errors) do
-        [
-          'Entries entry Array element is the wrong object type. ' \
-          '"Entry" was expected, but "Symbol" was received.'
-        ]
-      end
+        let(:expected_error) { /entries entry Array element is the wrong object type/ }
 
-      it_behaves_like 'the validation fails'
+        it_behaves_like 'an error is raised'
+      end
     end
   end
 

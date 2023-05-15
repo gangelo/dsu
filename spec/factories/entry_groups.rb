@@ -4,8 +4,7 @@ FactoryBot.define do
   factory :entry_group, class: 'Dsu::Models::EntryGroup' do
     transient do
       # Use this if you want to control the entries added
-      # to this entry group. For example, if you need to
-      # control the entry uuids or other attributes.
+      # to this entry group.
       entries { [] }
     end
 

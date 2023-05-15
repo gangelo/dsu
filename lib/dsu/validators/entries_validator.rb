@@ -7,7 +7,7 @@ require_relative '../support/field_errors'
 module Dsu
   module Validators
     class EntriesValidator < ActiveModel::Validator
-      include Dsu::Support::FieldErrors
+      include Support::FieldErrors
 
       def validate(record)
         raise 'options[:fields] is not defined.' unless options.key? :fields
@@ -24,7 +24,6 @@ module Dsu
           end
 
           validate_entry_types field, entries, record
-          validate_unique_entry_attr :uuid, field, entries, record
           validate_unique_entry_attr :description, field, entries, record
         end
       end
@@ -37,7 +36,7 @@ module Dsu
 
           record.errors.add(field, 'entry Array element is the wrong object type. ' \
                                    "\"Entry\" was expected, but \"#{entry.class}\" was received.",
-            type: Dsu::Support::FieldErrors::FIELD_TYPE_ERROR)
+            type: Support::FieldErrors::FIELD_TYPE_ERROR)
 
           next
         end
@@ -54,7 +53,7 @@ module Dsu
         non_unique_attrs = attrs.select { |attr| attrs.count(attr) > 1 }.uniq # rubocop:disable Lint/ShadowingOuterLocalVariable
         if non_unique_attrs.any?
           record.errors.add(field, "contains duplicate ##{attr}s: #{non_unique_attrs.join(', ')}.",
-            type: Dsu::Support::FieldErrors::FIELD_DUPLICATE_ERROR)
+            type: Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
       end
     end

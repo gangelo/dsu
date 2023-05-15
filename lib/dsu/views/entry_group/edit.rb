@@ -47,28 +47,24 @@ module Dsu
           # a "# [+|a|add] <entry group from previous DSU entry description>" (e.g. commented
           # out) by default?
           puts ''
-          puts '# [SHA/COMMAND] [DESCRIPTION]'
+          puts '# [ENTRY DESCRIPTION]'
 
-          entry_group_entry_lines.each { |entry_line| puts entry_line }
+          entry_group_entry_lines.each { |entry_line| puts entry_line.strip }
 
           puts ''
           puts '# INSTRUCTIONS:'
-          puts '# ADD a DSU entry: use one of the following commands: [+|a|add] ' \
-               'followed by the description.'
-          puts '# EDIT a DSU entry: change the description.'
-          puts '# DELETE a DSU entry: delete the entry or replace the sha with one ' \
-               'of the following commands: [-|d|delete].'
-          puts '# NOTE: deleting all the entries will delete the entry group file; '
+          puts '# ADD a DSU entry: type an ENTRY DESCRIPTION on a new line.'
+          puts '# EDIT a DSU entry: change the existing ENTRY DESCRIPTION.'
+          puts '# DELETE a DSU entry: delete the ENTRY DESCRIPTION.'
+          puts '# NOTE: deleting all of the ENTRY DESCRIPTIONs will delete the entry group file; '
           puts '#       this is preferable if this is what you want to do :)'
-          puts '# REORDER a DSU entry: reorder the DSU entries in order preference.'
+          puts '# REORDER a DSU entry: reorder the ENTRY DESCRIPTIONs in order preference.'
           puts '#'
           puts '# *** When you are done, save and close your editor ***'
         end
 
         def entry_group_entry_lines
-          entry_group.entries.map do |entry|
-            "#{entry.uuid} #{entry.description.strip}"
-          end
+          entry_group.entries.map(&:description)
         end
       end
     end
