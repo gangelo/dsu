@@ -11,8 +11,6 @@ module Dsu
       include ActiveModel::Model
       include Support::Descriptable
 
-      # validates :description, presence: true
-      # validate :validate_description, if: proc { |entry| entry.description.present? }
       validates_with Validators::DescriptionValidator, fields: [:description]
 
       attr_reader :description

@@ -1,18 +1,23 @@
 # frozen_string_literal: true
 
-require_relative '../services/entry_group_writer_service'
 require_relative '../models/entry'
+require_relative '../services/entry_group_writer_service'
+require_relative '../support/colorable'
 require_relative '../support/descriptable'
 require_relative '../support/entry_group_loadable'
 require_relative '../support/folder_locations'
+require_relative '../support/say'
+require_relative '../views/shared/messages'
 
 module Dsu
   module CommandServices
     # This class adds (does NOT update) an entry to an entry group.
     class AddEntryService
+      include Support::Colorable
       include Support::Descriptable
       include Support::EntryGroupLoadable
       include Support::FolderLocations
+      include Support::Say
 
       attr_reader :entry, :entry_group, :time
 
@@ -35,26 +40,16 @@ module Dsu
         entry.validate!
         save_entry_group!
         entry
-      rescue ActiveModel::ValidationError
-        puts "Error(s) encountered: #{entry.errors.full_messages}"
-        raise
+      rescue ActiveModel::ValidationError => e
+        header = 'An error was encountered; the entry could not be added added:'
+        Views::Shared::Messages.new(messages: e.message, message_type: :error, options: { header: header }).render
       end
 
       private
 
       attr_writer :entry, :entry_group, :time
 
-      def entry_exists?
-        @entry_exists ||= entry_group.entries.map(&:description).include?(entry.description)
-      end
-
-      def entry_group_hash
-        @entry_group_hash ||= entry_group_hash_for time: time
-      end
-
       def save_entry_group!
-        raise "Entry with description \"#{short_description}\" already exists in entry group #{time}" if entry_exists?
-
         entry_group.entries << entry
         entry_group.validate!
 

@@ -16,31 +16,30 @@ module Dsu
 
       # Expects a string from the editor
       def initialize(editor_line:)
-        #require 'pry-byebug'; binding.pry
         raise ArgumentError, 'editor_line is not a string' unless editor_line.is_a?(String)
-        raise ArgumentError, 'editor_line is blank' if editor_line.blank?
 
-        @editor_line = editor_line
-        @description = clean_edititor_line_for_description(@editor_line)
+        editor_line = self.class.clean_editor_line(editor_line: editor_line)
+        raise ArgumentError, 'editor_line is not editable' unless self.class.editable?(editor_line: editor_line)
+
+        @description = editor_line
       end
 
       class << self
         def editable?(editor_line:)
+          editor_line = clean_editor_line(editor_line: editor_line)
           !(editor_line.blank? || editor_line[0] == '#')
+        end
+
+        def clean_editor_line(editor_line:)
+          return if editor_line.nil?
+
+          editor_line.strip.gsub(/\s+/, ' ')
         end
       end
 
       def to_entry!
         validate!
         Entry.new(description: description)
-      end
-
-      private
-
-      attr_reader :editor_line
-
-      def clean_edititor_line_for_description(editor_line)
-        editor_line.strip.gsub(/\s+/, ' ')
       end
     end
   end

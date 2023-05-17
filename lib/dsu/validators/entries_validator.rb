@@ -52,7 +52,7 @@ module Dsu
 
         non_unique_attrs = attrs.select { |attr| attrs.count(attr) > 1 }.uniq # rubocop:disable Lint/ShadowingOuterLocalVariable
         if non_unique_attrs.any?
-          record.errors.add(field, "contains duplicate ##{attr}s: #{non_unique_attrs.join(', ')}.",
+          record.errors.add(field, "contains a duplicate ##{attr}: \"#{non_unique_attrs.join(', ')}\".",
             type: Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
       end

@@ -1,19 +1,13 @@
 # frozen_string_literal: true
 
-require 'time'
-require 'active_support/core_ext/numeric/time'
 require_relative '../../../models/edited_entry'
-require_relative '../../../support/time_formatable'
+require_relative '../../shared/messages'
 
 module Dsu
   module Views
     module EditedEntries
       module Shared
         class Errors
-          include Support::Colorable
-          include Support::Say
-          include Support::TimeFormatable
-
           def initialize(edited_entries:, options: {})
             raise ArgumentError, 'edited_entries is nil' if edited_entries.nil?
             raise ArgumentError, 'edited_entries is the wrong object type' unless edited_entries.is_a?(Array)
@@ -32,11 +26,8 @@ module Dsu
             return if edited_entries.empty?
             return if edited_entries.all?(&:valid?)
 
-            say header, ERROR
-
-            edited_entries.each_with_index do |edited_entry, index|
-              edited_entry.errors.full_messages.each { |message| say "#{index + 1}. #{message}", ERROR }
-            end
+            messages = edited_entries.map { |edited_entry| edited_entry.errors.full_messages }.flatten
+            Views::Shared::Messages.new(messages: messages, message_type: :error, options: { header: header }).render
           end
 
           private

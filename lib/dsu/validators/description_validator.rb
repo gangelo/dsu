@@ -32,9 +32,9 @@ module Dsu
         return if description.length.between?(2, 256)
 
         if description.length < 2
-          record.errors.add(field, "is too short: \"#{record.short_description}\"")
+          record.errors.add(field, "is too short: \"#{record.short_description}\" (minimum is 2 characters).")
         elsif description.length > 256
-          record.errors.add(field, "is too long: \"#{record.short_description}\"")
+          record.errors.add(field, "is too long: \"#{record.short_description}\" (maximum is 256 characters).")
         end
       end
     end

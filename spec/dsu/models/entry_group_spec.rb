@@ -209,7 +209,7 @@ RSpec.describe Dsu::Models::EntryGroup do
         end
 
         it 'deletes the file' do
-          described_class.delete(time: time)
+          described_class.delete!(time: time)
           expect(described_class.exists?(time: time)).to be false
         end
       end
@@ -220,7 +220,7 @@ RSpec.describe Dsu::Models::EntryGroup do
         end
 
         it 'does NOT raise an error' do
-          expect { described_class.delete(time: time) }.not_to raise_error
+          expect { described_class.delete!(time: time) }.not_to raise_error
         end
       end
     end

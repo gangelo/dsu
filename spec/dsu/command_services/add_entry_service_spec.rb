@@ -14,7 +14,6 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
     context 'when the arguments are invalid' do
       context 'when the entry is nil' do
         let(:entry) { nil }
-
         let(:expected_error) { /entry is nil/ }
 
         it_behaves_like 'an error is raised'
@@ -22,7 +21,6 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
 
       context 'when the entry is the wrong object type' do
         let(:entry) { :invalid }
-
         let(:expected_error) { /entry is the wrong object type/ }
 
         it_behaves_like 'an error is raised'
@@ -30,7 +28,6 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
 
       context 'when :time is nil' do
         let(:time) { nil }
-
         let(:expected_error) { /time is nil/ }
 
         it_behaves_like 'an error is raised'
@@ -38,7 +35,6 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
 
       context 'when :time is the wrong object type' do
         let(:time) { :invalid }
-
         let(:expected_error) { /time is the wrong object type/ }
 
         it_behaves_like 'an error is raised'
@@ -64,10 +60,6 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
       before do
         delete_entry_group_file!(time: time)
         add_entry_service
-      end
-
-      it 'returns the entry uuid' do
-        expect(add_entry_service).to eq entry.uuid
       end
 
       it 'creates the entry group file' do

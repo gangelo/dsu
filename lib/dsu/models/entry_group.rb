@@ -98,7 +98,7 @@ module Dsu
       end
 
       def save!
-        delete and return if entries.empty?
+        delete! and return if entries.empty?
 
         validate!
         Services::EntryGroupWriterService.new(entry_group: self).call

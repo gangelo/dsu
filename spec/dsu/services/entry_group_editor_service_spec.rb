@@ -9,9 +9,9 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
 
   include_context 'with tmp'
 
-  let(:time) { Time.now }
-  let(:entry_group) { build(:entry_group, entries: build_list(:entry, 2)) }
-  let!(:original_entry_group_hash) { entry_group.try(:to_h) || {} }
+  let(:time) { entry_group.time }
+  let(:entry_group) { build(:entry_group, time: Time.now, entries: build_list(:entry, 2)) }
+  let!(:original_entry_group) { entry_group.clone }
 
   describe '#initializer' do
     context 'when the arguments are valid' do
@@ -53,7 +53,7 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     subject(:entry_group_editor_service_call) { entry_group_editor_service.call }
 
     before do
-      allow(Dsu::Services::TempFileWriterService).to receive(:tmp_file_contents).and_return(tmp_file_contents)
+      allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
       editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
       allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
       entry_group_editor_service_call
@@ -61,40 +61,30 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
 
     context 'when there are no changes' do
       let(:tmp_file_contents) do
-        # Just render the original entry group unchanged, because we went
-        # to test for no changes.
-        Dsu::Views::EntryGroup::Edit.new(entry_group: entry_group).render
+        Dsu::Views::EntryGroup::Edit.new(entry_group: original_entry_group).render_as_string
       end
-      let(:expected_changes) { entry_group.entries.map(&:description) }
 
       it 'does not change the entry_group object' do
-        expect(entry_group.to_h).to match(original_entry_group_hash)
+        expect(entry_group.to_h).to match(original_entry_group.to_h)
       end
 
       it 'does not change the entry group file' do
-        expect(entry_group_file_matches?(time: time, entry_group_hash: original_entry_group_hash)).to be true
+        expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
       end
     end
 
     context 'when the entry descriptions change' do
       let(:tmp_file_contents) do
-        Dsu::Views::EntryGroup::Edit.new(entry_group:
-          entry_group.clone.tap do |cloned_entry_group|
-            cloned_entry_group.entries.each_with_index do |entry, index|
-              cloned_entry_group.entries[index] = entry.clone
-              cloned_entry_group.entries[index].description = "Changed description #{index}"
-            end
-          end).render
+        Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
       end
-      let(:expected_changes) do
-        [
-          'Changed description 0',
-          'Changed description 1'
-        ]
+      let(:changed_entry_group) do
+        original_entry_group.clone.tap do |cloned_entry_group|
+          cloned_entry_group.entries = build_list(:entry, 2)
+        end
       end
 
       it 'saves the changes to the entry_group object' do
-        expect(entry_group.entries.map(&:description)).to match_array(expected_changes)
+        expect(entry_group.to_h).to match(changed_entry_group.to_h)
       end
 
       it 'saves the changes to the entry group file' do
@@ -102,20 +92,19 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
       end
 
       it 'does not change the original time' do
-        expect(entry_group.to_h).to match(original_entry_group_hash)
+        expect(entry_group.time).to match(changed_entry_group.time)
       end
     end
 
     context 'when an entry is deleted' do
       let(:tmp_file_contents) do
-        Dsu::Views::EntryGroup::Edit.new(entry_group:
-          entry_group.clone.tap do |cloned_entry_group|
-            cloned_entry_group.entries.each_with_index do |entry, index|
-              cloned_entry_group.entries[index] = entry.clone
-            end
-            # Delete the last entry.
-            cloned_entry_group.entries.pop
-          end).render
+        Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
+      end
+      let(:changed_entry_group) do
+        original_entry_group.clone.tap do |cloned_entry_group|
+          # Delete the last entry.
+          cloned_entry_group.entries.pop
+        end
       end
 
       it 'deletes the entry from the entry group object' do
@@ -123,12 +112,7 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
       end
 
       it 'saves the changes to the entry group object' do
-        expect(entry_group.to_h[:entries].first).to eq(original_entry_group_hash[:entries].first)
-      end
-
-      it 'does not change the original entry group time or entry descriptions' do
-        # TODO: Do I need to clone and remove the the original entry group hash?
-        expect(entry_group.to_h).to match(original_entry_group_hash)
+        expect(entry_group.to_h).to match(changed_entry_group.to_h)
       end
 
       it 'saves the changes to the entry group file' do
@@ -137,13 +121,13 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     end
 
     context 'when all the entries are deleted' do
-      let(:entry_group) { build(:entry_group, entries: build_list(:entry, delete_cmds.length)) }
-      let(:entry_group_hash) { entry_group.to_h }
       let(:tmp_file_contents) do
-        Dsu::Views::EntryGroup::Edit.new(entry_group:
-          entry_group.clone.tap do |cloned_entry_group|
-            cloned_entry_group.entries = []
-          end).render
+        Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
+      end
+      let(:changed_entry_group) do
+        original_entry_group.clone.tap do |cloned_entry_group|
+          cloned_entry_group.entries = []
+        end
       end
 
       it 'deletes the entries from the entry group object' do
@@ -151,38 +135,36 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
       end
 
       it 'does not change the entry group time' do
-        expect(entry_group_hash[:time]).to eq(original_entry_group_hash[:time])
+        expect(entry_group.time).to eq(original_entry_group.time)
       end
 
       it 'deletes the entry group file' do
-        expect(entry_group_file_exists?(time: time)).to be false
+        expect(entry_group_file_exists?(time: original_entry_group.time)).to be false
       end
     end
 
-    context 'when entries are added' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+    context 'when entries are added' do
       let(:tmp_file_contents) do
-        entry_group_clone = entry_group.clone
-        entry_group_clone.entries.concat(added_entries)
-        Dsu::Views::EntryGroup::Edit.new(entry_group: entry_group_clone).render
+        # This simply simulates the user making entry group entry changes in the console.
+        Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
       end
-      let(:added_entries) do
-        [
-          build(:entry, description: 'Added entry 1'),
-          build(:entry, description: 'Added entry 2')
-        ]
+      let(:changed_entry_group) do
+        original_entry_group.clone.tap do |cloned_entry_group|
+          cloned_entry_group.entries << build(:entry, description: 'Added entry 1')
+          cloned_entry_group.entries << build(:entry, description: 'Added entry 2')
+        end
       end
 
       it 'adds the entries to the entry group object' do
-        entries_count = added_entries.count + original_entry_group_hash[:entries].count
-        expect(entry_group.entries.count).to eq(entries_count)
+        expect(entry_group.entries.map(&:description)).to match_array(changed_entry_group.entries.map(&:description))
       end
 
       it 'does not change the entry group time' do
-        expect(entry_group.time).to eq(original_entry_group_hash[:time])
+        expect(entry_group.time).to eq(original_entry_group.time)
       end
 
       it 'saves the changes to the entry group file' do
-        expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
+        expect(entry_group_file_matches?(time: time, entry_group_hash: changed_entry_group.to_h)).to be true
       end
     end
 

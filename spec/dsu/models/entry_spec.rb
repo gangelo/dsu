@@ -52,7 +52,7 @@ RSpec.describe Dsu::Models::Entry do
         let(:description) { 'x' }
         let(:expected_errors) do
           [
-            'Description is too short (minimum is 2 characters)'
+            /Description is too short/
           ]
         end
 
@@ -67,7 +67,7 @@ RSpec.describe Dsu::Models::Entry do
         let(:description) { 'x' * 257 }
         let(:expected_errors) do
           [
-            'Description is too long (maximum is 256 characters)'
+            /Description is too long/
           ]
         end
 

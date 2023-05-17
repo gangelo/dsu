@@ -6,6 +6,7 @@ module Dsu
       ABORTED = :red
       ERROR = :red
       HIGHLIGHT = :cyan
+      INFO = HIGHLIGHT
       SUCCESS = :green
       WARNING = :yellow
     end

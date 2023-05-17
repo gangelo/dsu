@@ -6,8 +6,9 @@ require_relative '../support/colorable'
 require_relative '../support/say'
 require_relative '../support/time_formatable'
 require_relative '../views/edited_entries/shared/errors'
-require_relative '../views/edited_entries/shared/warnings'
+require_relative '../views/shared/messages'
 require_relative 'configuration_loader_service'
+require_relative 'stdout_redirector_service'
 
 module Dsu
   module Services
@@ -27,7 +28,7 @@ module Dsu
 
       def call
         edit_view = render_edit_view
-        edit!(edit_view: edit_view)
+        edit(edit_view: edit_view)
         # NOTE: Return the original entry group object as any permanent changes
         # will have been applied to it.
         entry_group
@@ -41,11 +42,11 @@ module Dsu
       # and edit it. The edits will be used to update the entry group.
       def render_edit_view
         say "Editing entry group #{formatted_time(time: entry_group.time)}...", HIGHLIGHT
-        capture_stdxxx { Views::EntryGroup::Edit.new(entry_group: entry_group).render }
+        StdoutRedirectorService.call { Views::EntryGroup::Edit.new(entry_group: entry_group).render }
       end
 
       # Writes the temporary file contents to disk and opens it in the editor.
-      def edit!(edit_view:)
+      def edit(edit_view:)
         Services::TempFileWriterService.new(tmp_file_content: edit_view).call do |tmp_file_path|
           if Kernel.system("${EDITOR:-#{configuration[:editor]}} #{tmp_file_path}")
             edited_entries = []
@@ -55,7 +56,7 @@ module Dsu
               edited_entries << Models::EditedEntry.new(editor_line: editor_line)
             end
 
-            process_entry_group!(edited_entries: edited_entries) if edited_entries.any?
+            process_entry_group!(edited_entries: edited_entries)
           else
             say "Failed to open temporary file in editor '#{configuration[:editor]}'; " \
                 "the system error returned was: '#{$CHILD_STATUS}'.", ERROR
@@ -67,6 +68,11 @@ module Dsu
       end
 
       def process_entry_group!(edited_entries:)
+        if edited_entries.empty?
+          entry_group.entries = []
+          return entry_group.save!
+        end
+
         raise ArgumentError, 'edited_entries is nil' if edited_entries.nil?
         raise ArgumentError, 'edited_entries is empty' if edited_entries.empty?
 
@@ -77,8 +83,12 @@ module Dsu
         # Display warnings for duplicate edited entries.
         duplicate_entries = duplicate_edited_entries_from(edited_entries)
         if duplicate_entries.any?
-          Views::EditedEntries::Shared::Warnings.new(warnings: { duplicates: duplicate_entries }).render
-        end
+          messages = duplicate_entries.map do |edited_entry|
+            "Entry contains a duplicate #description: \"#{edited_entry.short_description}\"."
+          end
+          header = 'The following WARNINGS were encountered; these changes were not saved:'
+          Views::Shared::Messages.new(messages: messages, message_type: :warning, options: { header: header }).render
+      end
 
         # Make sure we're not saving any duplicate entries.
         entry_group.entries = valid_unique_edited_entries_from(edited_entries).map(&:to_entry!)
@@ -95,23 +105,6 @@ module Dsu
         return [] if edited_entries.none?
 
         edited_entries.select(&:valid?).uniq(&:description)
-      end
-
-      # TODO: Add this to a module.
-      # https://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby/4459463#4459463
-      def capture_stdxxx
-        # The output stream must be an IO-like object. In this case we capture it in
-        # an in-memory IO object so we can return the string value. You can assign any
-        # IO object here.
-        string_io = StringIO.new
-        prev_stdout, $stdout = $stdout, string_io # rubocop:disable Style/ParallelAssignment
-        prev_stderr, $stderr = $stderr, string_io # rubocop:disable Style/ParallelAssignment
-        yield
-        string_io.string
-      ensure
-        # Restore the previous value of stderr and stdout (typically equal to STDERR).
-        $stdout = prev_stdout
-        $stderr = prev_stderr
       end
 
       def configuration
