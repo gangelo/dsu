@@ -6,6 +6,7 @@ require_relative '../support/configuration'
 
 module Dsu
   module Services
+    # This class loads an entry group file.
     class ConfigurationLoaderService
       include Dsu::Support::Configuration
 

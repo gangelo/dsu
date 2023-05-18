@@ -11,7 +11,8 @@ require_relative '../views/shared/messages'
 
 module Dsu
   module CommandServices
-    # This class adds (does NOT update) an entry to an entry group.
+    # This class adds (does NOT update) an entry to an entry group by
+    # writing it to the appropriate entry group json file.
     class AddEntryService
       include Support::Colorable
       include Support::Descriptable

@@ -7,6 +7,8 @@ require_relative '../validators/description_validator'
 
 module Dsu
   module Models
+    # This class represents something someone might want to share at their
+    # daily standup (DSU).
     class Entry
       include ActiveModel::Model
       include Support::Descriptable

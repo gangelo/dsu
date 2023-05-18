@@ -13,6 +13,8 @@ require_relative 'entry'
 
 module Dsu
   module Models
+    # This class represents a group of entries for a given day. IOW,
+    # things someone might want to share at their daily standup (DSU).
     class EntryGroup
       include ActiveModel::Model
       extend Support::EntryGroupLoadable
