@@ -72,25 +72,6 @@ module Dsu
       'Displays DSU entries for the given SUBCOMMAND'
     subcommand :list, Subcommands::List
 
-    # TODO: Implement this.
-    # desc 'interactive', 'Opens a DSU interactive session'
-    # long_desc ''
-    # option :next_day, type: :boolean, aliases: '-n'
-    # option :previous_day, type: :boolean, aliases: '-p'
-    # option :today, type: :boolean, aliases: '-t'
-
-    # # https://stackoverflow.com/questions/4604905/interactive-prompt-with-thor
-    # def interactive
-    #   exit_commands = %w[x q exit quit]
-    #   display_interactive_help
-    #   loop do
-    #     command = ask('dsu > ')
-    #     display_interactive_help if command == 'h'
-    #     break if exit_commands.include? command
-    #   end
-    #   say 'Done.'
-    # end
-
     desc 'config, -c SUBCOMMAND',
       'Manage configuration file for this gem'
     subcommand :config, Subcommands::Config
@@ -103,18 +84,6 @@ module Dsu
       'Displays this gem version'
     def version
       say VERSION
-    end
-
-    private
-
-    def display_interactive_help
-      say 'Interactive Mode Commands:'
-      say '---'
-      say '[h]: show this help screen'
-      say '[t]: next day'
-      say '[y]: previous day'
-      say '[n]: today'
-      say '[x|q|exit|quit]: Exit interactive mode'
     end
   end
 end

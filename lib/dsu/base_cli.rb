@@ -15,9 +15,6 @@ require_relative 'version'
 require_relative 'views/entry_group/show'
 
 module Dsu
-  #
-  # The `dsu` command.
-  #
   class BaseCLI < ::Thor
     include Support::Colorable
     include Support::EntryGroupViewable
