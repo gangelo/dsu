@@ -1,3 +1,14 @@
+## [1.0.0] - 2023-05-18
+* First official release.
+* NOTE: If you have been using the alpha version of `dsu`, you will need to delete the `entries` folder (e.g. `/Users/<whoami>/dsu/entries` on a nix os) as the old entries .json files are incompatible with this official release.
+* Changes from the alpha version
+  - When editing an entry group, editor commands are no longer necessary. Simply add, remove or change entries as needed. See the README.md for more information.
+  - When editing an entry group and saving the results, take note of the folowing behavior:
+    - Entering duplicate entries are not allowed, only one entry with a given description is allowed per entry group.
+    - Entering entries whose descriptions are < 2 or > 256 characters will fail validation and will not be saved.
+    - When editing and encountering any of the aforementioned, the errors will be displayed to the console after the editor file is saved.
+  - Sha's are no longer being used, as I've not found a good use (currently) to use them. I may add them back in the future if I find a good use for them (tracking entries across entry groups, etc.).
+  - When adding an entry (`dsu add OPTION`), it used to be that after the entry was added, the entry group for the date being edited would be displayed, as well as "yesterday's" date. This is no longer the case; now, only the entry group for the date being edited is displayed.
 ## [0.1.0.alpha.5] - 2023-05-12
 * Changes
   - `dsu edit SUBCOMMAND` will now allow editing of an entry group for a date that does not yet exist. This will allow you to add entries in the editor using `+|a|add DESCRIPTION`. Be sure to follow the instructions in the editor when editing entry group entries.

@@ -9,8 +9,6 @@
 ## About
 `dsu` is little gem that helps manage your Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows you to create, read, update, and delete (CRUD) noteworthy activities that you performed during your day. During your DSU, you can then easily recall and share these these activities with your team. Activities are grouped by day and can be viewed in simple text format from the command line. When viewing a particular day, `dsu` will automatically display the previous day's activities as well. This is useful for remembering what you did yesterday, so you can share your "Today" and "Yesterday" activities with your team during your DSU. If the day you are trying to view falls on a weekend or Monday, `dsu` will display back to, and including the weekend and previous Friday inclusive, so that you can share what you did over the weekend (if anything) and the previous Friday.
 
-**NOTE:** This gem is in development (alpha version). Please see the [WIP Notes](#wip-notes) section for current `dsu` features.
-
 ## Help
 
 After installation (`gem install dsu`), the first thing you may want to do is run the `dsu` help:
@@ -97,7 +95,7 @@ Friday, (Yesterday) 2023-05-05
 ```
 ## Editing DSU Entries
 
-You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (today|tomorrow|yesterday|date DATE) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries. If no entries exist in the entry group, you can add entries using any of the the *add* (`+|a|add`) editor commands, followed by the entry description. *NOTE: you cannot add duplicate entries; that is, the entry SHA and DESCRIPTION need to be unique within an entry group. Non-unique entries will not be added to the entry group.*
+You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (today|tomorrow|yesterday|date DATE) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries. If no entries exist in the entry group the the date, the editor will allow you to add entries for that date. *NOTE: duplicate entries are not allowed; that is, the entry DESCRIPTION need to be unique within an entry group. Non-unique entries will not be added to the entry group. The same holds true for entries whose DESCRIPTION that do not pass validation (between 2 and 256 characters (inclusive) in length).*
 
 Note: See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-configuration-file)"" section to configure `dsu` to use the editor of your choice.
 
@@ -116,20 +114,19 @@ The following will edit your DSU entry group entries for "Today", where `Time.no
 ```shell
 #=> In your editor, you will see...
 # Editing DSU Entries for Tuesday, (Today) 2023-05-09 EDT
-
-# [SHA/COMMAND] [DESCRIPTION]
-3849f0c0 Interative planning meeting 11:00AM.
-586478f5 Pair with Chad on ticket 31211.
-9e5f82c8 Investigate spike ticket 31255.
-59b25ca7 Review Kelsey's PR ticket 30721.
+# [ENTRY DESCRIPTION]
+Interative planning meeting 11:00AM.
+Pair with Chad on ticket 31211.
+Investigate spike ticket 31255.
+Review Kelsey's PR ticket 30721.
 
 # INSTRUCTIONS:
-# ADD a DSU entry: use one of the following commands: [+|a|add] followed by the description.
-# EDIT a DSU entry: change the description.
-# DELETE a DSU entry: delete the entry or replace the sha with one of the following commands: [-|d|delete].
-# NOTE: deleting all the entries will delete the entry group file;
-#       this is preferable if this is what you want to do :)
-# REORDER a DSU entry: reorder the DSU entries in order preference.
+#    ADD a DSU entry: type an ENTRY DESCRIPTION on a new line.
+#   EDIT a DSU entry: change the existing ENTRY DESCRIPTION.
+# DELETE a DSU entry: delete the ENTRY DESCRIPTION.
+#  NOTE: deleting all of the ENTRY DESCRIPTIONs will delete the entry group file;
+#        this is preferable if this is what you want to do :)
+# REORDER a DSU entry: reorder the ENTRY DESCRIPTIONs in order preference.
 #
 # *** When you are done, save and close your editor ***
 ```
@@ -140,32 +137,28 @@ Simply change the entry descripton text.
 
 For example...
 ```
-from: 3849f0c0 Interative planning meeting 11:00AM.
-  to: 3849f0c0 Interative planning meeting 12:00AM.
+from: Interative planning meeting 11:00AM.
+  to: Interative planning meeting 12:00AM.
 ```
 
 #### Add an Entry
 
-Replace the entry `sha` one of the add commands: `[+|a|add]`.
+Simply type a new entry on a separate line. *Note: any entry that starts with a `#` in the first character position will be ignored.*
 
 For example...
 ```
-+ Add me to this entry group.
+Add me to this entry group.
 ```
 
 #### Delete an Entry
 
-Simply delete the entry or replace the entry `sha` one of the delete commands: `[-|d|delete]`.
+Simply delete the entry.
 
 For example...
 ```
 # Delete this this entry from the editor file
-3849f0c0 Interative planning meeting 11:00AM.
-```
-or
-```
-from: 3849f0c0 Interative planning meeting 11:00AM.
-  to: - Interative planning meeting 11:00AM.
+from: Interative planning meeting 11:00AM.
+  to: <deleted>
 ```
 
 #### Reorder Entries
@@ -174,14 +167,14 @@ Simply reorder the entries in the editor.
 
 For example...
 ```
-from: 3849f0c0 Interative planning meeting 11:00AM.
-      586478f5 Pair with Chad on ticket 31211.
-      9e5f82c8 Investigate spike ticket 31255.
-      59b25ca7 Review Kelsey's PR ticket 30721.
-  to: 59b25ca7 Review Kelsey's PR ticket 30721.
-      9e5f82c8 Investigate spike ticket 31255.
-      586478f5 Pair with Chad on ticket 31211.
-      3849f0c0 Interative planning meeting 11:00AM.
+from: Interative planning meeting 11:00AM.
+      Pair with Chad on ticket 31211.
+      Investigate spike ticket 31255.
+      Review Kelsey's PR ticket 30721.
+  to: Review Kelsey's PR ticket 30721.
+      Investigate spike ticket 31255.
+      Pair with Chad on ticket 31211.
+      Interative planning meeting 11:00AM.
 ```
 
 ## Customizing the `dsu` Configuration File
@@ -241,12 +234,6 @@ Where `<whoami>` would be your username (`$ whoami` on nix systems)
 These notes apply to anywhere DATE is used...
 
 DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit the year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
-
-## WIP Notes
-This gem is in development (alpha release).
-
-- Not all edge cases are being handled currently by `dsu edit SUBCOMMAND`.
-- `dsu add OPTION` will raise an error if the entry discription (Entry#description) are not unique. This will be handled gracefully in a future release.
 
 ## Installation
 

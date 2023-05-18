@@ -30,14 +30,21 @@ module Dsu
       \x5
       -d DATE: Adds a DSU entry having DESCRIPTION to the DATE.
 
-      \x5 #{date_option_description}
+      \x5
+      #{date_option_description}
 
-      \x5 -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
+      \x5
+      -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
 
-      \x5 -t: Adds a DSU entry having DESCRIPTION to tomorrow's date (`Time.new.tomorrow`).
+      \x5
+      -t: Adds a DSU entry having DESCRIPTION to tomorrow's date (`Time.new.tomorrow`).
 
-      \x5 -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
+      \x5
+      -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
 
+      DESCRIPTION:
+      \x5
+      Must be be between 2 and 256 characters (inclusive) in length.
     LONG_DESC
     option :date, type: :string, aliases: '-d'
     option :tomorrow, type: :boolean, aliases: '-t'
