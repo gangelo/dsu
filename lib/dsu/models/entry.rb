@@ -16,9 +16,7 @@ module Dsu
       attr_reader :description
 
       def initialize(description:)
-        raise ArgumentError, 'description is nil' if description.nil?
         raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
-        raise ArgumentError, 'description is blank' if description.blank?
 
         self.description = description
       end

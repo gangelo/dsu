@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../models/edited_entry'
 require_relative '../../shared/messages'
 
 module Dsu

@@ -85,10 +85,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
       end
 
       let(:entries) do
-        [
-          build(:entry, uuid: '01234567'),
-          build(:entry, uuid: '89abcdef')
-        ]
+        build_list(:entry, 2)
       end
 
       it_behaves_like 'the entry group has entries'
@@ -106,8 +103,8 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
 
       let(:entries) do
         [
-          build(:entry, uuid: '01234567', description: 'description 0'),
-          build(:entry, uuid: '89abcdef', description: 'description 1')
+          build(:entry, description: 'description 0'),
+          build(:entry, description: 'description 1')
         ]
       end
 
@@ -115,14 +112,11 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
       it_behaves_like 'the entry group file is written'
     end
 
-    context 'when there are entries with non-unique uuids' do
+    context 'when there are entries with non-unique descriptions' do
       let(:entries) do
-        [
-          build(:entry, uuid: '11111111'),
-          build(:entry, uuid: '11111111', description: 'duplicate uuid')
-        ]
+        build_list(:entry, 2, description: 'Non-unique description')
       end
-      let(:expected_error) { /Entries contains duplicate #uuids/ }
+      let(:expected_error) { /Entries contains a duplicate entry/ }
 
       it_behaves_like 'the entry group has entries'
       it_behaves_like 'an error is raised'

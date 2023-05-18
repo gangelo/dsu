@@ -5,7 +5,7 @@ FactoryBot.define do
     description { FFaker::Lorem.words(rand(2..80)).join(' ')[0...80] }
 
     trait :invalid do
-      description { nil }
+      description { '' }
     end
 
     initialize_with do

@@ -46,46 +46,9 @@ module Dsu
           end
         end
 
-        # def entry_info_by_description(entries:)
-        #   entries.each_with_index.with_object({}) do |entry_index, hash|
-        #     entry, index = entry_index
-        #     description = entry.description
-        #     hash[description] = { at: [], count: 0 } unless hash.key? description
-        #     count = entries.count { |e| e.description == description }
-        #     hash[description][:at] << index
-        #     hash[description][:count] = count
-        #     hash
-        #   end
-        # end
-
-        # def duplicate_entries_by_description(entries:)
-        #   entries.each_with_object({}) do |entry, hash|
-        #     description = entry.description
-        #     hash[description] = [] unless hash.key? description
-        #     hash[description] << entry
-        #   end
-        # end
-
         def exists?(time:)
           Dsu::Services::EntryGroupReaderService.entry_group_file_exists?(time: time)
         end
-
-        # def invalid_entries
-        #   entries.select(&:invalid?)
-        # end
-
-        # def duplicate_entries
-        #   return [] if entries.none?
-
-        #   # entries.select(&:valid?) - entries.select(&:valid?).uniq(&:description)
-        #   entries - entries.uniq(&:description)
-        # end
-
-        # def valid_unique_entries
-        #   return [] if entries.none?
-
-        #   entries.select(&:valid?) - duplicate_entries
-        # end
 
         # Loads the EntryGroup from the file system and returns an
         # instantiated EntryGroup object.
@@ -102,17 +65,9 @@ module Dsu
         end
       end
 
-      # def different_entries(other_entries:)
-      #   entries.reject do |entry|
-      #     other_entries.any? { |other_entry| entry.description == other_entry.description }
-      #   end
-      # end
-
-      # def valid_unique_entries
-      #   return [] if entries.none?
-
-      #   entries.select(&:valid?) - duplicate_entries
-      # end
+      def valid_unique_entries
+        entries&.select(&:valid?)&.uniq(&:description)
+      end
 
       def clone
         clone = super
@@ -138,14 +93,6 @@ module Dsu
 
         @entries = entries.map(&:clone)
       end
-
-      # def entry_info_by_description
-      #   self.class.entry_info_by_description(entries: entries)
-      # end
-
-      # def duplicate_entries_by_description
-      #   self.class.duplicate_entries_by_description(entries: entries)
-      # end
 
       # Deletes the entry group file from the file system.
       def delete!

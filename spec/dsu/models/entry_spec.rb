@@ -17,16 +17,15 @@ RSpec.describe Dsu::Models::Entry do
     context 'with invalid arguments' do
       context 'when description is nil' do
         let(:description) { nil }
-        let(:expected_error) { /description is nil/ }
+        let(:expected_error) { /description is the wrong object type/ }
 
         it_behaves_like 'an error is raised'
       end
 
       context 'when description is blank' do
         let(:description) { '' }
-        let(:expected_error) { /description is blank/ }
 
-        it_behaves_like 'an error is raised'
+        it_behaves_like 'no error is raised'
       end
 
       context 'when desdcription is the wrong type' do

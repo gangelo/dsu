@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::CommandServices::AddEntryService do
-  subject(:add_entry_service) { described_class.new(entry: entry, time: time) }
+  after do
+    delete_entry_group_file!(time: time) if time.is_a?(Time)
+  end
 
   let(:entry) { build(:entry) }
   let(:time) { Time.now }
 
   describe '#initialize' do
+    subject(:add_entry_service) { described_class.new(entry: entry, time: time) }
+
     context 'when the arguments are valid' do
       it_behaves_like 'no error is raised'
     end
@@ -45,15 +49,20 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
   describe '#call' do
     subject(:add_entry_service) { described_class.new(entry: entry, time: time).call }
 
-    context 'when the entry is not added' do
-      before do
-        entry.description = nil
-      end
-
-      let(:entry) { build(:entry) }
+    context 'when an entry fails validation' do
+      let(:entry) { build(:entry, :invalid) }
       let(:expected_error) { ActiveModel::ValidationError }
 
-      it_behaves_like 'an error is raised'
+      it 'writes an error message to the console' do
+        expect { add_entry_service }.to output(/An error was encountered; the entry could not be added added/).to_stdout
+      end
+
+      it 'does not add the entry' do
+        # If the entry was added, the entry group file would have been created.
+        # Checking the existance of the entry group file is a good way to ensure
+        # that the entry was not added.
+        expect(entry_group_file_exists?(time: time)).not_to be true
+      end
     end
 
     context 'when the entry is added' do

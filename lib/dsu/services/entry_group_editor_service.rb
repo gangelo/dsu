@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-#require_relative '../models/edited_entry'
 require_relative '../models/entry'
 require_relative '../support/colorable'
 require_relative '../support/say'
@@ -45,9 +44,12 @@ module Dsu
         StdoutRedirectorService.call { Views::EntryGroup::Edit.new(entry_group: entry_group).render }
       end
 
-      # Writes the temporary file contents to disk and opens it in the editor.
+      # Writes the temporary file contents to disk and opens it in the editor
+      # for editing. It then copies the changes to the entry group and writes
+      # the changes to the entry group file.
       def edit(edit_view)
-        entry_group_with_edits = entry_group.clone
+        entry_group_with_edits = Models::EntryGroup.new(time: entry_group.time)
+
         Services::TempFileWriterService.new(tmp_file_content: edit_view).call do |tmp_file_path|
           if Kernel.system("${EDITOR:-#{configuration[:editor]}} #{tmp_file_path}")
             Services::TempFileReaderService.new(tmp_file_path: tmp_file_path).call do |editor_line|
@@ -67,20 +69,10 @@ module Dsu
         end
       end
 
-      def process_description?(description)
-        description = Models::Entry.clean_description(description)
-        !(description.blank? || description[0] == '#')
-      end
-
       def process_entry_group!(entry_group_with_edits)
         if entry_group_with_edits.entries.empty?
-          entry_group.entries = []
-          return entry_group.save!
-        end
-
-        common_entries = entry_group_with_edits.entries.select { |entry| entry_group.entries.include?(entry) }.uniq
-        common_entries.each do |common_entry|
-          entry_group_with_edits.entries.delete_one!(common_entry)
+          entry_group.delete!
+          return
         end
 
         if entry_group_with_edits.invalid?
@@ -90,8 +82,13 @@ module Dsu
         end
 
         # Make sure we're saving only valid, unique entries.
-        entry_group.entries = entry_group_with_edits.entries.select(&:valid?).uniq(&:description)
+        entry_group.entries = entry_group_with_edits.valid_unique_entries
         entry_group.save!
+      end
+
+      def process_description?(description)
+        description = Models::Entry.clean_description(description)
+        !(description.blank? || description[0] == '#')
       end
 
       def configuration

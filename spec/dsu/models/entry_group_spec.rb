@@ -3,15 +3,12 @@
 RSpec.describe Dsu::Models::EntryGroup do
   subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
-  before(:all) do
-    config.create_config_file!
-  end
-
   before do
+    config.create_config_file!
     delete_entry_group_file!(time: time) if time.is_a?(Time)
   end
 
-  after(:all) do
+  after do
     config.delete_config_file!
   end
 
@@ -187,7 +184,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       subject(:entry_group) { build(:entry_group, time: time, entries: entries).validate! }
 
       let(:entries) { build_list(:entry, 2, description: 'duplicate') }
-      let(:expected_error) { /Entries contains duplicate #descriptions/ }
+      let(:expected_error) { /Entries contains a duplicate entry/ }
 
       it_behaves_like 'an error is raised'
     end
@@ -197,7 +194,7 @@ RSpec.describe Dsu::Models::EntryGroup do
     describe '.delete' do
       context 'when an entry group file exists for :time' do
         before do
-          create_entry_group_file!(entry_group: create(:entry_group, :with_entries, time: time))
+          create_entry_group_file!(entry_group: build(:entry_group, :with_entries, time: time))
         end
 
         after do
