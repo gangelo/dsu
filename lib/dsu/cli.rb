@@ -45,28 +45,45 @@ module Dsu
     option :today, type: :boolean, aliases: '-n', default: true
 
     def add(description)
-      times = if options[:date].present?
-        time = Time.parse(options[:date])
-        [time, time.yesterday]
+      time = if options[:date].present?
+        Time.parse(options[:date])
       else
-        time = Time.now
         if options[:tomorrow].present?
-          [time.tomorrow, time.tomorrow.yesterday]
+          Time.now.tomorrow
         elsif options[:yesterday].present?
-          [time.yesterday, time.yesterday.yesterday]
+          Time.now.yesterday
         elsif options[:today].present?
-          [time, time.yesterday]
+          Time.now
         end
       end
       entry = Models::Entry.new(description: description)
-      # NOTE: We need to add the Entry to the date that is the furthest in the future
-      # (time.max) because this is the DSU entry that the user specified.
-      CommandServices::AddEntryService.new(entry: entry, time: times.max).call
-      sorted_dsu_times_for(times: times).each do |t|
-        view_entry_group(time: t)
-        puts
-      end
+      CommandServices::AddEntryService.new(entry: entry, time: time).call
+      view_entry_group(time: time)
     end
+
+    # def add(description)
+    #   times = if options[:date].present?
+    #     time = Time.parse(options[:date])
+    #     [time, time.yesterday]
+    #   else
+    #     time = Time.now
+    #     if options[:tomorrow].present?
+    #       [time.tomorrow, time.tomorrow.yesterday]
+    #     elsif options[:yesterday].present?
+    #       [time.yesterday, time.yesterday.yesterday]
+    #     elsif options[:today].present?
+    #       [time, time.yesterday]
+    #     end
+    #   end
+    #   entry = Models::Entry.new(description: description)
+    #   # NOTE: We need to add the Entry to the date that is the furthest in the future
+    #   # (time.max) because this is the DSU entry that the user specified.
+    #   CommandServices::AddEntryService.new(entry: entry, time: times.max).call
+    #   sorted_dsu_times_for(times: times).each do |t|
+    #     view_entry_group(time: t)
+    #     puts
+    #   end
+    # end
 
     desc 'list, -l SUBCOMMAND',
       'Displays DSU entries for the given SUBCOMMAND'

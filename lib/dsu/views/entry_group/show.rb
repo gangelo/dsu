@@ -26,7 +26,7 @@ module Dsu
         end
 
         def call
-          render_entry_group!
+          render!
         end
         alias render call
 
@@ -34,7 +34,7 @@ module Dsu
 
         attr_reader :entry_group, :options
 
-        def render_entry_group!
+        def render!
           say formatted_time(time: entry_group.time), HIGHLIGHT
           say('(no entries available for this day)') and return if entry_group.entries.empty?
 
