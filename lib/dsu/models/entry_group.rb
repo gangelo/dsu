@@ -51,19 +51,6 @@ module Dsu
         def exists?(time:)
           Dsu::Services::EntryGroupReaderService.entry_group_file_exists?(time: time)
         end
-
-        # Loads the EntryGroup from the file system and returns an
-        # instantiated EntryGroup object.
-        def load(time: nil)
-          load_entry_group_file_for(time: time)
-        end
-
-        # This function returns a hash whose :time and :entries
-        # key values are hydrated with instantiated Time and Entry
-        # objects.
-        def load_entry_group_for(time:)
-          load_entry_group_file_for(time: time)
-        end
       end
 
       def valid_unique_entries

@@ -8,12 +8,9 @@ require_relative '../models/entry_group'
 module Dsu
   module Support
     module EntryGroupLoadable
-      module_function
-
-      # returns a Hash having :time and :entries
-      # where entries == an Array of Entry Hashes
-      # representing the JSON Entry objects for :time.
-      def load_entry_group_file_for(time:)
+      # returns an EntryGroup object loaded from
+      # the entry group json file.
+      def load(time:)
         entry_group_json = Services::EntryGroupReaderService.new(time: time).call
         hash = if entry_group_json.present?
           JSON.parse(entry_group_json, symbolize_names: true).tap do |hash|
@@ -25,6 +22,8 @@ module Dsu
 
         Models::EntryGroup.new(**hydrate_entry_group_hash(hash: hash, time: time))
       end
+
+      module_function
 
       # Accepts an entry group hash and returns a
       # hydrated entry group hash:

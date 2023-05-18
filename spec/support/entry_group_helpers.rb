@@ -23,14 +23,14 @@ module EntryGroupHelpers
     time = localtime_for(time)
     return false unless entry_group_file_exists?(time: time)
 
-    Dsu::Support::EntryGroupLoadable.load_entry_group_file_for(time: time).to_h == entry_group_hash
+    Dsu::Models::EntryGroup.load(time: time).to_h == entry_group_hash
   end
 
   def entry_group_file_entries_matches?(time:, entry_group_entries_hash:)
     time = localtime_for(time)
     return false unless entry_group_file_exists?(time: time)
 
-    Dsu::Support::EntryGroupLoadable.load_entry_group_file_for(time: time).to_h[:entries] == entry_group_entries_hash
+    Dsu::Models::EntryGroup.load(time: time).to_h[:entries] == entry_group_entries_hash
   end
 
   def localtime_for(time)
