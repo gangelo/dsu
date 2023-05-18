@@ -80,6 +80,7 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
           time: time,
           entries: [entry.to_h]
         }
+
         expect(entry_group_file_matches?(time: time, entry_group_hash: expected_entry_group_hash)).to be true
       end
     end
