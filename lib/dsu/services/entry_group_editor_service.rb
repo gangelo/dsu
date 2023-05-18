@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../models/edited_entry'
+#require_relative '../models/edited_entry'
 require_relative '../models/entry'
 require_relative '../support/colorable'
 require_relative '../support/say'
@@ -28,7 +28,7 @@ module Dsu
 
       def call
         edit_view = render_edit_view
-        edit(edit_view: edit_view)
+        edit edit_view
         # NOTE: Return the original entry group object as any permanent changes
         # will have been applied to it.
         entry_group
@@ -46,17 +46,17 @@ module Dsu
       end
 
       # Writes the temporary file contents to disk and opens it in the editor.
-      def edit(edit_view:)
+      def edit(edit_view)
+        entry_group_with_edits = entry_group.clone
         Services::TempFileWriterService.new(tmp_file_content: edit_view).call do |tmp_file_path|
           if Kernel.system("${EDITOR:-#{configuration[:editor]}} #{tmp_file_path}")
-            edited_entries = []
             Services::TempFileReaderService.new(tmp_file_path: tmp_file_path).call do |editor_line|
-              next unless Models::EditedEntry.editable?(editor_line: editor_line)
+              next unless process_description?(editor_line)
 
-              edited_entries << Models::EditedEntry.new(editor_line: editor_line)
+              entry_group_with_edits.entries << Models::Entry.new(description: editor_line)
             end
 
-            process_entry_group!(edited_entries: edited_entries)
+            process_entry_group!(entry_group_with_edits)
           else
             say "Failed to open temporary file in editor '#{configuration[:editor]}'; " \
                 "the system error returned was: '#{$CHILD_STATUS}'.", ERROR
@@ -67,44 +67,31 @@ module Dsu
         end
       end
 
-      def process_entry_group!(edited_entries:)
-        if edited_entries.empty?
+      def process_description?(description)
+        description = Models::Entry.clean_description(description)
+        !(description.blank? || description[0] == '#')
+      end
+
+      def process_entry_group!(entry_group_with_edits)
+        if entry_group_with_edits.entries.empty?
           entry_group.entries = []
           return entry_group.save!
         end
 
-        raise ArgumentError, 'edited_entries is nil' if edited_entries.nil?
-        raise ArgumentError, 'edited_entries is empty' if edited_entries.empty?
+        common_entries = entry_group_with_edits.entries.select { |entry| entry_group.entries.include?(entry) }.uniq
+        common_entries.each do |common_entry|
+          entry_group_with_edits.entries.delete_one!(common_entry)
+        end
 
-        # Display errors for invalid edited entries.
-        invalid_entries = edited_entries.select(&:invalid?)
-        Views::EditedEntries::Shared::Errors.new(edited_entries: invalid_entries).render if invalid_entries.any?
+        if entry_group_with_edits.invalid?
+          header = 'The following ERRORS were encountered; these changes were not saved:'
+          messages = entry_group_with_edits.errors.full_messages
+          Views::Shared::Messages.new(messages: messages, message_type: :error, options: { header: header }).render
+        end
 
-        # Display warnings for duplicate edited entries.
-        duplicate_entries = duplicate_edited_entries_from(edited_entries)
-        if duplicate_entries.any?
-          messages = duplicate_entries.map do |edited_entry|
-            "Entry contains a duplicate #description: \"#{edited_entry.short_description}\"."
-          end
-          header = 'The following WARNINGS were encountered; these changes were not saved:'
-          Views::Shared::Messages.new(messages: messages, message_type: :warning, options: { header: header }).render
-      end
-
-        # Make sure we're not saving any duplicate entries.
-        entry_group.entries = valid_unique_edited_entries_from(edited_entries).map(&:to_entry!)
+        # Make sure we're saving only valid, unique entries.
+        entry_group.entries = entry_group_with_edits.entries.select(&:valid?).uniq(&:description)
         entry_group.save!
-      end
-
-      def duplicate_edited_entries_from(edited_entries)
-        return [] if edited_entries.none?
-
-        edited_entries.select(&:valid?) - edited_entries.select(&:valid?).uniq(&:description)
-      end
-
-      def valid_unique_edited_entries_from(edited_entries)
-        return [] if edited_entries.none?
-
-        edited_entries.select(&:valid?).uniq(&:description)
       end
 
       def configuration
