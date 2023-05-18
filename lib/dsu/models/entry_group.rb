@@ -55,13 +55,13 @@ module Dsu
         # Loads the EntryGroup from the file system and returns an
         # instantiated EntryGroup object.
         def load(time: nil)
-          new(**hydrated_entry_group_hash_for(time: time))
+          new(**load_entry_group_file_for(time: time))
         end
 
         # This function returns a hash whose :time and :entries
         # key values are hydrated with instantiated Time and Entry
         # objects.
-        def hydrated_entry_group_hash_for(time:)
+        def load_entry_group_file_for(time:)
           entry_group_hash = entry_group_hash_for(time: time)
           hydrate_entry_group_hash(entry_group_hash: entry_group_hash, time: time)
         end
