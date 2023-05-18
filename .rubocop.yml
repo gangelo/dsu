@@ -10,7 +10,7 @@ AllCops:
     - '.idea/**/*'
     - 'init/*'
     - 'Rakefile'
-#    - '*.gemspec'
+    - '*.gemspec'
 #    - 'spec/**/*'
     - 'vendor/**/*'
     - 'scratch*.rb'

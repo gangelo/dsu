@@ -41,7 +41,8 @@ module Dsu
 
         non_unique_descriptions = descriptions.select { |description| descriptions.count(description) > 1 }.uniq
         if non_unique_descriptions.any?
-          record.errors.add(:entries, "contains a duplicate entry: #{format_non_unique_descriptions(non_unique_descriptions)}.",
+          record.errors.add(:entries, 'contains a duplicate entry: ' \
+                                      "#{format_non_unique_descriptions(non_unique_descriptions)}.",
             type: Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
       end

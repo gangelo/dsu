@@ -139,7 +139,7 @@ RSpec.describe Dsu::Models::EntryGroup do
     end
 
     context 'when entries contains non-Entry objects' do
-      subject(:entry_group) { build(:entry_group).entries = entries }
+      subject(:entry_group) { build(:entry_group, entries: entries) }
 
       let(:entries) do
         [
@@ -147,10 +147,10 @@ RSpec.describe Dsu::Models::EntryGroup do
           :not_an_entry,
           build(:entry)
         ]
-        let(:expected_error) { /entries entry Array element is the wrong object type/ }
-
-        it_behaves_like 'an error is raised'
       end
+      let(:expected_error) { /entries contains the wrong object type/ }
+
+      it_behaves_like 'an error is raised'
     end
   end
 
@@ -222,10 +222,6 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
     end
 
-    describe '.edit' do
-      it 'does something'
-    end
-
     describe '.exists?' do
       context 'when an entry group file exists for :time' do
         after do
@@ -247,10 +243,6 @@ RSpec.describe Dsu::Models::EntryGroup do
           expect(described_class.exists?(time: time)).to be false
         end
       end
-    end
-
-    describe '.hydrated_entry_group_hash_for' do
-      it 'does something'
     end
 
     describe '.load' do

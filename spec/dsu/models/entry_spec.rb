@@ -11,7 +11,7 @@ RSpec.describe Dsu::Models::Entry do
 
   describe '#initialize' do
     it 'initializes the model attributes' do
-      expect(subject.description).to eq description
+      expect(entry.description).to eq description
     end
 
     context 'with invalid arguments' do

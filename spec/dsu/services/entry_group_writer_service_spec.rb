@@ -13,8 +13,11 @@ RSpec.shared_examples 'the entry group has no entries' do
 end
 
 RSpec.shared_examples 'the entry group file is written' do
-  it 'writes the entry group to the entry group file' do
+  it 'creates the entry group file if necessary' do
     expect(entry_group_file_exists?(time: time)).to be true
+  end
+
+  it 'writes the entry group to the entry group file' do
     expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
   end
 end
