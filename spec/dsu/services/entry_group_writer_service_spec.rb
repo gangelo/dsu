@@ -119,7 +119,7 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
       let(:entries) do
         build_list(:entry, 2, description: 'Non-unique description')
       end
-      let(:expected_error) { /Entries contains a duplicate entry/ }
+      let(:expected_error) { /Entries entry contains a duplicate entry/ }
 
       it_behaves_like 'the entry group has entries'
       it_behaves_like 'an error is raised'
