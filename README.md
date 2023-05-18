@@ -71,12 +71,11 @@ The following displays the entries for "Today", where `Time.now == '2023-05-06 0
 ```shell
 #=>
 Saturday, (Today) 2023-05-06
-  1. 587a2f29 Blocked for locally failing test IN-12345
-              Hope to pair with John on it
+  1. Blocked for locally failing test IN-12345
 
 Friday, (Yesterday) 2023-05-05
-  1. edc25a9a Pick up ticket IN-12345
-  2. f7d3018c Attend new hire meet & greet
+  1. Pick up ticket IN-12345
+  2. Attend new hire meet & greet
 ```
 
 `$ dsu list date "2023-05-06"`
@@ -86,12 +85,11 @@ See the [Dates](#dates) section for more information on acceptable DATE formats 
 ```shell
 #=>
 Saturday, (Today) 2023-05-06
-  1. 587a2f29 Blocked for locally failing test IN-12345
-              Hope to pair with John on it
+  1. Blocked for locally failing test IN-12345
 
 Friday, (Yesterday) 2023-05-05
-  1. edc25a9a Pick up ticket IN-12345
-  2. f7d3018c Attend new hire meet & greet
+  1. Pick up ticket IN-12345
+  2. Attend new hire meet & greet
 ```
 ## Editing DSU Entries
 
@@ -115,6 +113,7 @@ The following will edit your DSU entry group entries for "Today", where `Time.no
 #=> In your editor, you will see...
 # Editing DSU Entries for Tuesday, (Today) 2023-05-09 EDT
 # [ENTRY DESCRIPTION]
+
 Interative planning meeting 11:00AM.
 Pair with Chad on ticket 31211.
 Investigate spike ticket 31255.
