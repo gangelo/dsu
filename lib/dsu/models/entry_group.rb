@@ -21,8 +21,8 @@ module Dsu
       attr_accessor :time
       attr_reader :entries
 
-      validates_with Validators::EntriesValidator, fields: [:entries]
-      validates_with Validators::TimeValidator, fields: [:time]
+      validates_with Validators::EntriesValidator
+      validates_with Validators::TimeValidator
 
       def initialize(time: nil, entries: [])
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?

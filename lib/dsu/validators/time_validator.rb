@@ -5,29 +5,20 @@ module Dsu
   module Validators
     class TimeValidator < ActiveModel::Validator
       def validate(record)
-        raise 'options[:fields] is not defined.' unless options.key? :fields
-        raise 'options[:fields] is not an Array.' unless options[:fields].is_a? Array
-        raise 'options[:fields] elements are not Symbols.' unless options[:fields].all?(Symbol)
+        time = record.time
 
-        options[:fields].each do |field|
-          time = record.send(field)
-
-          if time.nil?
-            record.errors.add(field, :blank)
-            next
-          end
-
-          unless time.is_a?(Time)
-            record.errors.add(field, 'is the wrong object type. ' \
-                                     "\"Time\" was expected, but \"#{time.class}\" was received.")
-            next
-          end
-
-          if time.utc?
-            record.errors.add(field, 'is not in localtime format.')
-            next
-          end
+        if time.nil?
+          record.errors.add(:time, :blank)
+          return
         end
+
+        unless time.is_a?(Time)
+          record.errors.add(:time, 'is the wrong object type. ' \
+                                   "\"Time\" was expected, but \"#{time.class}\" was received.")
+          return
+        end
+
+        record.errors.add(:time, 'is not in localtime format.') if time.utc?
       end
     end
   end

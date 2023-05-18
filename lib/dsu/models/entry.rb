@@ -11,7 +11,7 @@ module Dsu
       include ActiveModel::Model
       include Support::Descriptable
 
-      validates_with Validators::DescriptionValidator, fields: [:description]
+      validates_with Validators::DescriptionValidator
 
       attr_reader :description
 
