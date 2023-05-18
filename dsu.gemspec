@@ -35,8 +35,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'activesupport', '~> 7.0', '>= 7.0.4'
+  spec.add_dependency 'activemodel', '~> 7.0', '>= 7.0.4.3'
   spec.add_dependency 'colorize', '~> 0.8.1'
-  spec.add_dependency 'deco_lite', '~> 1.3'
   spec.add_dependency 'os', '~> 1.1', '>= 1.1.4'
   spec.add_dependency 'thor', '~> 1.2', '>= 1.2.1'
   spec.add_dependency 'thor_nested_subcommand', '~> 1.0'
