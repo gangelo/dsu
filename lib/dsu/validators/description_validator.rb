@@ -13,7 +13,7 @@ module Dsu
 
         unless description.is_a?(String)
           record.errors.add(field, 'is the wrong object type. ' \
-                                    "\"String\" was expected, but \"#{description.class}\" was received.")
+                                   "\"String\" was expected, but \"#{description.class}\" was received.")
           return
         end
 

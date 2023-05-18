@@ -40,7 +40,7 @@ module Dsu
             # Editing DSU Entries for #{formatted_time(time: entry_group.time)}
             # [ENTRY DESCRIPTION]
 
-            #{ entry_group_entry_lines.each(&:strip).join("\n") }
+            #{entry_group_entry_lines.each(&:strip).join("\n")}
 
             # INSTRUCTIONS:
             #    ADD a DSU entry: type an ENTRY DESCRIPTION on a new line.

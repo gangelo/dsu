@@ -42,7 +42,9 @@ module Dsu
             prefix = "#{format('%03s', index + 1)}. "
             description = colorize_string(string: entry.description, mode: :bold)
             entry_info = "#{prefix} #{description}"
-            entry_info = "#{entry_info} (validation failed: #{entry_errors(entry_group_deleter_service)})" unless entry.valid?
+            unless entry.valid?
+              entry_info = "#{entry_info} (validation failed: #{entry_errors(entry_group_deleter_service)})"
+            end
             say entry_info
           end
         end
