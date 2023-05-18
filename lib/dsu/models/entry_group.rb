@@ -44,7 +44,7 @@ module Dsu
           # return new(time: time) unless exists?(time: time)
 
           load(time: time).tap do |entry_group|
-            entry_group.edit(options: options)
+            Services::EntryGroupEditorService.new(entry_group: entry_group, options: options).call
           end
         end
 
@@ -75,15 +75,6 @@ module Dsu
 
         clone.entries = clone.entries.map(&:clone)
         clone
-      end
-
-      def edit(options: {})
-        Services::EntryGroupEditorService.new(entry_group: self, options: options).call
-        self
-      end
-
-      def entries?
-        entries.any?
       end
 
       def entries=(entries)

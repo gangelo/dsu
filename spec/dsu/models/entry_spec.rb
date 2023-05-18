@@ -112,4 +112,10 @@ RSpec.describe Dsu::Models::Entry do
       end
     end
   end
+
+  describe '#hash' do
+    it 'returns the hash of the entry description' do
+      expect(entry.hash).to eq(description.hash)
+    end
+  end
 end

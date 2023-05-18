@@ -24,11 +24,6 @@ module Dsu
       end
 
       class << self
-        def valid?(description:)
-          description = clean_description(description)
-          !(description.blank? || description[0] == '#')
-        end
-
         def clean_description(description)
           return if description.nil?
 
