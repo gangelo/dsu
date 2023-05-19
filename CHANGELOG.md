@@ -1,3 +1,6 @@
+## [1.1.0] - 2023-05-1??
+* Changes
+  - Added new configuration option `carry_over_entries_to_today` (`true|false`, default: `false`); if true, when editing DSU entries **for the first time** on any  given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied to the editing session. If there are no DSU entries from the previous day, `dsu` will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply start with no previous DSU entries.
 ## [1.0.0] - 2023-05-18
 * First official release.
 * NOTE: If you have been using the alpha version of `dsu`, you will need to delete the `entries` folder (e.g. `/Users/<whoami>/dsu/entries` on a nix os) as the old entries .json files are incompatible with this official release.

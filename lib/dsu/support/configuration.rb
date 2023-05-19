@@ -28,7 +28,7 @@ module Dsu
         'entries_display_order' => 'desc',
         'entries_file_name' => '%Y-%m-%d.json',
         'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries",
-        'carry_over_entries_to_today' => true
+        'carry_over_entries_to_today' => false
       }.freeze
       # rubocop:enable Style/StringHashKeys
 

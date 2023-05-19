@@ -9,10 +9,10 @@ RSpec.describe Dsu::Support::Configuration do
 
   describe 'constants' do
     describe 'DEFAULT_DSU_OPTIONS' do
-      let(:expected_keys) { %w[editor entries_display_order entries_folder entries_file_name] }
+      let(:expected_keys) { %w[editor entries_display_order entries_folder entries_file_name carry_over_entries_to_today] }
 
       it 'defines the right keys' do
-        expect(described_class::DEFAULT_DSU_OPTIONS.keys).to match expected_keys
+        expect(described_class::DEFAULT_DSU_OPTIONS.keys).to match_array expected_keys
       end
     end
   end
