@@ -80,6 +80,10 @@ module Dsu
         self
       end
 
+      def time_formatted
+        formatted_time(time: time)
+      end
+
       def save!
         delete! and return if entries.empty?
 

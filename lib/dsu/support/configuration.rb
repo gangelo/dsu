@@ -27,7 +27,8 @@ module Dsu
         # asc or desc, ascending or descending, respectively.
         'entries_display_order' => 'desc',
         'entries_file_name' => '%Y-%m-%d.json',
-        'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries"
+        'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries",
+        'carry_over_entries_to_today' => true
       }.freeze
       # rubocop:enable Style/StringHashKeys
 
