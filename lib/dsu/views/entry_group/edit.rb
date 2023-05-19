@@ -92,7 +92,7 @@ module Dsu
 
           <<~EDIT_VIEW
             #{banner_line}
-            # PREVIOUS DSU ENTRIES FOR #{previous_entry_group.time_formatted}
+            # PREVIOUS DSU ENTRIES FROM #{previous_entry_group.time_formatted}
             #{banner_line}
 
             #{previous_entry_group.entries.map(&:description).join("\n").chomp}
