@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-def yyyy_mm_dd(time)
-  time.strftime('%Y-%m-%d')
-end
-
 RSpec.describe Dsu::Support::CommandOptions::Time do
   before do
     allow(Time).to receive(:now).and_call_original
@@ -85,7 +81,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
         let(:command_option) { '02/01/2023' }
 
         it 'returns a Time object' do
-          expect(yyyy_mm_dd(time)).to eq('2023-02-01')
+          expect(to_yyyymmdd_string(time)).to eq('2023-02-01')
         end
       end
 
@@ -93,7 +89,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
         let(:command_option) { '2/1/2023' }
 
         it 'returns a Time object' do
-          expect(yyyy_mm_dd(time)).to eq('2023-02-01')
+          expect(to_yyyymmdd_string(time)).to eq('2023-02-01')
         end
       end
 
@@ -101,7 +97,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
         let(:command_option) { '2/1' }
 
         it 'returns a Time object' do
-          expect(yyyy_mm_dd(time)).to eq('2023-02-01')
+          expect(to_yyyymmdd_string(time)).to eq('2023-02-01')
         end
       end
     end

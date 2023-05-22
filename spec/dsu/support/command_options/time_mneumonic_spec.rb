@@ -1,10 +1,20 @@
 # frozen_string_literal: true
 
+RSpec.shared_examples 'the correct time is returned' do
+  it 'returns the expected time' do
+    expect(to_yyyymmdd_string(time_from_mneumonic)).to eq(to_yyyymmdd_string(expected_time))
+  end
+end
+
 RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
-  subject(:time_mneumonic) do
+  subject(:time_from_mneumonic) do
     Class.new do
       include Dsu::Support::CommandOptions::TimeMneumonic
     end.new.time_from_mneumonic!(command_option: command_option, relative_time: relative_time)
+  end
+
+  before do
+    allow(Time).to receive(:now).and_call_original
   end
 
   describe '#time_from_mneumonic!' do
@@ -59,14 +69,6 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'an error is raised'
       end
 
-      context 'when nil' do
-        let(:command_option) { 'today' }
-        let(:relative_time) { nil }
-        let(:expected_error) { /relative_time cannot be nil/ }
-
-        it_behaves_like 'an error is raised'
-      end
-
       context 'when blank' do
         let(:command_option) { 'yesterday' }
         let(:relative_time) { '' }
@@ -89,6 +91,121 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         let(:expected_error) { /relative_time is an invalid mneumonic/ }
 
         it_behaves_like 'an error is raised'
+      end
+    end
+
+    context 'when the combination of command_option and relative_time arguments are invalid' do
+      # TODO: Implement these tests.
+    end
+
+    # The following tests are for the case where the arguments are valid.
+    context 'when command_option is valid' do
+      context "when 'today'" do
+        let(:command_option) { 'today' }
+        let(:relative_time) { nil }
+        let(:expected_time) { Time.now }
+
+        it_behaves_like 'the correct time is returned'
+      end
+
+      context "when 'yesterday'" do
+        let(:command_option) { 'yesterday' }
+        let(:relative_time) { nil }
+        let(:expected_time) { Time.now.yesterday }
+
+        it_behaves_like 'the correct time is returned'
+      end
+
+      context "when 'tomorrow'" do
+        let(:command_option) { 'tomorrow' }
+        let(:relative_time) { nil }
+        let(:expected_time) { Time.now.tomorrow }
+
+        it_behaves_like 'the correct time is returned'
+      end
+
+      context 'when a positive (+), relative time mneumonic' do
+        let(:command_option) { '+1' }
+        let(:relative_time) { nil }
+        let(:expected_time) { Time.now.tomorrow }
+
+        it_behaves_like 'the correct time is returned'
+      end
+
+      context 'when a positive (-), relative time mneumonic' do
+        let(:command_option) { '-1' }
+        let(:relative_time) { nil }
+        let(:expected_time) { Time.now.yesterday }
+
+        it_behaves_like 'the correct time is returned'
+      end
+    end
+
+    context 'when command_option and relative_time are both valid' do
+      context "when 'today' and a (positive, +n) relative time mneumonic respectfully" do
+        let(:command_option) { 'today' }
+        let(:relative_time) { '+1' }
+        let(:expected_time) { Time.now.tomorrow }
+
+        it_behaves_like 'the correct time is returned'
+      end
+
+      context "when 'today' and a (negative, -n) relative time mneumonic respectfully" do
+        let(:command_option) { 'today' }
+        let(:relative_time) { '-1' }
+        let(:expected_time) { Time.now.yesterday }
+
+        it_behaves_like 'the correct time is returned'
+      end
+
+      context 'when command_option and relative_time are both time mneumonics' do
+        context "when 'today' and 'tomorrow' respectfully" do
+          let(:command_option) { 'today' }
+          let(:relative_time) { 'tomorrow' }
+          let(:expected_time) { Time.now.tomorrow }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when 'today' and 'yesterday' respectfully" do
+          let(:command_option) { 'today' }
+          let(:relative_time) { 'yesterday' }
+          let(:expected_time) { Time.now.yesterday }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when 'tomorrow' and 'today' respectfully" do
+          let(:command_option) { 'tomorrow' }
+          let(:relative_time) { 'today' }
+          let(:expected_time) { Time.now.tomorrow }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when 'tomorrow' and 'yesterday' respectfully" do
+          let(:command_option) { 'tomorrow' }
+          let(:relative_time) { 'yesterday' }
+          let(:expected_time) { Time.now }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when 'yesterday' and 'today' respectfully" do
+          let(:command_option) { 'yesterday' }
+          let(:relative_time) { 'today' }
+          let(:expected_time) { Time.now.yesterday }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when 'yesterday' and 'tomorrow' respectfully" do
+          let(:command_option) { 'yesterday' }
+          let(:relative_time) { 'tomorrow' }
+          let(:expected_time) { Time.now }
+
+          it_behaves_like 'the correct time is returned'
+        end
       end
     end
   end
