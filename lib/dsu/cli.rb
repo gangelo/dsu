@@ -20,7 +20,7 @@ module Dsu
     long_desc <<-LONG_DESC
       NAME
       \x5
-      `DSU add, -a [OPTIONS] DESCRIPTION` -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
+      `dsu add, -a [OPTIONS] DESCRIPTION` -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
 
       SYNOPSIS
       \x5

@@ -30,9 +30,19 @@ module Dsu
       end
 
       def date_option_description
-        <<-DATE_OPTION_DESC
-          Where DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
-        DATE_OPTION_DESC
+        <<-OPTION_DESC
+          DATE:
+          \x5
+          This may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('01/02/2023'); Time.parse('1/2') # etc.`
+        OPTION_DESC
+      end
+
+      def mneumonic_option_description
+        <<-OPTION_DESC
+          MNEUMONIC:
+          \x5
+          This may be any of the following: DATE (see DATE)|n|today|t|tomorrow|y|yesterday.
+        OPTION_DESC
       end
     end
 

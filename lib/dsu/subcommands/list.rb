@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
 require_relative '../base_cli'
+require_relative '../support/command_options/from_to_times'
 
 module Dsu
   module Subcommands
     class List < Dsu::BaseCLI
+      include Support::CommandOptions::FromToTimes
+
       map %w[d] => :date
+      map %w[dd] => :dates
       map %w[n] => :today
       map %w[t] => :tomorrow
       map %w[y] => :yesterday
@@ -58,6 +62,50 @@ module Dsu
       def date(date)
         time = Time.parse(date)
         sorted_dsu_times_for(times: [time, time.yesterday]).each do |t|
+          view_entry_group(time: t)
+          puts
+        end
+      rescue ArgumentError => e
+        say "Error: #{e.message}", ERROR
+        exit 1
+      end
+
+      desc 'dates, dd OPTIONS',
+        'Displays the DSU entries for the OPTIONS provided'
+      long_desc <<~LONG_DESC
+        NAME
+        \x5
+        `dsu dates|dd OPTIONS` -- will display the DSU entries for the OPTIONS provided.
+
+        SYNOPSIS
+        \x5
+        `dsu dates|dd OPTIONS`
+
+        OPTIONS:
+        \x5
+        -f|--from DATE|MNEMONIC: ?.
+
+        \x5
+        -t|--to DATE|MNEMONIC: ?.
+
+        \x5
+        #{date_option_description}
+
+        \x5
+        #{mneumonic_option_description}
+      LONG_DESC
+      # -f, --from FROM [DATE|MNEMONIC] (e.g. -f, --from 1/1[/yyy]|n|t|y|today|tomorrow|yesterday)
+      option :from, type: :string, aliases: '-f', banner: 'DATE|MNEMONIC'
+      # -t, --to TO [DATE|MNEMONIC] (e.g. -t, --to 1/1[/yyy]|n|t|y|today|tomorrow|yesterday)
+      option :to, type: :string, aliases: '-t', banner: 'DATE|MNEMONIC'
+
+      # Exclude dates that have no DSU entries.
+      option :exclude_blank, type: :boolean, aliases: '-x', default: false
+      def dates
+        times = from_to_times_for!(from_command_option: options[:from], to_command_option: options[:to])
+        # Note special sort here, unlike the other commands where rules for
+        # displaying DSU entries are applied; this is more of a list command.
+        times_sort(times: times, entries_display_order: entries_display_order).each do |t|
           view_entry_group(time: t)
           puts
         end
