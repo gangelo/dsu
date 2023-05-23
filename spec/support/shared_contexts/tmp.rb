@@ -8,6 +8,5 @@ RSpec.shared_context 'with tmp' do
   end
 
   let(:tmp_file) { Tempfile.new('dsu', tmp_folder) }
-  let(:tmp_folder) { Gem::Specification.find_by_name('dsu').gem_dir + "/spec/#{tmp_folder_name}" }
-  let(:tmp_folder_name) { '.tmp' }
+  let(:tmp_folder) { "#{Gem::Specification.find_by_name('dsu').gem_dir}/spec/.tmp" }
 end

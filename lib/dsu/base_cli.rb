@@ -30,9 +30,28 @@ module Dsu
       end
 
       def date_option_description
-        <<-DATE_OPTION_DESC
-          Where DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
-        DATE_OPTION_DESC
+        <<-OPTION_DESC
+          DATE
+          \x5
+          This may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('01/02/2023'); Time.parse('1/2') # etc.`
+        OPTION_DESC
+      end
+
+      def mneumonic_option_description
+        <<-OPTION_DESC
+          MNEUMONIC
+          \x5
+          This may be any of the following: n|today|t|tomorrow|y|yesterday|+n|-n.
+
+          \x5
+          Where n, t, y are aliases for today, tomorrow, and yesterday, respectively.
+
+          \x5
+          Where +n, -n are relative date mneumonics (RDNs). Generally speaking, RDNs are relative to the current date. For example, a RDN of +1 would be equal to `Time.now + 1.day` (tomorrow), and a RDN of -1 would be equal to `Time.now - 1.day` (yesterday).
+
+          \x5
+          In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted.
+        OPTION_DESC
       end
     end
 

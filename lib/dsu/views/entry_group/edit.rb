@@ -1,17 +1,13 @@
 # frozen_string_literal: true
 
-require 'time'
-require 'active_support/core_ext/numeric/time'
 require_relative '../../models/entry_group'
-require_relative '../../support/time_formatable'
+require_relative '../../support/configurable'
 
 module Dsu
   module Views
     module EntryGroup
       class Edit
-        include Support::Colorable
-        include Support::Say
-        include Support::TimeFormatable
+        include Support::Configurable
 
         def initialize(entry_group:, options: {})
           raise ArgumentError, 'entry_group is nil' if entry_group.nil?
@@ -31,18 +27,16 @@ module Dsu
           # Just in case the entry group is invalid, we'll validate it before displaying it.
           entry_group.validate!
 
-          # TODO: Display entry group entries from the previous DSU date so they can be
-          # easily copied over; or, add them to the current entry group entries below as
-          # a "# [+|a|add] <entry group from previous DSU entry description>"
-          # (e.g. commented out) by default?
-
           <<~EDIT_VIEW
-            # Editing DSU Entries for #{formatted_time(time: entry_group.time)}
-            # [ENTRY DESCRIPTION]
+            #{banner_line}
+            # Editing DSU Entries for #{entry_group.time_formatted}
+            #{banner_line}
 
-            #{entry_group_entry_lines.each(&:strip).join("\n")}
+            #{entry_group_view&.chomp}
 
-            # INSTRUCTIONS:
+            #{banner_line}
+            # INSTRUCTIONS
+            #{banner_line}
             #    ADD a DSU entry: type an ENTRY DESCRIPTION on a new line.
             #   EDIT a DSU entry: change the existing ENTRY DESCRIPTION.
             # DELETE a DSU entry: delete the ENTRY DESCRIPTION.
@@ -51,6 +45,7 @@ module Dsu
             # REORDER a DSU entry: reorder the ENTRY DESCRIPTIONs in order preference.
             #
             # *** When you are done, save and close your editor ***
+            #{banner_line}
           EDIT_VIEW
         end
 
@@ -58,8 +53,68 @@ module Dsu
 
         attr_reader :entry_group, :options
 
+        def time
+          @time ||= entry_group.time
+        end
+
+        def banner_line
+          '#' * 80
+        end
+
+        def entry_group_view
+          return entry_group_entry_lines if entry_group.entries.any?
+          return previous_entry_group_entry_lines if carry_over_entries_to_today? && previous_entry_group?
+
+          <<~EDIT_VIEW
+            #{banner_line}
+            # ENTER DSU ENTRIES BELOW
+            #{banner_line}
+
+          EDIT_VIEW
+        end
+
         def entry_group_entry_lines
-          entry_group.entries.map(&:description)
+          raise 'No entries in entry group' if entry_group.entries.empty?
+
+          <<~EDIT_VIEW
+            #{banner_line}
+            # DSU ENTRIES
+            #{banner_line}
+
+            #{entry_group.entries.map(&:description).join("\n").chomp}
+          EDIT_VIEW
+        end
+
+        def previous_entry_group_entry_lines
+          raise 'carry_over_entries_to_today? is false' unless carry_over_entries_to_today?
+          raise 'Entries exist in entry_group' if entry_group.entries.any?
+          raise 'No previous entry group exists' unless previous_entry_group?
+
+          <<~EDIT_VIEW
+            #{banner_line}
+            # PREVIOUS DSU ENTRIES FROM #{previous_entry_group.time_formatted}
+            #{banner_line}
+
+            #{previous_entry_group.entries.map(&:description).join("\n").chomp}
+          EDIT_VIEW
+        end
+
+        def previous_entry_group?
+          previous_entry_group.present?
+        end
+
+        def previous_entry_group
+          # Go back a max of 7 days to find the previous entry group.
+          # TODO: Make this configurable or accept an option?
+          @previous_entry_group ||= (1..7).each do |days|
+            t = time.days_ago(days)
+            return Models::EntryGroup.load(time: t) if Support::EntryGroupFileable.entry_group_file_exists?(time: t)
+          end
+          nil
+        end
+
+        def carry_over_entries_to_today?
+          configuration[:carry_over_entries_to_today]
         end
       end
     end

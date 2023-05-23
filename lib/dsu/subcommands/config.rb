@@ -70,7 +70,6 @@ module Dsu
 
         Default: "'#{Dsu::Support::FolderLocations.root_folder}/dsu/entries'"
       LONG_DESC
-
       def init
         create_config_file!
       end

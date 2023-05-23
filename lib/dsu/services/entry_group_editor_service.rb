@@ -2,17 +2,18 @@
 
 require_relative '../models/entry'
 require_relative '../support/colorable'
+require_relative '../support/configurable'
 require_relative '../support/say'
 require_relative '../support/time_formatable'
 require_relative '../views/edited_entries/shared/errors'
 require_relative '../views/shared/messages'
-require_relative 'configuration_loader_service'
 require_relative 'stdout_redirector_service'
 
 module Dsu
   module Services
     class EntryGroupEditorService
       include Support::Colorable
+      include Support::Configurable
       include Support::Say
       include Support::TimeFormatable
 
@@ -89,10 +90,6 @@ module Dsu
       def process_description?(description)
         description = Models::Entry.clean_description(description)
         !(description.blank? || description[0] == '#')
-      end
-
-      def configuration
-        @configuration ||= ConfigurationLoaderService.new.call
       end
     end
   end

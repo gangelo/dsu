@@ -12,7 +12,7 @@ module Dsu
       def validate(record)
         unless record.entries.is_a?(Array)
           record.errors.add(:entries_entry, 'is the wrong object type. ' \
-                                      "\"Array\" was expected, but \"#{record.entries.class}\" was received.")
+                                            "\"Array\" was expected, but \"#{record.entries.class}\" was received.")
         end
 
         validate_entry_types record
@@ -27,7 +27,7 @@ module Dsu
           next if entry.is_a? Dsu::Models::Entry
 
           record.errors.add(:entries_entry, 'entry Array element is the wrong object type. ' \
-                                      "\"Entry\" was expected, but \"#{entry.class}\" was received.",
+                                            "\"Entry\" was expected, but \"#{entry.class}\" was received.",
             type: Support::FieldErrors::FIELD_TYPE_ERROR)
         end
       end
@@ -43,7 +43,7 @@ module Dsu
         non_unique_descriptions = descriptions.select { |description| descriptions.count(description) > 1 }.uniq
         if non_unique_descriptions.any?
           record.errors.add(:entries_entry, 'contains a duplicate entry: ' \
-                                      "#{format_non_unique_descriptions(non_unique_descriptions)}.",
+                                            "#{format_non_unique_descriptions(non_unique_descriptions)}.",
             type: Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
       end

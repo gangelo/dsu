@@ -1,3 +1,15 @@
+## [1.1.1] - 2023-05-23
+* See previous alpha releases for changes.
+## [1.1.1.alpha.2] - 2023-05-23
+* Changes
+  - For convenience, the `dsu list date` command now takes a MNEUMONIC in addition to a DATE. See `dsu list help date` for more information.
+* Bug fixes
+  - Fix a bug that did not display `dsu list dates SUBCOMMAND` date list properly when the `--from` option was a date mneumonic and the `--to` optoin was a relative time mneumonic (e.g. `dsu list dates -f today -t +1`). In this case, DSU dates `Time.now` and `Time.now.tomorrow` should be displayed; instead, the bug would consider the `--to` option as relative to `Time.now`, so only 1 DSU date (`Time.now` would be returned).
+## [1.1.0.alpha.1] - 2023-05-23
+* Changes
+  - Added new configuration option `carry_over_entries_to_today` (`true|false`, default: `false`); if true, when editing DSU entries **for the first time** on any  given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied to the editing session. If there are no DSU entries from the previous day, `dsu` will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply start with no previous DSU entries.
+  - Added new configuration option `include_all` (`true|false`, default: `false`); if true, when using dsu commands that list date ranges (e.g. `dsu list dates`), the displayed list will include dates that have no dsu entries. If false, the displayed list will only include dates that have dsu entries. For all other `dsu list` commands, if true, this option will behave in the aforementioned manner. If false, the displayed list will unconditionally display the first and last dates regardless of whether or not the DSU date has entries or not; all other dates will not be displayed if the DSU date has no entries.
+  - Changed the look of the editor template when editing entry group entries.
 ## [1.0.0] - 2023-05-18
 * First official release.
 * NOTE: If you have been using the alpha version of `dsu`, you will need to delete the `entries` folder (e.g. `/Users/<whoami>/dsu/entries` on a nix os) as the old entries .json files are incompatible with this official release.

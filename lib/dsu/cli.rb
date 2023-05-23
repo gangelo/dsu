@@ -20,7 +20,7 @@ module Dsu
     long_desc <<-LONG_DESC
       NAME
       \x5
-      `DSU add, -a [OPTIONS] DESCRIPTION` -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
+      `dsu add, -a [OPTIONS] DESCRIPTION` -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
 
       SYNOPSIS
       \x5
@@ -54,14 +54,12 @@ module Dsu
     def add(description)
       time = if options[:date].present?
         Time.parse(options[:date])
-      else
-        if options[:tomorrow].present?
-          Time.now.tomorrow
-        elsif options[:yesterday].present?
-          Time.now.yesterday
-        elsif options[:today].present?
-          Time.now
-        end
+      elsif options[:tomorrow].present?
+        Time.now.tomorrow
+      elsif options[:yesterday].present?
+        Time.now.yesterday
+      elsif options[:today].present?
+        Time.now
       end
       entry = Models::Entry.new(description: description)
       CommandServices::AddEntryService.new(entry: entry, time: time).call

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require 'securerandom'
 require_relative '../support/descriptable'
 require_relative '../validators/description_validator'
 

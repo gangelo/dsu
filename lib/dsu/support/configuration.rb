@@ -27,7 +27,19 @@ module Dsu
         # asc or desc, ascending or descending, respectively.
         'entries_display_order' => 'desc',
         'entries_file_name' => '%Y-%m-%d.json',
-        'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries"
+        'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries",
+        'carry_over_entries_to_today' => false,
+        # If true, when using dsu commands that list date ranges (e.g.
+        # `dsu list dates`), the displayed list will include dates that
+        # have no dsu entries. If false, the displayed list will only
+        # include dates that have dsu entries.
+        # For all other `dsu list` commands, if true, this option will
+        # behave in the aforementioned manner. If false, the displayed
+        # list will unconditionally display the first and last dates
+        # regardless of whether or not the DSU date has entries or not;
+        # all other dates will not be displayed if the DSU date has no
+        # entries.
+        'include_all' => false
       }.freeze
       # rubocop:enable Style/StringHashKeys
 

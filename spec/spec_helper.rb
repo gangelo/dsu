@@ -11,6 +11,7 @@ require 'time'
 
 require_relative './support/configuration_helpers'
 require_relative './support/entry_group_helpers'
+require_relative './support/time_helpers'
 
 require 'simplecov'
 
@@ -44,4 +45,5 @@ RSpec.configure do |config|
 
   config.include ConfigurationHelpers
   config.include EntryGroupHelpers
+  config.include TimeHelpers
 end
