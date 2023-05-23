@@ -3,17 +3,35 @@
 module Dsu
   module Support
     module EntryGroupViewable
-      module_function
+      def view_entry_groups(times:, options: {})
+        total_viewable_entry_groups = 0
 
-      def view_entry_group(time:)
-        entry_group = if Models::EntryGroup.exists?(time: time)
-          entry_group_json = Services::EntryGroupReaderService.new(time: time).call
-          Services::EntryGroupHydratorService.new(entry_group_json: entry_group_json).call
-        else
-          Models::EntryGroup.new(time: time)
+        times.each do |time|
+          view_entry_group(time: time, options: options) do
+            total_viewable_entry_groups += 1
+            puts
+          end
         end
-        Views::EntryGroup::Show.new(entry_group: entry_group).render
+
+        yield total_viewable_entry_groups if block_given?
       end
+
+      def view_entry_group(time:, options: {})
+        return unless show_entry_group?(time: time, options: options)
+
+        entry_group = Models::EntryGroup.load(time: time)
+        Views::EntryGroup::Show.new(entry_group: entry_group).render
+
+        yield if block_given?
+      end
+
+      private
+
+      def show_entry_group?(time:, options:)
+        Models::EntryGroup.exists?(time: time) || options[:include_all]
+      end
+
+      module_function :view_entry_group, :view_entry_groups, :show_entry_group?
     end
   end
 end

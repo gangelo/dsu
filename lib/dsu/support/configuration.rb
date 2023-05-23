@@ -28,7 +28,12 @@ module Dsu
         'entries_display_order' => 'desc',
         'entries_file_name' => '%Y-%m-%d.json',
         'entries_folder' => "#{FolderLocations.root_folder}/dsu/entries",
-        'carry_over_entries_to_today' => false
+        'carry_over_entries_to_today' => false,
+        # If true, when using dsu commands that list date ranges (e.g.
+        # `dsu list dates`), the displayed list will include dates that
+        # have no dsu entries. If false, the displayed list will only
+        # include dates that have dsu entries.
+        'include_all' => false
       }.freeze
       # rubocop:enable Style/StringHashKeys
 

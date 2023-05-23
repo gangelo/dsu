@@ -44,7 +44,8 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
           'entries_display_order' => 'entries_display_order',
           'entries_folder' => 'entries_folder',
           'entries_file_name' => 'entries_file_name',
-          'carry_over_entries_to_today' => 'carry_over_entries_to_today'
+          'carry_over_entries_to_today' => 'carry_over_entries_to_today',
+          'include_all' => 'include_all'
         }
       end
       # rubocop:enable Style/StringHashKeys
