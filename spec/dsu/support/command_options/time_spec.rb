@@ -5,11 +5,11 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
     allow(Time).to receive(:now).and_call_original
   end
 
-  describe '.to_time' do
+  describe '.time_from_date_string' do
     subject(:time) do
       Class.new do
         include Dsu::Support::CommandOptions::Time
-      end.new.to_time(command_option: command_option)
+      end.new.time_from_date_string(command_option: command_option)
     end
 
     context 'when the argument is invalid' do
@@ -39,11 +39,11 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
     end
   end
 
-  describe '.to_time!' do
+  describe '.time_from_date_string!' do
     subject(:time) do
       Class.new do
         include Dsu::Support::CommandOptions::Time
-      end.new.to_time!(command_option: command_option)
+      end.new.time_from_date_string!(command_option: command_option)
     end
 
     context 'when the argument is invalid' do

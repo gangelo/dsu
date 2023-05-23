@@ -10,7 +10,7 @@ module Dsu
       module Time
         DATE_CAPTURE_REGEX = %r{\A(?<month>0?[1-9]|1[0-2])/(?<day>0?[1-9]|1\d|2\d|3[01])(?:/(?<year>\d{4}))?\z}
 
-        def to_time!(command_option:)
+        def time_from_date_string!(command_option:)
           raise ArgumentError, 'command_option is nil.' if command_option.nil?
           raise ArgumentError, 'command_option is blank.' if command_option.blank?
 
@@ -29,8 +29,8 @@ module Dsu
           raise ArgumentError, "command_option is not a valid date: \"#{command_option}\"."
         end
 
-        def to_time(command_option:)
-          to_time!(command_option: command_option)
+        def time_from_date_string(command_option:)
+          time_from_date_string!(command_option: command_option)
         rescue ArgumentError
           nil
         end

@@ -10,6 +10,12 @@ module Dsu
       module TimeMneumonic
         include TimeMneumonics
 
+        def time_from_mneumonic(command_option:, relative_time: nil)
+          time_from_mneumonic!(command_option: command_option, relative_time: relative_time)
+        rescue ArgumentError
+          nil
+        end
+
         # command_option: is expected to me a time mneumonic. If relative_time is NOT nil, all
         # time mneumonics are relative to relative_time. Otherwise, they are relative to Time.now.
         # relative_time: is a Time object that is required IF command_option is expected to be
@@ -20,7 +26,20 @@ module Dsu
             validate_argument!(command_option: relative_time, command_option_name: :relative_time)
           end
 
+          # if relative_time_mneumonic?(command_option) && !relative_time.nil?
+          #   # If command_option is a relative time mneumonic, we need to get the time
+          #   # relative to relative_time using ::Time.now, and use the command_option
+          #   # as the relative time.
+          #   return time_from_mneumonic!(command_option: relative_time, relative_time: command_option)
+          # end
+
           time_for_mneumonic(mneumonic: command_option, relative_time: relative_time)
+        end
+
+        # This method returns true if mneumonic is a valid mneumonic OR
+        # a relative time mneumonic.
+        def time_mneumonic?(mneumonic)
+          mneumonic?(mneumonic) || relative_time_mneumonic?(mneumonic)
         end
 
         private
@@ -63,12 +82,6 @@ module Dsu
           days_from_now.to_i.days.from_now(time)
         end
 
-        # This method returns true if mneumonic is a valid mneumonic OR
-        # a relative time mneumonic.
-        def valid_mneumonic?(mneumonic)
-          mneumonic?(mneumonic) || relative_time_mneumonic?(mneumonic)
-        end
-
         # This method returns true if mneumonic is a valid time mneumonic.
         # This method will return false if mneumonic is an invalid mneumonic
         # OR if mneumonic is a relative time mneumonic.
@@ -104,7 +117,7 @@ module Dsu
           unless command_option.is_a?(String)
             raise ArgumentError, "#{command_option_name} must be a String: \"#{command_option}\""
           end
-          unless valid_mneumonic?(command_option)
+          unless time_mneumonic?(command_option)
             raise ArgumentError, "#{command_option_name} is an invalid mneumonic: \"#{command_option}\"."
           end
         end

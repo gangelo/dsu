@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+
 RSpec.shared_examples 'the correct time is returned' do
   it 'returns the expected time' do
     expect(to_yyyymmdd_string(time_from_mneumonic)).to eq(to_yyyymmdd_string(expected_time))
   end
 end
 
+# rubocop:disable RSpec/NestedGroups
 RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
   subject(:time_from_mneumonic) do
     Class.new do
@@ -94,10 +96,6 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
       end
     end
 
-    context 'when the combination of command_option and relative_time arguments are invalid' do
-      # TODO: Implement these tests.
-    end
-
     # The following tests are for the case where the arguments are valid.
     context 'when command_option is valid' do
       context "when 'today'" do
@@ -158,6 +156,21 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'the correct time is returned'
       end
 
+      context "when a (positive, +n) relative time mneumonic and 'today' respectfully" do
+        let(:command_option) { '+7' }
+        let(:relative_time) { 'today' }
+        let(:expected_time) { 7.days.from_now(Time.now) }
+
+        it_behaves_like 'the correct time is returned'
+      end
+      context "when a (negative, -n) relative time mneumonic and 'today' respectfully" do
+        let(:command_option) { '-7' }
+        let(:relative_time) { 'today' }
+        let(:expected_time) { -7.days.from_now(Time.now) }
+
+        it_behaves_like 'the correct time is returned'
+      end
+
       context 'when command_option and relative_time are both time mneumonics' do
         context "when 'today' and 'tomorrow' respectfully" do
           let(:command_option) { 'today' }
@@ -207,6 +220,41 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
           it_behaves_like 'the correct time is returned'
         end
       end
+
+      context 'when command_option and relative_time are both time relative mneumonics' do
+        context "when '+1' and '+1' respectfully" do
+          let(:command_option) { '+1' }
+          let(:relative_time) { '+1' }
+          let(:expected_time) { Time.now.tomorrow.tomorrow }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when '-1' and '-1' respectfully" do
+          let(:command_option) { '-1' }
+          let(:relative_time) { '-1' }
+          let(:expected_time) { Time.now.yesterday.yesterday }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when '-1' and '+1' respectfully" do
+          let(:command_option) { '-1' }
+          let(:relative_time) { '+1' }
+          let(:expected_time) { Time.now }
+
+          it_behaves_like 'the correct time is returned'
+        end
+
+        context "when '-2' and '+2' respectfully" do
+          let(:command_option) { '-2' }
+          let(:relative_time) { '+4' }
+          let(:expected_time) { Time.now.tomorrow.tomorrow }
+
+          it_behaves_like 'the correct time is returned'
+        end
+      end
     end
   end
 end
+# rubocop:enable RSpec/NestedGroups

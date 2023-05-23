@@ -8,4 +8,10 @@ module TimeHelpers
 
     time.strftime('%Y-%m-%d')
   end
+
+  def to_yyyymmdd_string_array(time_array)
+    raise ArgumentError, "time_array is not an Array: \"#{time_array}\"" unless time_array.is_a?(Array)
+
+    time_array.map { |time| to_yyyymmdd_string(time) }
+  end
 end
