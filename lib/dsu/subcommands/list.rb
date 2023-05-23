@@ -127,8 +127,9 @@ module Dsu
         times.each do |time|
           view_options = options.dup
           view_options[:include_all] = true if times_first_and_last.include?(time)
-          view_entry_group(time: time, options: view_options)
-          puts
+          view_entry_group(time: time, options: view_options) do
+            puts
+          end
         end
       end
     end
