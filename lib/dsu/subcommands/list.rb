@@ -113,7 +113,8 @@ module Dsu
 
       def nothing_to_display_banner_for(entry_group_times)
         entry_group_times.sort!
-        time_range = "#{formatted_time(time: entry_group_times.first)} through #{formatted_time(time: entry_group_times.last)}"
+        time_range = "#{formatted_time(time: entry_group_times.first)} " \
+                     "through #{formatted_time(time: entry_group_times.last)}"
         say "(nothing to display for #{time_range})", INFO
       end
 

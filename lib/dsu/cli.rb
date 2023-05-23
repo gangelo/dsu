@@ -54,14 +54,12 @@ module Dsu
     def add(description)
       time = if options[:date].present?
         Time.parse(options[:date])
-      else
-        if options[:tomorrow].present?
-          Time.now.tomorrow
-        elsif options[:yesterday].present?
-          Time.now.yesterday
-        elsif options[:today].present?
-          Time.now
-        end
+      elsif options[:tomorrow].present?
+        Time.now.tomorrow
+      elsif options[:yesterday].present?
+        Time.now.yesterday
+      elsif options[:today].present?
+        Time.now
       end
       entry = Models::Entry.new(description: description)
       CommandServices::AddEntryService.new(entry: entry, time: time).call

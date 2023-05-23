@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 RSpec.shared_examples 'the correct time is returned' do
   it 'returns the expected time' do
     expect(to_yyyymmdd_string(time_from_mneumonic)).to eq(to_yyyymmdd_string(expected_time))
@@ -163,6 +162,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
 
         it_behaves_like 'the correct time is returned'
       end
+
       context "when a (negative, -n) relative time mneumonic and 'today' respectfully" do
         let(:command_option) { '-7' }
         let(:relative_time) { 'today' }
