@@ -74,14 +74,6 @@ module Dsu
             yesterday_mneumonic?(mneumonic)
         end
 
-        # This method returns true if mneumonic is a valid relative
-        # time mneumonic.
-        def relative_time_mneumonic?(mneumonic)
-          return false unless mneumonic.is_a?(String)
-
-          mneumonic.match?(RELATIVE_REGEX)
-        end
-
         def today_mneumonic?(mneumonic)
           TODAY.include?(mneumonic)
         end
