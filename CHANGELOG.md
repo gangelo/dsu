@@ -1,3 +1,5 @@
+## [1.1.1] - 2023-05-23
+* See previous alpha releases for changes.
 ## [1.1.1.alpha.2] - 2023-05-23
 * Changes
   - For convenience, the `dsu list date` command now takes a MNEUMONIC in addition to a DATE. See `dsu list help date` for more information.

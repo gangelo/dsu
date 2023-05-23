@@ -84,7 +84,7 @@ module Dsu
         \x5
         `dsu dates|dd OPTIONS`
 
-        OPTIONS:
+        OPTIONS
         \x5
         -a|--include-all true|false: If true, all DSU dates within the specified range will be displayed. If false, DSU dates between the first and last DSU dates that have NO entries will NOT be displayed.. The default is taken from the dsu configuration setting :include_all, see `dsu config info`.
 
