@@ -1,6 +1,8 @@
-## [1.1.0] - 2023-05-1??
+## [1.1.0.alpha.1] - 2023-05-23
 * Changes
   - Added new configuration option `carry_over_entries_to_today` (`true|false`, default: `false`); if true, when editing DSU entries **for the first time** on any  given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied to the editing session. If there are no DSU entries from the previous day, `dsu` will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply start with no previous DSU entries.
+  - Added new configuration option `include_all` (`true|false`, default: `false`); if true, when using dsu commands that list date ranges (e.g. `dsu list dates`), the displayed list will include dates that have no dsu entries. If false, the displayed list will only include dates that have dsu entries. For all other `dsu list` commands, if true, this option will behave in the aforementioned manner. If false, the displayed list will unconditionally display the first and last dates regardless of whether or not the DSU date has entries or not; all other dates will not be displayed if the DSU date has no entries.
+  - Changed the look of the editor template when editing entry group entries.
 ## [1.0.0] - 2023-05-18
 * First official release.
 * NOTE: If you have been using the alpha version of `dsu`, you will need to delete the `entries` folder (e.g. `/Users/<whoami>/dsu/entries` on a nix os) as the old entries .json files are incompatible with this official release.
