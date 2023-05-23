@@ -19,7 +19,11 @@ module Dsu
             from_time = time_from_mneumonic(command_option: from_command_option) if time_mneumonic?(from_command_option)
             from_time ||= time_from_date_string(command_option: from_command_option)
 
-            to_time = time_from_mneumonic(command_option: to_command_option) if time_mneumonic?(to_command_option)
+            to_time = if relative_time_mneumonic?(to_command_option)
+              time_from_mneumonic(command_option: to_command_option, relative_time: from_time)
+            elsif time_mneumonic?(to_command_option)
+              time_from_mneumonic(command_option: to_command_option)
+            end
             to_time ||= time_from_date_string(command_option: to_command_option)
 
             [from_time, to_time].sort

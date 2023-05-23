@@ -1,3 +1,8 @@
+## [1.1.1.alpha.2] - 2023-05-23
+* Changes
+  - For convenience, the `dsu list date` command now takes a MNEUMONIC in addition to a DATE. See `dsu list help date` for more information.
+* Bug fixes
+  - Fix a bug that did not display `dsu list dates SUBCOMMAND` date list properly when the `--from` option was a date mneumonic and the `--to` optoin was a relative time mneumonic (e.g. `dsu list dates -f today -t +1`). In this case, DSU dates `Time.now` and `Time.now.tomorrow` should be displayed; instead, the bug would consider the `--to` option as relative to `Time.now`, so only 1 DSU date (`Time.now` would be returned).
 ## [1.1.0.alpha.1] - 2023-05-23
 * Changes
   - Added new configuration option `carry_over_entries_to_today` (`true|false`, default: `false`); if true, when editing DSU entries **for the first time** on any  given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied to the editing session. If there are no DSU entries from the previous day, `dsu` will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply start with no previous DSU entries.

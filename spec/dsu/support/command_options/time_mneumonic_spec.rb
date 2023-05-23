@@ -61,38 +61,12 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
       end
     end
 
-    context 'when the relative_time argument is invalid' do
-      context 'when a valid date string' do
-        let(:command_option) { 'today' }
-        let(:relative_time) { '5/1/2023' }
-        let(:expected_error) { /relative_time is an invalid mneumonic/ }
+    context 'when the relative_time argument is not a Time object' do
+      let(:command_option) { 'yesterday' }
+      let(:relative_time) { :not_a_time }
+      let(:expected_error) { /relative_time is not a Time object/ }
 
-        it_behaves_like 'an error is raised'
-      end
-
-      context 'when blank' do
-        let(:command_option) { 'yesterday' }
-        let(:relative_time) { '' }
-        let(:expected_error) { /relative_time cannot be blank/ }
-
-        it_behaves_like 'an error is raised'
-      end
-
-      context 'when not a String' do
-        let(:command_option) { 'tomorrow' }
-        let(:relative_time) { :not_a_string }
-        let(:expected_error) { /relative_time must be a String/ }
-
-        it_behaves_like 'an error is raised'
-      end
-
-      context 'when an invalid mneumonic' do
-        let(:command_option) { 'n' }
-        let(:relative_time) { 'not a mneumonic' }
-        let(:expected_error) { /relative_time is an invalid mneumonic/ }
-
-        it_behaves_like 'an error is raised'
-      end
+      it_behaves_like 'an error is raised'
     end
 
     # The following tests are for the case where the arguments are valid.
@@ -129,7 +103,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'the correct time is returned'
       end
 
-      context 'when a positive (-), relative time mneumonic' do
+      context 'when a negative (-), relative time mneumonic' do
         let(:command_option) { '-1' }
         let(:relative_time) { nil }
         let(:expected_time) { Time.now.yesterday }
@@ -139,82 +113,82 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
     end
 
     context 'when command_option and relative_time are both valid' do
-      context "when 'today' and a (positive, +n) relative time mneumonic respectfully" do
+      context "when 'today' and 'Time.now.tomorrow' respectfully" do
         let(:command_option) { 'today' }
-        let(:relative_time) { '+1' }
+        let(:relative_time) { Time.now.tomorrow }
         let(:expected_time) { Time.now.tomorrow }
 
         it_behaves_like 'the correct time is returned'
       end
 
-      context "when 'today' and a (negative, -n) relative time mneumonic respectfully" do
+      context "when 'today' and 'Time.now.yesterday' respectfully" do
         let(:command_option) { 'today' }
-        let(:relative_time) { '-1' }
+        let(:relative_time) { Time.now.yesterday }
         let(:expected_time) { Time.now.yesterday }
 
         it_behaves_like 'the correct time is returned'
       end
 
-      context "when a (positive, +n) relative time mneumonic and 'today' respectfully" do
+      context "when a (positive, +n) relative time mneumonic and 'Time.now' respectfully" do
         let(:command_option) { '+7' }
-        let(:relative_time) { 'today' }
-        let(:expected_time) { 7.days.from_now(Time.now) }
+        let(:relative_time) { Time.now }
+        let(:expected_time) { 7.days.from_now }
 
         it_behaves_like 'the correct time is returned'
       end
 
-      context "when a (negative, -n) relative time mneumonic and 'today' respectfully" do
+      context "when a (negative, -n) relative time mneumonic and 'Time.now' respectfully" do
         let(:command_option) { '-7' }
-        let(:relative_time) { 'today' }
-        let(:expected_time) { -7.days.from_now(Time.now) }
+        let(:relative_time) { Time.now }
+        let(:expected_time) { -7.days.from_now }
 
         it_behaves_like 'the correct time is returned'
       end
 
-      context 'when command_option and relative_time are both time mneumonics' do
-        context "when 'today' and 'tomorrow' respectfully" do
+      context 'when command_option is a time mneumonic' do
+        context "when 'today' and 'Time.now.tomorrow' respectfully" do
           let(:command_option) { 'today' }
-          let(:relative_time) { 'tomorrow' }
+          let(:relative_time) { Time.now.tomorrow }
           let(:expected_time) { Time.now.tomorrow }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when 'today' and 'yesterday' respectfully" do
+        context "when 'today' and 'Time.now.yesterday' respectfully" do
           let(:command_option) { 'today' }
-          let(:relative_time) { 'yesterday' }
+          let(:relative_time) { Time.now.yesterday }
           let(:expected_time) { Time.now.yesterday }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when 'tomorrow' and 'today' respectfully" do
+        context "when 'tomorrow' and 'Time.now' respectfully" do
           let(:command_option) { 'tomorrow' }
-          let(:relative_time) { 'today' }
+          let(:relative_time) { Time.now }
           let(:expected_time) { Time.now.tomorrow }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when 'tomorrow' and 'yesterday' respectfully" do
+        context "when 'tomorrow' and 'Time.now.yesterday' respectfully" do
           let(:command_option) { 'tomorrow' }
-          let(:relative_time) { 'yesterday' }
+          let(:relative_time) { Time.now.yesterday }
           let(:expected_time) { Time.now }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when 'yesterday' and 'today' respectfully" do
+        context "when 'yesterday' and 'Time.now' respectfully" do
           let(:command_option) { 'yesterday' }
-          let(:relative_time) { 'today' }
+          let(:relative_time) { Time.now }
           let(:expected_time) { Time.now.yesterday }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when 'yesterday' and 'tomorrow' respectfully" do
+        context "when 'yesterday' and 'Time.now.tomorrow' respectfully" do
           let(:command_option) { 'yesterday' }
-          let(:relative_time) { 'tomorrow' }
+          let(:relative_time) { Time.now.tomorrow }
           let(:expected_time) { Time.now }
 
           it_behaves_like 'the correct time is returned'
@@ -222,33 +196,33 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
       end
 
       context 'when command_option and relative_time are both time relative mneumonics' do
-        context "when '+1' and '+1' respectfully" do
+        context "when '+1' and 'Time.now.tomorrow' respectfully" do
           let(:command_option) { '+1' }
-          let(:relative_time) { '+1' }
+          let(:relative_time) { Time.now.tomorrow }
           let(:expected_time) { Time.now.tomorrow.tomorrow }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when '-1' and '-1' respectfully" do
+        context "when '-1' and 'Time.now.yesterday' respectfully" do
           let(:command_option) { '-1' }
-          let(:relative_time) { '-1' }
+          let(:relative_time) { Time.now.yesterday }
           let(:expected_time) { Time.now.yesterday.yesterday }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when '-1' and '+1' respectfully" do
+        context "when '-1' and 'Time.now.tomorrow' respectfully" do
           let(:command_option) { '-1' }
-          let(:relative_time) { '+1' }
+          let(:relative_time) { Time.now.tomorrow }
           let(:expected_time) { Time.now }
 
           it_behaves_like 'the correct time is returned'
         end
 
-        context "when '-2' and '+2' respectfully" do
+        context "when '-2' and '4.days.from_now' respectfully" do
           let(:command_option) { '-2' }
-          let(:relative_time) { '+4' }
+          let(:relative_time) { 4.days.from_now }
           let(:expected_time) { Time.now.tomorrow.tomorrow }
 
           it_behaves_like 'the correct time is returned'

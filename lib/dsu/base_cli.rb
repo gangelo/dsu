@@ -41,7 +41,16 @@ module Dsu
         <<-OPTION_DESC
           MNEUMONIC:
           \x5
-          This may be any of the following: DATE (see DATE)|n|today|t|tomorrow|y|yesterday.
+          This may be any of the following: n|today|t|tomorrow|y|yesterday|+n|-n.
+
+          \x5
+          Where n, t, y are aliases for today, tomorrow, and yesterday, respectively.
+
+          \x5
+          Where +n, -n are relative date mneumonics (RDNs). Generally speaking, RDNs are relative to the current date. For example, a RDN of +1 would be equal to `Time.now + 1.day` (tomorrow), and a RDN of -1 would be equal to `Time.now - 1.day` (yesterday).
+
+          \x5
+          In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted.
         OPTION_DESC
       end
     end

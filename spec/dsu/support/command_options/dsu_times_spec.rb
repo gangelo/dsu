@@ -88,12 +88,42 @@ RSpec.describe Dsu::Support::CommandOptions::DsuTimes do
         end
       end
 
+      context 'when from_command_option and to_command_option are relative time mneumonics' do
+        context "when '-2' and '-2' respectively" do
+          let(:from_command_option) { '-1' }
+          let(:to_command_option) { '-2' }
+          let(:expected_times) do
+            from_date = from_command_option.to_i.days.from_now.to_date
+            to_date = to_command_option.to_i.days.from_now(from_date).to_date
+            dates = [from_date, to_date].sort
+            (dates.min..dates.max).map(&:to_time)
+          end
+
+          it_behaves_like 'the correct times are returned'
+        end
+      end
+
       context 'when from_command_option is a time mneumonic and to_command_option is a relative time mneumonic' do
         context "when 'today' and 'tomorrow' respectively" do
           let(:from_command_option) { 'today' }
           let(:to_command_option) { '+2' }
           let(:expected_times) do
             [Time.now, Time.now.tomorrow, Time.now.tomorrow.tomorrow]
+          end
+
+          it_behaves_like 'the correct times are returned'
+        end
+      end
+
+      context 'when from_command_option is a relative time mneumonic and to_command_option is a time mneumonic' do
+        context "when 'today' and 'tomorrow' respectively" do
+          let(:from_command_option) { '+2' }
+          let(:to_command_option) { 'yesterday' }
+          let(:expected_times) do
+            from_date = from_command_option.to_i.days.from_now.to_date
+            to_date = Time.now.yesterday.to_date
+            dates = [from_date, to_date].sort
+            (dates.min..dates.max).map(&:to_time)
           end
 
           it_behaves_like 'the correct times are returned'
