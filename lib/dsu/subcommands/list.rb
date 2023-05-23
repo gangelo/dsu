@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 require_relative '../base_cli'
-require_relative '../support/command_options/from_to_times'
+require_relative '../support/command_options/dsu_times'
 
 module Dsu
   module Subcommands
     class List < Dsu::BaseCLI
-      include Support::CommandOptions::FromToTimes
+      include Support::CommandOptions::DsuTimes
 
       map %w[d] => :date
       map %w[dd] => :dates
@@ -102,7 +102,7 @@ module Dsu
       # Exclude dates that have no DSU entries.
       option :exclude_blank, type: :boolean, aliases: '-x', default: false
       def dates
-        times = from_to_times_for!(from_command_option: options[:from], to_command_option: options[:to])
+        times = dsu_times_from!(from_command_option: options[:from], to_command_option: options[:to])
         # Note special sort here, unlike the other commands where rules for
         # displaying DSU entries are applied; this is more of a list command.
         times_sort(times: times, entries_display_order: entries_display_order).each do |t|

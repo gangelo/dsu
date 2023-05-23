@@ -7,10 +7,10 @@ RSpec.shared_examples 'the correct times are returned' do
   end
 end
 
-RSpec.describe Dsu::Support::CommandOptions::FromToTimes do
+RSpec.describe Dsu::Support::CommandOptions::DsuTimes do
   subject(:from_to_time) do
     Class.new do
-      include Dsu::Support::CommandOptions::FromToTimes
+      include Dsu::Support::CommandOptions::DsuTimes
     end.new
   end
 
@@ -18,11 +18,11 @@ RSpec.describe Dsu::Support::CommandOptions::FromToTimes do
     allow(Time).to receive(:now).and_call_original
   end
 
-  describe '.from_to_times_for!' do
+  describe '.dsu_times_from!' do
     subject(:from_to_time) do
       Class.new do
-        include Dsu::Support::CommandOptions::FromToTimes
-      end.new.from_to_times_for!(from_command_option: from_command_option, to_command_option: to_command_option)
+        include Dsu::Support::CommandOptions::DsuTimes
+      end.new.dsu_times_from!(from_command_option: from_command_option, to_command_option: to_command_option)
     end
 
     # No need to test a lot here; this is covered by tests for
