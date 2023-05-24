@@ -1,4 +1,4 @@
-# `dsu` (alpha)
+# `dsu`
 
 [![GitHub version](http://badge.fury.io/gh/gangelo%2Fdsu.svg)](https://badge.fury.io/gh/gangelo%2Fdsu)
 [![Gem Version](https://badge.fury.io/rb/dsu.svg)](https://badge.fury.io/rb/dsu)
@@ -7,7 +7,9 @@
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](#license)
 
 ## About
-`dsu` is little gem that helps manage your Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows you to create, read, update, and delete (CRUD) noteworthy activities that you performed during your day. During your DSU, you can then easily recall and share these these activities with your team. Activities are grouped by day and can be viewed in simple text format from the command line. When viewing a particular day, `dsu` will automatically display the previous day's activities as well. This is useful for remembering what you did yesterday, so you can share your "Today" and "Yesterday" activities with your team during your DSU. If the day you are trying to view falls on a weekend or Monday, `dsu` will display back to, and including the weekend and previous Friday inclusive, so that you can share what you did over the weekend (if anything) and the previous Friday.
+`dsu` is a simple, but powerful little gem I wrote for myself to help me manage my Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows me to create, read, update, and delete (CRUD) DSU entries on a daily basis. During my DSU, I'm then able to list, recall and share my DSU activities with my team. DSU entries are grouped by day and are viewed in simple text format from the command line, in a myriad of ways, to meet my personal needs. When viewing DSU entries for a particular day, `dsu` will automatically display the previous day's activities as well, using the typical "what I did yesterday", "What I'm doing today" DSU paradigm. If the DSU date I am trying to view falls on a weekend or Monday, `dsu` will automatically display back to and including the weekend and previous Friday (inclusive), so that I can share what I did over the weekend (if anything) and "last" Friday.
+
+You may want to install it and give it a try. If you happen to find `dsu` helpful, give it a star and tell a friend `:)`
 
 ## Help
 
@@ -52,7 +54,10 @@ If you need to add a DSU entry for tomorrow, you can use the `-t`|`--tomorrow` o
 
 ### Miscellaneous Date
 
-`$ dsu add -d "2022-12-31" "Attend company New Years Coffee Meet & Greet"`
+Both of the below examples will accomplish the same thing, assuming the current year is 2023; the current year is assumed if omitted:
+
+`$ dsu add -d "12/31/2023" "Attend company New Years Coffee Meet & Greet"`
+`$ dsu add -d "12/31" "Attend company New Years Coffee Meet & Greet"`
 
 See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
 
@@ -62,7 +67,13 @@ You can display DSU entries for a particular day or date (`date`) using any of t
 - `$ dsu list today|n`
 - `$ dsu list tomorrow|t`
 - `$ dsu list yesterday|y`
-- `$ dsu list date|d DATE`
+- `$ dsu list date|d DATE|MNEUMONIC`
+- `$ dsu list dates|dd OPTIONS`
+
+See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
+See the [Mneumonics](#mneumonics) section for more information on acceptable MNEUMONIC rules and formats used by `dsu`.
+
+IMPORTANT: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
 
 ### Examples
 The following displays the entries for "Today", where `Time.now == '2023-05-06 08:54:57.6861 -0400'`
@@ -78,9 +89,8 @@ Friday, (Yesterday) 2023-05-05
   2. Attend new hire meet & greet
 ```
 
-`$ dsu list date "2023-05-06"`
-
-See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
+`$ dsu list date 5/6/2023`
+`$ dsu list date 5/6`
 
 ```shell
 #=>
@@ -91,11 +101,45 @@ Friday, (Yesterday) 2023-05-05
   1. Pick up ticket IN-12345
   2. Attend new hire meet & greet
 ```
+
+#### Listing Date Ranges
+For more information, see the [Mneumonics](#mneumonics) section for more information on acceptable MNEUMONIC rules and formats used by `dsu`.
+
+Output omitted for brevity...
+
+Display the DSU entries for the last 3 days.
+
+`dsu list dates --from yesterday --to -2`
+
+Display the DSU entries for 1/1 to 1/4.
+
+`dsu list dates --from 1/1 --to +3`
+
+Display the DSU entries for 1/2 to 1/5.
+
+`dsu list dates --from 1/5 --to -3`
+
+Display the DSU entries for the last week.
+
+`dsu list dates --from today --to -7`
+
+Display the DSU entries back 1 week from yesterday's date. *This example is silly,* but it illustrates the fact that you can use relative mneumonics for both `--from` and `--to` options. While you *can* use relative mneumonics for both `--from` and `--to` options, there is always a more intuitive way.
+
+`dsu list dates --from -7 --to +6`
+
+The above can be accomplished MUCH easier by using the `yesterday` mneumonic. This will display the DSU entries back 1 week from yesterday's date.
+
+`dsu list dates --from yesterday --to -6`
+
 ## Editing DSU Entries
 
-You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (today|tomorrow|yesterday|date DATE) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries. If no entries exist in the entry group the the date, the editor will allow you to add entries for that date. *NOTE: duplicate entries are not allowed; that is, the entry DESCRIPTION need to be unique within an entry group. Non-unique entries will not be added to the entry group. The same holds true for entries whose DESCRIPTION that do not pass validation (between 2 and 256 characters (inclusive) in length).*
+You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry group using the `dsu edit SUBCOMMAND` date (`n|today|t|tomorrow|y|yesterday|date DATE`) you specify. `dsu edit` will open your DSU entry group entries in your editor, where you'll be able to perform editing functions against one or all of the entries.
 
-Note: See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-configuration-file)"" section to configure `dsu` to use the editor of your choice.
+If no entries exist for the DSU date, the editor will open and allow you to add entries for that date. If you have the `:carry_over_entries_to_today` configuration option setting set to `true`, entries from the last DSU date will be copied into the editor for your convenience.
+
+*NOTE: duplicate entries are not allowed; that is, the entry DESCRIPTION need to be unique within an entry group. Non-unique entries will not be added to the entry group. The same holds true for entries whose DESCRIPTION that do not pass validation (between 2 and 256 characters (inclusive) in length).*
+
+NOTE: See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-configuration-file)" section to configure `dsu` to use the editor of your choice and other configuration options to make editing more convenient.
 
 - `$ dsu edit today|n`
 - `$ dsu edit tomorrow|t`
@@ -111,15 +155,22 @@ The following will edit your DSU entry group entries for "Today", where `Time.no
 
 ```shell
 #=> In your editor, you will see...
-# Editing DSU Entries for Tuesday, (Today) 2023-05-09 EDT
-# [ENTRY DESCRIPTION]
+################################################################################
+# Editing DSU Entries for Tuesday, (Today) 2023-05-23 EDT
+################################################################################
+
+################################################################################
+# DSU ENTRIES
+################################################################################
 
 Interative planning meeting 11:00AM.
 Pair with Chad on ticket 31211.
 Investigate spike ticket 31255.
 Review Kelsey's PR ticket 30721.
 
-# INSTRUCTIONS:
+################################################################################
+# INSTRUCTIONS
+################################################################################
 #    ADD a DSU entry: type an ENTRY DESCRIPTION on a new line.
 #   EDIT a DSU entry: change the existing ENTRY DESCRIPTION.
 # DELETE a DSU entry: delete the ENTRY DESCRIPTION.
@@ -128,6 +179,7 @@ Review Kelsey's PR ticket 30721.
 # REORDER a DSU entry: reorder the ENTRY DESCRIPTIONs in order preference.
 #
 # *** When you are done, save and close your editor ***
+################################################################################
 ```
 
 #### Edit an Entry
@@ -193,7 +245,9 @@ Config file (/Users/<whoami>/.dsu) contents:
 editor: nano
 entries_display_order: desc
 entries_file_name: "%Y-%m-%d.json"
-entries_folder: "/Users/<whoami>/dsu/entries"
+entries_folder: "/Users/gangelo/dsu/entries"
+carry_over_entries_to_today: false
+include_all: false
 ```
 
 Where `<whoami>` would be your username (`$ whoami` on nix systems)
@@ -228,11 +282,34 @@ Default: `'/Users/<whoami>/dsu/entries'` on nix systems.
 
 Where `<whoami>` would be your username (`$ whoami` on nix systems)
 
+##### carry_over_entries_to_today
+Applicable to the `dsu edit` command.  Valid values are `true|false`. If `true`, when editing DSU entries *for the first time* on any  given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied into the editing session. If there are no DSU entries from the previous day, `dsu` will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply start with no previous DSU entries.
+
+Default: false
+
+##### include_all
+Applicable to `dsu` commands that display DSU date lists (e.g. `dsu list` commands). Valid values are `true|false`. If `true`, all DSU dates within the specified range will be displayed. If `false`, DSU dates between the first and last DSU dates that have NO entries *will NOT be displayed*. The default is taken from the dsu configuration setting `:include_all`, see `dsu config info`.
+
+Default: false
+
 ## Dates
 
 These notes apply to anywhere DATE is used...
 
-DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit the year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023-01-02'); Time.parse('1/2') # etc.`
+DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may omit the year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023/01/02'); Time.parse('1/2/2023'); Time.parse('1/2') # etc.`
+
+## Mneumonics
+
+These notes apply to anywhere MNEUMONIC is used...
+
+A *mneumonic* may be any of the following: `n|today|t|tomorrow|y|yesterday|+n|-n`.
+
+Where `n`, `t`, `y` are aliases for `today`, `tomorrow`, and `yesterday`, respectively.
+
+Where `+n`, `-n` are relative date mneumonics (RDNs). Generally speaking, RDNs are relative to the current date. For example, a RDN of `+1` would be equal to `Time.now + 1.day` (or tomorrow), and a RDN of `-1` would be equal to `Time.now - 1.day` (or yesterday).
+
+NOTE: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
+
 
 ## Installation
 
