@@ -58,10 +58,7 @@ module Dsu
       end
 
       def clone
-        clone = super
-
-        clone.entries = clone.entries.map(&:clone)
-        clone
+        self.class.new(time: time, entries: entries.map(&:clone))
       end
 
       def entries=(entries)

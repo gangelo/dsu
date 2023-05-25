@@ -75,6 +75,27 @@ RSpec.describe Dsu::Models::EntryGroup do
     end
   end
 
+  describe '#clone' do
+    subject(:cloned_entry_group) { entry_group.clone }
+
+    let(:entries) { build_list(:entry, 2) }
+
+    it 'returns a new object' do
+      expect(cloned_entry_group).not_to eq entry_group
+    end
+
+    it 'returns the entries in the same orded' do
+      expect(cloned_entry_group.entries).to match_array entry_group.entries
+    end
+
+    it 'clones the entries' do
+      result = cloned_entry_group.entries.each_with_index.any? do |entry, index|
+        entry_group.entries[index].equal?(entry)
+      end
+      expect(result).to eq false
+    end
+  end
+
   describe '#time' do
     context 'when time is nil?' do
       before do
