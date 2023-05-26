@@ -16,8 +16,8 @@ module Dsu
     # This class represents a group of entries for a given day. IOW,
     # things someone might want to share at their daily standup (DSU).
     class EntryGroup
-      include ActiveModel::Model
       extend Support::EntryGroupLoadable
+      include ActiveModel::Model
       include Support::TimeFormatable
 
       attr_accessor :time
@@ -58,10 +58,7 @@ module Dsu
       end
 
       def clone
-        clone = super
-
-        clone.entries = clone.entries.map(&:clone)
-        clone
+        self.class.new(time: time, entries: entries.map(&:clone))
       end
 
       def entries=(entries)

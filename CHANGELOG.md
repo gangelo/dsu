@@ -1,3 +1,7 @@
+## [1.1.2] 2023-05-??
+* Changes
+  - Various refactors.
+  - Add more test coverage.
 ## [1.1.1] - 2023-05-23
 * See previous alpha releases for changes.
 ## [1.1.1.alpha.2] - 2023-05-23

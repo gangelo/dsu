@@ -95,5 +95,26 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
         expect(configuration_loader_service.call).to eq default_options
       end
     end
+
+    context 'when the configuration file exists and the default configuration changed' do
+      subject(:configuration_loader_service) { described_class.new }
+
+      let!(:original_configuration) { Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS }
+      let!(:changed_configuration) { original_configuration.merge({ 'new_option' => 'new_option_value' }) }
+
+      before do
+        create_config_file!
+        stub_const('Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS', changed_configuration)
+      end
+
+      after do
+        delete_config_file!
+      end
+
+      it 'writes the new configuration defaults to the configuration file' do
+        configuration_loader_service.call # This will write out the new changes.
+        expect(configuration_loader_service.call).to eq changed_configuration
+      end
+    end
   end
 end
