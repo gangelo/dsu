@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dsu (1.1.2)
+    dsu (1.2.0)
       activemodel (~> 7.0, >= 7.0.4.3)
       activesupport (~> 7.0, >= 7.0.4)
       colorize (~> 0.8.1)

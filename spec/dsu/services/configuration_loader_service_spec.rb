@@ -100,7 +100,7 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
       subject(:configuration_loader_service) { described_class.new }
 
       let!(:original_configuration) { Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS }
-      let!(:changed_configuration) { original_configuration.merge({ 'new_option' => 'new_option_value' }) }
+      let!(:changed_configuration) { original_configuration.merge({ 'new_option' => 'new_option_value' }) } # rubocop:disable Style/StringHashKeys
 
       before do
         create_config_file!
