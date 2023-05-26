@@ -18,6 +18,23 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
     allow(Time).to receive(:now).and_call_original
   end
 
+  describe '#time_from_mneumonic' do
+    subject(:time_from_mneumonic) do
+      Class.new do
+        include Dsu::Support::CommandOptions::TimeMneumonic
+      end.new.time_from_mneumonic(command_option: command_option, relative_time: relative_time)
+    end
+
+    context 'when an argument is invalid' do
+      let(:command_option) { 'not a mneumonic' }
+      let(:relative_time) { :not_a_time }
+
+      it 'returns nil' do
+        expect(time_from_mneumonic).to be_nil
+      end
+    end
+  end
+
   describe '#time_from_mneumonic!' do
     context 'when the command_option argument is invalid' do
       context 'when a valid date string' do

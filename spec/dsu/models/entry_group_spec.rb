@@ -3,6 +3,8 @@
 RSpec.describe Dsu::Models::EntryGroup do
   subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
+  include_context 'with tmp'
+
   before do
     config.create_config_file!
     delete_entry_group_file!(time: time) if time.is_a?(Time)
@@ -240,6 +242,40 @@ RSpec.describe Dsu::Models::EntryGroup do
         it 'does NOT raise an error' do
           expect { described_class.delete!(time: time) }.not_to raise_error
         end
+      end
+    end
+
+    describe '.edit' do
+      before do
+        delete_entry_group_file!(time: time)
+        allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
+        editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
+        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
+      end
+
+      after do
+        delete_entry_group_file!(time: time)
+      end
+
+      let!(:original_entry_group) { entry_group.clone }
+      let(:tmp_file_contents) do
+        # This simply simulates the user making entry group entry changes in the console.
+        Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
+      end
+      let(:changed_entry_group) do
+        original_entry_group.clone.tap do |cloned_entry_group|
+          cloned_entry_group.entries << build(:entry, description: 'Added entry 1')
+          cloned_entry_group.entries << build(:entry, description: 'Added entry 2')
+        end
+      end
+
+      it 'starts with no entry group file' do
+        expect(entry_group_file_exists?(time: time)).to be false
+      end
+
+      it 'edits and saves the entry group file' do
+        described_class.edit(time: time)
+        expect(described_class.load(time: time).entries.size).to eq 2
       end
     end
 

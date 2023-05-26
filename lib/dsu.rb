@@ -7,10 +7,6 @@ require 'pry-byebug' if ENV['DEV_ENV']
 require 'thor'
 require 'time'
 
-Dir.glob("#{__dir__}/lib/core/**/*.rb").each do |file|
-  require file
-end
-
 Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
   require file
 end
