@@ -1,4 +1,8 @@
-## [1.1.2] 2023-05-??
+## [1.2.0] 2023-05-26
+* Changes
+  - Various refactors.
+  - Bring test coverage to >= 85%.
+## [1.1.2] 2023-05-26
 * Changes
   - Various refactors.
   - Add more test coverage.
