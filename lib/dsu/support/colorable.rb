@@ -3,7 +3,6 @@
 module Dsu
   module Support
     module Colorable
-      ABORTED = :red
       ERROR = :red
       HIGHLIGHT = :cyan
       INFO = HIGHLIGHT
