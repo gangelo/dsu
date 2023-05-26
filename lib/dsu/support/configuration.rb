@@ -39,7 +39,12 @@ module Dsu
         # regardless of whether or not the DSU date has entries or not;
         # all other dates will not be displayed if the DSU date has no
         # entries.
-        'include_all' => false
+        'include_all' => false,
+        # Themes
+        # The currently selected theme.
+        'theme' => 'default',
+        # The theme folder where the themes reside.
+        'themes_folder' => "#{FolderLocations.root_folder}/dsu/themes"
       }.freeze
       # rubocop:enable Style/StringHashKeys
 
