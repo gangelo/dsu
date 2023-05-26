@@ -205,7 +205,7 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
           changed_entry_group.entries.map(&:description).join("\n")
         end
         let(:changed_entry_group) do
-          entry_group.clone.tap do |cloned_entry_group|
+          original_entry_group.clone.tap do |cloned_entry_group|
             cloned_entry_group.entries << build(:entry, description: 'Duplicate description')
             cloned_entry_group.entries << build(:entry, description: 'Duplicate description')
           end
@@ -218,7 +218,13 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
         end
 
 
-        it 'saves all the valid entries to the entry group file and ignores the invalid entries'
+        it 'saves all the valid entries to the entry group file and ignores the invalid entries' do
+          entry_group_editor_service.call
+          expected_entry_group = changed_entry_group.clone.tap do |cloned_entry_group|
+            cloned_entry_group.entries = cloned_entry_group.valid_unique_entries
+          end
+          expect(entry_group_file_matches?(time: time, entry_group_hash: expected_entry_group.to_h)).to be true
+        end
       end
     end
   end
