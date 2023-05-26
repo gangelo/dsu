@@ -207,7 +207,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       subject(:entry_group) { build(:entry_group, time: time, entries: entries).validate! }
 
       let(:entries) { build_list(:entry, 2, description: 'duplicate') }
-      let(:expected_error) { /Entries entry contains a duplicate entry/ }
+      let(:expected_error) { /Entries Array contains a duplicate entry/ }
 
       it_behaves_like 'an error is raised'
     end
