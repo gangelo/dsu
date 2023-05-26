@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'the entry is ignored and not saved' do
-  it 'does something'
-end
-
 RSpec.describe Dsu::Services::EntryGroupEditorService do
   subject(:entry_group_editor_service) { described_class.new(entry_group: entry_group) }
 
@@ -13,7 +9,7 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
   let(:entry_group) { build(:entry_group, time: Time.now, entries: build_list(:entry, 2)) }
   let!(:original_entry_group) { entry_group.clone }
 
-  describe '#initializer' do
+  describe '#initialize' do
     context 'when the arguments are valid' do
       it 'does not raise an error' do
         expect { entry_group_editor_service }.not_to raise_error
@@ -50,16 +46,32 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
   end
 
   describe '#call' do
-    subject(:entry_group_editor_service_call) { entry_group_editor_service.call }
-
     before do
       allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
       editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
       allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
-      entry_group_editor_service_call
+    end
+
+    context 'when the editing session fails' do
+      before do
+        editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
+        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(false)
+      end
+
+      let(:tmp_file_contents) { '' }
+
+      it 'displays an error in the console' do
+        expect do
+          entry_group_editor_service.call
+        end.to output(/Failed to open temporary file in editor/).to_stdout
+      end
     end
 
     context 'when there are no changes' do
+      before do
+        entry_group_editor_service.call
+      end
+
       let(:tmp_file_contents) do
         Dsu::Views::EntryGroup::Edit.new(entry_group: original_entry_group).render_as_string
       end
@@ -74,6 +86,10 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     end
 
     context 'when the entry descriptions change' do
+      before do
+        entry_group_editor_service.call
+      end
+
       let(:tmp_file_contents) do
         Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
       end
@@ -97,6 +113,10 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     end
 
     context 'when an entry is deleted' do
+      before do
+        entry_group_editor_service.call
+      end
+
       let(:tmp_file_contents) do
         Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
       end
@@ -121,6 +141,10 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     end
 
     context 'when all the entries are deleted' do
+      before do
+        entry_group_editor_service.call
+      end
+
       let(:tmp_file_contents) do
         Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
       end
@@ -144,6 +168,10 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     end
 
     context 'when entries are added' do
+      before do
+        entry_group_editor_service.call
+      end
+
       let(:tmp_file_contents) do
         # This simply simulates the user making entry group entry changes in the console.
         Dsu::Views::EntryGroup::Edit.new(entry_group: changed_entry_group).render_as_string
@@ -169,18 +197,28 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
     end
 
     context 'when the entry group file is edited incorrectly' do
-      before do
-        allow(Dsu::Views::EntryGroup::Edit).to receive(:entry_group_entry_lines).and_return(edit_entry_groups)
-      end
-
-      context 'when then entry line has no sha or editor command' do
-        let(:edit_entry_groups) do
-          [
-            'This is an entry with no sha or editor command'
-          ]
+      context 'when the entry group fails validation' do
+        let(:tmp_file_contents) do
+          # This simply simulates the user making entry group entry changes in the console.
+          # For example, deleting everything the editor initially displays, and the user
+          # entering the below entry descriptions which is a valid scenario.
+          changed_entry_group.entries.map(&:description).join("\n")
+        end
+        let(:changed_entry_group) do
+          entry_group.clone.tap do |cloned_entry_group|
+            cloned_entry_group.entries << build(:entry, description: 'Duplicate description')
+            cloned_entry_group.entries << build(:entry, description: 'Duplicate description')
+          end
         end
 
-        it_behaves_like 'the entry is ignored and not saved'
+        it 'displays the validation error in the console' do
+          expect do
+            entry_group_editor_service.call
+          end.to output(/The following ERRORS were encountered/).to_stdout
+        end
+
+
+        it 'saves all the valid entries to the entry group file and ignores the invalid entries'
       end
     end
   end
