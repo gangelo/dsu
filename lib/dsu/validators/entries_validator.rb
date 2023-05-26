@@ -11,12 +11,14 @@ module Dsu
 
       def validate(record)
         unless record.entries.is_a?(Array)
-          record.errors.add(:entries_entry, 'is the wrong object type. ' \
-                                            "\"Array\" was expected, but \"#{record.entries.class}\" was received.")
+          record.errors.add(:entries, 'is the wrong object type. ' \
+                                      "\"Array\" was expected, but \"#{record.entries.class}\" was received.")
+          return
         end
 
-        validate_entry_types record
-        validate_unique_entry record
+        return if validate_entry_types record
+        return if validate_unique_entry record
+
         validate_entries record
       end
 
@@ -26,10 +28,12 @@ module Dsu
         record.entries.each do |entry|
           next if entry.is_a? Dsu::Models::Entry
 
-          record.errors.add(:entries_entry, 'entry Array element is the wrong object type. ' \
-                                            "\"Entry\" was expected, but \"#{entry.class}\" was received.",
+          record.errors.add(:entries, 'Array element is the wrong object type. ' \
+                                      "\"Entry\" was expected, but \"#{entry.class}\" was received.",
             type: Support::FieldErrors::FIELD_TYPE_ERROR)
         end
+
+        record.errors.any?
       end
 
       def validate_unique_entry(record)
@@ -42,10 +46,12 @@ module Dsu
 
         non_unique_descriptions = descriptions.select { |description| descriptions.count(description) > 1 }.uniq
         if non_unique_descriptions.any?
-          record.errors.add(:entries_entry, 'contains a duplicate entry: ' \
-                                            "#{format_non_unique_descriptions(non_unique_descriptions)}.",
+          record.errors.add(:entries, 'Array contains a duplicate entry: ' \
+                                      "#{format_non_unique_descriptions(non_unique_descriptions)}.",
             type: Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
+
+        record.errors.any?
       end
 
       def validate_entries(record)
