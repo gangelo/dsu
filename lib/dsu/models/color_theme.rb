@@ -10,7 +10,7 @@ module Dsu
     module ColorTheme
       extend Support::ColorThemeLocatable
 
-      DEFAULT_THEME = {
+      DEFAULT_THEME_HASH = {
         description: 'Default theme',
         entry_group: :highlight,
         entry: :highlight,
@@ -24,7 +24,7 @@ module Dsu
 
       class << self
         def default
-          Theme.new(theme_name: DEFAULT_THEME_NAME, theme_hash: DEFAULT_THEME)
+          Theme.new(theme_name: DEFAULT_THEME_NAME, theme_hash: DEFAULT_THEME_HASH)
         end
 
         #   def current
@@ -35,7 +35,7 @@ module Dsu
         #     Theme.load(theme: theme)
         #   end
         def theme_keys
-          DEFAULT_THEME.keys
+          DEFAULT_THEME_HASH.keys
         end
       end
 
@@ -64,11 +64,11 @@ module Dsu
           # Color themes I expect will change a lot, so we're using
           # a little meta-programming here to dynamically create
           # public attr_readers and private attr_writers based on the
-          # keys in DEFAULT_THEME, then assign those attributes from
+          # keys in DEFAULT_THEME_HASH, then assign those attributes from
           # the values in theme_hash. theme_hash will be guaranteed to
-          # have the same keys as DEFAULT_THEME.keys at this point
+          # have the same keys as DEFAULT_THEME_HASH.keys at this point
           # because we called ensure_theme_hash! above.
-          DEFAULT_THEME.each_key do |attr|
+          DEFAULT_THEME_HASH.each_key do |attr|
             self.class.class_eval do
               attr_reader attr
               attr_writer attr
@@ -92,12 +92,12 @@ module Dsu
         def ==(other)
           return false unless other.is_a?(Theme)
 
-          DEFAULT_THEME.keys.all? { |key| public_send(key) == other.public_send(key) }
+          DEFAULT_THEME_HASH.keys.all? { |key| public_send(key) == other.public_send(key) }
         end
         alias eql? ==
 
         def hash
-          DEFAULT_THEME.keys.map { |key| public_send(key) }.hash
+          DEFAULT_THEME_HASH.keys.map { |key| public_send(key) }.hash
         end
 
         private
@@ -108,15 +108,15 @@ module Dsu
 
         # This method ensures that theme_hash is a valid color theme hash.
         # Apart from the obvious guard clauses, it also ensures that
-        # theme_hash.keys == DEFAULT_THEME.keys. If not, it raises an
+        # theme_hash.keys == DEFAULT_THEME_HASH.keys. If not, it raises an
         # ArgumentError displaying the missing and extra keys present in
-        # hash_keys as compared to DEFAULT_THEME.keys.
+        # hash_keys as compared to DEFAULT_THEME_HASH.keys.
         def ensure_theme_hash!(theme_hash)
           raise ArgumentError, 'theme_hash is nil.' if theme_hash.nil?
           raise ArgumentError, "theme_hash is the wrong object type: \"#{theme_hash}\"." unless theme_hash.is_a?(Hash)
 
           keys = theme_hash.keys.sort
-          expected_keys = DEFAULT_THEME.keys.sort
+          expected_keys = DEFAULT_THEME_HASH.keys.sort
 
           return theme_hash if keys == expected_keys
 

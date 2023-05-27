@@ -12,7 +12,7 @@ RSpec.describe Dsu::Support::ColorThemeLocatable do
   end
 
   let(:theme_name) { 'foo' }
-  let(:theme_hash) { Dsu::Models::ColorTheme::DEFAULT_THEME }
+  let(:theme_hash) { Dsu::Models::ColorTheme::DEFAULT_THEME_HASH }
 
   describe '#theme_file?' do
     context 'when the theme file does not exist' do

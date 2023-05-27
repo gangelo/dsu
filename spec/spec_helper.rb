@@ -43,6 +43,7 @@ RSpec.configure do |config|
     FactoryBot.find_definitions
   end
 
+  config.include ColorThemeHelpers
   config.include ConfigurationHelpers
   config.include EntryGroupHelpers
   config.include TimeHelpers

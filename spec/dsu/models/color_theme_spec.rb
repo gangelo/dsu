@@ -9,7 +9,7 @@ RSpec.describe Dsu::Models::ColorTheme do
     end
 
     let(:theme_name) { described_class.default.theme_name }
-    let(:theme_hash) { described_class::DEFAULT_THEME }
+    let(:theme_hash) { described_class::DEFAULT_THEME_HASH }
 
     describe '#initialize' do
       context 'when theme_name is nil' do

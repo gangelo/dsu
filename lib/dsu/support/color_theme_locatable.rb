@@ -58,7 +58,7 @@ module Dsu
       private
 
       def default_theme
-        Models::ColorTheme::DEFAULT_THEME
+        Models::ColorTheme::DEFAULT_THEME_HASH
       end
 
       def create_theme_file(theme_file:, theme_hash:)

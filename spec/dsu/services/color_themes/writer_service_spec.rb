@@ -4,15 +4,8 @@ RSpec.describe Dsu::Services::ColorThemes::WriterService do
   subject(:writer_service) { described_class.new(theme: theme) }
 
   after do
-    # TODO: Delete the theme file
-    if theme_name.is_a?(Dsu::Models::ColorTheme::Theme) &&
-       color_theme_class.theme_file?(theme_name: theme_name)
-      File.delete(color_theme_class.theme_file(theme_name: theme_name))
-    end
-
-    if color_theme_class.theme_file?(theme_name: color_theme_class.default.theme_name)
-      File.delete(color_theme_class.theme_file(theme_name: color_theme_class.default.theme_name))
-    end
+    delete_default_color_theme!
+    delete_color_theme!(theme_name: theme_name) if theme_name.is_a?(String)
   end
 
   let(:color_theme_class) { Dsu::Models::ColorTheme }
@@ -49,20 +42,12 @@ RSpec.describe Dsu::Services::ColorThemes::WriterService do
         expect(color_theme_class.theme_file?(theme_name: theme_name)).to eq true
       end
     end
-
-    context 'when the theme file exists and has the same keys as the default color theme' do
-      it 'returns the loaded color theme'
-    end
-
-    context 'when the color theme file exists and has differnent keys than the default color theme' do
-      it 'updates the color theme file and returns the updated color theme'
-    end
   end
 
   describe '#call!' do
-    context 'when the theme file already exists' do
-      subject(:writer_service_call) { writer_service.call! }
+    subject(:writer_service_call) { writer_service.call! }
 
+    context 'when the theme file already exists' do
       before do
         # This creates the file before our test.
         writer_service.call
@@ -71,6 +56,18 @@ RSpec.describe Dsu::Services::ColorThemes::WriterService do
       let(:expected_error) { /Theme file already exists for theme "#{theme.theme_name}"/ }
 
       it_behaves_like 'an error is raised'
+    end
+
+    context 'when the theme file does not exist' do
+      before do
+        allow(writer_service).to receive(:call) # rubocop:disable RSpec/SubjectStub
+      end
+
+
+      it 'calls #call' do
+        writer_service_call
+        expect(writer_service).to have_received(:call).once # rubocop:disable RSpec/SubjectStub
+      end
     end
   end
 end

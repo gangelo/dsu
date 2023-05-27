@@ -50,7 +50,7 @@ module Dsu
         end
 
         def default_color_theme_hash
-          Models::ColorTheme::DEFAULT_THEME
+          Models::ColorTheme::DEFAULT_THEME_HASH
         end
       end
     end
