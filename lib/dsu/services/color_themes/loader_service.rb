@@ -21,10 +21,10 @@ module Dsu
 
         def call
           unless theme_file?(theme_name: theme_name)
-            return Models::ColorTheme.new(theme_name: theme_name, theme_hash: default_color_theme_hash)
+            return Models::ColorTheme::Theme.new(theme_name: theme_name, theme_hash: default_color_theme_hash)
           end
 
-          Models::ColorTheme.new(theme_name: theme_name, theme_hash: loaded_color_theme_hash)
+          Models::ColorTheme::Theme.new(theme_name: theme_name, theme_hash: loaded_color_theme_hash)
         end
 
         private

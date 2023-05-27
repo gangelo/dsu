@@ -7,14 +7,6 @@ RSpec.describe Dsu::Support::ColorThemeLocatable do
     end.new
   end
 
-  before do
-    # TODO: Move this to a shared context?
-    mocked_default_dsu_options = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS.dup
-    mocked_default_dsu_options['entries_folder'] = entries_folder
-    mocked_default_dsu_options['themes_folder'] = themes_folder
-    stub_const('Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS', mocked_default_dsu_options)
-  end
-
   after do
     color_theme_locatable.delete_theme_file!(theme_name: theme_name) unless theme_name.nil?
   end
