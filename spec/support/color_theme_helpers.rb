@@ -4,7 +4,7 @@
 # typically before and after every test.
 module ColorThemeHelpers
   def create_color_theme!(theme_name:, theme_hash:)
-    theme = Dsu::Models::ColorTheme::Theme.new(theme_name: theme_name, theme_hash: theme_hash)
+    theme = Dsu::Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash)
     Dsu::Services::ColorThemes::WriterService.new(theme: theme).call!
   end
 
@@ -17,7 +17,7 @@ module ColorThemeHelpers
     # TODO: Switch to this service when implemented:
     # Dsu::Services::ColorThemes::DeleterService.new(theme_name: theme_name).call!
     color_theme_class = Dsu::Models::ColorTheme
-    if color_theme_class.theme_file?(theme_name: theme_name)
+    if color_theme_class.theme_file_exist?(theme_name: theme_name)
       File.delete(color_theme_class.theme_file(theme_name: theme_name))
     end
   end
@@ -26,7 +26,7 @@ module ColorThemeHelpers
     # TODO: Switch to this service when implemented:
     # Dsu::Services::ColorThemes::DeleterService.new(theme_name: theme_name).call!
     color_theme_class = Dsu::Models::ColorTheme
-    if color_theme_class.theme_file?(theme_name: color_theme_class.default.theme_name)
+    if color_theme_class.theme_file_exist?(theme_name: color_theme_class.default.theme_name)
       File.delete(color_theme_class.theme_file(theme_name: color_theme_class.default.theme_name))
     end
   end

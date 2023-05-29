@@ -11,6 +11,7 @@ RSpec.describe Dsu::Support::Configuration do
     describe 'DEFAULT_DSU_OPTIONS' do
       let(:expected_keys) do
         %w[
+          version
           editor
           entries_display_order
           entries_folder
@@ -34,7 +35,7 @@ RSpec.describe Dsu::Support::Configuration do
     end
   end
 
-  describe '#config_file?' do
+  describe '#config_file_exist?' do
     context 'when the config file exists' do
       before do
         config.create_config_file!
@@ -45,13 +46,13 @@ RSpec.describe Dsu::Support::Configuration do
       end
 
       it 'returns true' do
-        expect(config.config_file?).to be true
+        expect(config.config_file_exist?).to be true
       end
     end
 
     context 'when the config file does not exist' do
       it 'returns false' do
-        expect(config.config_file?).to be false
+        expect(config.config_file_exist?).to be false
       end
     end
   end
@@ -68,7 +69,7 @@ RSpec.describe Dsu::Support::Configuration do
       end
 
       it 'creates the config file' do
-        expect(config.config_file?).to be true
+        expect(config.config_file_exist?).to be true
       end
     end
 
@@ -76,7 +77,7 @@ RSpec.describe Dsu::Support::Configuration do
       subject(:config) { config_with_bad_config_file }
 
       specify 'makes sure the config file does not exist' do
-        expect(config.config_file?).to be false
+        expect(config.config_file_exist?).to be false
       end
 
       it 'displays a message to the console' do
@@ -92,7 +93,7 @@ RSpec.describe Dsu::Support::Configuration do
 
       context 'when creating the config file it should exist' do
         it 'exists' do
-          expect(config.config_file?).to be true
+          expect(config.config_file_exist?).to be true
         end
       end
 
@@ -110,13 +111,13 @@ RSpec.describe Dsu::Support::Configuration do
 
       context 'when deleting the config file it should exist' do
         it 'exists' do
-          expect(config.config_file?).to be true
+          expect(config.config_file_exist?).to be true
         end
       end
 
       it 'deletes the config file' do
         config.delete_config_file!
-        expect(config.config_file?).to be false
+        expect(config.config_file_exist?).to be false
       end
     end
 
@@ -124,7 +125,7 @@ RSpec.describe Dsu::Support::Configuration do
       subject(:config) { config_with_bad_config_file }
 
       specify 'makes sure the config file does not exist' do
-        expect(config.config_file?).to be false
+        expect(config.config_file_exist?).to be false
       end
 
       it 'displays a message to the console' do
@@ -146,7 +147,7 @@ RSpec.describe Dsu::Support::Configuration do
 
       context 'when setting up this test the config file should exist' do
         it 'exists' do
-          expect(config.config_file?).to be true
+          expect(config.config_file_exist?).to be true
         end
       end
 
@@ -157,7 +158,7 @@ RSpec.describe Dsu::Support::Configuration do
 
     context 'when the configuration file does not exists' do
       specify 'makes sure the config file does not exist' do
-        expect(config.config_file?).to be false
+        expect(config.config_file_exist?).to be false
       end
 
       it 'prints the config file' do

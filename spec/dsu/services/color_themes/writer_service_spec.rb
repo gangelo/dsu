@@ -34,12 +34,12 @@ RSpec.describe Dsu::Services::ColorThemes::WriterService do
       let(:expected_color_theme) { Dsu::Models::ColorTheme.default }
 
       it 'makes sure the theme file does not exist before the test' do
-        expect(color_theme_class.theme_file?(theme_name: theme_name)).to eq false
+        expect(color_theme_class.theme_file_exist?(theme_name: theme_name)).to eq false
       end
 
       it 'wites (creates) the color theme file' do
         writer_service.call
-        expect(color_theme_class.theme_file?(theme_name: theme_name)).to eq true
+        expect(color_theme_class.theme_file_exist?(theme_name: theme_name)).to eq true
       end
     end
   end

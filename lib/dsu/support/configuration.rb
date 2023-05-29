@@ -18,6 +18,7 @@ module Dsu
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_DSU_OPTIONS = {
+        'version' => Dsu::VERSION,
         # The default editor to use when editing entry groups if the EDITOR
         # environment variable on your system is not set. On nix systmes,
         # the default editor is`nano`. You need to change this default on
@@ -52,7 +53,7 @@ module Dsu
         File.join(root_folder, CONFIG_FILENAME)
       end
 
-      def config_file?
+      def config_file_exist?
         File.exist? config_file
       end
 
@@ -67,7 +68,7 @@ module Dsu
 
       # TODO: Move this to a view (e.g. views/configuration/show.rb)
       def print_config_file
-        if config_file?
+        if config_file_exist?
           say "Config file (#{config_file}) contents:", SUCCESS
           hash = YAML.safe_load(File.open(config_file))
           say hash.to_yaml.gsub("\n-", "\n\n-"), SUCCESS

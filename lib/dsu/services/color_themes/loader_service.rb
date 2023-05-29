@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require 'psych'
+require_relative '../../migration/color_theme_migrator_service'
 require_relative '../../models/color_theme'
-require_relative '../../support/color_theme_locatable'
 
 module Dsu
   module Services
     module ColorThemes
       # This class loads an color theme from disk.
       class LoaderService
-        include Support::ColorThemeLocatable
+        delegate :theme_file_exist?, :theme_file, to: Models::ColorTheme
 
         def initialize(theme_name: nil)
           unless theme_name.nil? || theme_name.is_a?(String)
@@ -20,33 +20,39 @@ module Dsu
         end
 
         def call
-          unless theme_file?(theme_name: theme_name)
-            return Models::ColorTheme::Theme.new(theme_name: theme_name, theme_hash: default_color_theme_hash)
+          unless theme_file_exist?(theme_name: theme_name)
+            return Models::ColorTheme.new(theme_name: theme_name, theme_hash: default_color_theme_hash)
           end
 
-          Models::ColorTheme::Theme.new(theme_name: theme_name, theme_hash: loaded_color_theme_hash)
+          Models::ColorTheme.new(theme_name: theme_name, theme_hash: color_theme_hash)
         end
 
         private
 
         attr_reader :theme_name
 
-        def loaded_color_theme_hash
-          @loaded_color_theme_hash ||= begin
-            theme_file = theme_file(theme_name: theme_name)
-            loaded_color_theme_hash = Psych.safe_load(File.read(theme_file), [Symbol])
-            unless loaded_color_theme_hash.keys == default_color_theme_hash.keys
-              loaded_color_theme_hash = update_and_write_theme_file!(loaded_color_theme_hash: loaded_color_theme_hash, theme_file: theme_file)
+        def color_theme_hash
+          @color_theme_hash ||= begin
+            color_theme_hash = load_theme_file
+            if migrate?(color_theme_hash)
+              Migration::ColorThemeMigratorService.new.call
+              color_theme_hash = load_theme_file
+              if migrate?(color_theme_hash)
+                raise "Color theme migration from \"#{color_theme_hash[:version]}\" " \
+                      "to \"#{default_color_theme_hash[:version]}\" could not be applied."
+              end
             end
-            loaded_color_theme_hash
+            color_theme_hash
           end
         end
 
-        def update_and_write_theme_file!(loaded_color_theme_hash:, theme_file:)
-          loaded_color_theme_hash = default_theme.merge(loaded_color_theme_hash)
-          # TODO: Make this into a configuration writer service.
-          File.write(theme_file, loaded_color_theme_hash.to_yaml)
-          loaded_color_theme_hash
+        def load_theme_file
+          theme_file = theme_file(theme_name: theme_name)
+          Psych.safe_load(File.read(theme_file), [Symbol])
+        end
+
+        def migrate?(color_theme_hash)
+          color_theme_hash[:version] != default_color_theme_hash[:version]
         end
 
         def default_color_theme_hash

@@ -5,6 +5,16 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
 
   include_context 'with tmp'
 
+  before do
+    create_config_file!
+  end
+
+  after do
+    # NOTE: most operations need the config around until they are
+    # funished, so delete the config file last.
+    delete_config_file!
+  end
+
   let(:time) { entry_group.time }
   let(:entry_group) { build(:entry_group, time: Time.now, entries: build_list(:entry, 2)) }
   let!(:original_entry_group) { entry_group.clone }

@@ -30,19 +30,19 @@ module Dsu
       end
 
       def entries_folder
-        @entries_folder ||= configuration_or_options_configuration[:entries_folder]
+        @entries_folder ||= options_configuration_or_configuration[:entries_folder]
       end
 
       def entries_file_name
-        @entries_file_name ||= time.strftime(configuration_or_options_configuration[:entries_file_name])
+        @entries_file_name ||= time.strftime(options_configuration_or_configuration[:entries_file_name])
       end
 
       def create_entry_group_path_if!
         FileUtils.mkdir_p(entries_folder) unless entry_group_path_exists?
       end
 
-      def configuration_or_options_configuration
-        @configuration_or_options_configuration ||= options[:configuration] || configuration
+      def options_configuration_or_configuration
+        @options_configuration_or_configuration ||= options[:configuration] || configuration
       end
     end
   end

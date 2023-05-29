@@ -2,18 +2,17 @@
 
 require 'psych'
 require_relative '../../models/color_theme'
-require_relative '../../support/color_theme_locatable'
 
 module Dsu
   module Services
     module ColorThemes
       # This class writes a color theme to disk.
       class WriterService
-        include Support::ColorThemeLocatable
+        delegate :theme_file_exist?, :theme_file, to: Models::ColorTheme
 
         def initialize(theme:)
           raise ArgumentError, 'theme is nil.' if theme.nil?
-          unless theme.is_a?(Models::ColorTheme::Theme)
+          unless theme.is_a?(Models::ColorTheme)
             raise ArgumentError, "theme is the wrong object type: \"#{theme}\"."
           end
 
@@ -23,7 +22,7 @@ module Dsu
         # Does the same thing as #call, but raises an error if the theme
         # file already exists.
         def call!
-          if theme_file?(theme_name: theme_name)
+          if theme_file_exist?(theme_name: theme_name)
             error_message = "Theme file already exists for theme \"#{theme_name}\": " \
                             "\"#{theme_file(theme_name: theme_name)}\"."
             raise ArgumentError, error_message

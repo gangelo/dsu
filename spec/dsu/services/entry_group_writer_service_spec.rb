@@ -25,14 +25,22 @@ end
 RSpec.describe Dsu::Services::EntryGroupWriterService do
   subject(:entry_group_writer_service) { described_class.new(entry_group: entry_group, options: options) }
 
+  before do
+    create_config_file!
+  end
+
+  after do
+    delete_entry_group_file!(time: time)
+    # NOTE: most operations need the config around until they are
+    # funished, so delete the config file last.
+    delete_config_file!
+  end
+
+
   let(:entry_group) { build(:entry_group, time: time, entries: entries) }
   let(:time) { Time.now }
   let(:entries) { [] }
   let(:options) { {} }
-
-  before do
-    delete_entry_group_file!(time: time)
-  end
 
   describe '#initialize' do
     context 'when the arguments are valid' do

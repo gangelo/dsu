@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'erb'
-require 'yaml'
+require 'psych'
+require_relative '../migration/configuration_migrator_service'
 require_relative '../support/configuration'
 
 module Dsu
@@ -22,32 +22,39 @@ module Dsu
       end
 
       def call
-        config_options.merge(default_options).with_indifferent_access
+        config_hash.merge(default_options).with_indifferent_access
       end
 
       private
 
       attr_reader :default_options
 
-      def config_options
-        return default_config unless config_file?
+      def config_hash
+        return default_config_hash unless config_file_exist?
 
-        @config_options ||= begin
-          loaded_config = YAML.safe_load(ERB.new(File.read(config_file)).result)
-          loaded_config = update_and_write_config_file!(loaded_config) unless loaded_config.keys == default_config.keys
-          loaded_config
+        @config_hash ||= begin
+          config_hash = load_config_file
+          if migrate?(config_hash)
+            Migration::ConfigurationMigratorService.new.call
+            config_hash = load_config_file
+            if migrate?(config_hash)
+              raise "Configuration migration from \"#{config_hash['version']}\" " \
+                    "to \"#{default_config_hash['version']}\" could not be applied."
+            end
+          end
+          config_hash
         end
       end
 
-      def update_and_write_config_file!(loaded_config)
-        loaded_config = default_config.merge(loaded_config)
-        # TODO: Make this into a configuration writer service.
-        # TODO: Test this
-        File.write(config_file, loaded_config.to_yaml)
-        loaded_config
+      def load_config_file
+        Psych.safe_load(File.read(config_file), [Symbol])
       end
 
-      def default_config
+      def migrate?(config_hash)
+        config_hash['version'] != default_config_hash['version']
+      end
+
+      def default_config_hash
         Support::Configuration::DEFAULT_DSU_OPTIONS
       end
     end
