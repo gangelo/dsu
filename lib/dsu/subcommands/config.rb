@@ -73,6 +73,24 @@ module Dsu
       def init
         create_config_file!
       end
+
+      desc 'delete', 'Deletes the configuration file'
+      long_desc <<-LONG_DESC
+        NAME
+        \x5
+        `dsu config delete` -- Deletes the configuration.
+
+        SYNOPSIS
+        \x5
+        dsu config delete
+
+        NOTES
+        \x5
+        Deleting the dsu configuration file will simply cause dsu to use the default configuration options (`Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS`).
+      LONG_DESC
+      def delete
+        delete_config_file!
+      end
     end
   end
 end

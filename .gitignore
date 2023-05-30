@@ -23,3 +23,5 @@ readme.txt
 
 .env
 /spec/.tmp
+
+migration_version.yml

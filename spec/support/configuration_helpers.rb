@@ -4,14 +4,24 @@
 # typically before and after every test.
 module ConfigurationHelpers
   def create_config_file!
-    config.create_config_file! unless config.config_file_exist?
+    config_hash = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS
+    service = Dsu::Services::Configuration::WriterService.new(config_hash: config_hash)
+    service.call unless service.config_file_exist?
+  end
+
+  # NOTE: This overwrites any existing config file!
+  def create_config_file_using!(config_hash:)
+    Dsu::Services::Configuration::WriterService.new(config_hash: config_hash).call
   end
 
   def delete_config_file!
+    # TODO: Change this once the Dsu::Services::Configuration::DeleterService
+    # is implemented.
     config.delete_config_file! if config.config_file_exist?
   end
 
   def config_with_bad_config_file
+    # TODO: Replce this.
     @config_with_bad_config_file ||= Class.new do
       include Dsu::Support::Configuration
 

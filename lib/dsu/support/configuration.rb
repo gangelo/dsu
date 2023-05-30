@@ -4,6 +4,7 @@ require 'colorize'
 require 'fileutils'
 require 'yaml'
 require_relative 'colorable'
+require_relative 'configuration_fileable'
 require_relative 'folder_locations'
 require_relative 'say'
 
@@ -11,6 +12,7 @@ module Dsu
   module Support
     module Configuration
       include Colorable
+      include ConfigurationFileable
       include FolderLocations
       include Say
 
@@ -18,7 +20,6 @@ module Dsu
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_DSU_OPTIONS = {
-        'version' => Dsu::VERSION,
         # The default editor to use when editing entry groups if the EDITOR
         # environment variable on your system is not set. On nix systmes,
         # the default editor is`nano`. You need to change this default on
@@ -49,13 +50,13 @@ module Dsu
       }.freeze
       # rubocop:enable Style/StringHashKeys
 
-      def config_file
-        File.join(root_folder, CONFIG_FILENAME)
-      end
+      # def config_file
+      #   File.join(root_folder, CONFIG_FILENAME)
+      # end
 
-      def config_file_exist?
-        File.exist? config_file
-      end
+      # def config_file_exist?
+      #   File.exist? config_file
+      # end
 
       def create_config_file!
         create_config_file config_file: config_file

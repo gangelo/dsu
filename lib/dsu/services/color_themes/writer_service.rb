@@ -12,9 +12,7 @@ module Dsu
 
         def initialize(theme:)
           raise ArgumentError, 'theme is nil.' if theme.nil?
-          unless theme.is_a?(Models::ColorTheme)
-            raise ArgumentError, "theme is the wrong object type: \"#{theme}\"."
-          end
+          raise ArgumentError, "theme is the wrong object type: \"#{theme}\"." unless theme.is_a?(Models::ColorTheme)
 
           @theme = theme
         end

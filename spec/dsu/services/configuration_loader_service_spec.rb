@@ -97,29 +97,14 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
 
     context 'when the configuration file exists and migrations are needed' do
       before do
-        stub_const('Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS', mocked_default_options)
-
-        # Mock the configuration migration service so that we can make sure it is
-        # called to migrate the configuration if the config version is not
-        # current.
-        allow(Dsu::Migration::ConfigurationMigratorService).to receive(:new).and_return(mocked_migration_service)
-        allow(mocked_migration_service).to receive(:call)
-      end
-
-      let(:mocked_migration_service) { instance_double(Dsu::Migration::ConfigurationMigratorService) }
-
-      # These options represent (for example) a user updates this gem, the default
-      # configuration has changed to include a more recent version.
-      let(:mocked_default_options) do
-        Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS.dup.tap do |default_options|
-          default_options['version'] = default_options['version'].gsub(/\d+\.\d+\.\d+/, '100.0.0')
+        old_config_options = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS.dup.tap do |default_options|
+          default_options.delete('version')
         end
+        create_config_file_using!(config_hash: old_config_options)
       end
 
-      # TODO: This test won't pass until the migration service is implemented.
-      it 'runs migrations for color themes' do
-        configuration_loader_service.call
-        expect(mocked_migration_service).to have_received(:call).once
+      it 'runs and applies the migrations' do
+        expect(configuration_loader_service.call[:version]).to eq default_configuration['version']
       end
     end
   end

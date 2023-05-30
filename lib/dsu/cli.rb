@@ -4,6 +4,7 @@ require 'time'
 require_relative 'base_cli'
 require_relative 'subcommands/config'
 require_relative 'subcommands/edit'
+require_relative 'subcommands/generate'
 require_relative 'subcommands/list'
 
 module Dsu
@@ -12,6 +13,7 @@ module Dsu
     map %w[a -a] => :add
     map %w[c -c] => :config
     map %w[e -e] => :edit
+    map %w[g -g] => :generate
     map %w[l -l] => :list
     map %w[v -v] => :version
 
@@ -101,6 +103,12 @@ module Dsu
     desc 'edit, -e SUBCOMMAND',
       'Edit DSU entries for the given SUBCOMMAND'
     subcommand :edit, Subcommands::Edit
+
+    if ENV['DEV_ENV'] == 'dev'
+      desc 'generate, -g SUBCOMMAND',
+        'Runs the DSU generator for the given SUBCOMMAND'
+      subcommand :generate, Subcommands::Generate
+    end
 
     desc 'version, -v',
       'Displays this gem version'
