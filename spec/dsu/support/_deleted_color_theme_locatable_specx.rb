@@ -40,7 +40,7 @@ RSpec.describe Dsu::Support::ColorThemeLocatable do
 
   describe '#theme_file' do
     it 'returns the correct theme file path' do
-      themes_folder = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['themes_folder']
+      themes_folder = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['themes_folder']
       expected_theme_file = File.join(themes_folder, theme_name)
       expect(color_theme_locatable.theme_file).to eq expected_theme_file
     end
@@ -48,7 +48,7 @@ RSpec.describe Dsu::Support::ColorThemeLocatable do
 
   describe '#themes_folder' do
     it 'returns the correct themes folder' do
-      expected_themes_folder = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['themes_folder']
+      expected_themes_folder = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['themes_folder']
       expect(color_theme_locatable.themes_folder).to eq expected_themes_folder
     end
   end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require 'psych'
-require_relative '../support/configuration'
 
 module Dsu
   module Migration
     # This is the base class for all migration services.
     class MigratorService
-      MINIMUM_VERSION_REGEX = /(\A\d+)/
+      MIGRATION_VERSION_REGEX = /(\A\d+)/
+      MIGRATION_VERSION_FILE_NAME = 'migration_version.yml'
 
       attr_reader :object
 
@@ -25,16 +25,21 @@ module Dsu
 
           before_migration_version = current_migration_version
 
-          migration_files_info.each_value do |file_path|
-            # Requiring the migration files will run the migrations in each file.
-            file_name = File.basename(file_path)
-
-            puts "Running migration: #{file_name}..."
-            require file_path
-          end
+          migration_files_info.each_value { |file_path| run_migration!(migration_path: file_path) }
 
           puts "Migration version (after migrations): #{current_migration_version}"
           puts 'Nothing to do.' if current_migration_version == before_migration_version
+        end
+
+        def run_migration!(migration_path:)
+          puts "Running migration: #{File.basename(migration_path)}..."
+          # Requiring the migration files will run the migrations in each file.
+          require migration_path
+        end
+
+        # Migrate version file methods
+        def migration_version_file_path
+          @migration_version_file_path ||= File.join(migrate_folder, MIGRATION_VERSION_FILE_NAME)
         end
 
         private
@@ -46,15 +51,6 @@ module Dsu
           Psych.safe_load(File.read(migration_version_file_path), [Symbol])[:migration_version]
         end
 
-        # Migrate version file methods
-        def migration_version_file_path
-          @migration_version_file_path ||= File.join(migrate_folder, migration_version_file_name)
-        end
-
-        def migration_version_file_name
-          'migration_version.yml'
-        end
-
         def migrate_folder
           @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
         end
@@ -62,7 +58,7 @@ module Dsu
         # Returns a hash of migration files that need to be applied, sorted asc by migration version.
         def migration_files_info
           migration_files_info = Dir.glob("#{migrate_folder}/*").filter_map do |file_path|
-            migration_version = File.basename(file_path).match(MINIMUM_VERSION_REGEX).try(:[], 0)&.to_i
+            migration_version = File.basename(file_path).match(MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
             next if migration_version.nil? || current_migration_version >= migration_version
 
             { migration_version: migration_version, file_path: file_path }

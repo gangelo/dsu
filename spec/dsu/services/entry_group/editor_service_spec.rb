@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Services::EntryGroupEditorService do
+RSpec.describe Dsu::Services::EntryGroup::EditorService do
   subject(:entry_group_editor_service) { described_class.new(entry_group: entry_group) }
 
   include_context 'with tmp'
@@ -58,13 +58,13 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
   describe '#call' do
     before do
       allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
-      editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
+      editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
       allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
     end
 
     context 'when the editing session fails' do
       before do
-        editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
+        editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
         allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(false)
       end
 
@@ -226,7 +226,6 @@ RSpec.describe Dsu::Services::EntryGroupEditorService do
             entry_group_editor_service.call
           end.to output(/The following ERRORS were encountered/).to_stdout
         end
-
 
         it 'saves all the valid entries to the entry group file and ignores the invalid entries' do
           entry_group_editor_service.call

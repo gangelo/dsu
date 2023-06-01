@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require_relative '../services/entry_group_editor_service'
-require_relative '../services/entry_group_deleter_service'
-require_relative '../services/entry_group_reader_service'
-require_relative '../services/entry_group_writer_service'
+require_relative '../services/entry_group/editor_service'
+require_relative '../services/entry_group/deleter_service'
+require_relative '../services/entry_group/reader_service'
+require_relative '../services/entry_group/writer_service'
 require_relative '../support/entry_group_loadable'
 require_relative '../support/time_formatable'
 require_relative '../validators/entries_validator'
@@ -44,12 +44,12 @@ module Dsu
           # return new(time: time) unless exists?(time: time)
 
           load(time: time).tap do |entry_group|
-            Services::EntryGroupEditorService.new(entry_group: entry_group, options: options).call
+            Services::EntryGroup::EditorService.new(entry_group: entry_group, options: options).call
           end
         end
 
         def exists?(time:)
-          Dsu::Services::EntryGroupReaderService.entry_group_file_exists?(time: time)
+          Dsu::Services::EntryGroup::ReaderService.entry_group_file_exists?(time: time)
         end
       end
 
@@ -85,7 +85,7 @@ module Dsu
         delete! and return if entries.empty?
 
         validate!
-        Services::EntryGroupWriterService.new(entry_group: self).call
+        Services::EntryGroup::WriterService.new(entry_group: self).call
         self
       end
 

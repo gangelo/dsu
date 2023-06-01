@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../services/configuration_loader_service'
 require_relative '../support/configurable'
 
 module Dsu
@@ -30,19 +29,23 @@ module Dsu
       end
 
       def entries_folder
-        @entries_folder ||= options_configuration_or_configuration[:entries_folder]
+        @entries_folder ||= merged_configuration.entries_folder
       end
 
       def entries_file_name
-        @entries_file_name ||= time.strftime(options_configuration_or_configuration[:entries_file_name])
+        @entries_file_name ||= time.strftime(merged_configuration.entries_file_name)
       end
 
       def create_entry_group_path_if!
         FileUtils.mkdir_p(entries_folder) unless entry_group_path_exists?
       end
 
-      def options_configuration_or_configuration
-        @options_configuration_or_configuration ||= options[:configuration] || configuration
+      def merged_configuration
+        @merged_configuration ||= if options[:configuration]
+          Models::Configuration(config_hash: configuration.to_h.merge(options[:configuration]))
+        else
+          configuration
+        end
       end
     end
   end

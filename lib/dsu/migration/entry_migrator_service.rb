@@ -6,15 +6,8 @@ module Dsu
   module Migration
     # This service migrates Entry files from
     # one version to another.
+    # TODO: Implement this service.
     class EntryMigratorService < MigratorService
-      def initialize
-        super
-        # TODO: Implement this.
-      end
-
-      def call
-        # TODO: Implement this.
-      end
     end
   end
 end

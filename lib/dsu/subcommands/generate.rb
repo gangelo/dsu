@@ -89,16 +89,14 @@ module Dsu
           # frozen_string_literal: true
 
           require_relative '../dsu/migration/configuration_migrator_service'
-          require_relative '../dsu/support/configuration_fileable'
+          require_relative '../dsu/models/configuration'
 
           module Dsu
             module Migrate
               class #{migration_class} < Migration::ConfigurationMigratorService
-                include Support::ConfigurationFileable
-
                 def call
                   # No sense in updating anything if we're not saving anything to disk.
-                  if config_file_exist?
+                  if Models::Configuration.config_file_exist?
                     # TODO: Make your configuration changes here; for example:
                     # config_hash[:my_change] = 'my change'
                     # config_hash.delete(:delete_me)
@@ -110,7 +108,7 @@ module Dsu
                 private
 
                 def migration_version
-                  File.basename(__FILE__).match(MINIMUM_VERSION_REGEX).try(:[], 0)&.to_i
+                  File.basename(__FILE__).match(MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
                 end
               end
             end

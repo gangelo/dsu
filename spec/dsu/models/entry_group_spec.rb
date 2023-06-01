@@ -249,7 +249,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       before do
         delete_entry_group_file!(time: time)
         allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
-        editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
+        editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
         allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
       end
 

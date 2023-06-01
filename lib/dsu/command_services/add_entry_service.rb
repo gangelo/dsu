@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../models/entry'
-require_relative '../services/entry_group_writer_service'
+require_relative '../services/entry_group/writer_service'
 require_relative '../support/colorable'
 require_relative '../support/descriptable'
 require_relative '../support/entry_group_loadable'
@@ -54,7 +54,7 @@ module Dsu
         entry_group.entries << entry
         entry_group.validate!
 
-        Services::EntryGroupWriterService.new(entry_group: entry_group).call
+        Services::EntryGroup::WriterService.new(entry_group: entry_group).call
       end
     end
   end

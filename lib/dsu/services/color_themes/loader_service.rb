@@ -7,7 +7,7 @@ require_relative '../../models/color_theme'
 module Dsu
   module Services
     module ColorThemes
-      # This class loads an color theme from disk.
+      # This class loads a color theme from disk.
       class LoaderService
         delegate :theme_file_exist?, :theme_file, to: Models::ColorTheme
 
@@ -32,18 +32,7 @@ module Dsu
         attr_reader :theme_name
 
         def color_theme_hash
-          @color_theme_hash ||= begin
-            color_theme_hash = load_theme_file
-            if migrate?(color_theme_hash)
-              Migration::ColorThemeMigratorService.new.call
-              color_theme_hash = load_theme_file
-              if migrate?(color_theme_hash)
-                raise "Color theme migration from \"#{color_theme_hash[:version]}\" " \
-                      "to \"#{default_color_theme_hash[:version]}\" could not be applied."
-              end
-            end
-            color_theme_hash
-          end
+          @color_theme_hash ||= load_theme_file
         end
 
         def load_theme_file

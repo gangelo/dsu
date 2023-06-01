@@ -3,12 +3,11 @@
 require 'bundler'
 require 'thor'
 require_relative 'command_services/add_entry_service'
+require_relative 'models/configuration'
 require_relative 'models/entry_group'
-require_relative 'services/configuration_loader_service'
-require_relative 'services/entry_group_hydrator_service'
-require_relative 'services/entry_group_reader_service'
+require_relative 'services/entry_group/hydrator_service'
+require_relative 'services/entry_group/reader_service'
 require_relative 'support/colorable'
-require_relative 'support/configuration'
 require_relative 'support/entry_group_viewable'
 require_relative 'support/times_sortable'
 require_relative 'version'
@@ -58,7 +57,7 @@ module Dsu
     def initialize(*args)
       super
 
-      @configuration = Services::ConfigurationLoaderService.new.call
+      @configuration = Models::Configuration.current_or_default
     end
 
     private
@@ -70,7 +69,7 @@ module Dsu
     end
 
     def entries_display_order
-      @entries_display_order ||= configuration[:entries_display_order]
+      @entries_display_order ||= configuration.entries_display_order
     end
   end
 end

@@ -31,6 +31,11 @@ module Dsu
 
           say header, message_color if header.present?
 
+          if messages.one?
+            say(messages[0], message_color)
+            return
+          end
+
           messages.each_with_index do |message, index|
             say "#{index + 1}. #{message}", message_color
           end

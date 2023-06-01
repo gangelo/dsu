@@ -142,7 +142,7 @@ module Dsu
       # Include dates that have no DSU entries.
       option :include_all, type: :boolean, aliases: '-a'
       def dates
-        options = configuration.merge(self.options)
+        options = configuration.to_h.merge(self.options).with_indifferent_access
         times = dsu_times_from!(from_command_option: options[:from], to_command_option: options[:to])
         # Note special sort here, unlike the other commands where rules for
         # displaying DSU entries are applied; this is more of a list command.
@@ -169,7 +169,7 @@ module Dsu
       # entry groups will be conditionally displayed based on the :include_all
       # value in the <options> argument.
       def view_list_for(times:)
-        options = configuration.merge(self.options)
+        options = configuration.to_h.merge(self.options)
         times_first_and_last = [times.first, times.last]
         times.each do |time|
           view_options = options.dup

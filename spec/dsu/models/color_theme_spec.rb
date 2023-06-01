@@ -89,14 +89,14 @@ RSpec.describe Dsu::Models::ColorTheme do
       it 'returns the correct theme file path' do
         # NOTE: For some reason, putting themes_folder in a let
         # fails to recognize the stub_const in spec/support/shared_contexts/config.rb
-        themes_folder = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['themes_folder']
+        themes_folder = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['themes_folder']
         expect(color_theme.theme_file).to eq File.join(themes_folder, theme_name)
       end
     end
 
     describe '#themes_folder' do
       it 'returns the correct themes folder' do
-        themes_folder = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['themes_folder']
+        themes_folder = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['themes_folder']
         expect(color_theme.themes_folder).to eq(themes_folder)
       end
     end
@@ -178,7 +178,7 @@ RSpec.describe Dsu::Models::ColorTheme do
     describe '.default' do
       let(:expected_default_color_theme) do
         described_class.new(theme_name: described_class::DEFAULT_THEME_NAME,
-            theme_hash: described_class::DEFAULT_THEME_HASH)
+          theme_hash: described_class::DEFAULT_THEME_HASH)
       end
 
       it 'returns the default color theme' do

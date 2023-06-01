@@ -2,11 +2,11 @@
 
 RSpec.shared_examples 'the configuration file does not exist' do
   it 'does not exist' do
-    expect(config.config_file_exist?).to be false
+    expect(config_file_exist?).to be false
   end
 end
 
-RSpec.describe Dsu::Services::ConfigurationLoaderService do
+RSpec.describe Dsu::Services::Configuration::LoaderService do
   subject(:configuration_loader_service) { described_class.new(default_options: default_options) }
 
   before do
@@ -18,7 +18,7 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
   end
 
   let(:default_options) { nil }
-  let(:default_configuration) { Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS }
+  let(:default_configuration) { Dsu::Models::Configuration::DEFAULT_CONFIGURATION }
 
   describe '#initialize' do
     context 'when the arguments are valid' do
@@ -83,7 +83,7 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
     context 'when default options are passed and the configuration file does exist' do
       let(:default_options) do
         # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
-        Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS.merge({
+        Dsu::Models::Configuration::DEFAULT_CONFIGURATION.merge({
           'version' => 'changed version',
           'entries_file_name' => 'changed entries file name'
         })
@@ -97,7 +97,7 @@ RSpec.describe Dsu::Services::ConfigurationLoaderService do
 
     context 'when the configuration file exists and migrations are needed' do
       before do
-        old_config_options = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS.dup.tap do |default_options|
+        old_config_options = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.dup.tap do |default_options|
           default_options.delete('version')
         end
         create_config_file_using!(config_hash: old_config_options)

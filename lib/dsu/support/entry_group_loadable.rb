@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'pathname'
-require_relative '../services/entry_group_reader_service'
+require_relative '../services/entry_group/reader_service'
 require_relative '../models/entry'
 require_relative '../models/entry_group'
 
@@ -11,7 +11,7 @@ module Dsu
       # returns an EntryGroup object loaded from
       # the entry group json file.
       def load(time:)
-        entry_group_json = Services::EntryGroupReaderService.new(time: time).call
+        entry_group_json = Services::EntryGroup::ReaderService.new(time: time).call
         hash = if entry_group_json.present?
           JSON.parse(entry_group_json, symbolize_names: true).tap do |hash|
             hash[:time] = Time.parse(hash[:time])

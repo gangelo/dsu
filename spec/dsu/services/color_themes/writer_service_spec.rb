@@ -60,13 +60,12 @@ RSpec.describe Dsu::Services::ColorThemes::WriterService do
 
     context 'when the theme file does not exist' do
       before do
-        allow(writer_service).to receive(:call) # rubocop:disable RSpec/SubjectStub
+        allow(writer_service).to receive(:call)
       end
-
 
       it 'calls #call' do
         writer_service_call
-        expect(writer_service).to have_received(:call).once # rubocop:disable RSpec/SubjectStub
+        expect(writer_service).to have_received(:call).once
       end
     end
   end

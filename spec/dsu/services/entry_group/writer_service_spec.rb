@@ -22,7 +22,7 @@ RSpec.shared_examples 'the entry group file is written' do
   end
 end
 
-RSpec.describe Dsu::Services::EntryGroupWriterService do
+RSpec.describe Dsu::Services::EntryGroup::WriterService do
   subject(:entry_group_writer_service) { described_class.new(entry_group: entry_group, options: options) }
 
   before do
@@ -35,7 +35,6 @@ RSpec.describe Dsu::Services::EntryGroupWriterService do
     # funished, so delete the config file last.
     delete_config_file!
   end
-
 
   let(:entry_group) { build(:entry_group, time: time, entries: entries) }
   let(:time) { Time.now }

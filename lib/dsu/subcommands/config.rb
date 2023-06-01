@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
 require 'thor'
-require_relative '../support/configuration'
+require_relative '../models/configuration'
+require_relative '../services/configuration/deleter_service'
+require_relative '../views/configuration/show'
+require_relative '../views/shared/messages'
+require_relative '../views/shared/model_errors'
 
 module Dsu
   module Subcommands
     class Config < ::Thor
-      include Dsu::Support::Configuration
-
       default_command :help
 
       class << self
@@ -27,7 +29,8 @@ module Dsu
         dsu config info
       LONG_DESC
       def info
-        print_config_file
+        configuration = Models::Configuration.current_or_default
+        Views::Configuration::Show.new(config: configuration).call
       end
 
       desc 'init', 'Creates and initializes a .dsu file in your home folder'
@@ -43,6 +46,10 @@ module Dsu
         CONFIGURATION FILE OPTIONS
 
         The following configuration file options are available:
+
+        version:
+
+        The configuration version - DO NOT ALTER THIS VALUE!
 
         editor:
 
@@ -71,7 +78,25 @@ module Dsu
         Default: "'#{Dsu::Support::FolderLocations.root_folder}/dsu/entries'"
       LONG_DESC
       def init
-        create_config_file!
+        if Models::Configuration.config_file_exist?
+          messages = ["Configuration file (#{Models::Configuration.config_file}) already exists"]
+          Views::Shared::Messages.new(messages: messages, message_type: :warning).render
+          exit 1
+        elsif !Dir.exist?(Models::Configuration.config_folder)
+          messages = ["Destination folder for configuration file (#{Models::Configuration.config_folder}) does not exist"]
+          Views::Shared::Messages.new(messages: messages, message_type: :error).render
+          exit 1
+        else
+          configuration = Models::Configuration.default
+          unless configuration.valid?
+            Views::Shared::ModelErrors.new(model: configuration).render
+            exit 1
+          end
+          configuration.save!
+          messages = ["Configuration file (#{Models::Configuration.config_file}) created."]
+          Views::Shared::Messages.new(messages: messages, message_type: :success).render
+          Views::Configuration::Show.new(config: configuration).render
+        end
       end
 
       desc 'delete', 'Deletes the configuration file'
@@ -86,10 +111,17 @@ module Dsu
 
         NOTES
         \x5
-        Deleting the dsu configuration file will simply cause dsu to use the default configuration options (`Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS`).
+        Deleting the dsu configuration file will simply cause dsu to use the default configuration options (`Dsu::Models::Configuration::DEFAULT_CONFIGURATION`).
       LONG_DESC
       def delete
-        delete_config_file!
+        unless Models::Configuration.config_file_exist?
+          messages = ["Configuration file (#{Models::Configuration.config_file}) does not exist."]
+          Views::Shared::Messages.new(messages: messages, message_type: :warning).render
+          exit 1
+        end
+        Models::Configuration.delete!
+        messages = ["Configuration file (#{Models::Configuration.config_file}) deleted."]
+        Views::Shared::Messages.new(messages: messages, message_type: :success).render
       end
     end
   end
