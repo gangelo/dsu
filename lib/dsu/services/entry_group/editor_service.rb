@@ -78,9 +78,7 @@ module Dsu
             return
           end
 
-          if entry_group_with_edits.invalid?
-            Views::Shared::ModelErrors.new(model: entry_group_with_edits).render
-          end
+          Views::Shared::ModelErrors.new(model: entry_group_with_edits).render if entry_group_with_edits.invalid?
 
           # Make sure we're saving only valid, unique entries.
           entry_group.entries = entry_group_with_edits.valid_unique_entries

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Services::ColorThemes::WriterService do
+RSpec.describe Dsu::Services::ColorTheme::WriterService do
   subject(:writer_service) { described_class.new(theme: theme) }
 
   after do

@@ -23,9 +23,11 @@ module Dsu
         status_warning: :yellow,
         status_error: :red,
         state_highlight: :cyan
-      }
+      }.freeze
       DEFAULT_THEME_NAME = 'default'
 
+      # TODO: Validate theme colors against valid colorize
+      # gem colors.
       validates_with Validators::DescriptionValidator
 
       attr_reader :theme_name
@@ -57,6 +59,16 @@ module Dsu
       class << self
         def version
           DEFAULT_THEME[:version]
+        end
+
+        # Returns the current color theme if it exists; otherwise,
+        # it returns the default color theme.
+        def current_or_default
+          current || default
+        end
+
+        def current
+          # TODO: Implement this.
         end
 
         def default
@@ -111,6 +123,12 @@ module Dsu
         hashes = DEFAULT_THEME.keys.map { |key| public_send(key) }
         hashes << theme_name.hash
         hashes.hash
+      end
+
+      def save!
+        validate!
+
+        Services::ColorTheme::WriterService.new(theme_name: theme_name, theme_hash: to_h).call
       end
 
       private

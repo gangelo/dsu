@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Services::ColorThemes::LoaderService do
+RSpec.describe Dsu::Services::ColorTheme::LoaderService do
   subject(:loader_service) { described_class.new(theme_name: theme_name) }
 
   after do

@@ -5,7 +5,7 @@ require_relative '../../models/color_theme'
 
 module Dsu
   module Services
-    module ColorThemes
+    module ColorTheme
       # This class loads a color theme from disk.
       class LoaderService
         delegate :theme_file_exist?, :theme_file, to: Models::ColorTheme

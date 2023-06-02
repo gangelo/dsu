@@ -6,12 +6,14 @@ RSpec.describe Dsu::Models::EntryGroup do
   include_context 'with tmp'
 
   before do
+    create_default_color_theme!
     create_config_file!
     delete_entry_group_file!(time: time) if time.is_a?(Time)
   end
 
   after do
     delete_config_file!
+    delete_default_color_theme!
   end
 
   let(:time) { time_utc }

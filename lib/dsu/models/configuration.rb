@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_model'
+require_relative '../models/color_theme'
 require_relative '../services/configuration/deleter_service'
 require_relative '../services/configuration/reader_service'
 require_relative '../services/configuration/writer_service'
@@ -43,7 +44,7 @@ module Dsu
         'include_all' => false,
         # Themes
         # The currently selected theme.
-        'theme' => 'default',
+        'theme' => Models::ColorTheme::DEFAULT_THEME_NAME,
         # The theme folder where the themes reside.
         'themes_folder' => "#{Support::FolderLocations.root_folder}/dsu/themes"
       }.freeze
@@ -52,7 +53,8 @@ module Dsu
       validates :version, presence: true,
         format: { with: VERSION_REGEX, message: "must match the format '#.#.#[.alpha.#]' where # is 0-n" }
       validates :editor, presence: true
-      validates :entries_display_order, presence: true, inclusion: { in: %w[asc desc], message: "must be 'asc' or 'desc'" }
+      validates :entries_display_order, presence: true,
+        inclusion: { in: %w[asc desc], message: "must be 'asc' or 'desc'" }
       validates :entries_file_name, presence: true,
         format: { with: ENTRIES_FILE_NAME_REGEX,
                   message: "must include the Time#strftime format specifiers '%Y %m %d' " \
@@ -85,7 +87,11 @@ module Dsu
       end
 
       class << self
-        # Returns the current  configuration if it exists; otherwise,
+        def version
+          DEFAULT_CONFIGURATION['version']
+        end
+
+        # Returns the current configuration if it exists; otherwise,
         # it returns the default configuration.
         def current_or_default
           current || default
@@ -177,10 +183,12 @@ module Dsu
       def assign_attributes_from_config_hash
         @version = config_hash.fetch('version', DEFAULT_CONFIGURATION['version'])
         @editor = config_hash.fetch('editor', DEFAULT_CONFIGURATION['editor'])
-        @entries_display_order = config_hash.fetch('entries_display_order', DEFAULT_CONFIGURATION['entries_display_order'])
+        @entries_display_order = config_hash.fetch('entries_display_order',
+          DEFAULT_CONFIGURATION['entries_display_order'])
         @entries_file_name = config_hash.fetch('entries_file_name', DEFAULT_CONFIGURATION['entries_file_name'])
         @entries_folder = config_hash.fetch('entries_folder', DEFAULT_CONFIGURATION['entries_folder'])
-        @carry_over_entries_to_today = config_hash.fetch('carry_over_entries_to_today', DEFAULT_CONFIGURATION['carry_over_entries_to_today'])
+        @carry_over_entries_to_today = config_hash.fetch('carry_over_entries_to_today',
+          DEFAULT_CONFIGURATION['carry_over_entries_to_today'])
         @include_all = config_hash.fetch('include_all', DEFAULT_CONFIGURATION['include_all'])
         @theme = config_hash.fetch('theme', DEFAULT_CONFIGURATION['theme'])
         @themes_folder = config_hash.fetch('themes_folder', DEFAULT_CONFIGURATION['themes_folder'])

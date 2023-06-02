@@ -7,6 +7,8 @@ module Dsu
   module Services
     module Configuration
       # This service is used to write the configuration file.
+      # It is assumed that the configuration hash has already been validated
+      # before using this service.
       class WriterService
         def initialize(config_hash:)
           raise ArgumentError, 'config_hash cannot be nil' if config_hash.nil?
@@ -16,9 +18,6 @@ module Dsu
         end
 
         def call
-          # TODO: Should we be using a model here so we can #validate!
-          # before saving?
-
           write_file!
 
           config_hash

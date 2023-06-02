@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 # # frozen_string_literal: true
 
-# # rubocop:disable RSpec/SubjectStub
+#
 # RSpec.describe Dsu::Migration::MigratorService do
 #   subject(:migrator_service) { described_class.new(object: object) }
 

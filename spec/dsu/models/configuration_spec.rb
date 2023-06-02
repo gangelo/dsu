@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/StringHashKeys
 RSpec.describe Dsu::Models::Configuration do
   subject(:config) { described_class.new(config_hash: config_hash) }
 
@@ -364,7 +365,7 @@ RSpec.describe Dsu::Models::Configuration do
         end
 
         it 'does not raise an error' do
-          expect { described_class.delete! }.to_not raise_error
+          expect { described_class.delete! }.not_to raise_error
         end
       end
     end
@@ -508,7 +509,7 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       it 'does not raise an error' do
-        expect { config.delete! }.to_not raise_error
+        expect { config.delete! }.not_to raise_error
       end
     end
   end
@@ -524,3 +525,4 @@ RSpec.describe Dsu::Models::Configuration do
     end
   end
 end
+# rubocop:enable Style/StringHashKeys

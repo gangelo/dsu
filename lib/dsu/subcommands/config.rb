@@ -83,7 +83,10 @@ module Dsu
           Views::Shared::Messages.new(messages: messages, message_type: :warning).render
           exit 1
         elsif !Dir.exist?(Models::Configuration.config_folder)
-          messages = ["Destination folder for configuration file (#{Models::Configuration.config_folder}) does not exist"]
+          messages = [
+            "Destination folder for configuration file (#{Models::Configuration.config_folder}) " \
+            'does not exist'
+          ]
           Views::Shared::Messages.new(messages: messages, message_type: :error).render
           exit 1
         else
