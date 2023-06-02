@@ -488,15 +488,39 @@ RSpec.describe Dsu::Models::Configuration do
 
   describe '#delete!' do
     context 'when the configuration exists' do
-      it 'deletes the configuration'
+      before do
+        config.save!
+      end
+
+      it 'makes sure the config file exists prior to the test' do
+        expect(described_class.config_file_exist?).to be true
+      end
+
+      it 'deletes the configuration' do
+        config.delete!
+        expect(described_class.config_file_exist?).to be false
+      end
     end
 
     context 'when the configuration does not exist' do
-      it 'does nothing'
+      it 'makes sure the config file does not exist prior to the test' do
+        expect(described_class.config_file_exist?).to be false
+      end
+
+      it 'does not raise an error' do
+        expect { config.delete! }.to_not raise_error
+      end
     end
   end
 
   describe '#merge' do
-    it 'merges the hash into the configuration hash and returns the nerged hash'
+    let(:expected_config) do
+      config.merge('editor' => 'doom')
+    end
+
+    it 'merges the hash into the configuration hash and returns a new config' do
+      config.editor = 'doom'
+      expect(config).to eq expected_config
+    end
   end
 end
