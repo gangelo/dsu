@@ -14,6 +14,11 @@ module Dsu
         File.exist?(entry_group_file_path)
       end
 
+      def entry_group_file_exists_for?(time:)
+        entries_file_name = time.strftime(configuration_or_options_configuration[:entries_file_name])
+        File.join(entries_folder, entries_file_name)
+      end
+
       private
 
       def entry_group_path_exists?

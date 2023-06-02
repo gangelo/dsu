@@ -1,3 +1,6 @@
+## [1.2.1] 2023-06-02
+* Bug fixes
+  - Fixed a bug that raises an error `NoMethodError` for `entry_group_file_exists?` if the `carry_over_entries_to_today` configuration option is set to true, and attempting to edit today's dsu entries.
 ## [1.2.0] 2023-05-26
 * Changes
   - Various refactors.
