@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require_relative '../support/configurable'
+require_relative '../models/configuration'
 require_relative '../support/descriptable'
 require_relative '../validators/description_validator'
 
@@ -9,7 +9,6 @@ module Dsu
   module Models
     # This class represents a dsu color theme.
     class ColorTheme
-      extend Support::Configurable
       include ActiveModel::Model
       include Support::Descriptable
 
@@ -85,6 +84,12 @@ module Dsu
 
         def themes_folder
           configuration.themes_folder
+        end
+
+        private
+
+        def configuration
+          @configuration ||= Models::Configuration.current_or_default
         end
       end
 

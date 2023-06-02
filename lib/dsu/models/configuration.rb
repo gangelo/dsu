@@ -43,7 +43,9 @@ module Dsu
         # entries.
         'include_all' => false,
         # Themes
-        # The currently selected theme.
+        # The currently selected theme. Should be equal to
+        # Models::ColorTheme::DEFAULT_THEME_NAME or the name of a custom
+        # theme that resides in the themes_folder.
         'theme' => Models::ColorTheme::DEFAULT_THEME_NAME,
         # The theme folder where the themes reside.
         'themes_folder' => "#{Support::FolderLocations.root_folder}/dsu/themes"
@@ -201,6 +203,11 @@ module Dsu
       end
 
       def validate_theme
+        # No need to validate the existance of a default theme file
+        # because if it doesn't exist, we just use the default theme
+        # (ColorTheme::DEFAULT_THEME).
+        return if theme == Models::ColorTheme::DEFAULT_THEME_NAME
+
         theme_file = File.join(themes_folder || 'nil', theme)
         return if File.exist?(theme_file)
 

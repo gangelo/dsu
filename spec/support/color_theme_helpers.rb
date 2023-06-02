@@ -14,6 +14,8 @@ module ColorThemeHelpers
   end
 
   def delete_color_theme!(theme_name:)
+    raise ArgumentError, 'theme_name is blank' if theme_name.blank?
+
     # TODO: Switch to this service when implemented:
     # Dsu::Services::ColorTheme::DeleterService.new(theme_name: theme_name).call!
     color_theme_class = Dsu::Models::ColorTheme

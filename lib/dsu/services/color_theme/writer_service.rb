@@ -29,13 +29,22 @@ module Dsu
           write_file!
         end
 
+        def call!
+          raise "Theme file already exists for theme \"#{theme_name}\": \"#{theme_file}\"" if File.exist?(theme_file)
+
+          call
+        end
+
         private
 
         attr_reader :theme_name, :theme_hash
 
         def write_file!
-          theme_file = File.join(configuration.themes_folder, "#{theme_name}.yml")
           File.write(theme_file, Psych.dump(theme_hash))
+        end
+
+        def theme_file
+          @theme_file ||= File.join(configuration.themes_folder, theme_name)
         end
       end
     end
