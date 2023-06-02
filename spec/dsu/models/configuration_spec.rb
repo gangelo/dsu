@@ -1,14 +1,24 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::Models::Configuration do
-  subject(:config) { Dsu::Models::Configuration.new(config_hash: config_hash) }
+  subject(:config) { described_class.new(config_hash: config_hash) }
 
-  let(:config_hash) { Dsu::Models::Configuration::DEFAULT_CONFIGURATION }
+  before do
+    create_default_color_theme!
+  end
+
+  after do
+    delete_default_color_theme!
+    delete_config_file!
+  end
+
+  let(:config_hash) { described_class::DEFAULT_CONFIGURATION }
 
   describe 'constants' do
     describe 'DEFAULT_CONFIGURATION' do
       let(:expected_keys) do
         %w[
+          version
           editor
           entries_display_order
           entries_folder
@@ -26,145 +36,467 @@ RSpec.describe Dsu::Models::Configuration do
     end
   end
 
-  describe '#config_file' do
-    it 'returns the correct config file name' do
-      expect(Dsu::Models::Configuration.config_file).to eq File.join(Dir.home, described_class::CONFIG_FILE_NAME)
+  describe 'validations' do
+    describe '#version' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('version' => nil)
+        end
+        let(:expected_errors) do
+          [
+            "Version can't be blank",
+            "Version must match the format '#.#.#[.alpha.#]' where # is 0-n"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when not the correct format' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('version' => 'a.b.c')
+        end
+        let(:expected_errors) do
+          [
+            "Version must match the format '#.#.#[.alpha.#]' where # is 0-n"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#editor' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('editor' => nil)
+        end
+        let(:expected_errors) do
+          [
+            "Editor can't be blank"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#entries_display_order' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('entries_display_order' => nil)
+        end
+        let(:expected_errors) do
+          [
+            "Entries display order can't be blank",
+            "Entries display order must be 'asc' or 'desc'"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when not asc or desc' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('entries_display_order' => 'xyz')
+        end
+        let(:expected_errors) do
+          [
+            "Entries display order must be 'asc' or 'desc'"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#entries_file_name' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('entries_file_name' => nil)
+        end
+        let(:expected_errors) do
+          [
+            "Entries file name can't be blank",
+            "Entries file name must include the Time#strftime format specifiers '%Y %m %d' " \
+            'and be a valid file name for your operating system'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context "when it doesn't include the required Time format specified" do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('entries_file_name' => '%Y-%d-no-month')
+        end
+        let(:expected_errors) do
+          [
+            "Entries file name must include the Time#strftime format specifiers '%Y %m %d' " \
+            'and be a valid file name for your operating system'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#entries_folder' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('entries_folder' => nil)
+        end
+        let(:expected_errors) do
+          [
+            "Entries folder can't be blank"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when it is not a valid folder' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('entries_folder' => './foo/bar')
+        end
+        let(:expected_errors) do
+          [
+            /Entries folder .+ does not exist/
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#carry_over_entries_to_today' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('carry_over_entries_to_today' => nil)
+        end
+        let(:expected_errors) do
+          [
+            'Carry over entries to today must be true or false'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when not true or false' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('carry_over_entries_to_today' => 'foo')
+        end
+        let(:expected_errors) do
+          [
+            'Carry over entries to today must be true or false'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#include_all' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('include_all' => nil)
+        end
+        let(:expected_errors) do
+          [
+            'Include all must be true or false'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when not true or false' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('include_all' => 'foo')
+        end
+        let(:expected_errors) do
+          [
+            'Include all must be true or false'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#theme' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('theme' => nil)
+        end
+        let(:expected_errors) do
+          [
+            "Theme can't be blank"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when the theme file does not exist' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('theme' => '/foo/bar/theme')
+        end
+        let(:expected_errors) do
+          [
+            /Theme file ".+" does not exist/
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+    end
+
+    describe '#themes_folder' do
+      context 'when not present?' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('themes_folder' => nil)
+        end
+        let(:expected_errors) do
+          [
+            /Theme file ".+" does not exist/,
+            "Themes folder can't be blank"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when it is not a valid folder' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('themes_folder' => './foo/bar')
+        end
+        let(:expected_errors) do
+          [
+            /Theme file ".+" does not exist/,
+            /Themes folder ".+" does not exist/
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
     end
   end
 
-  describe '#config_file_exist?' do
-    context 'when the config file exists' do
-      before do
-        config.create_config_file!
+  describe 'class methods' do
+    describe '.current_or_default' do
+      context 'when there is no current configuration' do
+        it 'returns the default configuration' do
+          expect(described_class.current_or_default).to eq(described_class.default)
+        end
       end
 
-      after do
-        config.delete_config_file!
+      context 'when there is a current configuration' do
+        before do
+          current_config.save!
+        end
+
+        let(:current_config) do
+          described_class.default.merge('editor' => 'doom')
+        end
+
+        it 'returns the current configuration' do
+          expect(described_class.current_or_default).to eq(current_config)
+        end
+      end
+    end
+
+    describe '.current' do
+      context 'when there is no current configuration' do
+        it 'returns nil' do
+          expect(described_class.current).to be nil
+        end
+      end
+
+      context 'when there is a current configuration' do
+        before do
+          current_config.save!
+        end
+
+        let(:current_config) do
+          described_class.default.merge('editor' => 'doom')
+        end
+
+        it 'returns the current configuration' do
+          expect(described_class.current).to eq(current_config)
+        end
+      end
+    end
+
+    describe '.default' do
+      it 'returns the default configuration' do
+        default_config = described_class.new(config_hash: described_class::DEFAULT_CONFIGURATION)
+        expect(described_class.default).to eq(default_config)
+      end
+    end
+
+    describe '.delete!' do
+      context 'when the config file exists' do
+        before do
+          described_class.current_or_default.save!
+        end
+
+        context 'when deleting the config file it should exist' do
+          it 'exists' do
+            expect(described_class.config_file_exist?).to be true
+          end
+        end
+
+        it 'deletes the config file' do
+          described_class.delete!
+          expect(described_class.config_file_exist?).to be false
+        end
+      end
+
+      context 'when the config file does not exist' do
+        before do
+          described_class.delete!
+        end
+
+        specify 'makes sure the config file does not exist' do
+          expect(described_class.config_file_exist?).to be false
+        end
+
+        it 'does not raise an error' do
+          expect { described_class.delete! }.to_not raise_error
+        end
+      end
+    end
+
+    describe '.config_file' do
+      it 'returns the correct config file name' do
+        expect(described_class.config_file).to eq File.join(Dir.home, described_class::CONFIG_FILE_NAME)
+      end
+    end
+
+    describe '.config_file_exist?' do
+      context 'when the config file exists' do
+        before do
+          described_class.current_or_default.save!
+        end
+
+        it 'returns true' do
+          expect(described_class.config_file_exist?).to be true
+        end
+      end
+
+      context 'when the config file does not exist' do
+        it 'returns false' do
+          expect(described_class.config_file_exist?).to be false
+        end
+      end
+    end
+
+    describe '.config_folder' do
+      it 'returns the config folder' do
+        expect(described_class.config_folder).to eq Dsu::Support::FolderLocations.root_folder
+      end
+    end
+  end
+
+  describe '#carry_over_entries_to_today?' do
+    context 'when carry_over_entries_to_today is true' do
+      let(:config_hash) do
+        { 'carry_over_entries_to_today' => true }
       end
 
       it 'returns true' do
-        expect(config_file_exist?).to be true
+        expect(config.carry_over_entries_to_today?).to be true
       end
     end
 
-    context 'when the config file does not exist' do
+    context 'when carry_over_entries_to_today is false' do
       it 'returns false' do
-        expect(config_file_exist?).to be false
+        expect(config.carry_over_entries_to_today?).to be false
       end
     end
   end
 
-  describe '#create_config_file!' do
-    context 'when the config file does not exist' do
-      before do
-        config.delete_config_file!
-        config.create_config_file!
-      end
+  describe '#to_h' do
+    it 'returns a hash' do
+      expect(described_class.default.to_h).to eq described_class::DEFAULT_CONFIGURATION
+    end
+  end
 
-      after do
-        config.delete_config_file!
-      end
-
-      it 'creates the config file' do
-        expect(config_file_exist?).to be true
+  describe '#==' do
+    context 'when the other object is not a Configuration' do
+      it 'returns false' do
+        expect(described_class.default == 'foo').to be false
       end
     end
 
-    context 'when the config file destination folder does not exist' do
-      before do
-        allow(Dsu::Support::FolderLocations).to receive(:root_folder).and_return('/foo/bar')
-      end
-
-      specify 'makes sure the config file does not exist' do
-        expect(config_file_exist?).to be false
-      end
-
-      it 'displays a message to the console' do
-        expected_output = /Destination folder\x20.+\x20does not exist/
-        expect { config.create_config_file! }.to output(expected_output).to_stdout
-      end
-    end
-
-    context 'when the config file already exists' do
-      before do
-        config.create_config_file!
-      end
-
-      context 'when creating the config file it should exist' do
-        it 'exists' do
-          expect(config_file_exist?).to be true
-        end
-      end
-
-      it 'displays a message to the console' do
-        expect { config.create_config_file! }.to output(/already exists/).to_stdout
+    context 'when the configurations are equal' do
+      it 'returns true' do
+        expect(described_class.default.to_h == described_class::DEFAULT_CONFIGURATION.dup).to be true
       end
     end
   end
 
-  describe '#delete_config_file!' do
-    context 'when the config file exists' do
+  describe '#hash' do
+    let(:expected_hash) do
+      default_config = described_class.default
+      described_class::DEFAULT_CONFIGURATION.each_key.map do |key|
+        default_config.public_send(key.to_sym)
+      end.hash
+    end
+
+    it 'returns the hash of all the attributes' do
+      expect(described_class.default.hash).to eq expected_hash
+    end
+  end
+
+  describe '#save!' do
+    context 'when the configuration is valid' do
+      let(:config_hash) do
+        described_class::DEFAULT_CONFIGURATION.merge('editor' => 'doom')
+      end
+
       before do
-        config.create_config_file!
+        config.delete!
+        config.save!
       end
 
-      context 'when deleting the config file it should exist' do
-        it 'exists' do
-          expect(config_file_exist?).to be true
-        end
+      it 'saves the configuration' do
+        expect(described_class.config_file_exist?).to be true
       end
 
-      it 'deletes the config file' do
-        config.delete_config_file!
-        expect(config_file_exist?).to be false
+      it 'saves the configuration values' do
+        expect(described_class.current).to eq config
       end
     end
 
-    context 'when the config file does not exist' do
+    context 'when the configuration is not valid' do
       before do
-        delete_config_file!
+        config.editor = nil
       end
 
-      specify 'makes sure the config file does not exist' do
-        expect(config_file_exist?).to be false
+      let(:expected_error) do
+        /Editor can't be blank/
       end
 
-      it 'displays a message to the console' do
-        expected_output = /Configuration file\x20.+\x20does not exist/
-        expect { config.delete_config_file! }.to output(expected_output).to_stdout
+      it 'raises an error' do
+        expect { config.save! }.to raise_error(expected_error)
       end
     end
   end
 
-  describe '#print_config_file' do
-    context 'when the configuration file exists' do
-      before do
-        config.create_config_file!
-      end
-
-      after do
-        config.delete_config_file!
-      end
-
-      context 'when setting up this test the config file should exist' do
-        it 'exists' do
-          expect(config_file_exist?).to be true
-        end
-      end
-
-      it 'prints the config file' do
-        expect { config.print_config_file }.to output(/Config file/).to_stdout
-      end
+  describe '#delete!' do
+    context 'when the configuration exists' do
+      it 'deletes the configuration'
     end
 
-    context 'when the configuration file does not exists' do
-      specify 'makes sure the config file does not exist' do
-        expect(config_file_exist?).to be false
-      end
-
-      it 'prints the config file' do
-        expect { config.print_config_file }.to output(/does not exist/).to_stdout
-      end
+    context 'when the configuration does not exist' do
+      it 'does nothing'
     end
+  end
+
+  describe '#merge' do
+    it 'merges the hash into the configuration hash and returns the nerged hash'
   end
 end

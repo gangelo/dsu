@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require_relative '../services/entry_group/editor_service'
 require_relative '../services/entry_group/deleter_service'
+require_relative '../services/entry_group/editor_service'
 require_relative '../services/entry_group/reader_service'
 require_relative '../services/entry_group/writer_service'
 require_relative '../support/entry_group_loadable'
@@ -35,7 +35,7 @@ module Dsu
 
       class << self
         def delete!(time:, options: {})
-          Services::EntryGroupDeleterService.new(time: time, options: options).call
+          Services::EntryGroup::DeleterService.new(time: time, options: options).call
         end
 
         def edit(time:, options: {})

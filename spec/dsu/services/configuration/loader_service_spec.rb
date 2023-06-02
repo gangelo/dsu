@@ -1,24 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'the configuration file does not exist' do
-  it 'does not exist' do
-    expect(config_file_exist?).to be false
-  end
-end
-
 RSpec.describe Dsu::Services::Configuration::LoaderService do
-  subject(:configuration_loader_service) { described_class.new(default_options: default_options) }
+  subject(:configuration_loader_service) { described_class.new(config_hash: config_hash) }
 
-  before do
-    create_config_file!
-  end
-
-  after do
-    delete_config_file!
-  end
-
-  let(:default_options) { nil }
-  let(:default_configuration) { Dsu::Models::Configuration::DEFAULT_CONFIGURATION }
+  let(:config_hash) { Dsu::Models::Configuration::DEFAULT_CONFIGURATION }
 
   describe '#initialize' do
     context 'when the arguments are valid' do
@@ -28,83 +13,43 @@ RSpec.describe Dsu::Services::Configuration::LoaderService do
     # No errors are expected because the options are not
     # considered until #call is invoked.
     context 'when the arguments are invalid' do
-      let(:default_options) { :invalid }
-      let(:expected_error) { /default_options must be a Hash or ActiveSupport::HashWithIndifferentAccess/ }
+      context 'when config_hash is nil' do
+        let(:config_hash) { nil }
+        let(:expected_error) { /config_hash is nil/ }
 
-      it_behaves_like 'an error is raised'
+        it_behaves_like 'an error is raised'
+      end
+
+      context 'when config_hash is not a Hash' do
+        let(:config_hash) { :invalid }
+        let(:expected_error) { /config_hash must be a Hash/ }
+
+        it_behaves_like 'an error is raised'
+      end
     end
   end
 
   describe '#call' do
-    context 'when no default options are passed and the configuration file does not exist' do
-      subject(:configuration_loader_service) { described_class.new }
-
-      it 'returns the default configuration options' do
-        expect(configuration_loader_service.call).to eq default_configuration
+    context 'when the config_hash is valid' do
+      it 'returns the passed options' do
+        expect(configuration_loader_service.call).to eq Dsu::Models::Configuration.default
       end
     end
 
-    context 'when default options are passed and the configuration file does not exist' do
-      before do
-        delete_config_file!
+    context 'when the config_hash is invalid' do
+      let(:config_hash) do
+        default_config_hash = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.dup
+        Dsu::Models::Configuration.new(config_hash: default_config_hash).tap do |configuration|
+          configuration.entries_folder = 'invalid'
+          configuration.version = 'invalid'
+        end.to_h
       end
-
-      # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
-      let(:default_options) do
-        {
-          'version' => 'version',
-          'editor' => 'editor',
-          'entries_display_order' => 'entries_display_order',
-          'entries_folder' => 'entries_folder',
-          'entries_file_name' => 'entries_file_name',
-          'carry_over_entries_to_today' => 'carry_over_entries_to_today',
-          'include_all' => 'include_all',
-          'theme' => 'theme',
-          'themes_folder' => 'themes_folder'
-        }
+      let(:expected_configuration) do
+        Dsu::Models::Configuration.new(config_hash: config_hash)
       end
-      # rubocop:enable Style/StringHashKeys
-
-      it_behaves_like 'the configuration file does not exist'
 
       it 'returns the passed options' do
-        expect(configuration_loader_service.call).to eq default_options
-      end
-    end
-
-    context 'when no default options are passed and the configuration file does exist' do
-      subject(:configuration_loader_service) { described_class.new }
-
-      it 'returns the configuration file options' do
-        expect(configuration_loader_service.call).to eq default_configuration
-      end
-    end
-
-    context 'when default options are passed and the configuration file does exist' do
-      let(:default_options) do
-        # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
-        Dsu::Models::Configuration::DEFAULT_CONFIGURATION.merge({
-          'version' => 'changed version',
-          'entries_file_name' => 'changed entries file name'
-        })
-        # rubocop:enable Style/StringHashKeys
-      end
-
-      it 'returns the default options merged with the configuration file options' do
-        expect(configuration_loader_service.call).to eq default_options
-      end
-    end
-
-    context 'when the configuration file exists and migrations are needed' do
-      before do
-        old_config_options = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.dup.tap do |default_options|
-          default_options.delete('version')
-        end
-        create_config_file_using!(config_hash: old_config_options)
-      end
-
-      it 'runs and applies the migrations' do
-        expect(configuration_loader_service.call[:version]).to eq default_configuration['version']
+        expect(configuration_loader_service.call).to eq expected_configuration
       end
     end
   end

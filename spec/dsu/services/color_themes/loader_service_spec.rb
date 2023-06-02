@@ -42,7 +42,7 @@ RSpec.describe Dsu::Services::ColorThemes::LoaderService do
       end
 
       let(:theme_hash) do
-        Dsu::Models::ColorTheme::DEFAULT_THEME_HASH.merge({ description: 'Test theme description' })
+        Dsu::Models::ColorTheme::DEFAULT_THEME.merge({ description: 'Test theme description' })
       end
 
       it 'returns the loaded color theme' do
@@ -53,7 +53,7 @@ RSpec.describe Dsu::Services::ColorThemes::LoaderService do
     context 'when the color theme file exists and migrations are needed' do
       before do
         create_default_color_theme!
-        stub_const('Dsu::Models::ColorTheme::DEFAULT_THEME_HASH', mocked_default_color_theme)
+        stub_const('Dsu::Models::ColorTheme::DEFAULT_THEME', mocked_default_color_theme)
 
         # Mock the color theme migration service so that we can make sure it is
         # called to migrate the color themes if the color theme version is not
@@ -67,7 +67,7 @@ RSpec.describe Dsu::Services::ColorThemes::LoaderService do
       # These options represent (for example) a user updates this gem, the default
       # configuration has changed to include a more recent version.
       let(:mocked_default_color_theme) do
-        Dsu::Models::ColorTheme::DEFAULT_THEME_HASH.dup.tap do |default_color_theme|
+        Dsu::Models::ColorTheme::DEFAULT_THEME.dup.tap do |default_color_theme|
           default_color_theme[:version] = default_color_theme[:version].gsub(/\d+\.\d+\.\d+/, '100.0.0')
         end
       end

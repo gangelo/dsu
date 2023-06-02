@@ -6,12 +6,12 @@ RSpec.describe Dsu::Models::EntryGroup do
   include_context 'with tmp'
 
   before do
-    config.create_config_file!
+    create_config_file!
     delete_entry_group_file!(time: time) if time.is_a?(Time)
   end
 
   after do
-    config.delete_config_file!
+    delete_config_file!
   end
 
   let(:time) { time_utc }

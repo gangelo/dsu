@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'psych'
-require_relative '../../migration/color_theme_migrator_service'
 require_relative '../../models/color_theme'
 
 module Dsu
@@ -45,7 +44,7 @@ module Dsu
         end
 
         def default_color_theme_hash
-          Models::ColorTheme::DEFAULT_THEME_HASH
+          Models::ColorTheme::DEFAULT_THEME
         end
       end
     end

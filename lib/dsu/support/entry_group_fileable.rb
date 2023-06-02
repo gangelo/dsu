@@ -42,7 +42,7 @@ module Dsu
 
       def merged_configuration
         @merged_configuration ||= if options[:configuration]
-          Models::Configuration(config_hash: configuration.to_h.merge(options[:configuration]))
+          Models::Configuration(config_hash: configuration.merge(options[:configuration]))
         else
           configuration
         end

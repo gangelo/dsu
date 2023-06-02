@@ -18,7 +18,7 @@ RSpec.describe Dsu::Models::ColorTheme do
   end
 
   let(:theme_name) { described_class.default.theme_name }
-  let(:theme_hash) { described_class::DEFAULT_THEME_HASH }
+  let(:theme_hash) { described_class::DEFAULT_THEME }
 
   describe '#initialize' do
     context 'when theme_name is nil' do
@@ -51,7 +51,7 @@ RSpec.describe Dsu::Models::ColorTheme do
 
     context 'when theme_hash is not a valid theme hash' do
       let(:theme_hash) do
-        described_class::DEFAULT_THEME_HASH.merge(foo: :bar)
+        described_class::DEFAULT_THEME.merge(foo: :bar)
       end
       let(:expected_error) { /theme_hash keys are missing or invalid:/ }
 
@@ -60,13 +60,13 @@ RSpec.describe Dsu::Models::ColorTheme do
 
     context 'when theme_hash is a valid theme hash' do
       it 'creates attributes for each theme hash key' do
-        expect(described_class::DEFAULT_THEME_HASH.each_key.all? do |key|
+        expect(described_class::DEFAULT_THEME.each_key.all? do |key|
           color_theme.respond_to?(key)
         end).to eq true
       end
 
       it 'assigns the correct attribute values' do
-        expect(described_class::DEFAULT_THEME_HASH.each.all? do |key, value|
+        expect(described_class::DEFAULT_THEME.each.all? do |key, value|
           color_theme.public_send(key) == value
         end).to eq true
       end
@@ -141,7 +141,7 @@ RSpec.describe Dsu::Models::ColorTheme do
   end
 
   describe 'class constants' do
-    describe 'DEFAULT_THEME_HASH' do
+    describe 'DEFAULT_THEME' do
       let(:expected_default_theme_hash) do
         {
           version: Dsu::VERSION,
@@ -157,7 +157,7 @@ RSpec.describe Dsu::Models::ColorTheme do
       end
 
       it 'returns the correct default theme hash' do
-        expect(described_class::DEFAULT_THEME_HASH).to eq(expected_default_theme_hash)
+        expect(described_class::DEFAULT_THEME).to eq(expected_default_theme_hash)
       end
     end
 
@@ -178,7 +178,7 @@ RSpec.describe Dsu::Models::ColorTheme do
     describe '.default' do
       let(:expected_default_color_theme) do
         described_class.new(theme_name: described_class::DEFAULT_THEME_NAME,
-          theme_hash: described_class::DEFAULT_THEME_HASH)
+          theme_hash: described_class::DEFAULT_THEME)
       end
 
       it 'returns the default color theme' do

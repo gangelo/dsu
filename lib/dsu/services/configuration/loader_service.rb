@@ -17,7 +17,7 @@ module Dsu
         end
 
         def call
-          Models::Configuration.new(config_hash: config_hash).tap(&:validate!)
+          Models::Configuration.new(config_hash: config_hash)
         end
 
         private

@@ -52,19 +52,19 @@ module Dsu
       validates :version, presence: true,
         format: { with: VERSION_REGEX, message: "must match the format '#.#.#[.alpha.#]' where # is 0-n" }
       validates :editor, presence: true
-      validates :entries_display_order, presence: true, inclusion: { in: %w[asc desc] }
+      validates :entries_display_order, presence: true, inclusion: { in: %w[asc desc], message: "must be 'asc' or 'desc'" }
       validates :entries_file_name, presence: true,
         format: { with: ENTRIES_FILE_NAME_REGEX,
                   message: "must include the Time#strftime format specifiers '%Y %m %d' " \
                            'and be a valid file name for your operating system' }
       validates :entries_folder, presence: true
-      validate :entries_folder_exist?, if: -> { entries_folder.present? }
-      validates :carry_over_entries_to_today, inclusion: { in: [true, false] }
-      validates :include_all, inclusion: { in: [true, false] }
+      validate :validate_entries_folder, if: -> { entries_folder.present? }
+      validates :carry_over_entries_to_today, inclusion: { in: [true, false], message: 'must be true or false' }
+      validates :include_all, inclusion: { in: [true, false], message: 'must be true or false' }
       validates :theme, presence: true
-      validate :theme_file_exist?, if: -> { theme.present? }
+      validate :validate_theme, if: -> { theme.present? }
       validates :themes_folder, presence: true
-      validate :themes_folder_exist?, if: -> { themes_folder.present? }
+      validate :validate_themes_folder, if: -> { themes_folder.present? }
 
       attr_accessor :version,
         :editor,
@@ -88,7 +88,12 @@ module Dsu
         # Returns the current  configuration if it exists; otherwise,
         # it returns the default configuration.
         def current_or_default
-          return default unless config_file_exist?
+          current || default
+        end
+
+        # Returns the current configuration if it exists or nil.
+        def current
+          return unless config_file_exist?
 
           new(config_hash: Services::Configuration::ReaderService.new.call)
         end
@@ -115,6 +120,10 @@ module Dsu
         end
       end
 
+      def carry_over_entries_to_today?
+        carry_over_entries_to_today
+      end
+
       def to_h
         # rubocop:disable Style/StringHashKeys
         {
@@ -137,12 +146,14 @@ module Dsu
       def ==(other)
         return false unless other.is_a?(Configuration)
 
-        to_hash == other.to_hash
+        to_h == other.to_h
       end
       alias eql? ==
 
       def hash
-        DEFAULT_CONFIGURATION.keys.map(&:to_sym).hash
+        DEFAULT_CONFIGURATION.each_key.map do |key|
+          public_send(key.to_sym)
+        end.hash
       end
 
       def save!
@@ -153,6 +164,10 @@ module Dsu
 
       def delete!
         self.class.delete!
+      end
+
+      def merge(hash)
+        self.class.new(config_hash: to_h.merge(hash))
       end
 
       private
@@ -171,22 +186,23 @@ module Dsu
         @themes_folder = config_hash.fetch('themes_folder', DEFAULT_CONFIGURATION['themes_folder'])
       end
 
-      def entries_folder_exist?
-        return false if entries_folder.blank?
+      def validate_entries_folder
+        return if File.exist?(entries_folder)
 
-        File.exist?(entries_folder)
+        errors.add(:base, "Entries folder \"#{entries_folder}\" does not exist")
       end
 
-      def theme_file_exist?
-        return false unless theme.present? && themes_folder_exist?
+      def validate_theme
+        theme_file = File.join(themes_folder || 'nil', theme)
+        return if File.exist?(theme_file)
 
-        File.exist?(File.join(themes_folder, theme))
+        errors.add(:base, "Theme file \"#{theme_file}\" does not exist")
       end
 
-      def themes_folder_exist?
-        return false if themes_folder.blank?
+      def validate_themes_folder
+        return if Dir.exist?(themes_folder)
 
-        Dir.exist?(themes_folder)
+        errors.add(:base, "Themes folder \"#{themes_folder}\" does not exist")
       end
     end
   end
