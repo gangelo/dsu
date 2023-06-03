@@ -20,11 +20,11 @@ module Dsu
       end
 
       def save
-        self.class.save(config_hash: to_h)
+        self.class.save(config: self)
       end
 
       def save!
-        self.class.save!(config_hash: to_h)
+        self.class.save!(config: self)
       end
 
       module ClassMethods
@@ -35,9 +35,11 @@ module Dsu
         end
 
         def delete
-          return unless exist?
+          return false unless exist?
 
           File.delete(config_path)
+
+          true
         end
 
         def exist?
@@ -45,17 +47,30 @@ module Dsu
         end
 
         def find
-          Psych.safe_load(File.read(config_path), [Symbol])
+          config_hash = Psych.safe_load(File.read(config_path), [Symbol])
+          new(config_hash: config_hash)
         end
 
-        def save(config_hash:)
-          new(config_hash: config_hash).validate!
+        def find_or_create
+          return find if exist?
 
-          File.write(config_path, Psych.dump(config_hash))
+          new(config_hash: self::DEFAULT_CONFIGURATION)
         end
 
-        def save!(config_hash:)
-          save(config_hash: config_hash)
+        def save(config:)
+          return false unless config.valid?
+
+          File.write(config_path, Psych.dump(config.to_h))
+
+          true
+        end
+
+        def save!(config:)
+          config.validate!
+
+          save(config: config)
+
+          config
         end
 
         def config_file

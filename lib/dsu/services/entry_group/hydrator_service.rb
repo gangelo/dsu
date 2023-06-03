@@ -18,27 +18,20 @@ module Dsu
         end
 
         def call
-          entry_group_hash = to_h
-          Models::EntryGroup.new(**entry_group_hash)
-        end
-
-        class << self
-          # Returns a Hash with :time and :entries values hydrated
-          # (i.e. Time and Entry objects respectively).
-          def to_h(entry_group_json:, options: {})
-            JSON.parse(entry_group_json, symbolize_names: true).tap do |hash|
-              hash[:time] = Time.parse(hash[:time])
-              hash[:entries] = Entry::HydratorService.hydrate(entries_array: hash[:entries], options: options)
-            end
-          end
+          Models::EntryGroup.new(**hydrate)
         end
 
         private
 
         attr_reader :entry_group_json, :options
 
-        def to_h
-          self.class.to_h(entry_group_json: entry_group_json, options: options)
+        # Returns a Hash with :time and :entries values hydrated
+        # (i.e. Time and Entry objects respectively).
+        def hydrate
+          JSON.parse(entry_group_json, symbolize_names: true).tap do |hash|
+            hash[:time] = Time.parse(hash[:time])
+            hash[:entries] = Entry::HydratorService.new(entries_json: hash[:entries], options: options).call
+          end
         end
       end
     end

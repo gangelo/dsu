@@ -42,11 +42,11 @@ module Dsu
         # entries.
         'include_all' => false,
         # Themes
-        # The currently selected theme. Should be equal to
+        # The currently selected color theme. Should be equal to
         # Models::ColorTheme::DEFAULT_THEME_NAME or the name of a custom
-        # theme that resides in the themes_folder.
-        'theme' => ColorTheme::DEFAULT_THEME_NAME,
-        # The theme folder where the themes reside.
+        # theme (with the same file name) that resides in the themes_folder.
+        'theme_name' => ColorTheme::DEFAULT_THEME_NAME,
+        # The folder where the theme files reside.
         'themes_folder' => "#{root_folder}/dsu/themes"
       }.freeze
       # rubocop:enable Style/StringHashKeys
@@ -64,8 +64,8 @@ module Dsu
       validate :validate_entries_folder, if: -> { entries_folder.present? }
       validates :carry_over_entries_to_today, inclusion: { in: [true, false], message: 'must be true or false' }
       validates :include_all, inclusion: { in: [true, false], message: 'must be true or false' }
-      validates :theme, presence: true
-      validate :validate_theme, if: -> { theme.present? }
+      validates :theme_name, presence: true
+      validate :validate_theme, if: -> { theme_name.present? }
       validates :themes_folder, presence: true
       validate :validate_themes_folder, if: -> { themes_folder.present? }
 
@@ -76,7 +76,7 @@ module Dsu
         :entries_folder,
         :carry_over_entries_to_today,
         :include_all,
-        :theme,
+        :theme_name,
         :themes_folder
 
       def initialize(config_hash: {})
@@ -124,7 +124,7 @@ module Dsu
           'entries_folder' => entries_folder,
           'carry_over_entries_to_today' => carry_over_entries_to_today,
           'include_all' => include_all,
-          'theme' => theme,
+          'theme_name' => theme_name,
           'themes_folder' => themes_folder
         }
         # rubocop:enable Style/StringHashKeys
@@ -164,7 +164,7 @@ module Dsu
         @carry_over_entries_to_today = config_hash.fetch('carry_over_entries_to_today',
           DEFAULT_CONFIGURATION['carry_over_entries_to_today'])
         @include_all = config_hash.fetch('include_all', DEFAULT_CONFIGURATION['include_all'])
-        @theme = config_hash.fetch('theme', DEFAULT_CONFIGURATION['theme'])
+        @theme_name = config_hash.fetch('theme_name', DEFAULT_CONFIGURATION['theme_name'])
         @themes_folder = config_hash.fetch('themes_folder', DEFAULT_CONFIGURATION['themes_folder'])
       end
 
@@ -175,12 +175,12 @@ module Dsu
       end
 
       def validate_theme
-        # No need to validate the existance of a default theme file
-        # because if it doesn't exist, we just use the default theme
+        # No need to validate the existance of a default theme_name file
+        # because if it doesn't exist, we just use the default theme_name
         # (ColorTheme::DEFAULT_THEME).
-        return if theme == ColorTheme::DEFAULT_THEME_NAME
+        return if theme_name == ColorTheme::DEFAULT_THEME_NAME
 
-        theme_file = File.join(themes_folder || 'nil', theme)
+        theme_file = File.join(themes_folder || 'nil', theme_name)
         return if File.exist?(theme_file)
 
         errors.add(:base, "Theme file \"#{theme_file}\" does not exist")

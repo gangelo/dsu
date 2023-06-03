@@ -38,7 +38,7 @@ module Dsu
         raise ArgumentError, "theme_name is the wrong object type: \"#{theme_name}\"." unless theme_name.is_a?(String)
 
         @theme_name = theme_name
-        ensure_theme_hash! theme_hash
+        ensure_theme_hash! theme_hash || DEFAULT_THEME.merge(theme_name: theme_name)
 
         # Color themes I expect will change a lot, so we're using
         # a little meta-programming here to dynamically create

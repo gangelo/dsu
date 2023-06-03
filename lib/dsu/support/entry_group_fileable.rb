@@ -4,7 +4,7 @@ require_relative '../support/configurable'
 
 module Dsu
   module Support
-    # TODO: I hate this module; refactor it!!!
+    # TODO: I hate this module; refactor or better yet, get rid of it!!!
     # This module expects the following attributes to be defined: :time, :options
     module EntryGroupFileable
       include Support::Configurable

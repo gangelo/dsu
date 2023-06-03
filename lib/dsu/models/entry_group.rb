@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require_relative '../services/entry_group/deleter_service'
 require_relative '../services/entry_group/editor_service'
-require_relative '../services/entry_group/reader_service'
-require_relative '../services/entry_group/writer_service'
-require_relative '../support/entry_group_loadable'
 require_relative '../support/time_formatable'
 require_relative '../validators/entries_validator'
 require_relative '../validators/time_validator'
@@ -16,7 +12,6 @@ module Dsu
     # This class represents a group of entries for a given day. IOW,
     # things someone might want to share at their daily standup (DSU).
     class EntryGroup
-      extend Support::EntryGroupLoadable
       include ActiveModel::Model
       include Support::TimeFormatable
 

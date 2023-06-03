@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../models/entry'
-require_relative '../services/entry_group/writer_service'
 require_relative '../support/colorable'
 require_relative '../support/descriptable'
-require_relative '../support/entry_group_loadable'
 require_relative '../support/folder_locations'
 require_relative '../support/say'
 require_relative '../views/shared/messages'
@@ -16,7 +14,6 @@ module Dsu
     class AddEntryService
       include Support::Colorable
       include Support::Descriptable
-      include Support::EntryGroupLoadable
       include Support::FolderLocations
       include Support::Say
 
@@ -34,12 +31,13 @@ module Dsu
 
         @entry = entry
         @time = time
-        @entry_group = Models::EntryGroup.load(time: time)
+        @entry_group = Models::EntryGroup.find_or_create(time: time)
       end
 
       def call
         entry.validate!
-        save_entry_group!
+        entry_group.entries << entry
+        entry_group.save!
         entry
       rescue ActiveModel::ValidationError => e
         header = 'An error was encountered; the entry could not be added added:'
@@ -49,13 +47,6 @@ module Dsu
       private
 
       attr_writer :entry, :entry_group, :time
-
-      def save_entry_group!
-        entry_group.entries << entry
-        entry_group.validate!
-
-        Services::EntryGroup::WriterService.new(entry_group: entry_group).call
-      end
     end
   end
 end
