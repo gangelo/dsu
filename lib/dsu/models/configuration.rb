@@ -1,19 +1,18 @@
 # frozen_string_literal: true
 
 require 'active_model'
+require_relative '../crud/configuration'
 require_relative '../models/color_theme'
-require_relative '../services/configuration/deleter_service'
-require_relative '../services/configuration/reader_service'
-require_relative '../services/configuration/writer_service'
 require_relative '../support/folder_locations'
 
 module Dsu
   module Models
     # This class represents the dsu configuration.
     class Configuration
+      extend Support::FolderLocations
       include ActiveModel::Model
+      include Crud::Configuration
 
-      CONFIG_FILE_NAME = '.dsu'
       ENTRIES_FILE_NAME_REGEX = /\A(?=.*%Y)(?=.*%m)(?=.*%d).*\.json\z/
       VERSION_REGEX = /\A\d+\.\d+\.\d+(\.alpha\.\d+)?\z/
 
@@ -29,7 +28,7 @@ module Dsu
         # asc or desc, ascending or descending, respectively.
         'entries_display_order' => 'desc',
         'entries_file_name' => '%Y-%m-%d.json',
-        'entries_folder' => "#{Support::FolderLocations.root_folder}/dsu/entries",
+        'entries_folder' => "#{root_folder}/dsu/entries",
         'carry_over_entries_to_today' => false,
         # If true, when using dsu commands that list date ranges (e.g.
         # `dsu list dates`), the displayed list will include dates that
@@ -46,9 +45,9 @@ module Dsu
         # The currently selected theme. Should be equal to
         # Models::ColorTheme::DEFAULT_THEME_NAME or the name of a custom
         # theme that resides in the themes_folder.
-        'theme' => Models::ColorTheme::DEFAULT_THEME_NAME,
+        'theme' => ColorTheme::DEFAULT_THEME_NAME,
         # The theme folder where the themes reside.
-        'themes_folder' => "#{Support::FolderLocations.root_folder}/dsu/themes"
+        'themes_folder' => "#{root_folder}/dsu/themes"
       }.freeze
       # rubocop:enable Style/StringHashKeys
 
@@ -99,32 +98,15 @@ module Dsu
           current || default
         end
 
-        # Returns the current configuration if it exists or nil.
         def current
-          return unless config_file_exist?
+          return unless exist?
 
-          new(config_hash: Services::Configuration::ReaderService.new.call)
+          new(config_hash: find)
         end
 
         # Returns the default configuration.
         def default
           new(config_hash: DEFAULT_CONFIGURATION)
-        end
-
-        def delete!
-          Services::Configuration::DeleterService.new.call
-        end
-
-        def config_file
-          File.join(config_folder, CONFIG_FILE_NAME)
-        end
-
-        def config_file_exist?
-          File.exist? config_file
-        end
-
-        def config_folder
-          Support::FolderLocations.root_folder
         end
       end
 
@@ -164,16 +146,6 @@ module Dsu
         end.hash
       end
 
-      def save!
-        validate!
-
-        Services::Configuration::WriterService.new(config_hash: to_h).call
-      end
-
-      def delete!
-        self.class.delete!
-      end
-
       def merge(hash)
         self.class.new(config_hash: to_h.merge(hash))
       end
@@ -206,7 +178,7 @@ module Dsu
         # No need to validate the existance of a default theme file
         # because if it doesn't exist, we just use the default theme
         # (ColorTheme::DEFAULT_THEME).
-        return if theme == Models::ColorTheme::DEFAULT_THEME_NAME
+        return if theme == ColorTheme::DEFAULT_THEME_NAME
 
         theme_file = File.join(themes_folder || 'nil', theme)
         return if File.exist?(theme_file)

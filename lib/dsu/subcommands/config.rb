@@ -2,7 +2,6 @@
 
 require 'thor'
 require_relative '../models/configuration'
-require_relative '../services/configuration/deleter_service'
 require_relative '../views/configuration/show'
 require_relative '../views/shared/messages'
 require_relative '../views/shared/model_errors'
@@ -117,7 +116,7 @@ module Dsu
         Deleting the dsu configuration file will simply cause dsu to use the default configuration options (`Dsu::Models::Configuration::DEFAULT_CONFIGURATION`).
       LONG_DESC
       def delete
-        unless Models::Configuration.config_file_exist?
+        unless Models::Configuration.exist?
           messages = ["Configuration file (#{Models::Configuration.config_file}) does not exist."]
           Views::Shared::Messages.new(messages: messages, message_type: :warning).render
           exit 1

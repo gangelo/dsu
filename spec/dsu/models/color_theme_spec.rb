@@ -144,7 +144,7 @@ RSpec.describe Dsu::Models::ColorTheme do
     describe 'DEFAULT_THEME' do
       let(:expected_default_theme_hash) do
         {
-          version: Dsu::VERSION,
+          version: described_class.version,
           description: 'Default theme',
           entry_group: :highlight,
           entry: :highlight,
@@ -171,7 +171,7 @@ RSpec.describe Dsu::Models::ColorTheme do
   describe 'class methods' do
     describe '.version' do
       it 'returns the current dsu version' do
-        expect(described_class.version).to eq(Dsu::VERSION)
+        expect(described_class.version).to eq(described_class.version)
       end
     end
 

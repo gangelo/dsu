@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require_relative '../models/configuration'
+require_relative '../crud/color_theme'
 require_relative '../support/descriptable'
 require_relative '../validators/description_validator'
 
@@ -10,6 +10,7 @@ module Dsu
     # This class represents a dsu color theme.
     class ColorTheme
       include ActiveModel::Model
+      include Crud::ColorTheme
       include Support::Descriptable
 
       DEFAULT_THEME = {
@@ -23,6 +24,7 @@ module Dsu
         status_error: :red,
         state_highlight: :cyan
       }.freeze
+
       DEFAULT_THEME_NAME = 'default'
 
       # TODO: Validate theme colors against valid colorize
@@ -67,42 +69,16 @@ module Dsu
         end
 
         def current
-          # TODO: Implement this.
+          theme = configuration.theme
+          return unless exist?(theme_name: theme)
+
+          theme_hash = find(theme_name: theme)
+          new(theme_name: theme, theme_hash: theme_hash)
         end
 
         def default
           new(theme_name: DEFAULT_THEME_NAME, theme_hash: DEFAULT_THEME)
         end
-
-        def theme_file_exist?(theme_name:)
-          File.exist?(theme_file(theme_name: theme_name))
-        end
-
-        def theme_file(theme_name:)
-          File.join(themes_folder, theme_name)
-        end
-
-        def themes_folder
-          configuration.themes_folder
-        end
-
-        private
-
-        def configuration
-          @configuration ||= Models::Configuration.current_or_default
-        end
-      end
-
-      def theme_file_exist?
-        self.class.theme_file_exist?(theme_name: @theme_name)
-      end
-
-      def theme_file
-        self.class.theme_file(theme_name: @theme_name)
-      end
-
-      def themes_folder
-        self.class.themes_folder
       end
 
       def to_h
@@ -125,15 +101,9 @@ module Dsu
       alias eql? ==
 
       def hash
-        hashes = DEFAULT_THEME.keys.map { |key| public_send(key) }
-        hashes << theme_name.hash
-        hashes.hash
-      end
-
-      def save!
-        validate!
-
-        Services::ColorTheme::WriterService.new(theme_name: theme_name, theme_hash: to_h).call
+        DEFAULT_THEME.keys.map { |key| public_send(key) }.tap do |hashes|
+          hashes << theme_name.hash
+        end.hash
       end
 
       private

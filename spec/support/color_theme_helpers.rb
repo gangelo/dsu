@@ -4,32 +4,22 @@
 # typically before and after every test.
 module ColorThemeHelpers
   def create_color_theme!(theme_name:, theme_hash:)
-    theme = Dsu::Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash)
-    Dsu::Services::ColorTheme::WriterService.new(theme: theme).call!
+    Dsu::Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
   end
 
   def create_default_color_theme!
-    theme = Dsu::Models::ColorTheme.default
-    Dsu::Services::ColorTheme::WriterService.new(theme: theme).call!
+    Dsu::Models::ColorTheme.default.save!
   end
 
   def delete_color_theme!(theme_name:)
     raise ArgumentError, 'theme_name is blank' if theme_name.blank?
 
-    # TODO: Switch to this service when implemented:
-    # Dsu::Services::ColorTheme::DeleterService.new(theme_name: theme_name).call!
-    color_theme_class = Dsu::Models::ColorTheme
-    if color_theme_class.theme_file_exist?(theme_name: theme_name)
-      File.delete(color_theme_class.theme_file(theme_name: theme_name))
+    if Dsu::Models::ColorTheme.theme_file_exist?(theme_name: theme_name)
+      Dsu::Models::ColorTheme.delete!(theme_name: theme_name)
     end
   end
 
   def delete_default_color_theme!
-    # TODO: Switch to this service when implemented:
-    # Dsu::Services::ColorTheme::DeleterService.new(theme_name: theme_name).call!
-    color_theme_class = Dsu::Models::ColorTheme
-    if color_theme_class.theme_file_exist?(theme_name: color_theme_class.default.theme_name)
-      File.delete(color_theme_class.theme_file(theme_name: color_theme_class.default.theme_name))
-    end
+    Dsu::Models::ColorTheme.default.delete!
   end
 end
