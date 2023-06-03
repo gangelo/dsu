@@ -38,13 +38,13 @@ module Dsu
             raise "Theme file does not exist for theme \"#{theme_name}\": \"#{color_theme_path}\""
           end
 
-          delete(color_theme: color_theme)
+          delete(theme_name: theme_name)
         end
 
-        def delete(color_theme:)
-          return false unless exist?(theme_name: color_theme.theme_name)
+        def delete(theme_name:)
+          return false unless exist?(theme_name: theme_name)
 
-          color_theme_path = color_theme_path(theme_name: color_theme.theme_name)
+          color_theme_path = color_theme_path(theme_name: theme_name)
           File.delete(color_theme_path)
 
           true
