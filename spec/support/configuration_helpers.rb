@@ -17,7 +17,7 @@ module ConfigurationHelpers
   end
 
   def delete_config_file!
-    Dsu::Models::Configuration.current.delete
+    Dsu::Models::Configuration.current_or_default.delete
   end
 
   def config

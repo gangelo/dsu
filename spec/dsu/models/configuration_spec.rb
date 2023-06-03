@@ -26,7 +26,7 @@ RSpec.describe Dsu::Models::Configuration do
           entries_file_name
           carry_over_entries_to_today
           include_all
-          theme
+          theme_name
           themes_folder
         ]
       end
@@ -229,11 +229,11 @@ RSpec.describe Dsu::Models::Configuration do
     describe '#theme' do
       context 'when not present?' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('theme' => nil)
+          described_class::DEFAULT_CONFIGURATION.merge('theme_name' => nil)
         end
         let(:expected_errors) do
           [
-            "Theme can't be blank"
+            "Theme name can't be blank"
           ]
         end
 
@@ -241,8 +241,10 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       context 'when the theme file does not exist' do
+        subject(:config) { described_class.new(config_hash: config_hash) }
+
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('theme' => '/foo/bar/theme')
+          described_class::DEFAULT_CONFIGURATION.merge('theme_name' => '/foo/bar/theme')
         end
         let(:expected_errors) do
           [
@@ -261,7 +263,6 @@ RSpec.describe Dsu::Models::Configuration do
         end
         let(:expected_errors) do
           [
-            /Theme file ".+" does not exist/,
             "Themes folder can't be blank"
           ]
         end
@@ -275,8 +276,7 @@ RSpec.describe Dsu::Models::Configuration do
         end
         let(:expected_errors) do
           [
-            /Theme file ".+" does not exist/,
-            /Themes folder ".+" does not exist/
+            /Themes folder \".+\" does not exist/
           ]
         end
 
@@ -343,53 +343,43 @@ RSpec.describe Dsu::Models::Configuration do
           described_class.current_or_default.save!
         end
 
-        context 'when deleting the config file it should exist' do
-          it 'exists' do
-            expect(described_class.config_file_exist?).to be true
-          end
-        end
-
         it 'deletes the config file' do
           described_class.delete!
-          expect(described_class.config_file_exist?).to be false
+          expect(described_class.exist?).to be false
         end
       end
 
       context 'when the config file does not exist' do
-        before do
-          described_class.delete!
+        subject(:config) { described_class.delete! }
+
+        let(:expected_error) do
+          /Config file does not exist/
         end
 
-        specify 'makes sure the config file does not exist' do
-          expect(described_class.config_file_exist?).to be false
-        end
-
-        it 'does not raise an error' do
-          expect { described_class.delete! }.not_to raise_error
-        end
+        it_behaves_like 'an error is raised'
       end
     end
 
-    describe '.config_file' do
+    describe '.config_path' do
       it 'returns the correct config file name' do
-        expect(described_class.config_file).to eq File.join(Dir.home, described_class::CONFIG_FILE_NAME)
+        expect(described_class.config_path).to eq File.join(Dir.home, '.dsu')
       end
     end
 
-    describe '.config_file_exist?' do
+    describe '.exist?' do
       context 'when the config file exists' do
         before do
           described_class.current_or_default.save!
         end
 
         it 'returns true' do
-          expect(described_class.config_file_exist?).to be true
+          expect(described_class.exist?).to be true
         end
       end
 
       context 'when the config file does not exist' do
         it 'returns false' do
-          expect(described_class.config_file_exist?).to be false
+          expect(described_class.exist?).to be false
         end
       end
     end
@@ -459,12 +449,11 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       before do
-        config.delete!
         config.save!
       end
 
       it 'saves the configuration' do
-        expect(described_class.config_file_exist?).to be true
+        expect(described_class.exist?).to be true
       end
 
       it 'saves the configuration values' do
@@ -494,23 +483,23 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       it 'makes sure the config file exists prior to the test' do
-        expect(described_class.config_file_exist?).to be true
+        expect(described_class.exist?).to be true
       end
 
       it 'deletes the configuration' do
         config.delete!
-        expect(described_class.config_file_exist?).to be false
+        expect(described_class.exist?).to be false
       end
     end
 
     context 'when the configuration does not exist' do
-      it 'makes sure the config file does not exist prior to the test' do
-        expect(described_class.config_file_exist?).to be false
+      subject(:config) { described_class.new(config_hash: config_hash).delete! }
+
+      let(:expected_error) do
+        /Config file does not exist/
       end
 
-      it 'does not raise an error' do
-        expect { config.delete! }.not_to raise_error
-      end
+      it_behaves_like 'an error is raised'
     end
   end
 
