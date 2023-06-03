@@ -4,7 +4,7 @@
 # typically before and after every test.
 module ConfigurationHelpers
   def config_file_exist?
-    Dsu::Models::Configuration.config_file_exist?
+    Dsu::Models::Configuration.exist?
   end
 
   def create_config_file!
@@ -17,9 +17,7 @@ module ConfigurationHelpers
   end
 
   def delete_config_file!
-    # TODO: Change this once the Dsu::Services::Configuration::DeleterService
-    # is implemented.
-    Dsu::Models::Configuration.current.delete! if config_file_exist?
+    Dsu::Models::Configuration.current.delete
   end
 
   def config

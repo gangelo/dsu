@@ -11,6 +11,10 @@ module Dsu
         end
       end
 
+      def delete
+        self.class.delete
+      end
+
       def delete!
         self.class.delete!
       end
@@ -47,6 +51,8 @@ module Dsu
         end
 
         def find
+          raise "Config file does not exist: \"#{config_path}\"" unless exist?
+
           config_hash = Psych.safe_load(File.read(config_path), [Symbol])
           new(config_hash: config_hash)
         end

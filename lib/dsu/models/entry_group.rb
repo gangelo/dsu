@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_model'
+require_relative '../crud/entry_group/'
 require_relative '../services/entry_group/editor_service'
 require_relative '../support/time_formatable'
 require_relative '../validators/entries_validator'
@@ -13,6 +14,7 @@ module Dsu
     # things someone might want to share at their daily standup (DSU).
     class EntryGroup
       include ActiveModel::Model
+      include Crud::EntryGroup
       include Support::TimeFormatable
 
       attr_accessor :time
@@ -29,22 +31,14 @@ module Dsu
       end
 
       class << self
-        def delete!(time:, options: {})
-          Services::EntryGroup::DeleterService.new(time: time, options: options).call
-        end
-
         def edit(time:, options: {})
           # NOTE: Uncomment this line to prohibit edits on
           # Entry Groups that do not exist (i.e. have no entries).
           # return new(time: time) unless exists?(time: time)
 
-          load(time: time).tap do |entry_group|
+          find_or_create(time: time).tap do |entry_group|
             Services::EntryGroup::EditorService.new(entry_group: entry_group, options: options).call
           end
-        end
-
-        def exists?(time:)
-          Dsu::Services::EntryGroup::ReaderService.entry_group_file_exists?(time: time)
         end
       end
 
@@ -65,23 +59,8 @@ module Dsu
         @entries = entries.map(&:clone)
       end
 
-      # Deletes the entry group file from the file system.
-      def delete!
-        self.class.delete!(time: time)
-        self.entries = []
-        self
-      end
-
       def time_formatted
         formatted_time(time: time)
-      end
-
-      def save!
-        delete! and return if entries.empty?
-
-        validate!
-        Services::EntryGroup::WriterService.new(entry_group: self).call
-        self
       end
 
       def to_h

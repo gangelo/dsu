@@ -12,6 +12,10 @@ module Dsu
         end
       end
 
+      def delete
+        self.class.delete(theme_name: theme_name)
+      end
+
       def delete!
         self.class.delete!(theme_name: theme_name)
       end

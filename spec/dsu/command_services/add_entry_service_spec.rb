@@ -2,7 +2,7 @@
 
 RSpec.describe Dsu::CommandServices::AddEntryService do
   after do
-    delete_entry_group_file!(time: time) if time.is_a?(Time)
+    Dsu::Models::EntryGroup.delete(time: time) if time.is_a?(Time)
   end
 
   let(:entry) { build(:entry) }
@@ -61,18 +61,18 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
         # If the entry was added, the entry group file would have been created.
         # Checking the existance of the entry group file is a good way to ensure
         # that the entry was not added.
-        expect(entry_group_file_exists?(time: time)).not_to be true
+        expect(Dsu::Models::EntryGroup.exist?(time: time)).not_to be true
       end
     end
 
     context 'when the entry is added' do
       before do
-        delete_entry_group_file!(time: time)
+        Dsu::Models::EntryGroup.delete(time: time)
         add_entry_service
       end
 
       it 'creates the entry group file' do
-        expect(entry_group_file_exists?(time: time)).to be true
+        expect(Dsu::Models::EntryGroup.exist?(time: time)).to be true
       end
 
       it 'creates the entry group file with the correct json' do

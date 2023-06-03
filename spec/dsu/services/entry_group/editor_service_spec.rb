@@ -173,7 +173,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
       end
 
       it 'deletes the entry group file' do
-        expect(entry_group_file_exists?(time: original_entry_group.time)).to be false
+        expect(Dsu::Models::EntryGroup.exist?(time: original_entry_group.time)).to be false
       end
     end
 

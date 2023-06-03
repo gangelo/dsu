@@ -74,7 +74,7 @@ module Dsu
 
         def process_entry_group!(entry_group_with_edits)
           if entry_group_with_edits.entries.empty?
-            entry_group.delete!
+            entry_group.delete
             return
           end
 

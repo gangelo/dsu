@@ -13,8 +13,14 @@ module Dsu
         end
       end
 
+      def delete
+        entries.clear
+        self.class.delete(time: time)
+      end
+
       def delete!
         self.class.delete!(time: time)
+        entries.clear
       end
 
       def exist?
@@ -55,7 +61,7 @@ module Dsu
 
         def find(time:)
           entry_group_path = entry_group_path(time: time)
-          raise "Entry group file does not exist for time \"#{time}\"" unless exist?(time: time)
+          raise "Entry group does not exist for time \"#{time}\"" unless exist?(time: time)
 
           entry_group_json = File.read(entry_group_path)
           Services::EntryGroup::HydratorService.new(entry_group_json: entry_group_json).call
@@ -69,6 +75,7 @@ module Dsu
 
         def save(entry_group:)
           return false unless entry_group.valid?
+          delete and return true if entry_group.entries.empty?
 
           ensure_entry_group_folder_exists!
           entry_group_path = entry_group_path(time: entry_group.time)
@@ -78,6 +85,8 @@ module Dsu
         end
 
         def save!(entry_group:)
+          delete! and return if entry_group.entries.empty?
+
           entry_group.validate!
 
           save(entry_group: entry_group)

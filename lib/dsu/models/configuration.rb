@@ -101,7 +101,7 @@ module Dsu
         def current
           return unless exist?
 
-          new(config_hash: find)
+          find
         end
 
         # Returns the default configuration.

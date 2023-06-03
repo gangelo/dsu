@@ -8,7 +8,7 @@ RSpec.describe Dsu::Models::EntryGroup do
   before do
     create_default_color_theme!
     create_config_file!
-    delete_entry_group_file!(time: time) if time.is_a?(Time)
+    Dsu::Models::EntryGroup.delete(time: time) if time.is_a?(Time)
   end
 
   after do
@@ -219,11 +219,11 @@ RSpec.describe Dsu::Models::EntryGroup do
     describe '.delete' do
       context 'when an entry group file exists for :time' do
         before do
-          create_entry_group_file!(entry_group: build(:entry_group, :with_entries, time: time))
+          build(:entry_group, :with_entries, time: time).save!
         end
 
         after do
-          delete_entry_group_file!(time: time)
+          Dsu::Models::EntryGroup.delete(time: time)
         end
 
         it 'exists before it is deleted' do
@@ -249,14 +249,14 @@ RSpec.describe Dsu::Models::EntryGroup do
 
     describe '.edit' do
       before do
-        delete_entry_group_file!(time: time)
+        Dsu::Models::EntryGroup.delete(time: time)
         allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
         editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
         allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
       end
 
       after do
-        delete_entry_group_file!(time: time)
+        Dsu::Models::EntryGroup.delete(time: time)
       end
 
       let!(:original_entry_group) { entry_group.clone }
@@ -272,7 +272,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
 
       it 'starts with no entry group file' do
-        expect(entry_group_file_exists?(time: time)).to be false
+        expect(Dsu::Models::EntryGroup.exist?(time: time)).to be false
       end
 
       it 'edits and saves the entry group file' do
@@ -284,18 +284,18 @@ RSpec.describe Dsu::Models::EntryGroup do
     describe '.exists?' do
       context 'when an entry group file exists for :time' do
         after do
-          delete_entry_group_file!(time: time)
+          Dsu::Models::EntryGroup.delete(time: time)
         end
 
         it 'returns true' do
-          create_entry_group_file!(entry_group: create(:entry_group, :with_entries, time: time))
+          entry_group: create(:entry_group, :with_entries, time: time).save!
           expect(described_class.exists?(time: time)).to be true
         end
       end
 
       context 'when an entry group file does NOT exist for :time' do
         before do
-          delete_entry_group_file!(time: time)
+          Dsu::Models::EntryGroup.delete(time: time)
         end
 
         it 'returns false' do
@@ -311,9 +311,7 @@ RSpec.describe Dsu::Models::EntryGroup do
         before do
           # Write our entry group to the file system so that when we
           # call our subject, it will load the entries from the file system.
-          build(:entry_group, time: time, entries: entries).tap do |entry_group|
-            create_entry_group_file!(entry_group: entry_group)
-          end
+          build(:entry_group, time: time, entries: entries).save!
         end
 
         let(:entries) { build_list(:entry, 2) }

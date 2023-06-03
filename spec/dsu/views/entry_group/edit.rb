@@ -64,8 +64,8 @@ RSpec.describe Dsu::Views::EntryGroup::Edit do
   subject(:edit_view) { described_class.new(entry_group: entry_group, options: options) }
 
   after do
-    delete_entry_group_file!(time: today)
-    delete_entry_group_file!(time: yesterday)
+    Dsu::Models::EntryGroup.delete(time: today)
+    Dsu::Models::EntryGroup.delete(time: yesterday)
   end
 
   let(:today) { Time.now }
