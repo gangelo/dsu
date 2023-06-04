@@ -160,8 +160,8 @@ RSpec.describe Dsu::Models::ColorTheme do
 
   describe 'class methods' do
     describe '.version' do
-      it 'returns the current dsu version' do
-        expect(described_class.version).to eq(described_class.version)
+      it 'returns the current color theme version' do
+        expect(described_class.version).to eq('1.0.0')
       end
     end
 
