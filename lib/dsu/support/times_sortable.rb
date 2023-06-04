@@ -3,27 +3,23 @@
 module Dsu
   module Support
     module TimesSortable
-      module_function
-
       def times_sort(times:, entries_display_order: nil)
-        raise ArgumentError, "times is the wrong object type: \"#{times.class}\"" unless times.is_a?(Array)
-        raise ArgumentError, 'times is empty' if times.empty?
-        unless entries_display_order.nil? || entries_display_order.is_a?(String)
-          raise ArgumentError, "entries_display_order is the wrong object type: \"#{entries_display_order.class}\""
-        end
-
+        times = times.dup
         entries_display_order ||= 'asc'
-        unless %w[asc desc].include? entries_display_order
-          raise ArgumentError, "entries_display_order is invalid: \"#{entries_display_order}\""
-        end
+
+        validate_times_sort_arguments!(times: times, entries_display_order: entries_display_order)
 
         return times if times.one?
 
-        if entries_display_order == 'asc'
-          times.sort # sort ascending
-        elsif entries_display_order == 'desc'
-          times.sort.reverse # sort descending
-        end
+        # NOTE: The times array needs to be sorted unconditionally because if
+        # the sort is ascending, then the times array needs to be returned
+        # in ascending order. If the sort is descending, then in order to
+        # properly reverse the times array, it needs to first be sorted in
+        # ascending order before being reversed.
+        times.sort!
+        times.reverse! if entries_display_order == 'desc'
+
+        times
       end
 
       def times_for(times:)
@@ -40,6 +36,25 @@ module Dsu
           time
         end
       end
+
+      private
+
+      def validate_times_sort_arguments!(times:, entries_display_order:)
+        raise ArgumentError, "times is the wrong object type: \"#{times.class}\"" unless times.is_a?(Array)
+        raise ArgumentError, 'times is empty' if times.empty?
+        unless entries_display_order.nil? || entries_display_order.is_a?(String)
+          raise ArgumentError, "entries_display_order is the wrong object type: \"#{entries_display_order.class}\""
+        end
+
+        unless %w[asc desc].include?(entries_display_order)
+          raise ArgumentError, "entries_display_order is invalid: \"#{entries_display_order}\""
+        end
+      end
+
+      # NOTE: This, as opposed to using module_function, so that we can
+      # invoke .validate_times_sort_arguments! from the .times_sort
+      # method with module as the receiver AND when included as a mixin.
+      extend self
     end
   end
 end
