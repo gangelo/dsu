@@ -38,60 +38,8 @@ RSpec.describe Dsu::Models::Configuration do
   end
 
   describe 'validations' do
-    describe '#version' do
-      context 'when nil' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('version' => nil)
-        end
-        let(:expected_errors) do
-          [
-            'Version is the wrong object type. "String" was expected, ' \
-            'but "NilClass" was received.'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when blank' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('version' => '')
-        end
-        let(:expected_errors) do
-          [
-            "Version can't be blank"
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when the wrong object type' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('version' => :foo)
-        end
-        let(:expected_errors) do
-          [
-            'Version is the wrong object type. "String" was expected, ' \
-            'but "Symbol" was received.'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when not the correct format' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('version' => 'a.b.c')
-        end
-        let(:expected_errors) do
-          [
-            'Version must match the format "#.#.#[.alpha.#]" where # is 0-n'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
+    it 'validates #version attribute with the VersionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::VersionValidator)
     end
 
     describe '#editor' do

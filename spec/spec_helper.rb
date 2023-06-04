@@ -9,9 +9,10 @@ require 'securerandom'
 require 'tempfile'
 require 'time'
 
-require_relative './support/configuration_helpers'
-require_relative './support/entry_group_helpers'
-require_relative './support/time_helpers'
+require_relative 'support/configuration_helpers'
+require_relative 'support/custom_matchers'
+require_relative 'support/entry_group_helpers'
+require_relative 'support/time_helpers'
 
 require 'simplecov'
 

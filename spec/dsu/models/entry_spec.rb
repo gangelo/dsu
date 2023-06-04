@@ -38,40 +38,8 @@ RSpec.describe Dsu::Models::Entry do
   end
 
   describe 'validations' do
-    before do
-      entry.validate
-    end
-
-    describe '#description' do
-      context 'when < 2 chars in length' do
-        before do
-          entry.validate
-        end
-
-        let(:description) { 'x' }
-        let(:expected_errors) do
-          [
-            /Description is too short/
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when > 256 chars in length' do
-        before do
-          entry.validate
-        end
-
-        let(:description) { 'x' * 257 }
-        let(:expected_errors) do
-          [
-            /Description is too long/
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
+    it 'validates #description with DescriptionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::DescriptionValidator)
     end
   end
 

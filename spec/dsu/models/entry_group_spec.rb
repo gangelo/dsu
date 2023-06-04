@@ -199,6 +199,14 @@ RSpec.describe Dsu::Models::EntryGroup do
   end
 
   describe 'validation' do
+    it 'validates #entries attribute with the EntriesValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::EntriesValidator)
+    end
+
+    it 'validates #time with TimeValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::TimeValidator)
+    end
+
     context 'when fields are valid' do
       it 'passes validation' do
         expect(entry_group.valid?).to be true

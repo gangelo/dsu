@@ -79,6 +79,16 @@ RSpec.describe Dsu::Models::ColorTheme do
     end
   end
 
+  describe 'validations' do
+    it 'validates #version attribute with the VersionValidator' do
+      expect(color_theme).to validate_with_validator(Dsu::Validators::VersionValidator)
+    end
+
+    it 'validates #description with DescriptionValidator' do
+      expect(color_theme).to validate_with_validator(Dsu::Validators::DescriptionValidator)
+    end
+  end
+
   describe 'instance methods' do
     describe '#exist?' do
       it 'returns true if the theme file exists' do
