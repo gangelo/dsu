@@ -14,6 +14,7 @@ module Dsu
       include ActiveModel::Model
       include Crud::Configuration
 
+      VERSION = '1.0.0'
       ENTRIES_FILE_NAME_REGEX = /\A(?=.*%Y)(?=.*%m)(?=.*%d).*\.json\z/
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
@@ -87,10 +88,6 @@ module Dsu
       end
 
       class << self
-        def version
-          DEFAULT_CONFIGURATION['version']
-        end
-
         # Returns the current configuration if it exists; otherwise,
         # it returns the default configuration.
         def current_or_default
@@ -154,7 +151,7 @@ module Dsu
       attr_accessor :config_hash
 
       def assign_attributes_from_config_hash
-        @version = config_hash.fetch('version', DEFAULT_CONFIGURATION['version'])
+        @version = config_hash.fetch('version', VERSION)
         @editor = config_hash.fetch('editor', DEFAULT_CONFIGURATION['editor'])
         @entries_display_order = config_hash.fetch('entries_display_order',
           DEFAULT_CONFIGURATION['entries_display_order'])

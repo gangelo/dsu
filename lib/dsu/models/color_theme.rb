@@ -14,8 +14,9 @@ module Dsu
       include Crud::ColorTheme
       include Support::Descriptable
 
+      VERSION = '1.0.0'
       DEFAULT_THEME = {
-        version: '1.0.0',
+        version: VERSION,
         description: 'Default theme',
         entry_group: :highlight,
         entry: :highlight,
@@ -62,10 +63,6 @@ module Dsu
       end
 
       class << self
-        def version
-          DEFAULT_THEME[:version]
-        end
-
         # Returns the current color theme if it exists; otherwise,
         # it returns the default color theme.
         def current_or_default

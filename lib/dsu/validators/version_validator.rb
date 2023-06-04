@@ -20,6 +20,11 @@ module Dsu
 
         unless version.match?(Dsu::VERSION_REGEX)
           record.errors.add(:version, 'must match the format "#.#.#[.alpha.#]" where # is 0-n')
+          return
+        end
+
+        unless version == record.class::VERSION
+          record.errors.add(:version, "\"#{version}\" is not the correct version: \"#{record.class::VERSION}\"")
         end
       end
     end

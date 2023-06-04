@@ -16,6 +16,16 @@ RSpec.describe Dsu::Models::Configuration do
   let(:config_hash) { described_class::DEFAULT_CONFIGURATION }
 
   describe 'constants' do
+    describe 'VERSION' do
+      it 'defines the right version' do
+        expect(described_class::VERSION).to eq '1.0.0'
+      end
+
+      it 'defines a valid version' do
+        expect(described_class::VERSION).to match Dsu::VERSION_REGEX
+      end
+    end
+
     describe 'DEFAULT_CONFIGURATION' do
       let(:expected_keys) do
         %w[
