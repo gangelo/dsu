@@ -39,14 +39,41 @@ RSpec.describe Dsu::Models::Configuration do
 
   describe 'validations' do
     describe '#version' do
-      context 'when not present?' do
+      context 'when nil' do
         let(:config_hash) do
           described_class::DEFAULT_CONFIGURATION.merge('version' => nil)
         end
         let(:expected_errors) do
           [
-            "Version can't be blank",
-            "Version must match the format '#.#.#[.alpha.#]' where # is 0-n"
+            'Version is the wrong object type. "String" was expected, ' \
+            'but "NilClass" was received.'
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when blank' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('version' => '')
+        end
+        let(:expected_errors) do
+          [
+            "Version can't be blank"
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
+      end
+
+      context 'when the wrong object type' do
+        let(:config_hash) do
+          described_class::DEFAULT_CONFIGURATION.merge('version' => :foo)
+        end
+        let(:expected_errors) do
+          [
+            'Version is the wrong object type. "String" was expected, ' \
+            'but "Symbol" was received.'
           ]
         end
 
@@ -59,7 +86,7 @@ RSpec.describe Dsu::Models::Configuration do
         end
         let(:expected_errors) do
           [
-            "Version must match the format '#.#.#[.alpha.#]' where # is 0-n"
+            'Version must match the format "#.#.#[.alpha.#]" where # is 0-n'
           ]
         end
 

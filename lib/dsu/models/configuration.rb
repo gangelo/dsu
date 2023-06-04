@@ -4,6 +4,7 @@ require 'active_model'
 require_relative '../crud/configuration'
 require_relative '../models/color_theme'
 require_relative '../support/folder_locations'
+require_relative '../validators/version_validator'
 
 module Dsu
   module Models
@@ -14,7 +15,6 @@ module Dsu
       include Crud::Configuration
 
       ENTRIES_FILE_NAME_REGEX = /\A(?=.*%Y)(?=.*%m)(?=.*%d).*\.json\z/
-      VERSION_REGEX = /\A\d+\.\d+\.\d+(\.alpha\.\d+)?\z/
 
       # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_CONFIGURATION = {
@@ -51,8 +51,7 @@ module Dsu
       }.freeze
       # rubocop:enable Style/StringHashKeys
 
-      validates :version, presence: true,
-        format: { with: VERSION_REGEX, message: "must match the format '#.#.#[.alpha.#]' where # is 0-n" }
+      validates_with Validators::VersionValidator
       validates :editor, presence: true
       validates :entries_display_order, presence: true,
         inclusion: { in: %w[asc desc], message: "must be 'asc' or 'desc'" }

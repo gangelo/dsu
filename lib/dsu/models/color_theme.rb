@@ -4,6 +4,7 @@ require 'active_model'
 require_relative '../crud/color_theme'
 require_relative '../support/descriptable'
 require_relative '../validators/description_validator'
+require_relative '../validators/version_validator'
 
 module Dsu
   module Models
@@ -30,6 +31,7 @@ module Dsu
       # TODO: Validate theme colors against valid colorize
       # gem colors.
       validates_with Validators::DescriptionValidator
+      validates_with Validators::VersionValidator
 
       attr_reader :theme_name
 
