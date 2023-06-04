@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'fileutils'
 require 'time'
 require_relative 'base_cli'
+require_relative 'models/color_theme'
 require_relative 'subcommands/config'
 require_relative 'subcommands/edit'
 require_relative 'subcommands/generate'
@@ -10,6 +12,8 @@ require_relative 'subcommands/list'
 module Dsu
   # The `dsu` command.
   class CLI < BaseCLI
+    FileUtils.mkdir_p(Dsu::Models::ColorTheme.color_theme_folder)
+
     map %w[a -a] => :add
     map %w[c -c] => :config
     map %w[e -e] => :edit

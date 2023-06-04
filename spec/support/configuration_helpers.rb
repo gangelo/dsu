@@ -3,12 +3,12 @@
 # These helpers are used to create and delete the configuration file
 # typically before and after every test.
 module ConfigurationHelpers
-  def config_file_exist?
+  def exist?
     Dsu::Models::Configuration.exist?
   end
 
   def create_config_file!
-    Dsu::Models::Configuration.default.save! unless config_file_exist?
+    Dsu::Models::Configuration.default.save! unless exist?
   end
 
   # NOTE: This overwrites any existing config file!

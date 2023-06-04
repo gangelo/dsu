@@ -34,7 +34,7 @@ module Dsu
 
         def render!
           config_file = Models::Configuration.config_file
-          color = if Models::Configuration.config_file_exist?
+          color = if Models::Configuration.exist?
             say "Config file (#{config_file}) contents:", SUCCESS
             SUCCESS
           else

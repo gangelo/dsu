@@ -96,7 +96,7 @@ module Dsu
               class #{migration_class} < Migration::ConfigurationMigratorService
                 def call
                   # No sense in updating anything if we're not saving anything to disk.
-                  if Models::Configuration.config_file_exist?
+                  if Models::Configuration.exist?
                     # TODO: Make your configuration changes here; for example:
                     # config_hash[:my_change] = 'my change'
                     # config_hash.delete(:delete_me)

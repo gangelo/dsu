@@ -77,23 +77,9 @@ module Dsu
         Default: "'#{Dsu::Support::FolderLocations.root_folder}/dsu/entries'"
       LONG_DESC
       def init
-        if Models::Configuration.config_file_exist?
-          messages = ["Configuration file (#{Models::Configuration.config_file}) already exists"]
-          Views::Shared::Messages.new(messages: messages, message_type: :warning).render
-          exit 1
-        elsif !Dir.exist?(Models::Configuration.config_folder)
-          messages = [
-            "Destination folder for configuration file (#{Models::Configuration.config_folder}) " \
-            'does not exist'
-          ]
-          Views::Shared::Messages.new(messages: messages, message_type: :error).render
-          exit 1
-        else
-          configuration = Models::Configuration.default
-          unless configuration.valid?
-            Views::Shared::ModelErrors.new(model: configuration).render
-            exit 1
-          end
+        exit 1 if configuration_errors_or_wanings?
+
+        Models::Configuration.default.tap do |configuration|
           configuration.save!
           messages = ["Configuration file (#{Models::Configuration.config_file}) created."]
           Views::Shared::Messages.new(messages: messages, message_type: :success).render
@@ -124,6 +110,25 @@ module Dsu
         Models::Configuration.delete!
         messages = ["Configuration file (#{Models::Configuration.config_file}) deleted."]
         Views::Shared::Messages.new(messages: messages, message_type: :success).render
+      end
+
+      private
+
+      def configuration_errors_or_wanings?
+        if Models::Configuration.exist?
+          messages = ["Configuration file (#{Models::Configuration.config_file}) already exists"]
+          Views::Shared::Messages.new(messages: messages, type: :warning).render
+        elsif !Dir.exist?(Models::Configuration.config_folder)
+          messages = ["Destination folder for configuration file (#{Models::Configuration.config_folder}) does not exist"] # rubocop:disable Layout/LineLength
+          Views::Shared::Messages.new(messages: messages, type: :error).render
+        else
+          configuration = Models::Configuration.default
+          return false if configuration.valid?
+
+          Views::Shared::ModelErrors.new(model: configuration).render
+        end
+
+        true
       end
     end
   end
