@@ -19,7 +19,7 @@ module Dsu
       def view_entry_group(time:, options: {})
         return unless show_entry_group?(time: time, options: options)
 
-        entry_group = Models::EntryGroup.load(time: time)
+        entry_group = Models::EntryGroup.find_or_create(time: time)
         Views::EntryGroup::Show.new(entry_group: entry_group).render
 
         yield if block_given?
@@ -28,7 +28,7 @@ module Dsu
       private
 
       def show_entry_group?(time:, options:)
-        Models::EntryGroup.exists?(time: time) || options[:include_all]
+        Models::EntryGroup.exist?(time: time) || options.include_all
       end
 
       module_function :view_entry_group, :view_entry_groups, :show_entry_group?

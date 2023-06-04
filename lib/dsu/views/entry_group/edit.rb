@@ -108,7 +108,7 @@ module Dsu
           # TODO: Make this configurable or accept an option?
           @previous_entry_group ||= (1..7).each do |days|
             t = time.days_ago(days)
-            return Models::EntryGroup.load(time: t) if entry_group_file_exists_for?(time: t)
+            return Models::EntryGroup.find(time: t) if Models::EntryGroup.exist?(time: t)
           end
           nil
         end
