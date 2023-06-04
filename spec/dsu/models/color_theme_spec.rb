@@ -36,10 +36,16 @@ RSpec.describe Dsu::Models::ColorTheme do
     end
 
     context 'when theme_hash is nil' do
+      let(:theme_name) { 'customized' }
       let(:theme_hash) { nil }
-      let(:expected_error) { 'theme_hash is nil.' }
+      let(:expected_color_theme) do
+        theme_hash = described_class::DEFAULT_THEME.merge(description: 'Customized theme')
+        described_class.new(theme_name: theme_name, theme_hash: theme_hash)
+      end
 
-      it_behaves_like 'an error is raised'
+      it 'initializes a color theme with the default theme and customized description' do
+        expect(color_theme).to eq expected_color_theme
+      end
     end
 
     context 'when theme_hash is not a Hash' do
@@ -74,30 +80,14 @@ RSpec.describe Dsu::Models::ColorTheme do
   end
 
   describe 'instance methods' do
-    describe '#theme_file_exist?' do
+    describe '#exist?' do
       it 'returns true if the theme file exists' do
         create_default_color_theme!
-        expect(color_theme.theme_file_exist?).to be true
+        expect(color_theme.exist?).to be true
       end
 
       it 'returns false if the theme file does not exist' do
-        expect(color_theme.theme_file_exist?).to be false
-      end
-    end
-
-    describe '#theme_file' do
-      it 'returns the correct theme file path' do
-        # NOTE: For some reason, putting themes_folder in a let
-        # fails to recognize the stub_const in spec/support/shared_contexts/config.rb
-        themes_folder = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['themes_folder']
-        expect(color_theme.theme_file).to eq File.join(themes_folder, theme_name)
-      end
-    end
-
-    describe '#themes_folder' do
-      it 'returns the correct themes folder' do
-        themes_folder = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['themes_folder']
-        expect(color_theme.themes_folder).to eq(themes_folder)
+        expect(color_theme.exist?).to be false
       end
     end
 

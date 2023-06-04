@@ -20,6 +20,6 @@ module ColorThemeHelpers
   end
 
   def delete_default_color_theme!
-    Dsu::Models::ColorTheme.default.delete!
+    Dsu::Models::ColorTheme.default.delete
   end
 end

@@ -33,12 +33,14 @@ module Dsu
 
       attr_reader :theme_name
 
-      def initialize(theme_name:, theme_hash: {})
+      def initialize(theme_name:, theme_hash: nil)
         raise ArgumentError, 'theme_name is nil.' if theme_name.nil?
         raise ArgumentError, "theme_name is the wrong object type: \"#{theme_name}\"." unless theme_name.is_a?(String)
 
         @theme_name = theme_name
-        ensure_theme_hash! theme_hash || DEFAULT_THEME.merge(theme_name: theme_name)
+
+        theme_hash ||= DEFAULT_THEME.merge(description: "#{theme_name.capitalize} theme")
+        ensure_theme_hash! theme_hash
 
         # Color themes I expect will change a lot, so we're using
         # a little meta-programming here to dynamically create
@@ -89,9 +91,6 @@ module Dsu
         end
       end
 
-      # Override == and hash so that we can compare Entry objects based
-      # on description alone. This is useful for comparing entries in
-      # an array, for example.
       def ==(other)
         return false unless other.is_a?(self.class)
         return false unless other.theme_name == theme_name

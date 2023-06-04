@@ -35,7 +35,8 @@ module Dsu
       module ClassMethods
         def delete!(theme_name:)
           unless exist?(theme_name: theme_name)
-            raise "Theme file does not exist for theme \"#{theme_name}\": \"#{color_theme_path}\""
+            raise "Theme file does not exist for theme \"#{theme_name}\": " \
+                  "\"#{color_theme_path(theme_name: theme_name)}\""
           end
 
           delete(theme_name: theme_name)
@@ -66,9 +67,7 @@ module Dsu
         def find_or_create(theme_name:)
           return find(theme_name: theme_name) if exist?(theme_name: theme_name)
 
-          theme_description = "#{theme_name.capitalize} theme"
-          theme_hash = self::DEFAULT_THEME.merge(description: theme_description)
-          new(theme_name: theme_name, theme_hash: theme_hash)
+          new(theme_name: theme_name)
         end
 
         def save(color_theme:)
