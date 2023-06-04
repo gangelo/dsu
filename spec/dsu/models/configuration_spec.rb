@@ -276,7 +276,7 @@ RSpec.describe Dsu::Models::Configuration do
         end
         let(:expected_errors) do
           [
-            /Themes folder \".+\" does not exist/
+            /Themes folder ".+" does not exist/
           ]
         end
 

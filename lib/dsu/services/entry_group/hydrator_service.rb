@@ -9,7 +9,11 @@ module Dsu
       class HydratorService
         def initialize(entry_group_json:, options: {})
           raise ArgumentError, 'entry_group_json is nil' if entry_group_json.nil?
-          raise ArgumentError, "entry_group_json is the wrong object type: \"#{entry_group_json}\"" unless entry_group_json.is_a?(String)
+
+          unless entry_group_json.is_a?(String)
+            raise ArgumentError,
+              "entry_group_json is the wrong object type: \"#{entry_group_json}\""
+          end
           raise ArgumentError, 'options is nil' if options.nil?
           raise ArgumentError, "options is the wrong object type:\"#{options}\"" unless options.is_a?(Hash)
 
