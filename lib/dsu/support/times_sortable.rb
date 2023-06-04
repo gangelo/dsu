@@ -6,10 +6,18 @@ module Dsu
       module_function
 
       def times_sort(times:, entries_display_order: nil)
+        raise ArgumentError, "times is the wrong object type: \"#{times.class}\"" unless times.is_a?(Array)
+        raise ArgumentError, 'times is empty' if times.empty?
+        unless entries_display_order.nil? || entries_display_order.is_a?(String)
+          raise ArgumentError, "entries_display_order is the wrong object type: \"#{entries_display_order.class}\""
+        end
+
         entries_display_order ||= 'asc'
         unless %w[asc desc].include? entries_display_order
-          raise "Invalid entries_display_order: #{entries_display_order}"
+          raise ArgumentError, "entries_display_order is invalid: \"#{entries_display_order}\""
         end
+
+        return times if times.one?
 
         if entries_display_order == 'asc'
           times.sort # sort ascending
@@ -18,7 +26,6 @@ module Dsu
         end
       end
 
-      # TODO: Do we have something else we can use here?
       def times_for(times:)
         start_date = times.max
         return times unless start_date.monday? || start_date.on_weekend?
