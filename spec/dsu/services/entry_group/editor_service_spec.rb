@@ -10,9 +10,11 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
   end
 
   after do
-    # NOTE: most operations need the config around until they are
-    # funished, so delete the config file last.
     delete_config_file!
+    delete_entry_groups!(times: [time])
+    # TODO: Find a better solition than delete_entry_groups!
+  rescue StandardError => e
+    "Exception caught in #{__FILE__}: #{e.message}"
   end
 
   let(:time) { entry_group.time }

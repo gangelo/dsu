@@ -22,4 +22,15 @@ module EntryGroupHelpers
 
     time
   end
+
+  def delete_entry_groups!(times:)
+    return unless times.is_a?(Array)
+    return unless times.any?
+
+    times.each do |time|
+      next unless time.is_a?(Time)
+
+      Dsu::Models::EntryGroup.delete(time: time)
+    end
+  end
 end
