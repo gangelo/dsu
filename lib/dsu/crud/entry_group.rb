@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'psych'
 require_relative '../models/entry_group'
 require_relative '../services/entry_group/hydrator_service'

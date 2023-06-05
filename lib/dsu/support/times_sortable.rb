@@ -7,7 +7,8 @@ module Dsu
         times = times.dup
         entries_display_order ||= 'asc'
 
-        validate_times_sort_arguments!(times: times, entries_display_order: entries_display_order)
+        validate_times_argument!(times: times)
+        validate_entries_display_order_argument!(entries_display_order: entries_display_order)
 
         return times if times.one?
 
@@ -23,12 +24,14 @@ module Dsu
       end
 
       def times_for(times:)
+        times = times.dup
+        validate_times_argument!(times: times)
+
         start_date = times.max
         return times unless start_date.monday? || start_date.on_weekend?
 
-        # If the start_date is a weekend or a Monday, then we need to include
-        # start_date along with all the dates up to and including the previous
-        # Monday.
+        # If the start date is a weekend or a Monday then we need to look back
+        # to include the preceeding Friday upto and including the start date.
         (0..3).filter_map do |num|
           time = start_date - num.days
           next unless time == start_date || time.on_weekend? || time.friday?
@@ -39,9 +42,12 @@ module Dsu
 
       private
 
-      def validate_times_sort_arguments!(times:, entries_display_order:)
+      def validate_times_argument!(times:)
         raise ArgumentError, "times is the wrong object type: \"#{times.class}\"" unless times.is_a?(Array)
         raise ArgumentError, 'times is empty' if times.empty?
+      end
+
+      def validate_entries_display_order_argument!(entries_display_order:)
         unless entries_display_order.nil? || entries_display_order.is_a?(String)
           raise ArgumentError, "entries_display_order is the wrong object type: \"#{entries_display_order.class}\""
         end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec::Matchers.define :validate_with_validator do |validator_class|
   match do |model|
     return validates_with?(model, validator_class) unless on_attribute?

@@ -21,9 +21,10 @@ module Dsu
       long_desc <<-LONG_DESC
         Displays the DSU entries for today. This command has no options.
       LONG_DESC
+      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
       def today
         time = Time.now
-        times = sorted_dsu_times_for(times: [time, time.yesterday])
+        times = sorted_dsu_times_for(times: [time.yesterday, time])
         view_list_for(times: times)
       end
 
@@ -32,9 +33,10 @@ module Dsu
       long_desc <<-LONG_DESC
         Displays the DSU entries for tomorrow. This command has no options.
       LONG_DESC
+      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
       def tomorrow
         time = Time.now
-        times = sorted_dsu_times_for(times: [time.tomorrow, time])
+        times = sorted_dsu_times_for(times: [time, time.tomorrow])
         view_list_for(times: times)
       end
 
@@ -43,6 +45,7 @@ module Dsu
       long_desc <<-LONG_DESC
         Displays the DSU entries for yesterday. This command has no options.
       LONG_DESC
+      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
       def yesterday
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time.yesterday.yesterday])
@@ -60,6 +63,7 @@ module Dsu
         \x5
         #{mneumonic_option_description}
       LONG_DESC
+      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
       def date(param)
         time = if time_mneumonic?(param)
           time_from_mneumonic(command_option: param)
@@ -138,16 +142,15 @@ module Dsu
       option :from, type: :string, aliases: '-f', banner: 'DATE|MNEMONIC'
       # -t, --to TO [DATE|MNEMONIC] (e.g. -t, --to 1/1[/yyy]|n|t|y|today|tomorrow|yesterday)
       option :to, type: :string, aliases: '-t', banner: 'DATE|MNEMONIC'
-
       # Include dates that have no DSU entries.
-      option :include_all, type: :boolean, aliases: '-a'
+      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
       def dates
-        options = configuration.merge(self.options).with_indifferent_access
+        options = configuration.to_h.merge(self.options).with_indifferent_access
         times = dsu_times_from!(from_command_option: options[:from], to_command_option: options[:to])
         # Note special sort here, unlike the other commands where rules for
         # displaying DSU entries are applied; this is more of a list command.
         times = times_sort(times: times, entries_display_order: entries_display_order)
-        view_entry_groups(times: times, options: options) do |total_entry_groups|
+        view_entry_groups(times: times, options: options) do |total_entry_groups, _total_entry_groups_not_shown|
           nothing_to_display_banner_for(times) if total_entry_groups.zero?
         end
       rescue ArgumentError => e
@@ -169,11 +172,11 @@ module Dsu
       # entry groups will be conditionally displayed based on the :include_all
       # value in the <options> argument.
       def view_list_for(times:)
-        options = configuration.merge(self.options)
+        options = configuration.to_h.merge(self.options).with_indifferent_access
         times_first_and_last = [times.first, times.last]
         times.each do |time|
           view_options = options.dup
-          view_options.include_all = true if times_first_and_last.include?(time)
+          view_options[:include_all] = true if times_first_and_last.include?(time)
           view_entry_group(time: time, options: view_options) do
             puts
           end
