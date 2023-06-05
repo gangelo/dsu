@@ -5,7 +5,7 @@ module Dsu
     module EntryGroupViewable
       def view_entry_groups(times:, options: {})
         raise ArgumentError, 'times must be an Array' unless times.is_a?(Array)
-        raise ArgumentError, 'Options must be a Hash' unless options.is_a?(Hash)
+        raise ArgumentError, 'options must be a Hash' unless options.is_a?(Hash)
 
         total_viewable_entry_groups = 0
 
@@ -21,6 +21,9 @@ module Dsu
       end
 
       def view_entry_group(time:, options: {})
+        raise ArgumentError, 'time must be a Time object' unless time.is_a?(Time)
+        raise ArgumentError, 'options must be a Hash' unless options.is_a?(Hash)
+
         return unless show_entry_group?(time: time, options: options)
 
         entry_group = Models::EntryGroup.find_or_create(time: time)

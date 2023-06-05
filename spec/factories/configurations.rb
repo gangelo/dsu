@@ -16,7 +16,7 @@ FactoryBot.define do
     end
 
     after(:build) do |configuration, evaluator|
-      configuration.theme = evaluator.theme_name
+      configuration.theme_name = evaluator.theme_name
       build(:color_theme,
         theme_name: evaluator.theme_name, theme_hash: evaluator.theme_hash, save: evaluator.save_theme)
       configuration.save! if evaluator.save
