@@ -4,15 +4,6 @@
 RSpec.describe Dsu::Models::Configuration do
   subject(:config) { described_class.new(config_hash: config_hash) }
 
-  before do
-    create_default_color_theme!
-  end
-
-  after do
-    delete_default_color_theme!
-    delete_config_file!
-  end
-
   let(:config_hash) { described_class::DEFAULT_CONFIGURATION }
 
   describe 'constants' do

@@ -5,34 +5,6 @@ RSpec.describe Dsu::Models::ColorTheme do
     described_class.new(theme_name: theme_name, theme_hash: theme_hash)
   end
 
-#   before(:all) do
-#     temp_home = Dir.mktmpdir('dsu')
-
-#     mocked_default_dsu_options = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.dup
-#     mocked_default_dsu_options['entries_folder'] = temp_home
-#     mocked_default_dsu_options['themes_folder'] = temp_home
-#     Dsu::Models::Configuration.send(:remove_const, 'DEFAULT_CONFIGURATION')
-#     Dsu::Models::Configuration.const_set(:DEFAULT_CONFIGURATION, mocked_default_dsu_options)
-# binding.pry
-#     #create_config_file!
-#   end
-
-#   before do
-#     binding.pry
-#     Dsu::Models::Configuration.default.save!
-#   end
-
-#   after do
-#     # delete_default_color_theme!
-#     # # NOTE: deleting the above defaut color theme is dependent on the
-#     # # configuration file being present. So, we delete the configuration file
-#     # # last.
-#     # delete_config_file!
-#     binding.pry
-#     Dsu::Models::ColorTheme.default.delete
-#     Dsu::Models::Configuration.default.delete
-#   end
-
   let(:theme_name) { described_class.default.theme_name }
   let(:theme_hash) { described_class::DEFAULT_THEME }
 

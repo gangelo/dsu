@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::CommandServices::AddEntryService do
-  after do
-    Dsu::Models::EntryGroup.delete(time: time) if time.is_a?(Time)
-  end
-
   let(:entry) { build(:entry) }
   let(:time) { Time.now }
 
@@ -67,7 +63,6 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
 
     context 'when the entry is added' do
       before do
-        Dsu::Models::EntryGroup.delete(time: time)
         add_entry_service
       end
 

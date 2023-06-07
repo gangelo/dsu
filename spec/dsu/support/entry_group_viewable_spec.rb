@@ -45,11 +45,6 @@ RSpec.describe Dsu::Support::EntryGroupViewable do
         entry_group
       end
 
-      after do
-        delete_entry_groups!(times: [time])
-        delete_entry_groups!(times: times)
-      end
-
       let(:entry_group) { create(:entry_group, :with_entries, time: time) }
 
       context 'when the entry group does not exist' do
@@ -84,7 +79,7 @@ RSpec.describe Dsu::Support::EntryGroupViewable do
 
       context 'when the entry group DOES NOT exists and the :includes_all option is false' do
         before do
-          entry_group.delete
+          entry_group.delete!
         end
 
         let(:options) { { include_all: false } }
@@ -96,7 +91,7 @@ RSpec.describe Dsu::Support::EntryGroupViewable do
 
       context 'when the entry group DOES NOT exists and the :includes_all option is true' do
         before do
-          entry_group.delete
+          entry_group.delete!
         end
 
         let(:options) { { include_all: true } }
@@ -114,10 +109,6 @@ RSpec.describe Dsu::Support::EntryGroupViewable do
   describe '#view_entry_groups' do
     subject(:view_entry_groups) do
       described_class.view_entry_groups(times: times, options: options)
-    end
-
-    after do
-      delete_entry_groups!(times: times)
     end
 
     let(:times) { [time.yesterday, time, time.tomorrow] }
