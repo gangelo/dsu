@@ -3,19 +3,6 @@
 RSpec.describe Dsu::Models::EntryGroup do
   subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
-  include_context 'with tmp'
-
-  before do
-    create_default_color_theme!
-    create_config_file!
-  end
-
-  after do
-    delete_config_file!
-    delete_default_color_theme!
-    described_class.delete(time: time) if time.is_a?(Time)
-  end
-
   let(:time) { Time.now }
   let(:entries) { [] }
 
@@ -256,7 +243,7 @@ RSpec.describe Dsu::Models::EntryGroup do
         described_class.delete(time: time)
         allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
         editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
-        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
+        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(true)
       end
 
       let!(:original_entry_group) { entry_group.clone }

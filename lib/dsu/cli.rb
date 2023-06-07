@@ -12,8 +12,6 @@ require_relative 'subcommands/list'
 module Dsu
   # The `dsu` command.
   class CLI < BaseCLI
-    FileUtils.mkdir_p(Dsu::Models::ColorTheme.color_theme_folder)
-
     map %w[a -a] => :add
     map %w[c -c] => :config
     map %w[e -e] => :edit

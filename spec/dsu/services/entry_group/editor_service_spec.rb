@@ -3,20 +3,6 @@
 RSpec.describe Dsu::Services::EntryGroup::EditorService do
   subject(:entry_group_editor_service) { described_class.new(entry_group: entry_group) }
 
-  include_context 'with tmp'
-
-  before do
-    create_config_file!
-  end
-
-  after do
-    delete_config_file!
-    delete_entry_groups!(times: [time])
-    # TODO: Find a better solition than delete_entry_groups!
-  rescue StandardError => e
-    "Exception caught in #{__FILE__}: #{e.message}"
-  end
-
   let(:time) { entry_group.time }
   let(:entry_group) { build(:entry_group, time: Time.now, entries: build_list(:entry, 2)) }
   let!(:original_entry_group) { entry_group.clone }
@@ -61,13 +47,13 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
     before do
       allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
       editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
-      allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
+      allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(true)
     end
 
     context 'when the editing session fails' do
       before do
         editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
-        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(false)
+        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(false)
       end
 
       let(:tmp_file_contents) { '' }

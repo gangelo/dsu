@@ -5,17 +5,33 @@ RSpec.describe Dsu::Models::ColorTheme do
     described_class.new(theme_name: theme_name, theme_hash: theme_hash)
   end
 
-  before do
-    create_config_file!
-  end
+#   before(:all) do
+#     temp_home = Dir.mktmpdir('dsu')
 
-  after do
-    delete_default_color_theme!
-    # NOTE: deleting the above defaut color theme is dependent on the
-    # configuration file being present. So, we delete the configuration file
-    # last.
-    delete_config_file!
-  end
+#     mocked_default_dsu_options = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.dup
+#     mocked_default_dsu_options['entries_folder'] = temp_home
+#     mocked_default_dsu_options['themes_folder'] = temp_home
+#     Dsu::Models::Configuration.send(:remove_const, 'DEFAULT_CONFIGURATION')
+#     Dsu::Models::Configuration.const_set(:DEFAULT_CONFIGURATION, mocked_default_dsu_options)
+# binding.pry
+#     #create_config_file!
+#   end
+
+#   before do
+#     binding.pry
+#     Dsu::Models::Configuration.default.save!
+#   end
+
+#   after do
+#     # delete_default_color_theme!
+#     # # NOTE: deleting the above defaut color theme is dependent on the
+#     # # configuration file being present. So, we delete the configuration file
+#     # # last.
+#     # delete_config_file!
+#     binding.pry
+#     Dsu::Models::ColorTheme.default.delete
+#     Dsu::Models::Configuration.default.delete
+#   end
 
   let(:theme_name) { described_class.default.theme_name }
   let(:theme_hash) { described_class::DEFAULT_THEME }
@@ -92,7 +108,7 @@ RSpec.describe Dsu::Models::ColorTheme do
   describe 'instance methods' do
     describe '#exist?' do
       it 'returns true if the theme file exists' do
-        create_default_color_theme!
+        described_class.default.save!
         expect(color_theme.exist?).to be true
       end
 
@@ -169,6 +185,35 @@ RSpec.describe Dsu::Models::ColorTheme do
   end
 
   describe 'class methods' do
+    describe '.current_or_default' do
+      context 'when the configuration theme is set to the default theme' do
+        before do
+          described_class.default.save!
+        end
+
+        it 'returns the default color theme' do
+          expect(described_class.current_or_default).to eq(described_class.default)
+        end
+      end
+
+      context 'when the configuration theme is set to a custom theme' do
+        before do
+          custom_color_theme
+          configuration = Dsu::Models::Configuration.current_or_default
+          configuration.theme_name = custom_color_theme.theme_name
+          configuration.save!
+        end
+
+        let(:custom_color_theme) do
+          described_class.find_or_create(theme_name: 'customized')
+        end
+
+        it 'returns the custom color theme' do
+          expect(described_class.current_or_default).to eq(custom_color_theme)
+        end
+      end
+    end
+
     describe '.default' do
       let(:expected_default_color_theme) do
         described_class.new(theme_name: described_class::DEFAULT_THEME_NAME,

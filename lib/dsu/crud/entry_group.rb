@@ -71,6 +71,12 @@ module Dsu
         def find_or_create(time:)
           return find(time: time) if exist?(time: time)
 
+          new(time: time).save!
+        end
+
+        def find_or_initialize(time:)
+          return find(time: time) if exist?(time: time)
+
           new(time: time)
         end
 
@@ -114,7 +120,11 @@ module Dsu
         end
 
         def configuration
-          @configuration ||= Models::Configuration.current_or_default
+          # NOTE: Do not memoize this, as it will cause issues if
+          # the configuration is updated (e.g. themes_folder,
+          # entries_folder, etc.); in this case, a memoized
+          # configuration would not reflect the updated values.
+          Models::Configuration.current_or_default
         end
       end
     end

@@ -67,6 +67,12 @@ module Dsu
         def find_or_create(theme_name:)
           return find(theme_name: theme_name) if exist?(theme_name: theme_name)
 
+          new(theme_name: theme_name).save!
+        end
+
+        def find_or_initialize(theme_name:)
+          return find(theme_name: theme_name) if exist?(theme_name: theme_name)
+
           new(theme_name: theme_name)
         end
 
@@ -98,13 +104,19 @@ module Dsu
         end
 
         def color_theme_folder
-          configuration.themes_folder
+          color_theme_folder = configuration.themes_folder
+          FileUtils.mkdir_p(color_theme_folder)
+          color_theme_folder
         end
 
         private
 
         def configuration
-          @configuration ||= Models::Configuration.current_or_default
+          # NOTE: Do not memoize this, as it will cause issues if
+          # the configuration is updated (e.g. themes_folder,
+          # entries_folder, etc.); in this case, a memoized
+          # configuration would not reflect the updated values.
+          Models::Configuration.current_or_default
         end
       end
     end

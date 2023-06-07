@@ -70,11 +70,10 @@ module Dsu
         end
 
         def current
-          theme = configuration.theme
-          return unless exist?(theme_name: theme)
+          theme_name = configuration.theme_name
+          return unless exist?(theme_name: theme_name)
 
-          theme_hash = find(theme_name: theme)
-          new(theme_name: theme, theme_hash: theme_hash)
+          find(theme_name: theme_name)
         end
 
         def default

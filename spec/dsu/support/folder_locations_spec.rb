@@ -4,13 +4,13 @@ RSpec.describe Dsu::Support::FolderLocations do
   describe 'sanity checks' do
     describe 'Dir.home' do
       it 'returns the correct mocked folder' do
-        expect(Dir.home).to eq home_folder
+        expect(Dir.home).to eq temp_folder
       end
     end
 
     describe 'Dir.tmpdir' do
       it 'returns the correct mocked folder' do
-        expect(Dir.tmpdir).to eq tmpdir_folder
+        expect(Dir.tmpdir).to eq temp_folder
       end
     end
   end

@@ -36,7 +36,7 @@ module Dsu
           # Entry Groups that do not exist (i.e. have no entries).
           # return new(time: time) unless exists?(time: time)
 
-          find_or_create(time: time).tap do |entry_group|
+          find_or_initialize(time: time).tap do |entry_group|
             Services::EntryGroup::EditorService.new(entry_group: entry_group, options: options).call
           end
         end

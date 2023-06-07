@@ -60,6 +60,12 @@ module Dsu
         def find_or_create
           return find if exist?
 
+          new(config_hash: self::DEFAULT_CONFIGURATION).save!
+        end
+
+        def find_or_initialize
+          return find if exist?
+
           new(config_hash: self::DEFAULT_CONFIGURATION)
         end
 

@@ -26,7 +26,7 @@ module Dsu
 
         return unless show_entry_group?(time: time, options: options)
 
-        entry_group = Models::EntryGroup.find_or_create(time: time)
+        entry_group = Models::EntryGroup.find_or_initialize(time: time)
         Views::EntryGroup::Show.new(entry_group: entry_group).render
 
         yield if block_given?

@@ -31,7 +31,7 @@ module Dsu
 
         @entry = entry
         @time = time
-        @entry_group = Models::EntryGroup.find_or_create(time: time)
+        @entry_group = Models::EntryGroup.find_or_initialize(time: time)
       end
 
       def call
