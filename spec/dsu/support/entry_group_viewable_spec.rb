@@ -58,7 +58,7 @@ RSpec.describe Dsu::Support::EntryGroupViewable do
       context 'when the entry group exists and the :includes_all option is false' do
         let(:options) { { include_all: false } }
         let(:expected_output) do
-          /.+#{Dsu::Support::TimeFormatable.formatted_time(time: time)}.*#{entry_group.entries[0].description}.*#{entry_group.entries[1].description}.*/m
+          entry_groups_regex_for(times: times, options: options)
         end
 
         it 'displays the entry group' do
@@ -69,7 +69,7 @@ RSpec.describe Dsu::Support::EntryGroupViewable do
       context 'when the entry group exists and the :includes_all option is true' do
         let(:options) { { include_all: true } }
         let(:expected_output) do
-          /.+#{Dsu::Support::TimeFormatable.formatted_time(time: time)}.*#{entry_group.entries[0].description}.*#{entry_group.entries[1].description}.*/m
+          entry_groups_regex_for(times: times, options: options)
         end
 
         it 'displays the entry group' do

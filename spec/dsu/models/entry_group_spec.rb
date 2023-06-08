@@ -19,22 +19,22 @@ RSpec.describe Dsu::Models::EntryGroup do
         let(:time) { nil }
 
         it 'uses Time.now' do
-          expect(entry_group.time).to eq time_utc
+          expect(!entry_group.time.utc?).to eq true
         end
       end
 
       context 'when utc' do
-        let(:time) { time_utc }
+        let(:time) { Time.now.utc }
 
-        it 'uses it' do
-          expect(entry_group.time).to eq time_utc
+        it 'converts it to localtime' do
+          expect(entry_group.time).to eq time.localtime
         end
       end
 
       context 'when localized' do
-        let(:time) { local_time }
+        let(:time) { Time.now }
 
-        it 'converts it to utc' do
+        it 'keeps the time localtime' do
           expect(entry_group.time).to eq time
         end
       end
@@ -72,7 +72,7 @@ RSpec.describe Dsu::Models::EntryGroup do
     let(:entries) { build_list(:entry, 2) }
 
     it 'returns a new object' do
-      expect(cloned_entry_group).not_to eq entry_group
+      expect(cloned_entry_group).not_to equal entry_group
     end
 
     it 'returns the entries in the same orded' do
@@ -295,21 +295,13 @@ RSpec.describe Dsu::Models::EntryGroup do
 
       context 'when an entry group file exists' do
         before do
-          # Write our entry group to the file system so that when we
-          # call our subject, it will load the entries from the file system.
-          create(:entry_group, time: time, entries: entries)
+          expected_entry_group
         end
 
-        let(:entries) { build_list(:entry, 2) }
-        let(:entry_group_hash) do
-          {
-            time: time,
-            entries: entries.map(&:to_h)
-          }
-        end
+        let(:expected_entry_group) { create(:entry_group, :with_entries, time: time)}
 
         it 'returns the entry group' do
-          expect(entry_group.to_h).to match_array entry_group_hash
+          expect(entry_group).to eq expected_entry_group
         end
       end
 

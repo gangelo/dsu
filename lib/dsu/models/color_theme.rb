@@ -123,9 +123,9 @@ module Dsu
         extra_keys = theme_hash_keys - expected_keys
 
         raise ArgumentError, 'theme_hash keys are missing or invalid: ' \
-                             "expected: #{expected_keys.to_token_string}, " \
-                             "missing: #{missing_keys.to_token_string}, " \
-                             "extra: #{extra_keys.to_token_string}"
+                             "expected: #{expected_keys.wrap_and_join}, " \
+                             "missing: #{missing_keys.wrap_and_join}, " \
+                             "extra: #{extra_keys.wrap_and_join}"
       end
     end
   end

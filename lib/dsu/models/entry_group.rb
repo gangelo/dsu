@@ -3,6 +3,7 @@
 require 'active_model'
 require_relative '../crud/entry_group/'
 require_relative '../services/entry_group/editor_service'
+require_relative '../support/time_comparable'
 require_relative '../support/time_formatable'
 require_relative '../validators/entries_validator'
 require_relative '../validators/time_validator'
@@ -15,6 +16,7 @@ module Dsu
     class EntryGroup
       include ActiveModel::Model
       include Crud::EntryGroup
+      include Support::TimeComparable
       include Support::TimeFormatable
 
       attr_accessor :time
@@ -68,6 +70,21 @@ module Dsu
           time: time.dup,
           entries: entries.map(&:to_h)
         }
+      end
+
+      # Override == and hash so that we can compare Entry Group objects.
+      def ==(other)
+        return false unless other.is_a?(EntryGroup)
+        return false unless time_equal?(other_time: other.time)
+
+        entries == other.entries
+      end
+      alias eql? ==
+
+      def hash
+        entries.map(&:hash).tap do |hashes|
+          hashes << time_equal_compare_string_for(time: time)
+        end.hash
       end
 
       private

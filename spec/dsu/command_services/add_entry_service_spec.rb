@@ -71,12 +71,9 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
       end
 
       it 'creates the entry group file with the correct json' do
-        expected_entry_group_hash = {
-          time: time,
-          entries: [entry.to_h]
-        }
+        expected_entry_group = Dsu::Models::EntryGroup.new(time: time, entries: [entry])
 
-        expect(entry_group_file_matches?(time: time, entry_group_hash: expected_entry_group_hash)).to be true
+        expect(Dsu::Models::EntryGroup.find(time: time)).to eq expected_entry_group
       end
     end
   end

@@ -11,8 +11,6 @@ RSpec.shared_context 'when dir mock and cleanup is needed' do
     allow(Dir).to receive(:home).and_return(temp_folder)
     allow(Dir).to receive(:tmpdir).and_return(temp_folder)
     allow(Tempfile).to receive(:new).with('dsu').and_return(temp_file)
-
-    puts "temp_folder is: #{temp_folder}"
   end
 
   after do

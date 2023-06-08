@@ -79,7 +79,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
       end
 
       it 'does not change the entry group file' do
-        expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
+        expect(Dsu::Models::EntryGroup.find(time: time)).to eq(entry_group)
       end
     end
 
@@ -102,7 +102,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
       end
 
       it 'saves the changes to the entry group file' do
-        expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
+        expect(Dsu::Models::EntryGroup.find(time: time)).to eq(entry_group)
       end
 
       it 'does not change the original time' do
@@ -134,7 +134,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
       end
 
       it 'saves the changes to the entry group file' do
-        expect(entry_group_file_matches?(time: time, entry_group_hash: entry_group.to_h)).to be true
+        expect(Dsu::Models::EntryGroup.find(time: time)).to eq(entry_group)
       end
     end
 
@@ -190,7 +190,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
       end
 
       it 'saves the changes to the entry group file' do
-        expect(entry_group_file_matches?(time: time, entry_group_hash: changed_entry_group.to_h)).to be true
+        expect(Dsu::Models::EntryGroup.find(time: time)).to eq(changed_entry_group)
       end
     end
 
@@ -220,7 +220,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
           expected_entry_group = changed_entry_group.clone.tap do |cloned_entry_group|
             cloned_entry_group.entries = cloned_entry_group.valid_unique_entries
           end
-          expect(entry_group_file_matches?(time: time, entry_group_hash: expected_entry_group.to_h)).to be true
+          expect(Dsu::Models::EntryGroup.find(time: time)).to eq(expected_entry_group)
         end
       end
     end
