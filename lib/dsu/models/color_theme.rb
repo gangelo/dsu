@@ -35,7 +35,7 @@ module Dsu
         status_info: %i[cyan],
         status_success: %i[green],
         status_warning: %i[yellow],
-        status_error: %i[red bold yellow],
+        status_error: %i[yellow bold red],
         # State colors.
         state_highlight: %i[cyan]
       }.freeze
