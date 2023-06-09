@@ -14,11 +14,3 @@ end
 
 Array.include(WrapAndJoin)
 DateAndTime::Calculations.include(NotToday)
-
-# module DateAndTime
-#   module Calculations
-#     def not_today?
-#       !today?
-#     end
-#   end
-# end

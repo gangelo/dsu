@@ -12,9 +12,7 @@ RSpec.describe Dsu::Models::Configuration do
         expect(described_class::VERSION).to eq '1.0.0'
       end
 
-      it 'defines a valid version' do
-        expect(described_class::VERSION).to match Dsu::VERSION_REGEX
-      end
+      it_behaves_like 'the version is a valid version string'
     end
 
     describe 'DEFAULT_CONFIGURATION' do

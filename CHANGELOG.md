@@ -1,6 +1,7 @@
 ## 1.3.0 - 2023-??-??
 
 - Changes
+  - Added version to Configuration an EntryGroup classes. This will help current and future migrations of their respective files.
   - Added color theme support. See `dsu help <TBD>` for more information.
   - Added (WIP) skeleton code for migration services that will enable us to migrate Entry files, Configuration file and ColorTheme::Theme files from one dsu version to another.
 

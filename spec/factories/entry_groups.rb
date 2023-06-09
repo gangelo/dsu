@@ -9,6 +9,7 @@ FactoryBot.define do
     end
 
     time { nil }
+    version { Dsu::Models::EntryGroup::VERSION }
 
     # Use this trait if you want to simply add entries to
     # this entry group and do not care about the entry
@@ -18,7 +19,7 @@ FactoryBot.define do
     end
 
     initialize_with do
-      new(time: time, entries: entries)
+      new(time: time, entries: entries, version: version)
     end
 
     after(:build) do |entry_group, evaluator|

@@ -7,6 +7,7 @@ require_relative '../support/time_comparable'
 require_relative '../support/time_formatable'
 require_relative '../validators/entries_validator'
 require_relative '../validators/time_validator'
+require_relative '../validators/version_validator'
 require_relative 'entry'
 
 module Dsu
@@ -19,16 +20,20 @@ module Dsu
       include Support::TimeComparable
       include Support::TimeFormatable
 
-      attr_accessor :time
+      VERSION = '1.0.0'
+
+      attr_accessor :time, :version
       attr_reader :entries
 
       validates_with Validators::EntriesValidator
       validates_with Validators::TimeValidator
+      validates_with Validators::VersionValidator
 
-      def initialize(time: nil, entries: [])
+      def initialize(time: nil, entries: [], version: nil)
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?
 
         @time = ensure_local_time(time)
+        @version = version || VERSION
         self.entries = entries || []
       end
 
@@ -49,7 +54,7 @@ module Dsu
       end
 
       def clone
-        self.class.new(time: time, entries: entries.map(&:clone))
+        self.class.new(time: time, entries: entries.map(&:clone), version: version)
       end
 
       def entries=(entries)
@@ -67,6 +72,7 @@ module Dsu
 
       def to_h
         {
+          version: version,
           time: time.dup,
           entries: entries.map(&:to_h)
         }
@@ -74,8 +80,9 @@ module Dsu
 
       # Override == and hash so that we can compare Entry Group objects.
       def ==(other)
-        return false unless other.is_a?(EntryGroup)
-        return false unless time_equal?(other_time: other.time)
+        return false unless other.is_a?(EntryGroup) &&
+                            version == other.version &&
+                            time_equal?(other_time: other.time)
 
         entries == other.entries
       end
@@ -83,6 +90,7 @@ module Dsu
 
       def hash
         entries.map(&:hash).tap do |hashes|
+          hashes << version.hash
           hashes << time_equal_compare_string_for(time: time)
         end.hash
       end

@@ -43,13 +43,12 @@ RSpec.describe Dsu::Models::ColorTheme do
       it_behaves_like 'an error is raised'
     end
 
-    context 'when theme_hash is not a valid theme hash' do
+    context 'when theme_hash contains extra key/value pairs' do
       let(:theme_hash) do
         described_class::DEFAULT_THEME.merge(foo: :bar)
       end
-      let(:expected_error) { /theme_hash keys are missing or invalid:/ }
 
-      it_behaves_like 'an error is raised'
+      it_behaves_like 'no error is raised'
     end
 
     context 'when theme_hash is a valid theme hash' do
@@ -67,13 +66,25 @@ RSpec.describe Dsu::Models::ColorTheme do
     end
   end
 
-  describe 'validations' do
-    it 'validates #version attribute with the VersionValidator' do
-      expect(color_theme).to validate_with_validator(Dsu::Validators::VersionValidator)
+  describe 'constants' do
+    it 'defines VERSION' do
+      expect(described_class::VERSION).to eq '1.0.0'
     end
 
+    it_behaves_like 'the version is a valid version string'
+  end
+
+  describe 'validations' do
     it 'validates #description with DescriptionValidator' do
       expect(color_theme).to validate_with_validator(Dsu::Validators::DescriptionValidator)
+    end
+
+    it 'validates the color theme color attributes with the ColorThemeValidator' do
+      expect(color_theme).to validate_with_validator(Dsu::Validators::ColorThemeValidator)
+    end
+
+    it 'validates #version attribute with the VersionValidator' do
+      expect(color_theme).to validate_with_validator(Dsu::Validators::VersionValidator)
     end
   end
 
@@ -134,13 +145,17 @@ RSpec.describe Dsu::Models::ColorTheme do
         {
           version: described_class::VERSION,
           description: 'Default theme',
-          entry_group: :highlight,
-          entry: :highlight,
-          status_info: :cyan,
-          status_success: :green,
-          status_warning: :yellow,
-          status_error: :red,
-          state_highlight: :cyan
+          # Entry Group colors.
+          entry_group_highlight: %i[cyan bold],
+          # Entry colors.
+          entry_highlight: %i[default bold],
+          # Status colors.
+          status_info: %i[cyan],
+          status_success: %i[green],
+          status_warning: %i[yellow],
+          status_error: %i[red bold yellow],
+          # State colors.
+          state_highlight: %i[cyan]
         }
       end
 

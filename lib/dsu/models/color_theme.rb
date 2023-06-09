@@ -3,7 +3,9 @@
 require 'active_model'
 require_relative '../crud/color_theme'
 require_relative '../support/descriptable'
+require_relative '../support/hash_key_comparable'
 require_relative '../validators/description_validator'
+require_relative '../validators/color_theme_validator'
 require_relative '../validators/version_validator'
 
 module Dsu
@@ -13,25 +15,39 @@ module Dsu
       include ActiveModel::Model
       include Crud::ColorTheme
       include Support::Descriptable
+      include Support::HashKeyComparable
 
       VERSION = '1.0.0'
+
+      DEFAULT_THEME_NAME = 'default'
+      # Theme colors key/value pair format:
+      # <key>: %i[<color> [[<mode>] [<background>]]]
+      # Where <color> (required) == any color represented in the colorize gem `String.colors` array.
+      #       <mode> (optional, default is :default) == any mode represented in the colorize gem `String.modes` array.
+      #       <background> (optional, default is :default) == any color represented in the colorize gem
+      #                    `String.colors` array.
+      DEFAULT_THEME_COLORS = {
+        # Entry Group colors.
+        entry_group_highlight: %i[cyan bold],
+        # Entry colors.
+        entry_highlight: %i[default bold],
+        # Status colors.
+        status_info: %i[cyan],
+        status_success: %i[green],
+        status_warning: %i[yellow],
+        status_error: %i[red bold yellow],
+        # State colors.
+        state_highlight: %i[cyan]
+      }.freeze
       DEFAULT_THEME = {
         version: VERSION,
         description: 'Default theme',
-        entry_group: :highlight,
-        entry: :highlight,
-        status_info: :cyan,
-        status_success: :green,
-        status_warning: :yellow,
-        status_error: :red,
-        state_highlight: :cyan
-      }.freeze
-
-      DEFAULT_THEME_NAME = 'default'
+      }.merge(DEFAULT_THEME_COLORS).freeze
 
       # TODO: Validate theme colors against valid colorize
       # gem colors.
       validates_with Validators::DescriptionValidator
+      validates_with Validators::ColorThemeValidator
       validates_with Validators::VersionValidator
 
       attr_reader :theme_name
@@ -39,11 +55,11 @@ module Dsu
       def initialize(theme_name:, theme_hash: nil)
         raise ArgumentError, 'theme_name is nil.' if theme_name.nil?
         raise ArgumentError, "theme_name is the wrong object type: \"#{theme_name}\"." unless theme_name.is_a?(String)
+        raise ArgumentError, "theme_hash is the wrong object type: \"#{theme_hash}\"." unless theme_hash.is_a?(Hash) || theme_hash.nil?
 
         @theme_name = theme_name
 
         theme_hash ||= DEFAULT_THEME.merge(description: "#{theme_name.capitalize} theme")
-        ensure_theme_hash! theme_hash
 
         # Color themes I expect will change a lot, so we're using
         # a little meta-programming here to dynamically create
@@ -89,6 +105,14 @@ module Dsu
         end
       end
 
+      def to_theme_colors_h
+        {}.tap do |hash|
+          DEFAULT_THEME_COLORS.each_key do |key|
+            hash[key] = public_send(key)
+          end
+        end
+      end
+
       def ==(other)
         return false unless other.is_a?(self.class)
         return false unless other.theme_name == theme_name
@@ -101,31 +125,6 @@ module Dsu
         DEFAULT_THEME.keys.map { |key| public_send(key) }.tap do |hashes|
           hashes << theme_name.hash
         end.hash
-      end
-
-      private
-
-      # This method ensures that theme_hash is a valid color theme hash.
-      # Apart from the obvious guard clauses, it also ensures that
-      # theme_hash.keys == DEFAULT_THEME.keys. If not, it raises an
-      # ArgumentError displaying the missing and extra keys present in
-      # hash_keys as compared to DEFAULT_THEME.keys.
-      def ensure_theme_hash!(theme_hash)
-        raise ArgumentError, 'theme_hash is nil.' if theme_hash.nil?
-        raise ArgumentError, "theme_hash is the wrong object type: \"#{theme_hash}\"." unless theme_hash.is_a?(Hash)
-
-        theme_hash_keys = theme_hash.keys.sort
-        expected_keys = DEFAULT_THEME.keys.sort
-
-        return if theme_hash_keys == expected_keys
-
-        missing_keys = expected_keys - theme_hash_keys
-        extra_keys = theme_hash_keys - expected_keys
-
-        raise ArgumentError, 'theme_hash keys are missing or invalid: ' \
-                             "expected: #{expected_keys.wrap_and_join}, " \
-                             "missing: #{missing_keys.wrap_and_join}, " \
-                             "extra: #{extra_keys.wrap_and_join}"
       end
     end
   end

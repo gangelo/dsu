@@ -172,6 +172,7 @@ RSpec.describe Dsu::Models::EntryGroup do
     let(:entries) { build_list(:entry, 2) }
     let(:entry_group_hash) do
       {
+        version: entry_group.version,
         time: time,
         entries: [
           entries[0].to_h,
@@ -186,6 +187,10 @@ RSpec.describe Dsu::Models::EntryGroup do
   end
 
   describe 'validation' do
+    it 'validates #version attribute with the VersionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::VersionValidator)
+    end
+
     it 'validates #entries attribute with the EntriesValidator' do
       expect(described_class).to validate_with_validator(Dsu::Validators::EntriesValidator)
     end
