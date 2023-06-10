@@ -7,6 +7,7 @@ require_relative 'subcommands/config'
 require_relative 'subcommands/edit'
 require_relative 'subcommands/generate'
 require_relative 'subcommands/list'
+require_relative 'subcommands/themes'
 
 module Dsu
   # The `dsu` command.
@@ -16,6 +17,7 @@ module Dsu
     map %w[e -e] => :edit
     map %w[g -g] => :generate
     map %w[l -l] => :list
+    map %w[t -t] => :themes
     map %w[v -v] => :version
 
     desc 'add, -a [OPTIONS] DESCRIPTION',
@@ -104,6 +106,10 @@ module Dsu
     desc 'edit, -e SUBCOMMAND',
       'Edit DSU entries for the given SUBCOMMAND'
     subcommand :edit, Subcommands::Edit
+
+    desc 'themes, -t SUBCOMMAND',
+    'Manage DSU themes'
+    subcommand :themes, Subcommands::Themes
 
     if ENV['DEV_ENV'] == 'dev'
       desc 'generate, -g SUBCOMMAND',

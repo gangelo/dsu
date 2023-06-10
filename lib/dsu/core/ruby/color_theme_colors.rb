@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module ColorThemeColors
-  THEME_COLOR_DEFAULTS = { color: :default, mode: :default, background: :default }.freeze
+  DEFAULT_THEME_COLORS = { color: :default, mode: :default, background: :default }.freeze
 
   # Ensures that default colors and mode are represented in the returned Hash.
   def merge_default_colors
     # TODO: Error checking.
-    THEME_COLOR_DEFAULTS.merge(dup)
+    DEFAULT_THEME_COLORS.merge(dup)
   end
 
   def merge_default_colors!

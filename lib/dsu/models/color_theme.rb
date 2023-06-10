@@ -2,10 +2,11 @@
 
 require 'active_model'
 require_relative '../crud/color_theme'
+require_relative '../support/color_themable'
 require_relative '../support/descriptable'
 require_relative '../support/hash_key_comparable'
-require_relative '../validators/description_validator'
 require_relative '../validators/color_theme_validator'
+require_relative '../validators/description_validator'
 require_relative '../validators/version_validator'
 
 module Dsu
@@ -14,6 +15,7 @@ module Dsu
     class ColorTheme
       include ActiveModel::Model
       include Crud::ColorTheme
+      include Support::ColorThemable
       include Support::Descriptable
       include Support::HashKeyComparable
 
@@ -41,7 +43,10 @@ module Dsu
         message_header: { color: :cyan, mode: :bold },
         message: { color: :cyan },
         # Generic colors.
-        generic_index: { color: :default, mode: :italic }
+        generic_index: { color: :default, mode: :italic },
+        # Prompts
+        prompt: { color: :cyan, mode: :bold },
+        prompt_options: { color: :white, mode: :bold }
       }.freeze
       DEFAULT_THEME = {
         version: VERSION,
@@ -150,6 +155,14 @@ module Dsu
         DEFAULT_THEME.keys.map { |key| public_send(key) }.tap do |hashes|
           hashes << theme_name.hash
         end.hash
+      end
+
+      # TODO: Place in a module?
+      def prompt_with_options(prompt:, options:)
+        options = "[#{options.join('/')}]"
+        "#{apply_color_theme(prompt, color_theme_color: self.prompt)} " \
+          "#{apply_color_theme(options, color_theme_color: prompt_options)}" \
+          "#{apply_color_theme(':', color_theme_color: self.prompt)}"
       end
 
       private
