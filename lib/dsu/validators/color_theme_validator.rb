@@ -52,27 +52,27 @@ module Dsu
       # end
 
       def validate_theme_color_type!(record, theme_color_key, theme_color)
-        return true if theme_color.is_a?(Array)
+        return true if theme_color.is_a?(Hash)
 
         record.errors.add(:base, ":#{theme_color_key} is the wrong object type. " \
-                                 "\"Array\" was expected, but \"#{theme_color.class}\" was received.")
+                                 "\"Hash\" was expected, but \"#{theme_color.class}\" was received.")
         false
       end
 
       def validate_theme_colors!(record, theme_color_key, theme_color)
-        unless colors.include?(theme_color[0])
-          record.errors.add(:base, "color value (#{theme_color_key}: value[0]) is not a valid color. " \
-                                   "One of #{colors.wrap_and_join(wrapper: [':', ''])} was expected, but :#{theme_color[0]} was received.")
+        unless colors.include?(theme_color[:color])
+          record.errors.add(:base, "color value (#{theme_color_key}: value[:color]) is not a valid color. " \
+                                   "One of #{colors.wrap_and_join(wrapper: [':', ''])} was expected, but :#{theme_color[:color]} was received.")
         end
 
-        unless theme_color[1].nil? || modes.include?(theme_color[1])
-          record.errors.add(:base, "mode value (#{theme_color_key}: value[1]) is not a valid mode. " \
-                                   "One of #{modes.wrap_and_join(wrapper: [':', ''])} was expected, but :#{theme_color[1]} was received.")
+        unless theme_color[:mode].nil? || modes.include?(theme_color[:mode])
+          record.errors.add(:base, "mode value (#{theme_color_key}: value[:mode]) is not a valid mode. " \
+                                   "One of #{modes.wrap_and_join(wrapper: [':', ''])} was expected, but :#{theme_color[:mode]} was received.")
         end
 
-        unless theme_color[2].nil? || colors.include?(theme_color[2])
-          record.errors.add(:base, "background color value (#{theme_color_key}: value[2]) is not a valid color. " \
-                                   "One of #{colors.wrap_and_join(wrapper: [':', ''])} was expected, but :#{theme_color[2]} was received.")
+        unless theme_color[:background].nil? || colors.include?(theme_color[:background])
+          record.errors.add(:base, "background color value (#{theme_color_key}: value[:background]) is not a valid color. " \
+                                   "One of #{colors.wrap_and_join(wrapper: [':', ''])} was expected, but :#{theme_color[:background]} was received.")
         end
       end
     end

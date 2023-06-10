@@ -2,8 +2,8 @@
 
 require 'active_model'
 require_relative '../crud/configuration'
-require_relative '../models/color_theme'
 require_relative '../support/folder_locations'
+require_relative '../support/presentable'
 require_relative '../validators/version_validator'
 
 module Dsu
@@ -13,6 +13,7 @@ module Dsu
       extend Support::FolderLocations
       include ActiveModel::Model
       include Crud::Configuration
+      include Support::Presentable
 
       VERSION = '1.0.0'
       ENTRIES_FILE_NAME_REGEX = /\A(?=.*%Y)(?=.*%m)(?=.*%d).*\.json\z/
@@ -46,7 +47,7 @@ module Dsu
         # The currently selected color theme. Should be equal to
         # Models::ColorTheme::DEFAULT_THEME_NAME or the name of a custom
         # theme (with the same file name) that resides in the themes_folder.
-        'theme_name' => ColorTheme::DEFAULT_THEME_NAME,
+        'theme_name' => 'default',
         # The folder where the theme files reside.
         'themes_folder' => "#{root_folder}/dsu/themes"
       }.freeze

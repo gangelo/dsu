@@ -3,6 +3,7 @@
 require 'active_model'
 require_relative '../crud/entry_group/'
 require_relative '../services/entry_group/editor_service'
+require_relative '../support/presentable'
 require_relative '../support/time_comparable'
 require_relative '../support/time_formatable'
 require_relative '../validators/entries_validator'
@@ -17,6 +18,7 @@ module Dsu
     class EntryGroup
       include ActiveModel::Model
       include Crud::EntryGroup
+      include Support::Presentable
       include Support::TimeComparable
       include Support::TimeFormatable
 

@@ -21,27 +21,31 @@ module Dsu
 
       DEFAULT_THEME_NAME = 'default'
       # Theme colors key/value pair format:
-      # <key>: %i[<color> [[<mode>] [<background>]]]
+      # <key>: { color: <color> [, mode: <mode>] [, background: <background>] }
       # Where <color> (required) == any color represented in the colorize gem `String.colors` array.
       #       <mode> (optional, default is :default) == any mode represented in the colorize gem `String.modes` array.
       #       <background> (optional, default is :default) == any color represented in the colorize gem
       #                    `String.colors` array.
       DEFAULT_THEME_COLORS = {
         # Entry Group colors.
-        entry_group_highlight: %i[cyan bold],
+        entry_group_date: { color: :cyan, mode: :bold },
         # Entry colors.
-        entry_highlight: %i[default bold],
+        entry_description: { mode: :bold },
+        entry_index: { color: :light_cyan, mode: :italic },
         # Status colors.
-        status_info: %i[cyan],
-        status_success: %i[green],
-        status_warning: %i[yellow],
-        status_error: %i[yellow bold red],
-        # State colors.
-        state_highlight: %i[cyan]
+        info: { color: :cyan },
+        success: { color: :green },
+        warning: { color: :yellow },
+        error: { color: :light_yellow, background: :red },
+        # Messages dsu displays other than status.
+        message_header: { color: :cyan, mode: :bold },
+        message: { color: :cyan },
+        # Generic colors.
+        generic_index: { color: :default, mode: :italic }
       }.freeze
       DEFAULT_THEME = {
         version: VERSION,
-        description: 'Default theme',
+        description: 'Default theme'
       }.merge(DEFAULT_THEME_COLORS).freeze
 
       # TODO: Validate theme colors against valid colorize
@@ -55,7 +59,9 @@ module Dsu
       def initialize(theme_name:, theme_hash: nil)
         raise ArgumentError, 'theme_name is nil.' if theme_name.nil?
         raise ArgumentError, "theme_name is the wrong object type: \"#{theme_name}\"." unless theme_name.is_a?(String)
-        raise ArgumentError, "theme_hash is the wrong object type: \"#{theme_hash}\"." unless theme_hash.is_a?(Hash) || theme_hash.nil?
+        unless theme_hash.is_a?(Hash) || theme_hash.nil?
+          raise ArgumentError, "theme_hash is the wrong object type: \"#{theme_hash}\"."
+        end
 
         @theme_name = theme_name
 
@@ -74,7 +80,9 @@ module Dsu
             attr_writer attr
             private "#{attr}="
           end
-          send("#{attr}=", theme_hash[attr])
+          attr_value = theme_hash[attr]
+          attr_value = ensure_theme_color_defaults(attr_value) if default_theme_color_keys.include?(attr)
+          send("#{attr}=", attr_value)
         end
       end
 
@@ -125,6 +133,16 @@ module Dsu
         DEFAULT_THEME.keys.map { |key| public_send(key) }.tap do |hashes|
           hashes << theme_name.hash
         end.hash
+      end
+
+      private
+
+      def default_theme_color_keys
+        @default_theme_color_keys ||= DEFAULT_THEME_COLORS.keys
+      end
+
+      def ensure_theme_color_defaults(hash)
+        { color: :defautl, mode: :default, background: :default }.merge(hash)
       end
     end
   end

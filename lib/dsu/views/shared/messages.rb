@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-require_relative '../../support/colorable'
-require_relative '../../support/say'
+require_relative '../../models/color_theme'
 
 module Dsu
   module Views
     module Shared
       class Messages
-        include Support::Colorable
-        include Support::Say
+        include Support::ColorThemable
 
         MESSAGE_TYPES = %i[error info success warning].freeze
 
@@ -19,9 +17,7 @@ module Dsu
 
           @messages = messages.select(&:present?)
           @message_type = message_type
-          # We've inluded Support::Colorable, so simply upcase the message_type
-          # and convert it to a symbol; this will equate to the color we want.
-          @message_color = self.class.const_get(message_type.to_s.upcase)
+          @message_color = color_theme.public_send(message_type)
           @options = options || {}
           @header = options[:header]
         end
@@ -29,15 +25,17 @@ module Dsu
         def render
           return if messages.empty?
 
-          say header, message_color if header.present?
+          colors = color_theme.message_header
+          puts apply_color_theme(header, color_theme_color: colors) if header.present?
 
           if messages.one?
-            say(messages[0], message_color)
+            puts apply_color_theme(messages[0], color_theme_color: message_color)
             return
           end
 
           messages.each_with_index do |message, index|
-            say "#{index + 1}. #{message}", message_color
+            message = "#{index + 1}. #{message}"
+            puts apply_color_theme(message, color_theme_color: message_color)
           end
         end
 
@@ -45,13 +43,17 @@ module Dsu
 
         attr_reader :messages, :message_color, :message_type, :header, :options
 
+        def color_theme
+          @color_theme ||= Models::ColorTheme.current_or_default
+        end
+
         def validate_arguments!(messages, message_type, options)
           raise ArgumentError, 'messages is nil' if messages.nil?
           raise ArgumentError, 'messages is the wrong object type' unless messages.is_a?(Array)
           raise ArgumentError, 'messages elements are the wrong object type' unless messages.all?(String)
           raise ArgumentError, 'message_type is nil' if message_type.nil?
           raise ArgumentError, 'message_type is the wrong object type' unless message_type.is_a?(Symbol)
-          raise ArgumentError, 'message_type is not a valid message type' unless MESSAGE_TYPES.include?(message_type)
+          raise ArgumentError, 'message_type is not a valid message type' unless Models::ColorTheme::DEFAULT_THEME_COLORS.keys.include?(message_type)
           raise ArgumentError, 'options is nil' if options.nil?
           raise ArgumentError, 'options is the wrong object type' unless options.is_a?(Hash)
         end

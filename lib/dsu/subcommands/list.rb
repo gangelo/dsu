@@ -73,7 +73,7 @@ module Dsu
         times = sorted_dsu_times_for(times: [time, time.yesterday])
         view_list_for(times: times)
       rescue ArgumentError => e
-        say "Error: #{e.message}", ERROR
+        puts apply_color_theme("Error: #{e.message}", color_theme_color: color_theme.error)
         exit 1
       end
 
@@ -154,7 +154,7 @@ module Dsu
           nothing_to_display_banner_for(times) if total_entry_groups.zero?
         end
       rescue ArgumentError => e
-        say "Error: #{e.message}", ERROR
+        puts apply_color_theme("Error: #{e.message}", color_theme_color: color_theme.error)
         exit 1
       end
 
@@ -164,7 +164,8 @@ module Dsu
         entry_group_times.sort!
         time_range = "#{formatted_time(time: entry_group_times.first)} " \
                      "through #{formatted_time(time: entry_group_times.last)}"
-        say "(nothing to display for #{time_range})", INFO
+        message = "(nothing to display for #{time_range})"
+        puts apply_color_theme(message, color_theme_color: color_theme.info)
       end
 
       # This method will unconditionally display the FIRST and LAST entry groups

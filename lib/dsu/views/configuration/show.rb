@@ -3,15 +3,13 @@
 require 'time'
 require 'active_support/core_ext/numeric/time'
 require_relative '../../models/configuration'
-require_relative '../../support/colorable'
-require_relative '../../support/say'
+require_relative '../../support/color_themable'
 
 module Dsu
   module Views
     module Configuration
       class Show
-        include Support::Colorable
-        include Support::Say
+        include Support::ColorThemable
 
         def initialize(config:, options: {})
           raise ArgumentError, 'config is nil' if config.nil?
@@ -33,19 +31,9 @@ module Dsu
         attr_reader :config, :options
 
         def render!
-          config_file = Models::Configuration.config_file
-          color = if Models::Configuration.exist?
-            say "Config file (#{config_file}) contents:", SUCCESS
-            SUCCESS
-          else
-            say "Config file (#{config_file}) does not exist.", WARNING
-            say ''
-            say 'The default configuration is being used:'
-            WARNING
-          end
-          config.to_h.each_with_index do |config_entry, index|
-            say "#{index + 1}. #{config_entry[0]}: '#{config_entry[1]}'", color
-          end
+          presenter = Dsu::Models::Configuration.current_or_default.presenter
+          puts presenter.configuration_exists_header
+          puts presenter.configuration_details
         end
       end
     end

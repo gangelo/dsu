@@ -3,7 +3,6 @@
 require 'fileutils'
 require 'time'
 require_relative 'base_cli'
-require_relative 'models/color_theme'
 require_relative 'subcommands/config'
 require_relative 'subcommands/edit'
 require_relative 'subcommands/generate'
@@ -115,7 +114,7 @@ module Dsu
     desc 'version, -v',
       'Displays this gem version'
     def version
-      say VERSION
+      puts VERSION
     end
   end
 end

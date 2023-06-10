@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
+require_relative '../../models/color_theme'
 require_relative '../../models/entry'
-require_relative '../../support/colorable'
+require_relative '../../support/color_themable'
 require_relative '../../support/configurable'
-require_relative '../../support/say'
 require_relative '../../support/time_formatable'
 require_relative '../../views/shared/model_errors'
 require_relative '../stdout_redirector_service'
@@ -14,9 +14,8 @@ module Dsu
   module Services
     module EntryGroup
       class EditorService
-        include Support::Colorable
+        include Support::ColorThemable
         include Support::Configurable
-        include Support::Say
         include Support::TimeFormatable
 
         def initialize(entry_group:, options: {})
@@ -43,7 +42,8 @@ module Dsu
         # Renders the edit view to a string so we can write it to a temporary file
         # and edit it. The edits will be used to update the entry group.
         def render_edit_view
-          say "Editing entry group #{formatted_time(time: entry_group.time)}...", HIGHLIGHT
+          puts apply_color_theme("Editing entry group #{formatted_time(time: entry_group.time)}...",
+            color_theme_color: color_theme.message)
           StdoutRedirectorService.call { Views::EntryGroup::Edit.new(entry_group: entry_group).render }
         end
 
@@ -63,11 +63,14 @@ module Dsu
 
               process_entry_group!(entry_group_with_edits)
             else
-              say "Failed to open temporary file in editor '#{configuration.editor}'; " \
-                  "the system error returned was: '#{$CHILD_STATUS}'.", ERROR
-              say 'Either set the EDITOR environment variable ' \
-                  'or set the dsu editor configuration option (`$ dsu config init`).', ERROR
-              say 'Run `$ dsu help config` for more information:', ERROR
+              puts apply_color_theme(
+                [
+                  "Failed to open temporary file in editor '#{configuration.editor}'; " \
+                  "the system error returned was: '#{$CHILD_STATUS}'.",
+                  'Either set the EDITOR environment variable ' \
+                  'or set the dsu editor configuration option (`$ dsu config init`).',
+                  'Run `$ dsu help config` for more information.'
+                ], color_theme_color: color_theme.error)
             end
           end
         end
@@ -88,6 +91,10 @@ module Dsu
         def process_description?(description)
           description = Models::Entry.clean_description(description)
           !(description.blank? || description[0] == '#')
+        end
+
+        def color_theme
+          @color_theme ||= Models::ColorTheme.current_or_default
         end
       end
     end

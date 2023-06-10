@@ -117,10 +117,10 @@ module Dsu
       def configuration_errors_or_wanings?
         if Models::Configuration.exist?
           messages = ["Configuration file (#{Models::Configuration.config_file}) already exists"]
-          Views::Shared::Messages.new(messages: messages, type: :warning).render
+          Views::Shared::Messages.new(messages: messages, message_type: :warning).render
         elsif !Dir.exist?(Models::Configuration.config_folder)
           messages = ["Destination folder for configuration file (#{Models::Configuration.config_folder}) does not exist"] # rubocop:disable Layout/LineLength
-          Views::Shared::Messages.new(messages: messages, type: :error).render
+          Views::Shared::Messages.new(messages: messages, message_type: :error).render
         else
           configuration = Models::Configuration.default
           return false if configuration.valid?

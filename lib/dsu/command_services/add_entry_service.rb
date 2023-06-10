@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 require_relative '../models/entry'
-require_relative '../support/colorable'
+require_relative '../support/color_themable'
 require_relative '../support/descriptable'
 require_relative '../support/folder_locations'
-require_relative '../support/say'
 require_relative '../views/shared/messages'
 
 module Dsu
@@ -12,10 +11,9 @@ module Dsu
     # This class adds (does NOT update) an entry to an entry group by
     # writing it to the appropriate entry group json file.
     class AddEntryService
-      include Support::Colorable
+      include Support::ColorThemable
       include Support::Descriptable
       include Support::FolderLocations
-      include Support::Say
 
       attr_reader :entry, :entry_group, :time
 

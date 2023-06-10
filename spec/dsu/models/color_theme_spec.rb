@@ -146,16 +146,16 @@ RSpec.describe Dsu::Models::ColorTheme do
           version: described_class::VERSION,
           description: 'Default theme',
           # Entry Group colors.
-          entry_group_highlight: %i[cyan bold],
+          entry_group_highlight: %i[cyan bold default],
           # Entry colors.
-          entry_highlight: %i[default bold],
+          entry_highlight: %i[default bold default],
           # Status colors.
-          status_info: %i[cyan],
-          status_success: %i[green],
-          status_warning: %i[yellow],
-          status_error: %i[yellow bold red],
+          info: %i[cyan default default],
+          success: %i[green default default],
+          warning: %i[yellow default default],
+          error: %i[yellow bold red],
           # State colors.
-          state_highlight: %i[cyan]
+          state_highlight: %i[cyan default default]
         }
       end
 

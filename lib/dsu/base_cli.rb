@@ -3,9 +3,10 @@
 require 'bundler'
 require 'thor'
 require_relative 'command_services/add_entry_service'
+require_relative 'models/color_theme'
 require_relative 'models/configuration'
 require_relative 'models/entry_group'
-require_relative 'support/colorable'
+require_relative 'support/color_themable'
 require_relative 'support/entry_group_viewable'
 require_relative 'support/times_sortable'
 require_relative 'version'
@@ -13,7 +14,7 @@ require_relative 'views/entry_group/show'
 
 module Dsu
   class BaseCLI < ::Thor
-    include Support::Colorable
+    include Support::ColorThemable
     include Support::EntryGroupViewable
     include Support::TimesSortable
 
@@ -68,6 +69,10 @@ module Dsu
 
     def entries_display_order
       @entries_display_order ||= configuration.entries_display_order
+    end
+
+    def color_theme
+      Models::ColorTheme.current_or_default
     end
   end
 end
