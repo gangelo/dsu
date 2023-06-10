@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# TODO: Error checking.
+# TODO: Keep <method>! (bang)?
 module ColorThemeMode
   def default!
     dup.merge({ mode: :default })

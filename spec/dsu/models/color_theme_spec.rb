@@ -58,9 +58,9 @@ RSpec.describe Dsu::Models::ColorTheme do
         end).to eq true
       end
 
-      it 'assigns the correct attribute values' do
-        expect(described_class::DEFAULT_THEME.each.all? do |key, value|
-          color_theme.public_send(key) == value
+      it 'makes sure all the color theme colors are accounted for and assigns the color theme attribute values' do
+        expect(described_class::DEFAULT_THEME_COLORS.each.all? do |key, value|
+          color_theme.public_send(key) == value.merge_default_colors
         end).to eq true
       end
     end
@@ -107,8 +107,12 @@ RSpec.describe Dsu::Models::ColorTheme do
     end
 
     describe '#theme_hash' do
+      let(:expected_color_theme) do
+        described_class.ensure_color_theme_color_defaults_for(theme_hash: theme_hash)
+      end
+
       it 'returns the correct theme hash' do
-        expect(color_theme.to_h).to eq theme_hash
+        expect(color_theme.to_h).to eq expected_color_theme
       end
     end
 
@@ -146,16 +150,20 @@ RSpec.describe Dsu::Models::ColorTheme do
           version: described_class::VERSION,
           description: 'Default theme',
           # Entry Group colors.
-          entry_group_highlight: %i[cyan bold default],
+          entry_group_date: { color: :cyan, mode: :bold },
           # Entry colors.
-          entry_highlight: %i[default bold default],
+          entry_description: { mode: :bold },
+          entry_index: { color: :light_cyan, mode: :italic },
           # Status colors.
-          info: %i[cyan default default],
-          success: %i[green default default],
-          warning: %i[yellow default default],
-          error: %i[yellow bold red],
-          # State colors.
-          state_highlight: %i[cyan default default]
+          info: { color: :cyan },
+          success: { color: :green },
+          warning: { color: :yellow },
+          error: { color: :light_yellow, background: :red },
+          # Messages dsu displays other than status.
+          message_header: { color: :cyan, mode: :bold },
+          message: { color: :cyan },
+          # Generic colors.
+          generic_index: { color: :default, mode: :italic }
         }
       end
 

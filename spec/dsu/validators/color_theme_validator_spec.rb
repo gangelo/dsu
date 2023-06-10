@@ -18,15 +18,46 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
     it_behaves_like 'the validation passes'
   end
 
-  context 'when there are color theme color values that are nil' do
-    let(:theme_hash) do
-      Dsu::Models::ColorTheme::DEFAULT_THEME.dup.tap do |hash|
-        hash[:entry_group_highlight] = nil
-      end
+  context 'when a color theme color Hash is empty' do
+    before do
+      allow(color_theme_validator).to receive(:entry_group_date).and_return({}) # rubocop:disable RSpec/SubjectStub
     end
+
     let(:expected_errors) do
       [
-        ':entry_group_highlight is the wrong object type. "Array" was expected, but "NilClass" was received.'
+        /:entry_group_date colors Hash is empty/
+      ]
+    end
+
+    it_behaves_like 'the validation fails'
+  end
+
+  context 'when a color theme color Hash value is not a Symbol' do
+    before do
+      allow(color_theme_validator).to receive(:entry_group_date) # rubocop:disable RSpec/SubjectStub
+        .and_return({ color: :default, mode: :default, background: 'bad'})
+    end
+
+    let(:expected_errors) do
+      [
+        ":background key value 'bad' in theme color Hash {:color=>:default, :mode=>:default, :background=>\"bad\"} " \
+        'is not a valid color. One of :black, :light_black, :red, :light_red, :green, :light_green, :yellow, ' \
+        ':light_yellow, :blue, :light_blue, :magenta, :light_magenta, :cyan, :light_cyan, :white, :light_white, ' \
+        ":default was expected, but 'bad' was received."
+      ]
+    end
+
+    it_behaves_like 'the validation fails'
+  end
+
+  context 'when a color theme color Hash is not a Hash' do
+    before do
+      allow(color_theme_validator).to receive(:entry_group_date).and_return(:foo) # rubocop:disable RSpec/SubjectStub
+    end
+
+    let(:expected_errors) do
+      [
+        /:entry_group_date value is the wrong object type. "Hash" was expected, but "Symbol" was received./
       ]
     end
 
@@ -43,25 +74,10 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
     it_behaves_like 'the extra key/value pairs are ignored'
   end
 
-  context 'when the color theme color values are the wrong object type' do
+  context 'when the color theme color values are an empty Hash' do
     let(:theme_hash) do
       Dsu::Models::ColorTheme::DEFAULT_THEME.dup.tap do |hash|
-        hash[:info] = :foo
-      end
-    end
-    let(:expected_errors) do
-      [
-        ':info is the wrong object type. "Array" was expected, but "Symbol" was received.'
-      ]
-    end
-
-    it_behaves_like 'the validation fails'
-  end
-
-  context 'when the color theme color values are an empty Array' do
-    let(:theme_hash) do
-      Dsu::Models::ColorTheme::DEFAULT_THEME.dup.tap do |hash|
-        hash[:error] = []
+        hash[:error] = {}
       end
     end
 
@@ -71,14 +87,15 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
   context 'when the color theme value color is invalid' do
     let(:theme_hash) do
       Dsu::Models::ColorTheme::DEFAULT_THEME.dup.tap do |hash|
-        hash[:info] = [:foo]
+        hash[:info] = { color: :foo, mode: :bold }
       end
     end
     let(:expected_errors) do
       [
-        'color value (info: value[0]) is not a valid color. One of :black, :light_black, :red, :light_red, ' \
-        ':green, :light_green, :yellow, :light_yellow, :blue, :light_blue, :magenta, :light_magenta, :cyan, :light_cyan, ' \
-        ':white, :light_white, :default was expected, but :foo was received.'
+        ':color key value :foo in theme color Hash {:color=>:foo, :mode=>:bold, :background=>:default} ' \
+        'is not a valid color. One of :black, :light_black, :red, :light_red, ' \
+        ':green, :light_green, :yellow, :light_yellow, :blue, :light_blue, :magenta, :light_magenta, ' \
+        ':cyan, :light_cyan, :white, :light_white, :default was expected, but :foo was received.'
       ]
     end
 
@@ -88,13 +105,14 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
   context 'when the color theme value mode is invalid' do
     let(:theme_hash) do
       Dsu::Models::ColorTheme::DEFAULT_THEME.dup.tap do |hash|
-        hash[:info] = %i[red foo]
+        hash[:info] = { color: :red, mode: :foo }
       end
     end
     let(:expected_errors) do
       [
-        'mode value (info: value[1]) is not a valid mode. One of :default, :bold, :italic, ' \
-        ':underline, :blink, :swap, :hide was expected, but :foo was received.'
+        ':mode key value :foo in theme color Hash {:color=>:red, :mode=>:foo, :background=>:default} ' \
+        'is not a valid mode value. One of :default, :bold, :italic, :underline, :blink, :swap, :hide ' \
+        'was expected, but :foo was received.'
       ]
     end
 
@@ -104,18 +122,18 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
   context 'when the color theme value background color is invalid' do
     let(:theme_hash) do
       Dsu::Models::ColorTheme::DEFAULT_THEME.dup.tap do |hash|
-        hash[:info] = %i[red bold foo]
+        hash[:info] = { color: :red, mode: :bold, background: :foo }
       end
     end
     let(:expected_errors) do
       [
-        'background color value (info: value[2]) is not a valid color. One of :black, :light_black, :red, :light_red, ' \
-        ':green, :light_green, :yellow, :light_yellow, :blue, :light_blue, :magenta, :light_magenta, :cyan, :light_cyan, ' \
-        ':white, :light_white, :default was expected, but :foo was received.'
+        ':background key value :foo in theme color Hash {:color=>:red, :mode=>:bold, :background=>:foo} ' \
+        'is not a valid color. One of :black, :light_black, :red, :light_red, ' \
+        ':green, :light_green, :yellow, :light_yellow, :blue, :light_blue, :magenta, :light_magenta, ' \
+        ':cyan, :light_cyan, :white, :light_white, :default was expected, but :foo was received.'
       ]
     end
 
     it_behaves_like 'the validation fails'
   end
-
 end

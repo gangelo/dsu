@@ -14,4 +14,5 @@ end
 
 Array.include(WrapAndJoin)
 DateAndTime::Calculations.include(NotToday)
+Hash.include(ColorThemeColors)
 Hash.include(ColorThemeMode)

@@ -81,7 +81,7 @@ module Dsu
             private "#{attr}="
           end
           attr_value = theme_hash[attr]
-          attr_value = ensure_theme_color_defaults(attr_value) if default_theme_color_keys.include?(attr)
+          attr_value = attr_value.merge_default_colors if default_theme_color_keys.include?(attr)
           send("#{attr}=", attr_value)
         end
       end
@@ -102,6 +102,23 @@ module Dsu
 
         def default
           new(theme_name: DEFAULT_THEME_NAME, theme_hash: DEFAULT_THEME)
+        end
+
+        def ensure_color_theme_color_defaults_for(theme_hash: DEFAULT_THEME)
+          theme_hash = theme_hash.dup
+
+          theme_hash.each_pair do |key, value|
+            next unless default_theme_color_keys.include?(key)
+
+            theme_hash[key] = value.merge_default_colors
+          end
+          theme_hash
+        end
+
+        private
+
+        def default_theme_color_keys
+          DEFAULT_THEME_COLORS.keys
         end
       end
 
@@ -138,11 +155,7 @@ module Dsu
       private
 
       def default_theme_color_keys
-        @default_theme_color_keys ||= DEFAULT_THEME_COLORS.keys
-      end
-
-      def ensure_theme_color_defaults(hash)
-        { color: :defautl, mode: :default, background: :default }.merge(hash)
+        @default_theme_color_keys ||= self.class.send(:default_theme_color_keys)
       end
     end
   end
