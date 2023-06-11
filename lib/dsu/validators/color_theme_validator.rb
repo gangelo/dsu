@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
 require 'colorize'
-require_relative '../support/hash_key_comparable'
 
 # rubocop:disable Layout/LineLength
 module Dsu
   module Validators
     class ColorThemeValidator < ActiveModel::Validator
-      delegate :compare_keys, to: Support::HashKeyComparable
-
       def validate(record)
         default_theme_colors = record.class::DEFAULT_THEME_COLORS
 
@@ -37,19 +34,6 @@ module Dsu
       def modes
         @modes ||= String.modes
       end
-
-      # NOTE: This method is unused because we can never run into this scenario the way the ColorTheme class is
-      # currently coded. However, I'm leaving it here in case things change.
-      # def validate_color_theme_keys!(record, default_theme_colors)
-      #   compare_keys(expected_hash: default_theme_colors, hash: record.to_theme_colors_h) do |_, missing, extra|
-      #     missing.each { |theme_color_key| record.errors.add(:base, "theme color :#{theme_color_key} is missing") }
-      #     extra.each { |theme_color_key| record.errors.add(:base, "theme color :#{theme_color_key} is an extra, invalid theme color theme_color_key") }
-      #
-      #     return false
-      #   end
-      #
-      #   true
-      # end
 
       def validate_theme_color_type!(record, theme_color_key, theme_colors_hash)
         return true if theme_colors_hash.is_a?(Hash)

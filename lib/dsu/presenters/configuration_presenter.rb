@@ -55,11 +55,6 @@ module Dsu
         config_entry = "#{config_entry[0]}: '#{config_entry[1]}'"
         apply_color_theme(config_entry, color_theme_color: color_theme_color.light!)
       end
-
-      def formatted_index(index:, color_theme_color:)
-        apply_color_theme("#{format('%03s', index + 1)}. ",
-          color_theme_color: color_theme_color)
-      end
     end
   end
 end

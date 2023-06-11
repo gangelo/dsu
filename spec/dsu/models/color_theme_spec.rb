@@ -150,17 +150,17 @@ RSpec.describe Dsu::Models::ColorTheme do
           version: described_class::VERSION,
           description: 'Default theme',
           # Entry Group colors.
-          entry_group_date: { color: :cyan, mode: :bold },
+          dates: { color: :cyan, mode: :bold },
           # Entry colors.
-          entry_description: { mode: :bold },
-          entry_index: { color: :light_cyan, mode: :italic },
+          descriptions: { mode: :bold },
+          indexes: { color: :light_cyan, mode: :italic },
           # Status colors.
           info: { color: :cyan },
           success: { color: :green },
           warning: { color: :yellow },
           error: { color: :light_yellow, background: :red },
           # Messages dsu displays other than status.
-          message_header: { color: :cyan, mode: :bold },
+          message_headers: { color: :cyan, mode: :bold },
           message: { color: :cyan },
           # Generic colors.
           generic_index: { color: :default, mode: :italic }

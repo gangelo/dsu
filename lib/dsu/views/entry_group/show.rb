@@ -41,8 +41,8 @@ module Dsu
 
           # entry_group.entries.each_with_index do |entry, index|
           #   prefix = apply_color_theme("#{format('%03s', index + 1)}. ",
-          #     color_theme_color: color_theme.entry_index)
-          #   description = apply_color_theme(entry.description, color_theme_color: color_theme.entry_description)
+          #     color_theme_color: color_theme.indexes)
+          #   description = apply_color_theme(entry.description, color_theme_color: color_theme.descriptions)
           #   puts "#{prefix} #{description}"
           # end
           entry_group.entries.each_with_index do |entry, index|

@@ -43,7 +43,7 @@ module Dsu
         # and edit it. The edits will be used to update the entry group.
         def render_edit_view
           puts apply_color_theme("Editing entry group #{formatted_time(time: entry_group.time)}...",
-            color_theme_color: color_theme.message)
+            color_theme_color: color_theme.messages)
           StdoutRedirectorService.call { Views::EntryGroup::Edit.new(entry_group: entry_group).render }
         end
 

@@ -25,7 +25,7 @@ module Dsu
         def render
           return if messages.empty?
 
-          colors = color_theme.message_header
+          colors = color_theme.message_headers
           puts apply_color_theme(header, color_theme_color: colors) if header.present?
 
           if messages.one?

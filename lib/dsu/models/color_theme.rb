@@ -4,7 +4,7 @@ require 'active_model'
 require_relative '../crud/color_theme'
 require_relative '../support/color_themable'
 require_relative '../support/descriptable'
-require_relative '../support/hash_key_comparable'
+require_relative '../support/presentable'
 require_relative '../validators/color_theme_validator'
 require_relative '../validators/description_validator'
 require_relative '../validators/version_validator'
@@ -17,7 +17,7 @@ module Dsu
       include Crud::ColorTheme
       include Support::ColorThemable
       include Support::Descriptable
-      include Support::HashKeyComparable
+      include Support::Presentable
 
       VERSION = '1.0.0'
 
@@ -29,32 +29,30 @@ module Dsu
       #       <background> (optional, default is :default) == any color represented in the colorize gem
       #                    `String.colors` array.
       DEFAULT_THEME_COLORS = {
-        # Entry Group colors.
-        entry_group_date: { color: :cyan, mode: :bold },
-        # Entry colors.
-        entry_description: { mode: :bold },
-        entry_index: { color: :light_cyan, mode: :italic },
+        headers: { color: :cyan, mode: :underline },
+        footers: { color: :light_cyan },
+        names: { color: :cyan, mode: :bold },
+        descriptions: { mode: :bold },
+        dates: { color: :cyan, mode: :bold },
+        indexes: { color: :light_cyan, mode: :italic },
         # Status colors.
         info: { color: :cyan },
         success: { color: :green },
         warning: { color: :yellow },
         error: { color: :light_yellow, background: :red },
         # Messages dsu displays other than status.
-        message_header: { color: :cyan, mode: :bold },
-        message: { color: :cyan },
-        # Generic colors.
-        generic_index: { color: :default, mode: :italic },
+        message_headers: { color: :cyan, mode: :bold },
+        messages: { color: :cyan },
         # Prompts
         prompt: { color: :cyan, mode: :bold },
         prompt_options: { color: :white, mode: :bold }
       }.freeze
       DEFAULT_THEME = {
         version: VERSION,
-        description: 'Default theme'
+        description: 'Default theme.'
       }.merge(DEFAULT_THEME_COLORS).freeze
 
-      # TODO: Validate theme colors against valid colorize
-      # gem colors.
+      # TODO: Validate other attrs.
       validates_with Validators::DescriptionValidator
       validates_with Validators::ColorThemeValidator
       validates_with Validators::VersionValidator
