@@ -24,7 +24,7 @@ module Dsu
           apply_color_theme("Configuration file (#{config_path}) does not exist.",
             color_theme_color: color_theme.warning),
           apply_color_theme('The default configuration is being used:',
-            color_theme_color: color_theme.warning.underline!),
+            color_theme_color: color_theme.warning.underline!)
         ].join("\n")
       end
 

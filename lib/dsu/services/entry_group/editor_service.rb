@@ -70,7 +70,8 @@ module Dsu
                   'Either set the EDITOR environment variable ' \
                   'or set the dsu editor configuration option (`$ dsu config init`).',
                   'Run `$ dsu help config` for more information.'
-                ], color_theme_color: color_theme.error)
+                ], color_theme_color: color_theme.error
+              )
             end
           end
         end

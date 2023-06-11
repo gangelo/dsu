@@ -35,7 +35,7 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
   context 'when a color theme color Hash value is not a Symbol' do
     before do
       allow(color_theme_validator).to receive(:dates) # rubocop:disable RSpec/SubjectStub
-        .and_return({ color: :default, mode: :default, background: 'bad'})
+        .and_return({ color: :default, mode: :default, background: 'bad' })
     end
 
     let(:expected_errors) do

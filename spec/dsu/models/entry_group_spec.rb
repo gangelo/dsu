@@ -303,7 +303,7 @@ RSpec.describe Dsu::Models::EntryGroup do
           expected_entry_group
         end
 
-        let(:expected_entry_group) { create(:entry_group, :with_entries, time: time)}
+        let(:expected_entry_group) { create(:entry_group, :with_entries, time: time) }
 
         it 'returns the entry group' do
           expect(entry_group).to eq expected_entry_group

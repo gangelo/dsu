@@ -53,7 +53,11 @@ module Dsu
           raise ArgumentError, 'messages elements are the wrong object type' unless messages.all?(String)
           raise ArgumentError, 'message_type is nil' if message_type.nil?
           raise ArgumentError, 'message_type is the wrong object type' unless message_type.is_a?(Symbol)
-          raise ArgumentError, 'message_type is not a valid message type' unless Models::ColorTheme::DEFAULT_THEME_COLORS.keys.include?(message_type)
+
+          unless Models::ColorTheme::DEFAULT_THEME_COLORS.key?(message_type)
+            raise ArgumentError,
+              'message_type is not a valid message type'
+          end
           raise ArgumentError, 'options is nil' if options.nil?
           raise ArgumentError, 'options is the wrong object type' unless options.is_a?(Hash)
         end
