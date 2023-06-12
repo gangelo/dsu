@@ -61,9 +61,9 @@ module Dsu
         end
 
         def find(time:)
-          entry_group_path = entry_group_path(time: time)
           raise "Entry group does not exist for time \"#{time}\"" unless exist?(time: time)
 
+          entry_group_path = entry_group_path(time: time)
           entry_group_json = File.read(entry_group_path)
           Services::EntryGroup::HydratorService.new(entry_group_json: entry_group_json).call
         end
@@ -99,6 +99,18 @@ module Dsu
           save(entry_group: entry_group)
 
           entry_group
+        end
+
+        def hash_for(time:)
+          entry_group_path = entry_group_path(time: time)
+          unless exist?(time: time)
+            raise "Entry group file does not exist for time \"#{time}\": " \
+                  "\"#{entry_group_path}\""
+          end
+
+          # Do not load the class because it is possible
+          entry_group_json = File.read(entry_group_path)
+          raise "TODO: return a hash."
         end
 
         def entry_group_file(time:)

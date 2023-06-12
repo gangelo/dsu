@@ -1,5 +1,11 @@
 # frozen_string_literal: true
 
+RSpec.shared_examples 'the color theme exists' do
+  it 'the color theme file exists' do
+    expect(described_class.exist?(theme_name: theme_name)).to be(true)
+  end
+end
+
 RSpec.describe Dsu::Models::ColorTheme do
   subject(:color_theme) do
     described_class.new(theme_name: theme_name, theme_hash: theme_hash)
@@ -138,6 +144,62 @@ RSpec.describe Dsu::Models::ColorTheme do
         it 'returns a different hash' do
           different_color_theme = described_class.new(theme_name: 'Different', theme_hash: theme_hash)
           expect(different_color_theme.hash).not_to eq described_class.default.hash
+        end
+      end
+    end
+
+    describe '#delete' do
+      before do
+        color_theme.save!
+      end
+
+      it 'deletes the theme file' do
+        color_theme.delete!
+        expect(color_theme.exist?).to be false
+      end
+
+      context 'when the theme is the current theme in the configuration' do
+        before do
+          Dsu::Models::Configuration.current_or_default.tap do |configuration|
+            configuration.theme_name = theme_name
+            configuration.save!
+          end
+        end
+
+        let(:theme_name) { 'test' }
+
+        it_behaves_like 'the color theme is the current color theme in the configuration'
+
+        it_behaves_like 'the color theme exists'
+
+        it 'deletes the theme file' do
+          color_theme.delete!
+          expect(described_class.exist?(theme_name: theme_name)).to be(false)
+        end
+      end
+
+      context 'when the theme is not the current theme in the configuration' do
+        before do
+          big_red = described_class.find_or_create(theme_name: 'big_red')
+          Dsu::Models::Configuration.current_or_default.tap do |configuration|
+            configuration.theme_name = big_red.theme_name
+            configuration.save!
+          end
+        end
+
+        let(:theme_name) { 'test' }
+
+        it_behaves_like 'the color theme is not the current color theme in the configuration'
+
+        it_behaves_like 'the color theme exists'
+
+        it 'deletes the theme file' do
+          color_theme.delete!
+          expect(described_class.exist?(theme_name: theme_name)).to be(false)
+        end
+
+        it 'does not change the current theme in the configuration' do
+          expect(Dsu::Models::Configuration.current_or_default.theme_name).to eq('big_red')
         end
       end
     end

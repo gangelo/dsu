@@ -160,7 +160,7 @@ module Dsu
         options = "[#{options.join('/')}]"
         "#{apply_color_theme(prompt, color_theme_color: self.prompt)} " \
           "#{apply_color_theme(options, color_theme_color: prompt_options)}" \
-          "#{apply_color_theme(':', color_theme_color: self.prompt)}"
+          "#{apply_color_theme('>', color_theme_color: self.prompt)}"
       end
 
       private

@@ -48,6 +48,8 @@ module Dsu
           color_theme_path = color_theme_path(theme_name: theme_name)
           File.delete(color_theme_path)
 
+          reset_default_configuration_color_theme_if!(deleted_theme_name: theme_name)
+
           true
         end
 
@@ -57,9 +59,9 @@ module Dsu
         end
 
         def find(theme_name:)
-          color_theme_path = color_theme_path(theme_name: theme_name)
           raise "Color theme does not exist: \"#{theme_name}\"" unless exist?(theme_name: theme_name)
 
+          color_theme_path = color_theme_path(theme_name: theme_name)
           color_theme_hash = Psych.safe_load(File.read(color_theme_path), [Symbol])
           new(theme_name: theme_name, theme_hash: color_theme_hash)
         end
@@ -93,9 +95,17 @@ module Dsu
           color_theme
         end
 
+        def hash_for(theme_name:)
+          raise "Color theme does not exist: \"#{theme_name}\"" unless exist?(theme_name: theme_name)
+
+          # Do not load the class because it is possible
+          color_theme_path = color_theme_path(theme_name: theme_name)
+          Psych.safe_load(File.read(color_theme_path), [Symbol])
+        end
+
         def color_theme_file(theme_name:)
           # Basicall returns the color theme name for now, but let's keep this
-          # in case we want to add an extension later on.
+          # in case we want to add a file extension later on.
           theme_name
         end
 
@@ -110,6 +120,19 @@ module Dsu
         end
 
         private
+
+        # If the color theme is deleted (deleted_theme_name) and the current
+        # theme_name in the configuration is the same as the deleted theme,
+        # we need to reset the configuration theme to the default theme.
+        def reset_default_configuration_color_theme_if!(deleted_theme_name:)
+          config = configuration
+          return if config.theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
+          return unless config.theme_name == deleted_theme_name
+          return unless config.exist?
+
+          config.theme_name = Models::ColorTheme::DEFAULT_THEME_NAME
+          config.save!
+        end
 
         def configuration
           # NOTE: Do not memoize this, as it will cause issues if

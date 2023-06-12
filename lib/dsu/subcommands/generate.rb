@@ -17,6 +17,14 @@ module Dsu
         def migrate_folder
           @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
         end
+
+        def migration_service_version
+          folder_path = File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/dsu/migration')
+          subfolders = Dir.entries(folder_path)
+            .select { |entry| File.directory?(File.join(folder_path, entry)) }
+            .reject { |entry| entry.start_with?('.') }
+          subfolders.map(&:to_f).max
+        end
       end
 
       desc 'migration', 'Creates dsu migration file in the `migrate` folder.'
@@ -36,7 +44,8 @@ module Dsu
       option :config, type: :boolean, aliases: '-c', default: false
       def migration(migration_name)
         # TODO: Perform validations.
-        create_migration_file(migration_name)
+        puts "Migration version: #{migration_service_version}"
+        # create_migration_file(migration_name)
       end
 
       private
@@ -60,6 +69,10 @@ module Dsu
         self.class.migrate_folder
       end
 
+      def migration_service_version
+        self.class.migration_service_version
+      end
+
       def migration_file_for(migration_name)
         [
           File.join(migrate_folder, time.strftime("%Y%m%d%H%M%S_#{migration_name.underscore}.rb")),
@@ -73,11 +86,11 @@ module Dsu
         <<~MIGRATION_FILE_CONTENT
           # frozen_string_literal: true
 
-          require_relative '../dsu/migrations/migrator_service'
+          require_relative '../dsu/migrations/service'
 
           module Dsu
             module Migrate
-              class #{migration_class} < Migration::MigratorService
+              class #{migration_class} < Migration::Service[#{migration_service_version}]
               end
             end
           end
@@ -93,7 +106,7 @@ module Dsu
 
           module Dsu
             module Migrate
-              class #{migration_class} < Migration::ConfigurationMigratorService
+              class #{migration_class} < Migration::Service[#{migration_service_version}]
                 def call
                   # No sense in updating anything if we're not saving anything to disk.
                   if Models::Configuration.exist?

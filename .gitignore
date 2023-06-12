@@ -20,6 +20,7 @@
 scratch*.rb
 snippets.rb
 readme.txt
+todo.txt
 
 .env
 /spec/.tmp

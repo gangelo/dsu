@@ -7,6 +7,7 @@ require_relative 'models/color_theme'
 require_relative 'models/configuration'
 require_relative 'models/entry_group'
 require_relative 'support/color_themable'
+require_relative 'support/command_hookable'
 require_relative 'support/entry_group_viewable'
 require_relative 'support/times_sortable'
 require_relative 'version'
@@ -15,6 +16,7 @@ require_relative 'views/entry_group/show'
 module Dsu
   class BaseCLI < ::Thor
     include Support::ColorThemable
+    include Support::CommandHookable
     include Support::EntryGroupViewable
     include Support::TimesSortable
 

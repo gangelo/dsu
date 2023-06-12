@@ -46,9 +46,8 @@ module Dsu
       end
 
       def formatted_config_entry_with_index(config_entry, index:, color_theme_color:)
-        "#{formatted_index(index: index,
-          color_theme_color: color_theme_color)} #{formatted_config_entry(config_entry: config_entry,
-            color_theme_color: color_theme_color)}"
+        "#{formatted_index(index: index)} #{formatted_config_entry(config_entry: config_entry,
+          color_theme_color: color_theme_color)}"
       end
 
       def formatted_config_entry(config_entry:, color_theme_color:)
