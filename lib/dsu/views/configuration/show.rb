@@ -31,7 +31,7 @@ module Dsu
         attr_reader :config, :options
 
         def render!
-          presenter = Dsu::Models::Configuration.current_or_default.presenter
+          presenter = Dsu::Models::Configuration.instance.presenter
           puts presenter.configuration_exists_header
           puts presenter.configuration_details
         end

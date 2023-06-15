@@ -1,32 +1,30 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/StringHashKeys
 RSpec.describe Dsu::Models::Configuration do
-  subject(:config) { described_class.new(config_hash: config_hash) }
+  subject(:config) { described_class.instance.load(config_hash: config_hash) }
+
+  before do
+    create(:color_theme)
+  end
 
   let(:config_hash) { described_class::DEFAULT_CONFIGURATION }
 
   describe 'constants' do
     describe 'VERSION' do
-      it 'defines the right version' do
-        expect(described_class::VERSION).to eq '1.0.0'
+      it 'defines the right version type' do
+        expect(described_class::VERSION).to be_a(Integer)
       end
-
-      it_behaves_like 'the version is a valid version string'
     end
 
     describe 'DEFAULT_CONFIGURATION' do
       let(:expected_keys) do
-        %w[
+        %i[
           version
           editor
           entries_display_order
-          entries_folder
-          entries_file_name
           carry_over_entries_to_today
           include_all
           theme_name
-          themes_folder
         ]
       end
 
@@ -44,7 +42,7 @@ RSpec.describe Dsu::Models::Configuration do
     describe '#editor' do
       context 'when not present?' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('editor' => nil)
+          described_class::DEFAULT_CONFIGURATION.merge(editor: nil)
         end
         let(:expected_errors) do
           [
@@ -59,84 +57,25 @@ RSpec.describe Dsu::Models::Configuration do
     describe '#entries_display_order' do
       context 'when not present?' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('entries_display_order' => nil)
+          described_class::DEFAULT_CONFIGURATION.merge(entries_display_order: nil)
         end
         let(:expected_errors) do
           [
             "Entries display order can't be blank",
-            "Entries display order must be 'asc' or 'desc'"
+            "Entries display order must be :asc or :desc"
           ]
         end
 
         it_behaves_like 'the validation fails'
       end
 
-      context 'when not asc or desc' do
+      context 'when not :asc or :desc' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('entries_display_order' => 'xyz')
+          described_class::DEFAULT_CONFIGURATION.merge(entries_display_order: 'xyz')
         end
         let(:expected_errors) do
           [
-            "Entries display order must be 'asc' or 'desc'"
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-    end
-
-    describe '#entries_file_name' do
-      context 'when not present?' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('entries_file_name' => nil)
-        end
-        let(:expected_errors) do
-          [
-            "Entries file name can't be blank",
-            "Entries file name must include the Time#strftime format specifiers '%Y %m %d' " \
-            'and be a valid file name for your operating system'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context "when it doesn't include the required Time format specified" do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('entries_file_name' => '%Y-%d-no-month')
-        end
-        let(:expected_errors) do
-          [
-            "Entries file name must include the Time#strftime format specifiers '%Y %m %d' " \
-            'and be a valid file name for your operating system'
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-    end
-
-    describe '#entries_folder' do
-      context 'when not present?' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('entries_folder' => nil)
-        end
-        let(:expected_errors) do
-          [
-            "Entries folder can't be blank"
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when it is not a valid folder' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('entries_folder' => './foo/bar')
-        end
-        let(:expected_errors) do
-          [
-            /Entries folder .+ does not exist/
+            'Entries display order must be :asc or :desc'
           ]
         end
 
@@ -147,7 +86,7 @@ RSpec.describe Dsu::Models::Configuration do
     describe '#carry_over_entries_to_today' do
       context 'when not present?' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('carry_over_entries_to_today' => nil)
+          described_class::DEFAULT_CONFIGURATION.merge(carry_over_entries_to_today: nil)
         end
         let(:expected_errors) do
           [
@@ -160,7 +99,7 @@ RSpec.describe Dsu::Models::Configuration do
 
       context 'when not true or false' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('carry_over_entries_to_today' => 'foo')
+          described_class::DEFAULT_CONFIGURATION.merge(carry_over_entries_to_today: 'foo')
         end
         let(:expected_errors) do
           [
@@ -175,7 +114,7 @@ RSpec.describe Dsu::Models::Configuration do
     describe '#include_all' do
       context 'when not present?' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('include_all' => nil)
+          described_class::DEFAULT_CONFIGURATION.merge(include_all: nil)
         end
         let(:expected_errors) do
           [
@@ -188,7 +127,7 @@ RSpec.describe Dsu::Models::Configuration do
 
       context 'when not true or false' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('include_all' => 'foo')
+          described_class::DEFAULT_CONFIGURATION.merge(include_all: 'foo')
         end
         let(:expected_errors) do
           [
@@ -203,11 +142,12 @@ RSpec.describe Dsu::Models::Configuration do
     describe '#theme' do
       context 'when not present?' do
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('theme_name' => nil)
+          described_class::DEFAULT_CONFIGURATION.merge(theme_name: nil)
         end
         let(:expected_errors) do
           [
-            "Theme name can't be blank"
+            "Theme name can't be blank",
+            /Theme file ".+" does not exist/
           ]
         end
 
@@ -215,10 +155,8 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       context 'when the theme file does not exist' do
-        subject(:config) { described_class.new(config_hash: config_hash) }
-
         let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('theme_name' => '/foo/bar/theme')
+          described_class::DEFAULT_CONFIGURATION.merge(theme_name: '/foo/bar/theme')
         end
         let(:expected_errors) do
           [
@@ -229,138 +167,24 @@ RSpec.describe Dsu::Models::Configuration do
         it_behaves_like 'the validation fails'
       end
     end
-
-    describe '#themes_folder' do
-      context 'when not present?' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('themes_folder' => nil)
-        end
-        let(:expected_errors) do
-          [
-            "Themes folder can't be blank"
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when it is not a valid folder' do
-        let(:config_hash) do
-          described_class::DEFAULT_CONFIGURATION.merge('themes_folder' => './foo/bar')
-        end
-        let(:expected_errors) do
-          [
-            /Themes folder ".+" does not exist/
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-    end
   end
 
   describe 'class methods' do
-    describe '.current_or_default' do
-      context 'when there is no current configuration' do
-        it 'returns the default configuration' do
-          expect(described_class.current_or_default).to eq(described_class.default)
-        end
-      end
-
-      context 'when there is a current configuration' do
-        before do
-          current_config.save!
-        end
-
-        let(:current_config) do
-          described_class.default.merge('editor' => 'doom')
-        end
-
-        it 'returns the current configuration' do
-          expect(described_class.current_or_default).to eq(current_config)
-        end
-      end
-    end
-
-    describe '.current' do
-      context 'when there is no current configuration' do
-        it 'returns nil' do
-          expect(described_class.current).to be nil
-        end
-      end
-
-      context 'when there is a current configuration' do
-        before do
-          current_config.save!
-        end
-
-        let(:current_config) do
-          described_class.default.merge('editor' => 'doom')
-        end
-
-        it 'returns the current configuration' do
-          expect(described_class.current).to eq(current_config)
-        end
-      end
-    end
-
-    describe '.default' do
-      it 'returns the default configuration' do
-        default_config = described_class.new(config_hash: described_class::DEFAULT_CONFIGURATION)
-        expect(described_class.default).to eq(default_config)
-      end
-    end
-
-    describe '.delete!' do
-      context 'when the config file exists' do
-        before do
-          described_class.current_or_default.save!
-        end
-
-        it 'deletes the config file' do
-          described_class.delete!
-          expect(described_class.exist?).to be false
-        end
-      end
-
-      context 'when the config file does not exist' do
-        subject(:config) { described_class.delete! }
-
-        let(:expected_error) do
-          /Config file does not exist/
-        end
-
-        it_behaves_like 'an error is raised'
-      end
-    end
-
-    describe '.config_path' do
-      it 'returns the correct config file name' do
-        expect(described_class.config_path).to eq File.join(Dir.home, '.dsu')
-      end
-    end
-
     describe '.exist?' do
       context 'when the config file exists' do
-        before do
-          described_class.current_or_default.save!
-        end
-
         it 'returns true' do
           expect(described_class.exist?).to be true
         end
       end
 
       context 'when the config file does not exist' do
+        before do
+          File.delete(described_class.config_path)
+        end
+
         it 'returns false' do
           expect(described_class.exist?).to be false
         end
-      end
-    end
-
-    describe '.config_folder' do
-      it 'returns the config folder' do
-        expect(described_class.config_folder).to eq Dsu::Support::FolderLocations.root_folder
       end
     end
   end
@@ -368,7 +192,7 @@ RSpec.describe Dsu::Models::Configuration do
   describe '#carry_over_entries_to_today?' do
     context 'when carry_over_entries_to_today is true' do
       let(:config_hash) do
-        { 'carry_over_entries_to_today' => true }
+        { carry_over_entries_to_today: true }
       end
 
       it 'returns true' do
@@ -384,42 +208,53 @@ RSpec.describe Dsu::Models::Configuration do
   end
 
   describe '#to_h' do
+    before do
+      config.save!
+    end
+
     it 'returns a hash' do
-      expect(described_class.default.to_h).to eq described_class::DEFAULT_CONFIGURATION
+      expect(described_class.instance.reload!.to_h).to eq described_class::DEFAULT_CONFIGURATION
     end
   end
 
   describe '#==' do
+    before do
+      config.save!
+    end
+
     context 'when the other object is not a Configuration' do
       it 'returns false' do
-        expect(described_class.default == 'foo').to be false
+        expect(described_class.instance.reload! == 'foo').to be false
       end
     end
 
     context 'when the configurations are equal' do
       it 'returns true' do
-        expect(described_class.default.to_h == described_class::DEFAULT_CONFIGURATION.dup).to be true
+        expect(described_class.instance.reload!.to_h == described_class::DEFAULT_CONFIGURATION.dup).to be true
       end
     end
   end
 
   describe '#hash' do
+    before do
+      config.save!
+    end
+
     let(:expected_hash) do
-      default_config = described_class.default
       described_class::DEFAULT_CONFIGURATION.each_key.map do |key|
-        default_config.public_send(key.to_sym)
+        described_class.instance.public_send(key)
       end.hash
     end
 
     it 'returns the hash of all the attributes' do
-      expect(described_class.default.hash).to eq expected_hash
+      expect(config.hash).to eq expected_hash
     end
   end
 
   describe '#save!' do
     context 'when the configuration is valid' do
       let(:config_hash) do
-        described_class::DEFAULT_CONFIGURATION.merge('editor' => 'doom')
+        described_class::DEFAULT_CONFIGURATION.merge(editor: 'doom')
       end
 
       before do
@@ -431,7 +266,7 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       it 'saves the configuration values' do
-        expect(described_class.current).to eq config
+        expect(described_class.instance.reload!).to eq config
       end
     end
 
@@ -450,36 +285,9 @@ RSpec.describe Dsu::Models::Configuration do
     end
   end
 
-  describe '#delete!' do
-    context 'when the configuration exists' do
-      before do
-        config.save!
-      end
-
-      it 'makes sure the config file exists prior to the test' do
-        expect(described_class.exist?).to be true
-      end
-
-      it 'deletes the configuration' do
-        config.delete!
-        expect(described_class.exist?).to be false
-      end
-    end
-
-    context 'when the configuration does not exist' do
-      subject(:config) { described_class.new(config_hash: config_hash).delete! }
-
-      let(:expected_error) do
-        /Config file does not exist/
-      end
-
-      it_behaves_like 'an error is raised'
-    end
-  end
-
   describe '#merge' do
     let(:expected_config) do
-      config.merge('editor' => 'doom')
+      config.merge(edito: 'doom')
     end
 
     it 'merges the hash into the configuration hash and returns a new config' do
@@ -488,4 +296,3 @@ RSpec.describe Dsu::Models::Configuration do
     end
   end
 end
-# rubocop:enable Style/StringHashKeys

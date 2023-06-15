@@ -14,6 +14,15 @@ RSpec.shared_examples 'the color theme does not exist' do
   end
 end
 
+def color_theme_regex_for(theme_names:, default_theme_name: Dsu::Models::ColorTheme::DEFAULT_THEME_NAME)
+  theme_names << default_theme_name unless theme_names.include?(default_theme_name)
+  regex_string = theme_names.sort.each_with_index.map do |theme_name, index|
+    theme_name = "\*#{theme_name}" if theme_name == default_theme_name
+    ".*#{index + 1}\..*#{theme_name}"
+  end.join('.*')
+  Regexp.new(regex_string, Regexp::MULTILINE)
+end
+
 RSpec.describe Dsu::Subcommands::Theme do
   subject(:cli) { Dsu::CLI.start(args) }
 
@@ -65,6 +74,15 @@ RSpec.describe Dsu::Subcommands::Theme do
   end
 
   describe '#delete' do
+    context 'when the color theme is the default theme' do
+      let(:theme_name) { Dsu::Models::ColorTheme::DEFAULT_THEME_NAME }
+      let(:args) { ['theme', 'delete', theme_name] }
+
+      it 'displays a does not exist error to the console' do
+        expect { cli }.to output(/Color theme "#{theme_name}" cannot be deleted/).to_stdout
+      end
+    end
+
     context 'when the color theme does not exists' do
       let(:args) { ['theme', 'delete', theme_name] }
 
@@ -140,6 +158,30 @@ RSpec.describe Dsu::Subcommands::Theme do
         end
 
         it_behaves_like 'the color theme exists'
+      end
+    end
+  end
+
+  describe '#list' do
+    let(:args) { %w[theme list] }
+
+    context 'when there are no color themes' do
+      it 'displays the default color theme' do
+        expect { cli }.to output(/1\..+\*default.+-.+Default theme/).to_stdout
+      end
+    end
+
+    context 'when there are color themes' do
+      before do
+        theme_names.each { |theme_name| create(:color_theme, theme_name: theme_name) }
+      end
+
+      let(:theme_names) { [theme_name, theme_name_b, theme_name_c] }
+      let(:theme_name_b) { 'b_test' }
+      let(:theme_name_c) { 'c_test' }
+
+      it 'displays the color theme' do
+        expect { cli }.to output(color_theme_regex_for(theme_names: theme_names)).to_stdout
       end
     end
   end

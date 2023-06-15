@@ -15,7 +15,7 @@
 
 #       class << self
 #         def run(options: {})
-#           Dir.glob("#{Models::ColorTheme.color_theme_folder}/*").each do |color_theme_path|
+#           Dir.glob("#{Models::ColorTheme.themes_folder}/*").each do |color_theme_path|
 #             theme_name = File.basename(color_theme_path)
 #             theme_hash = Models::ColorTheme.hash_for(theme_name: theme_name)
 #             new(theme_name: theme_name, theme_hash: theme_hash, options: options).run

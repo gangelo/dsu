@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Support::FolderLocations do
+RSpec.describe Dsu::Support::Fileable do
   describe 'sanity checks' do
     describe 'Dir.home' do
       it 'returns the correct mocked folder' do

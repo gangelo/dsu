@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require 'active_model'
+require 'singleton'
 require_relative '../crud/configuration'
-require_relative '../support/folder_locations'
+require_relative '../support/fileable'
 require_relative '../support/presentable'
 require_relative '../validators/version_validator'
 
@@ -10,28 +11,25 @@ module Dsu
   module Models
     # This class represents the dsu configuration.
     class Configuration
-      extend Support::FolderLocations
+      extend Support::Fileable
       include ActiveModel::Model
       include Crud::Configuration
+      include Singleton
       include Support::Presentable
 
-      VERSION = '1.0.0'
-      ENTRIES_FILE_NAME_REGEX = /\A(?=.*%Y)(?=.*%m)(?=.*%d).*\.json\z/
+      VERSION = 0
 
-      # rubocop:disable Style/StringHashKeys - YAML writing/loading necessitates this
       DEFAULT_CONFIGURATION = {
-        'version' => '1.0.0',
+        version: VERSION,
         # The default editor to use when editing entry groups if the EDITOR
         # environment variable on your system is not set. On nix systmes,
         # the default editor is`nano`. You need to change this default on
         # Windows systems.
-        'editor' => 'nano',
+        editor: 'nano',
         # The order by which entries should be displayed by default:
-        # asc or desc, ascending or descending, respectively.
-        'entries_display_order' => 'desc',
-        'entries_file_name' => '%Y-%m-%d.json',
-        'entries_folder' => "#{root_folder}/dsu/entries",
-        'carry_over_entries_to_today' => false,
+        # :asc or :desc, ascending or descending, respectively.
+        entries_display_order: :desc,
+        carry_over_entries_to_today: false,
         # If true, when using dsu commands that list date ranges (e.g.
         # `dsu list dates`), the displayed list will include dates that
         # have no dsu entries. If false, the displayed list will only
@@ -42,69 +40,52 @@ module Dsu
         # regardless of whether or not the DSU date has entries or not;
         # all other dates will not be displayed if the DSU date has no
         # entries.
-        'include_all' => false,
+        include_all: false,
         # Themes
         # The currently selected color theme. Should be equal to
         # Models::ColorTheme::DEFAULT_THEME_NAME or the name of a custom
         # theme (with the same file name) that resides in the themes_folder.
-        'theme_name' => 'default',
-        # The folder where the theme files reside.
-        'themes_folder' => "#{root_folder}/dsu/themes"
+        theme_name: 'default'
       }.freeze
-      # rubocop:enable Style/StringHashKeys
 
       validates_with Validators::VersionValidator
       validates :editor, presence: true
       validates :entries_display_order, presence: true,
-        inclusion: { in: %w[asc desc], message: "must be 'asc' or 'desc'" }
-      validates :entries_file_name, presence: true,
-        format: { with: ENTRIES_FILE_NAME_REGEX,
-                  message: "must include the Time#strftime format specifiers '%Y %m %d' " \
-                           'and be a valid file name for your operating system' }
-      validates :entries_folder, presence: true
-      validate :validate_entries_folder, if: -> { entries_folder.present? }
+        inclusion: { in: %i[asc desc], message: 'must be :asc or :desc' }
       validates :carry_over_entries_to_today, inclusion: { in: [true, false], message: 'must be true or false' }
       validates :include_all, inclusion: { in: [true, false], message: 'must be true or false' }
       validates :theme_name, presence: true
-      validate :validate_theme, if: -> { theme_name.present? }
-      validates :themes_folder, presence: true
-      validate :validate_themes_folder, if: -> { themes_folder.present? }
+      validate :validate_theme_file
 
       attr_accessor :version,
         :editor,
         :entries_display_order,
-        :entries_file_name,
-        :entries_folder,
         :carry_over_entries_to_today,
         :include_all,
-        :theme_name,
-        :themes_folder
+        :theme_name
 
-      def initialize(config_hash: {})
+      def initialize
+        reload! and return if exist?
+
+        load(config_hash: DEFAULT_CONFIGURATION).save!
+      end
+
+      def reload!
+        raise "Config file does not exist: \"#{config_path}\"" unless exist?
+
+        config_json = File.read(config_path)
+        config_hash = Services::Configuration::HydratorService.new(config_json: config_json).call
+        load(config_hash: config_hash)
+      end
+
+      def load(config_hash: {})
         raise ArgumentError, 'config_hash is nil.' if config_hash.nil?
         raise ArgumentError, "config_hash must be a Hash: \"#{config_hash}\"." unless config_hash.is_a?(Hash)
 
         @config_hash = config_hash.dup
-        assign_attributes_from_config_hash
-      end
+        assign_attributes_from config_hash
 
-      class << self
-        # Returns the current configuration if it exists; otherwise,
-        # it returns the default configuration.
-        def current_or_default
-          current || default
-        end
-
-        def current
-          return unless exist?
-
-          find
-        end
-
-        # Returns the default configuration.
-        def default
-          new(config_hash: DEFAULT_CONFIGURATION)
-        end
+        self
       end
 
       def carry_over_entries_to_today?
@@ -112,19 +93,14 @@ module Dsu
       end
 
       def to_h
-        # rubocop:disable Style/StringHashKeys
         {
-          'version' => version,
-          'editor' => editor,
-          'entries_display_order' => entries_display_order,
-          'entries_file_name' => entries_file_name,
-          'entries_folder' => entries_folder,
-          'carry_over_entries_to_today' => carry_over_entries_to_today,
-          'include_all' => include_all,
-          'theme_name' => theme_name,
-          'themes_folder' => themes_folder
+          version: version,
+          editor: editor,
+          entries_display_order: entries_display_order,
+          carry_over_entries_to_today: carry_over_entries_to_today,
+          include_all: include_all,
+          theme_name: theme_name
         }
-        # rubocop:enable Style/StringHashKeys
       end
 
       # Override == and hash so that we can compare objects based
@@ -139,54 +115,34 @@ module Dsu
 
       def hash
         DEFAULT_CONFIGURATION.each_key.map do |key|
-          public_send(key.to_sym)
+          public_send(key)
         end.hash
       end
 
       def merge(hash)
-        self.class.new(config_hash: to_h.merge(hash))
+        load(config_hash: to_h.merge(hash))
       end
 
       private
 
       attr_accessor :config_hash
 
-      def assign_attributes_from_config_hash
-        @version = config_hash.fetch('version', VERSION)
-        @editor = config_hash.fetch('editor', DEFAULT_CONFIGURATION['editor'])
-        @entries_display_order = config_hash.fetch('entries_display_order',
-          DEFAULT_CONFIGURATION['entries_display_order'])
-        @entries_file_name = config_hash.fetch('entries_file_name', DEFAULT_CONFIGURATION['entries_file_name'])
-        @entries_folder = config_hash.fetch('entries_folder', DEFAULT_CONFIGURATION['entries_folder'])
-        @carry_over_entries_to_today = config_hash.fetch('carry_over_entries_to_today',
-          DEFAULT_CONFIGURATION['carry_over_entries_to_today'])
-        @include_all = config_hash.fetch('include_all', DEFAULT_CONFIGURATION['include_all'])
-        @theme_name = config_hash.fetch('theme_name', DEFAULT_CONFIGURATION['theme_name'])
-        @themes_folder = config_hash.fetch('themes_folder', DEFAULT_CONFIGURATION['themes_folder'])
+      def assign_attributes_from(config_hash)
+        @version = config_hash.fetch(:version, VERSION)
+        @editor = config_hash.fetch(:editor, DEFAULT_CONFIGURATION[:editor])
+        @entries_display_order = config_hash.fetch(:entries_display_order,
+          DEFAULT_CONFIGURATION[:entries_display_order])
+        @carry_over_entries_to_today = config_hash.fetch(:carry_over_entries_to_today,
+          DEFAULT_CONFIGURATION[:carry_over_entries_to_today])
+        @include_all = config_hash.fetch(:include_all, DEFAULT_CONFIGURATION[:include_all])
+        @theme_name = config_hash.fetch(:theme_name, DEFAULT_CONFIGURATION[:theme_name])
       end
 
-      def validate_entries_folder
-        return if File.exist?(entries_folder)
+      def validate_theme_file
+        theme_path = themes_path(theme_name: theme_name)
+        return if File.exist?(theme_path)
 
-        errors.add(:base, "Entries folder \"#{entries_folder}\" does not exist")
-      end
-
-      def validate_theme
-        # No need to validate the existance of a default theme_name file
-        # because if it doesn't exist, we just use the default theme_name
-        # (ColorTheme::DEFAULT_THEME).
-        return if theme_name == ColorTheme::DEFAULT_THEME_NAME
-
-        theme_file = File.join(themes_folder || 'nil', theme_name)
-        return if File.exist?(theme_file)
-
-        errors.add(:base, "Theme file \"#{theme_file}\" does not exist")
-      end
-
-      def validate_themes_folder
-        return if Dir.exist?(themes_folder)
-
-        errors.add(:base, "Themes folder \"#{themes_folder}\" does not exist")
+        errors.add(:base, "Theme file \"#{theme_path}\" does not exist")
       end
     end
   end

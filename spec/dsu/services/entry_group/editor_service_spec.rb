@@ -46,13 +46,13 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
   describe '#call' do
     before do
       allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
-      editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
+      editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION[:editor]
       allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(true)
     end
 
     context 'when the editing session fails' do
       before do
-        editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
+        editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION[:editor]
         allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(false)
       end
 
@@ -182,7 +182,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
       end
 
       it 'adds the entries to the entry group object' do
-        expect(entry_group.entries.map(&:description)).to match_array(changed_entry_group.entries.map(&:description))
+        expect(entry_group.entries).to match_array(changed_entry_group.entries)
       end
 
       it 'does not change the entry group time' do

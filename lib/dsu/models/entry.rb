@@ -4,6 +4,7 @@ require 'active_model'
 require_relative '../support/descriptable'
 require_relative '../support/presentable'
 require_relative '../validators/description_validator'
+require_relative '../validators/version_validator'
 
 module Dsu
   module Models
@@ -14,14 +15,21 @@ module Dsu
       include Support::Descriptable
       include Support::Presentable
 
+      VERSION = 0
+
+      validates_with Validators::VersionValidator
       validates_with Validators::DescriptionValidator
 
       attr_reader :description
+      attr_accessor :version
 
-      def initialize(description:)
+      def initialize(description:, version: nil)
         raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
+        raise ArgumentError, 'version is the wrong object type' unless version.is_a?(Integer) || version.nil?
 
+        # Make sure to call the setter method so that the description is cleaned up.
         self.description = description
+        @version = version || VERSION
       end
 
       class << self
@@ -37,7 +45,10 @@ module Dsu
       end
 
       def to_h
-        { description: description }
+        {
+          version: version,
+          description: description
+        }
       end
 
       # Override == and hash so that we can compare Entry objects based
@@ -46,12 +57,16 @@ module Dsu
       def ==(other)
         return false unless other.is_a?(Entry)
 
-        description == other.description
+        version == other.version &&
+          description == other.description
       end
       alias eql? ==
 
       def hash
-        description.hash
+        [
+          version,
+          description
+        ].hash
       end
     end
   end

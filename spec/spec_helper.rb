@@ -9,7 +9,6 @@ require 'securerandom'
 require 'tempfile'
 require 'time'
 
-require_relative 'support/configuration_helpers'
 require_relative 'support/custom_matchers'
 
 require 'simplecov'
@@ -43,6 +42,5 @@ RSpec.configure do |config|
   end
 
   config.include ColorThemeHelpers
-  config.include ConfigurationHelpers
   config.include TimeHelpers
 end

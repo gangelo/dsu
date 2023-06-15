@@ -23,8 +23,8 @@ module Dsu
         end
 
         def render_theme_details
-          themes_folder = Models::Configuration.current_or_default.themes_folder
-          theme_file_names = Dir.glob("#{themes_folder}/*").map { |theme_path| File.basename(theme_path) }
+          themes_folder = Models::Configuration.instance.themes_folder
+          theme_file_names = Dir.glob("#{themes_folder}/*").map { |theme_path| File.basename(theme_path, '.*') }
           theme_file_names << default_theme_name unless theme_file_names.include?(default_theme_name)
           theme_file_names.sort.each_with_index do |theme_file, index|
             color_theme = if theme_file == default_theme_name

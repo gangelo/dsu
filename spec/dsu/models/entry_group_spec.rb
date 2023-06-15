@@ -247,7 +247,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       before do
         described_class.delete(time: time)
         allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
-        editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION['editor']
+        editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION[:editor]
         allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(true)
       end
 
@@ -311,9 +311,19 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
 
       context 'when an entry group file does NOT exists' do
-        let(:expected_error) { /Entry group does not exist/ }
+        let(:expected_error) { /Entry group file does not exist/ }
 
         it_behaves_like 'an error is raised'
+      end
+    end
+
+    describe '.each_h' do
+      before do
+        entries
+      end
+
+      context 'when there are entry group files' do
+        it 'yields each entry group as a Hash'
       end
     end
   end

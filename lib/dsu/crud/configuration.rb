@@ -1,22 +1,18 @@
 # frozen_string_literal: true
 
-require 'psych'
+require 'json'
+require_relative '../services/configuration/hydrator_service'
+require_relative '../support/fileable'
 
 module Dsu
   module Crud
     module Configuration
+      include Support::Fileable
+
       class << self
         def included(base)
           base.extend(ClassMethods)
         end
-      end
-
-      def delete
-        self.class.delete
-      end
-
-      def delete!
-        self.class.delete!
       end
 
       def exist?
@@ -32,47 +28,15 @@ module Dsu
       end
 
       module ClassMethods
-        def delete!
-          raise "Config file does not exist: \"#{config_path}\"" unless exist?
-
-          delete
-        end
-
-        def delete
-          return false unless exist?
-
-          File.delete(config_path)
-
-          true
-        end
-
         def exist?
           File.exist?(config_path)
-        end
-
-        def find
-          raise "Config file does not exist: \"#{config_path}\"" unless exist?
-
-          config_hash = Psych.safe_load(File.read(config_path), [Symbol])
-          new(config_hash: config_hash)
-        end
-
-        def find_or_create
-          return find if exist?
-
-          new(config_hash: self::DEFAULT_CONFIGURATION).save!
-        end
-
-        def find_or_initialize
-          return find if exist?
-
-          new(config_hash: self::DEFAULT_CONFIGURATION)
         end
 
         def save(config:)
           return false unless config.valid?
 
-          File.write(config_path, Psych.dump(config.to_h))
+          FileUtils.mkdir_p config_folder
+          File.write(config_path, JSON.pretty_generate(config.to_h))
 
           true
         end
@@ -83,18 +47,6 @@ module Dsu
           save(config: config)
 
           config
-        end
-
-        def config_file
-          '.dsu'
-        end
-
-        def config_path
-          File.join(config_folder, config_file)
-        end
-
-        def config_folder
-          root_folder
         end
       end
     end

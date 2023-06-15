@@ -4,6 +4,7 @@ require 'active_model'
 require_relative '../crud/color_theme'
 require_relative '../support/color_themable'
 require_relative '../support/descriptable'
+require_relative '../support/fileable'
 require_relative '../support/presentable'
 require_relative '../validators/color_theme_validator'
 require_relative '../validators/description_validator'
@@ -13,13 +14,14 @@ module Dsu
   module Models
     # This class represents a dsu color theme.
     class ColorTheme
+      extend Support::Fileable
       include ActiveModel::Model
       include Crud::ColorTheme
       include Support::ColorThemable
       include Support::Descriptable
       include Support::Presentable
 
-      VERSION = '1.0.0'
+      VERSION = 0
 
       DEFAULT_THEME_NAME = 'default'
       # Theme colors key/value pair format:
@@ -29,6 +31,7 @@ module Dsu
       #       <background> (optional, default is :default) == any color represented in the colorize gem
       #                    `String.colors` array.
       DEFAULT_THEME_COLORS = {
+        help: { color: :cyan },
         headers: { color: :cyan, mode: :underline },
         footers: { color: :light_cyan },
         names: { color: :cyan, mode: :bold },

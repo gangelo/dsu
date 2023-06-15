@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
+require_relative '../../models/configuration'
 require_relative '../../models/entry_group'
-require_relative '../../support/configurable'
 
 module Dsu
   module Views
     module EntryGroup
       class Edit
-        include Support::Configurable
-
         def initialize(entry_group:, options: {})
           raise ArgumentError, 'entry_group is nil' if entry_group.nil?
           raise ArgumentError, 'entry_group is the wrong object type' unless entry_group.is_a?(Models::EntryGroup)
@@ -114,7 +112,7 @@ module Dsu
         end
 
         def carry_over_entries_to_today?
-          configuration.merge(options).carry_over_entries_to_today?
+          Models::Configuration.instance.merge(options).carry_over_entries_to_today?
         end
       end
     end

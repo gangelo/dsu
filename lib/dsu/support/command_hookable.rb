@@ -14,7 +14,7 @@ module Dsu
       end
 
       module ClassMethods
-        def start(*)
+        def start(args = ARGV, options = {})
           before_command
           super
           after_command

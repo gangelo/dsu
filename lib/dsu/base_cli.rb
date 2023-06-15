@@ -13,6 +13,8 @@ require_relative 'support/times_sortable'
 require_relative 'version'
 require_relative 'views/entry_group/show'
 
+require_relative 'services/stdout_redirector_service'
+
 module Dsu
   class BaseCLI < ::Thor
     include Support::ColorThemable
@@ -25,6 +27,11 @@ module Dsu
     default_command :help
 
     class << self
+      def help(shell, subcommand = false) # rubocop:disable Style/OptionalBooleanParameter
+        help_text = Services::StdoutRedirectorService.call { super }
+        puts apply_color_theme(help_text, color_theme_color: color_theme.help)
+      end
+
       def exit_on_failure?
         false
       end
@@ -58,7 +65,7 @@ module Dsu
     def initialize(*args)
       super
 
-      @configuration = Models::Configuration.current_or_default
+      @configuration = Models::Configuration.instance
     end
 
     private

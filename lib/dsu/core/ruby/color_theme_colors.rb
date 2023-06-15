@@ -13,10 +13,4 @@ module ColorThemeColors
     # TODO: Error checking.
     merge!(merge_default_colors)
   end
-
-  private
-
-  def default_theme_colors
-    @default_theme_colors ||= { color: :default, mode: :default, background: :default }
-  end
 end

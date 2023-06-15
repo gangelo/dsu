@@ -74,10 +74,10 @@ RSpec.describe Dsu::Models::ColorTheme do
 
   describe 'constants' do
     it 'defines VERSION' do
-      expect(described_class::VERSION).to eq '1.0.0'
+      expect(described_class::VERSION).to eq 0
     end
 
-    it_behaves_like 'the version is a valid version string'
+    it_behaves_like 'the version is a valid version'
   end
 
   describe 'validations' do
@@ -102,6 +102,7 @@ RSpec.describe Dsu::Models::ColorTheme do
       end
 
       it 'returns false if the theme file does not exist' do
+        described_class.default.delete!
         expect(color_theme.exist?).to be false
       end
     end
@@ -160,7 +161,7 @@ RSpec.describe Dsu::Models::ColorTheme do
 
       context 'when the theme is the current theme in the configuration' do
         before do
-          Dsu::Models::Configuration.current_or_default.tap do |configuration|
+          Dsu::Models::Configuration.instance.tap do |configuration|
             configuration.theme_name = theme_name
             configuration.save!
           end
@@ -181,7 +182,7 @@ RSpec.describe Dsu::Models::ColorTheme do
       context 'when the theme is not the current theme in the configuration' do
         before do
           big_red = described_class.find_or_create(theme_name: 'big_red')
-          Dsu::Models::Configuration.current_or_default.tap do |configuration|
+          Dsu::Models::Configuration.instance.tap do |configuration|
             configuration.theme_name = big_red.theme_name
             configuration.save!
           end
@@ -199,7 +200,7 @@ RSpec.describe Dsu::Models::ColorTheme do
         end
 
         it 'does not change the current theme in the configuration' do
-          expect(Dsu::Models::Configuration.current_or_default.theme_name).to eq('big_red')
+          expect(Dsu::Models::Configuration.instance.theme_name).to eq('big_red')
         end
       end
     end
@@ -210,11 +211,13 @@ RSpec.describe Dsu::Models::ColorTheme do
       let(:expected_default_theme_hash) do
         {
           version: described_class::VERSION,
-          description: 'Default theme',
-          # Entry Group colors.
-          dates: { color: :cyan, mode: :bold },
-          # Entry colors.
+          description: 'Default theme.',
+          help: { color: :cyan },
+          headers: { color: :cyan, mode: :underline },
+          footers: { color: :light_cyan },
+          names: { color: :cyan, mode: :bold },
           descriptions: { mode: :bold },
+          dates: { color: :cyan, mode: :bold },
           indexes: { color: :light_cyan, mode: :italic },
           # Status colors.
           info: { color: :cyan },
@@ -223,10 +226,11 @@ RSpec.describe Dsu::Models::ColorTheme do
           error: { color: :light_yellow, background: :red },
           # Messages dsu displays other than status.
           message_headers: { color: :cyan, mode: :bold },
-          message: { color: :cyan },
-          # Generic colors.
-          generic_index: { color: :default, mode: :italic }
-        }
+          messages: { color: :cyan },
+          # Prompts
+          prompt: { color: :cyan, mode: :bold },
+          prompt_options: { color: :white, mode: :bold }
+          }
       end
 
       it 'returns the correct default theme hash' do
@@ -256,7 +260,7 @@ RSpec.describe Dsu::Models::ColorTheme do
       context 'when the configuration theme is set to a custom theme' do
         before do
           custom_color_theme
-          configuration = Dsu::Models::Configuration.current_or_default
+          configuration = Dsu::Models::Configuration.instance
           configuration.theme_name = custom_color_theme.theme_name
           configuration.save!
         end

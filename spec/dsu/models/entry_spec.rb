@@ -4,17 +4,29 @@ RSpec.describe Dsu::Models::Entry do
   subject(:entry) do
     # All defaults are set up to instantiate without errors
     # or vailidation errors by default.
-    described_class.new(description: description)
+    described_class.new(description: description, version: version)
   end
 
+  let(:version) { 0 }
   let(:description) { entry_0_hash[:description] }
 
   describe '#initialize' do
-    it 'initializes the model attributes' do
+    it 'initializes #version' do
+      expect(entry.version).to eq version
+    end
+
+    it 'initializes #description' do
       expect(entry.description).to eq description
     end
 
     context 'with invalid arguments' do
+      context 'when version is the wrong object type' do
+        let(:version) { :foo }
+        let(:expected_error) { /version is the wrong object type/ }
+
+        it_behaves_like 'an error is raised'
+      end
+
       context 'when description is nil' do
         let(:description) { nil }
         let(:expected_error) { /description is the wrong object type/ }
@@ -38,6 +50,11 @@ RSpec.describe Dsu::Models::Entry do
   end
 
   describe 'validations' do
+    it 'validates #version attribute with the VersionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::VersionValidator)
+    end
+
+
     it 'validates #description with DescriptionValidator' do
       expect(described_class).to validate_with_validator(Dsu::Validators::DescriptionValidator)
     end
@@ -82,8 +99,15 @@ RSpec.describe Dsu::Models::Entry do
   end
 
   describe '#hash' do
+    let(:expected_hash) do
+      [
+        version,
+        description
+      ].hash
+    end
+
     it 'returns the hash of the entry description' do
-      expect(entry.hash).to eq(description.hash)
+      expect(entry.hash).to eq(expected_hash)
     end
   end
 end

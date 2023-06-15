@@ -3,7 +3,6 @@
 require_relative '../../models/color_theme'
 require_relative '../../models/entry'
 require_relative '../../support/color_themable'
-require_relative '../../support/configurable'
 require_relative '../../support/time_formatable'
 require_relative '../../views/shared/model_errors'
 require_relative '../stdout_redirector_service'
@@ -15,7 +14,6 @@ module Dsu
     module EntryGroup
       class EditorService
         include Support::ColorThemable
-        include Support::Configurable
         include Support::TimeFormatable
 
         def initialize(entry_group:, options: {})
@@ -68,7 +66,7 @@ module Dsu
                   "Failed to open temporary file in editor '#{configuration.editor}'; " \
                   "the system error returned was: '#{$CHILD_STATUS}'.",
                   'Either set the EDITOR environment variable ' \
-                  'or set the dsu editor configuration option (`$ dsu config init`).',
+                  'or set the dsu editor configuration option (`$ dsu config info`).',
                   'Run `$ dsu help config` for more information.'
                 ], color_theme_color: color_theme.error
               )
@@ -96,6 +94,10 @@ module Dsu
 
         def color_theme
           @color_theme ||= Models::ColorTheme.current_or_default
+        end
+
+        def configuration
+          Models::Configuration.instance
         end
       end
     end

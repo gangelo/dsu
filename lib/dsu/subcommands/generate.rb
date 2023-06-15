@@ -2,6 +2,8 @@
 
 require 'thor'
 
+require_relative '../migration/service'
+
 module Dsu
   module Subcommands
     class Generate < ::Thor
@@ -15,15 +17,7 @@ module Dsu
         end
 
         def migrate_folder
-          @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
-        end
-
-        def migration_service_version
-          folder_path = File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/dsu/migration')
-          subfolders = Dir.entries(folder_path)
-            .select { |entry| File.directory?(File.join(folder_path, entry)) }
-            .reject { |entry| entry.start_with?('.') }
-          subfolders.map(&:to_f).max
+          Dsu::Migration::Service.migrate_folder
         end
       end
 
@@ -31,21 +25,17 @@ module Dsu
       long_desc <<-LONG_DESC
         NAME
 
-        `dsu generate migration [OPTION]` -- will create dsu migration file in the dsu `migrate` folder ("#{migrate_folder}") given an option OPTION.
+        `dsu generate migration` -- will create dsu migration file in the dsu `migrate` folder ("#{migrate_folder}") given an option OPTION.
 
         SYNOPSIS
 
-        dsu generate|-g migration [OPTION]
-
-        OPTIONS
-
-        -c|--config: Creates dsu config file migration in the dsu `migrate` folder ("#{migrate_folder}").
+        dsu generate|-g migration
       LONG_DESC
       option :config, type: :boolean, aliases: '-c', default: false
       def migration(migration_name)
         # TODO: Perform validations.
-        puts "Migration version: #{migration_service_version}"
-        # create_migration_file(migration_name)
+        puts "Migration service version: #{Dsu::Migration::Service::MIGRATION_SERVICE_VERSION}"
+        create_migration_file(migration_name)
       end
 
       private
@@ -80,48 +70,53 @@ module Dsu
         ]
       end
 
-      def migration_file_content(migration_class, type: nil)
-        return config_migration_file_content(migration_class) if type == :config
-
+      def migration_file_content(migration_class)
         <<~MIGRATION_FILE_CONTENT
           # frozen_string_literal: true
 
-          require_relative '../dsu/migrations/service'
-
-          module Dsu
-            module Migrate
-              class #{migration_class} < Migration::Service[#{migration_service_version}]
-              end
-            end
-          end
-        MIGRATION_FILE_CONTENT
-      end
-
-      def config_migration_file_content(migration_class)
-        <<~MIGRATION_FILE_CONTENT
-          # frozen_string_literal: true
-
-          require_relative '../dsu/migration/configuration_migrator_service'
+          require_relative '../dsu/migration/service'
+          require_relative '../dsu/models/color_theme'
           require_relative '../dsu/models/configuration'
+          require_relative '../dsu/models/entry'
+          require_relative '../dsu/models/entry_group'
 
           module Dsu
             module Migrate
-              class #{migration_class} < Migration::Service[#{migration_service_version}]
+              class << self
+                Models::EntryGroup
+              end
+
+              class #{migration_class} < Migration::Service[#{Dsu::Migration::Service::MIGRATION_SERVICE_VERSION}]
+                unless migration.migrate?
+                  raise 'This migration should not be run' \\
+                        "this migration file migration version (\#{migration_version}) " \\
+                        "is > the current migration version (\#{current_migration_version})."
+                end
+
                 def call
-                  # No sense in updating anything if we're not saving anything to disk.
+                  # No sense in updating the configuration if it's not saved to disk.
                   if Models::Configuration.exist?
                     # TODO: Make your configuration changes here; for example:
+                    # config_hash = Dsu::Models::Configuration.current_h!
                     # config_hash[:my_change] = 'my change'
                     # config_hash.delete(:delete_me)
+                    # config_hash[:version] = migration_version
+                    # Models::Configuration.new(config_hash: config_hash).save!
                   end
 
+                  # TODO: Apply Entry Group/Entry changes here.
+                  # TODO: Apply Color Theme changes here.
+
                   super
+                rescue StandardError => e
+                  puts "Error running migration \#{File.basename(__FILE__)}: \#{e.message}"
+                  raise
                 end
 
                 private
 
                 def migration_version
-                  File.basename(__FILE__).match(MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
+                  File.basename(__FILE__).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
                 end
               end
             end

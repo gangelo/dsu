@@ -7,18 +7,16 @@ module Dsu
     module Version10
       # This is the base class for all migration services.
       class MigrationService
-        MIGRATION_VERSION_REGEX = /(\A\d+)/
-        MIGRATION_VERSION_FILE_NAME = 'migration_version.yml'
+        # attr_reader :object
 
-        attr_reader :object
+        # def initialize(object:)
+        #   raise ArgumentError, 'object is nil' if object.nil?
 
-        def initialize(object:)
-          raise ArgumentError, 'object is nil' if object.nil?
-
-          @object = object.dup
-        end
+        #   @object = object.dup
+        # end
 
         class << self
+          # To run migrations, run this class method.
           def run_migrations!
             puts "dsu version: #{Dsu::VERSION}"
             puts 'Running migrations...'
@@ -33,6 +31,7 @@ module Dsu
           end
 
           def run_migration!(migration_path:)
+            migration_path = migration_path.sub(/\.[^.]+\z/, '')
             puts "Running migration: #{File.basename(migration_path)}..."
             # Requiring the migration files will run the migrations in each file.
             require migration_path
@@ -40,7 +39,7 @@ module Dsu
 
           # Migrate version file methods
           def migration_version_file_path
-            @migration_version_file_path ||= File.join(migrate_folder, MIGRATION_VERSION_FILE_NAME)
+            @migration_version_file_path ||= File.join(migrate_folder, Migration::MIGRATION_VERSION_FILE_NAME)
           end
 
           private
@@ -59,7 +58,7 @@ module Dsu
           # Returns a hash of migration files that need to be applied, sorted asc by migration version.
           def migration_files_info
             migration_files_info = Dir.glob("#{migrate_folder}/*").filter_map do |file_path|
-              migration_version = File.basename(file_path).match(MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
+              migration_version = File.basename(file_path).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
               next if migration_version.nil? || current_migration_version >= migration_version
 
               { migration_version: migration_version, file_path: file_path }
@@ -67,7 +66,7 @@ module Dsu
 
             migration_files_info.sort_by do |migration_file_info|
               migration_file_info[:migration_version]
-            end.map(&:values).to_h || {}
+            end.to_h(&:values) || {}
           end
         end
 
@@ -79,11 +78,11 @@ module Dsu
           # NOTE: This method must be implemented by the subclass. The subclass is responsible for
           # making any updates necessary to the object before calling super!
 
-          save_model!
+          #save_model!
           update_migration_version!
 
           # Make sure we return the updated object before returning.
-          object
+          #object
         end
 
         def migrate?
@@ -93,9 +92,9 @@ module Dsu
         private
 
         # Override this method and save any changes to the model to disk here.
-        def save_model!
-          raise NotImplementedError, 'You must implement the #save_model! method.'
-        end
+        # def save_model!
+        #   raise NotImplementedError, 'You must implement the #save_model! method.'
+        # end
 
         # This updates the migration version file with the current migration version.
         # This method is called from the #call method; however, you can call it directly
@@ -105,8 +104,7 @@ module Dsu
           # Do nothing unless the migration version is greater than the current migration version.
           return unless migrate?
 
-          migration_version_hash = migration_version_hash_for(migration_version: migration_version)
-          File.write(migration_version_file_path, Psych.dump(migration_version_hash))
+          File.write(migration_version_file_path, Psych.dump({ migration_version: migration_version }))
         end
 
         #
@@ -123,9 +121,9 @@ module Dsu
           raise NotImplementedError, 'You must implement the #migration_version method.'
         end
 
-        def migration_version_hash_for(migration_version:)
-          { migration_version: migration_version }
-        end
+        # def migration_version_hash_for(migration_version:)
+        #   { migration_version: migration_version }
+        # end
 
         def migration_version_file_path
           self.class.send(:migration_version_file_path)

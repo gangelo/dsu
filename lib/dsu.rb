@@ -8,7 +8,7 @@ require 'pry-byebug' if ENV['DEV_ENV']
 require 'thor'
 require 'time'
 
-Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
+Dir.glob("#{__dir__}/dsu/core/ruby/**/*.rb").each do |file|
   require file
 end
 
@@ -16,3 +16,7 @@ Array.include(WrapAndJoin)
 DateAndTime::Calculations.include(NotToday)
 Hash.include(ColorThemeColors)
 Hash.include(ColorThemeMode)
+
+Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
+  require file
+end

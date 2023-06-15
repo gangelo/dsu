@@ -1,11 +1,15 @@
 # frozen_string_literal: true
 
+require 'fileutils'
 require 'psych'
 require_relative '../models/configuration'
+require_relative '../support/fileable'
 
 module Dsu
   module Crud
     module ColorTheme
+      include Support::Fileable
+
       class << self
         def included(base)
           base.extend(ClassMethods)
@@ -34,10 +38,7 @@ module Dsu
 
       module ClassMethods
         def delete!(theme_name:)
-          unless exist?(theme_name: theme_name)
-            raise "Theme file does not exist for theme \"#{theme_name}\": " \
-                  "\"#{color_theme_path(theme_name: theme_name)}\""
-          end
+          raise file_does_not_exist_message(theme_name) unless exist?(theme_name: theme_name)
 
           delete(theme_name: theme_name)
         end
@@ -45,8 +46,8 @@ module Dsu
         def delete(theme_name:)
           return false unless exist?(theme_name: theme_name)
 
-          color_theme_path = color_theme_path(theme_name: theme_name)
-          File.delete(color_theme_path)
+          themes_path = themes_path(theme_name: theme_name)
+          File.delete(themes_path)
 
           reset_default_configuration_color_theme_if!(deleted_theme_name: theme_name)
 
@@ -54,15 +55,15 @@ module Dsu
         end
 
         def exist?(theme_name:)
-          color_theme_path = color_theme_path(theme_name: theme_name)
-          File.exist?(color_theme_path)
+          themes_path = themes_path(theme_name: theme_name)
+          File.exist?(themes_path)
         end
 
         def find(theme_name:)
           raise "Color theme does not exist: \"#{theme_name}\"" unless exist?(theme_name: theme_name)
 
-          color_theme_path = color_theme_path(theme_name: theme_name)
-          color_theme_hash = Psych.safe_load(File.read(color_theme_path), [Symbol])
+          themes_path = themes_path(theme_name: theme_name)
+          color_theme_hash = Psych.safe_load(File.read(themes_path), [Symbol])
           new(theme_name: theme_name, theme_hash: color_theme_hash)
         end
 
@@ -81,8 +82,9 @@ module Dsu
         def save(color_theme:)
           return false unless color_theme.valid?
 
-          color_theme_path = color_theme_path(theme_name: color_theme.theme_name)
-          File.write(color_theme_path, Psych.dump(color_theme.to_h))
+          FileUtils.mkdir_p themes_folder
+          themes_path = themes_path(theme_name: color_theme.theme_name)
+          File.write(themes_path, Psych.dump(color_theme.to_h))
 
           true
         end
@@ -93,30 +95,6 @@ module Dsu
           save(color_theme: color_theme)
 
           color_theme
-        end
-
-        def hash_for(theme_name:)
-          raise "Color theme does not exist: \"#{theme_name}\"" unless exist?(theme_name: theme_name)
-
-          # Do not load the class because it is possible
-          color_theme_path = color_theme_path(theme_name: theme_name)
-          Psych.safe_load(File.read(color_theme_path), [Symbol])
-        end
-
-        def color_theme_file(theme_name:)
-          # Basicall returns the color theme name for now, but let's keep this
-          # in case we want to add a file extension later on.
-          theme_name
-        end
-
-        def color_theme_path(theme_name:)
-          File.join(color_theme_folder, color_theme_file(theme_name: theme_name))
-        end
-
-        def color_theme_folder
-          color_theme_folder = configuration.themes_folder
-          FileUtils.mkdir_p(color_theme_folder)
-          color_theme_folder
         end
 
         private
@@ -135,11 +113,12 @@ module Dsu
         end
 
         def configuration
-          # NOTE: Do not memoize this, as it will cause issues if
-          # the configuration is updated (e.g. themes_folder,
-          # entries_folder, etc.); in this case, a memoized
-          # configuration would not reflect the updated values.
-          Models::Configuration.current_or_default
+          Models::Configuration.instance
+        end
+
+        def file_does_not_exist_message(theme_name)
+          "Theme file does not exist for theme \"#{theme_name}\": " \
+            "\"#{themes_path(theme_name: theme_name)}\""
         end
       end
     end

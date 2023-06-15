@@ -4,10 +4,13 @@ require 'json'
 require 'psych'
 require_relative '../models/entry_group'
 require_relative '../services/entry_group/hydrator_service'
+require_relative '../support/fileable'
 
 module Dsu
   module Crud
     module EntryGroup
+      include Support::Fileable
+
       class << self
         def included(base)
           base.extend(ClassMethods)
@@ -38,10 +41,7 @@ module Dsu
 
       module ClassMethods
         def delete!(time:)
-          unless exist?(time: time)
-            raise "Entry group file does not exist for time \"#{time}\": " \
-                  "\"#{entry_group_path(time: time)}\""
-          end
+          raise file_does_not_exist_message(time) unless exist?(time: time)
 
           delete(time: time)
         end
@@ -49,22 +49,22 @@ module Dsu
         def delete(time:)
           return false unless exist?(time: time)
 
-          entry_group_path = entry_group_path(time: time)
-          File.delete(entry_group_path)
+          entries_path = entries_path(time: time)
+          File.delete(entries_path)
 
           true
         end
 
         def exist?(time:)
-          entry_group_path = entry_group_path(time: time)
-          File.exist?(entry_group_path)
+          entries_path = entries_path(time: time)
+          File.exist?(entries_path)
         end
 
         def find(time:)
-          raise "Entry group does not exist for time \"#{time}\"" unless exist?(time: time)
+          raise file_does_not_exist_message(time) unless exist?(time: time)
 
-          entry_group_path = entry_group_path(time: time)
-          entry_group_json = File.read(entry_group_path)
+          entries_path = entries_path(time: time)
+          entry_group_json = File.read(entries_path)
           Services::EntryGroup::HydratorService.new(entry_group_json: entry_group_json).call
         end
 
@@ -84,9 +84,9 @@ module Dsu
           return false unless entry_group.valid?
           delete and return true if entry_group.entries.empty?
 
-          ensure_entry_group_folder_exists!
-          entry_group_path = entry_group_path(time: entry_group.time)
-          File.write(entry_group_path, JSON.pretty_generate(entry_group.to_h))
+          FileUtils.mkdir_p(entries_folder)
+          entries_path = entries_path(time: entry_group.time)
+          File.write(entries_path, JSON.pretty_generate(entry_group.to_h))
 
           true
         end
@@ -101,42 +101,15 @@ module Dsu
           entry_group
         end
 
-        def hash_for(time:)
-          entry_group_path = entry_group_path(time: time)
-          unless exist?(time: time)
-            raise "Entry group file does not exist for time \"#{time}\": " \
-                  "\"#{entry_group_path}\""
-          end
-
-          # Do not load the class because it is possible
-          entry_group_json = File.read(entry_group_path)
-          raise "TODO: return a hash."
-        end
-
-        def entry_group_file(time:)
-          time.strftime(configuration.entries_file_name)
-        end
-
-        def entry_group_path(time:)
-          File.join(entry_group_folder, entry_group_file(time: time))
-        end
-
-        def entry_group_folder
-          configuration.entries_folder
-        end
-
         private
 
-        def ensure_entry_group_folder_exists!
-          FileUtils.mkdir_p(entry_group_folder)
+        def configuration
+          Models::Configuration.instance
         end
 
-        def configuration
-          # NOTE: Do not memoize this, as it will cause issues if
-          # the configuration is updated (e.g. themes_folder,
-          # entries_folder, etc.); in this case, a memoized
-          # configuration would not reflect the updated values.
-          Models::Configuration.current_or_default
+        def file_does_not_exist_message(time)
+          "Entry group file does not exist for time \"#{time}\": " \
+            "\"#{entries_path(time: time)}\""
         end
       end
     end

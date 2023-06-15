@@ -2,15 +2,19 @@
 
 RSpec.shared_context 'when dir mock and cleanup is needed' do
   before do
-    mocked_default_configuration = Dsu::Models::Configuration.send(:remove_const, 'DEFAULT_CONFIGURATION').dup
-    mocked_default_configuration['entries_folder'] = temp_folder
-    mocked_default_configuration['themes_folder'] = temp_folder
-    Dsu::Models::Configuration.const_set(:DEFAULT_CONFIGURATION, mocked_default_configuration)
+    # mocked_default_configuration = Dsu::Models::Configuration.send(:remove_const, 'DEFAULT_CONFIGURATION').dup
+    # Dsu::Models::Configuration.const_set(:DEFAULT_CONFIGURATION, mocked_default_configuration)
 
     # Mock Dir.home and Dir.tmpdir to return the temporary directories
     allow(Dir).to receive(:home).and_return(temp_folder)
     allow(Dir).to receive(:tmpdir).and_return(temp_folder)
     allow(Tempfile).to receive(:new).with('dsu').and_return(temp_file)
+
+    theme_name = Dsu::Models::ColorTheme::DEFAULT_THEME_NAME
+    theme_hash = Dsu::Models::ColorTheme::DEFAULT_THEME
+    Dsu::Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
+
+    Dsu::Models::Configuration.instance.load(config_hash: Dsu::Models::Configuration::DEFAULT_CONFIGURATION).save!
   end
 
   after do

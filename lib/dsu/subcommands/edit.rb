@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative '../base_cli'
+require_relative 'base_subcommand'
 require_relative '../models/entry_group'
 require_relative '../views/entry_group/show'
 
 module Dsu
   module Subcommands
-    class Edit < Dsu::BaseCLI
+    class Edit < BaseSubcommand
       map %w[d] => :date
       map %w[n] => :today
       map %w[t] => :tomorrow

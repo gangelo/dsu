@@ -1,15 +1,11 @@
 # frozen_string_literal: true
 
-require_relative '../base_cli'
-require_relative '../models/color_theme'
-require_relative '../support/ask'
+require_relative 'base_subcommand'
 require_relative '../views/color_theme/index'
 
 module Dsu
   module Subcommands
-    class Theme < Dsu::BaseCLI
-      include Support::Ask
-
+    class Theme < BaseSubcommand
       map %w[c] => :create
       # map %w[e] => :edit
       map %w[d] => :delete
@@ -20,7 +16,7 @@ module Dsu
       desc 'create THEME_NAME [OPTIONS]',
         'Creates a dsu color theme named THEME_NAME.'
       long_desc <<-LONG_DESC
-      Create a dsu color theme named THEME_NAME in the #{Models::ColorTheme.color_theme_folder} folder.
+      Create a dsu color theme named THEME_NAME in the #{Models::ColorTheme.themes_folder} folder.
 
       SYNOPSIS
       \x5
@@ -60,10 +56,16 @@ module Dsu
       long_desc <<-LONG_DESC
       NAME
 
-      `dsu delete [THEME_NAME]` -- will delete the dsu color theme named THEME_NAME located in the #{Models::ColorTheme.color_theme_folder} folder.
+      `dsu delete [THEME_NAME]` -- will delete the dsu color theme named THEME_NAME located in the #{Models::ColorTheme.themes_folder} folder.
       LONG_DESC
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def delete(theme_name)
+        if theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
+          Views::Shared::Messages.new(messages: "Color theme \"#{theme_name}\" cannot be deleted.",
+            message_type: :error).render
+          return
+        end
+
         unless Models::ColorTheme.exist?(theme_name: theme_name)
           Views::Shared::Messages.new(messages: "Color theme \"#{theme_name}\" does not exist.",
             message_type: :error).render
@@ -85,9 +87,8 @@ module Dsu
       long_desc <<-LONG_DESC
       NAME
 
-      `dsu list` -- lists the available dsu color themes located in the #{Models::ColorTheme.color_theme_folder} folder.
+      `dsu list` -- lists the available dsu color themes located in the #{Models::ColorTheme.themes_folder} folder.
       LONG_DESC
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def list
         Views::ColorTheme::Index.new.render
       end
@@ -101,11 +102,12 @@ module Dsu
 
       SYNOPSIS
 
-      If THEME_NAME does not exist, you will be given the option to create a new theme
+      If THEME_NAME is not provided, the default theme will be used.
+      If THEME_NAME does not exist, you will be given the option to create a new theme.
 
       LONG_DESC
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def use(theme_name)
+      def use(theme_name = Models::ColorTheme::DEFAULT_THEME_NAME)
         return unless Models::ColorTheme.exist?(theme_name: theme_name) || create(theme_name)
 
         configuration.theme_name = theme_name

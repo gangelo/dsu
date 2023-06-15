@@ -5,7 +5,7 @@ RSpec.describe Dsu::Support::TimesSortable do
 
   let(:time) { Time.now }
   let(:times) { [time.yesterday, time, time.tomorrow] }
-  let(:entries_display_order) { 'asc' }
+  let(:entries_display_order) { :asc }
 
   describe '.times_sort' do
     context 'when the arguments are invalid' do
@@ -29,7 +29,7 @@ RSpec.describe Dsu::Support::TimesSortable do
 
       context 'when argument :entries_display_order is not a String' do
         let(:entries_display_order) { :bad }
-        let(:expected_error) { /entries_display_order is the wrong object type/ }
+        let(:expected_error) { /entries_display_order is invalid: ":bad"/ }
 
         it 'raises an error' do
           expect { times_sortable.times_sort(times: times, entries_display_order: entries_display_order) }.to raise_error(expected_error)
@@ -38,7 +38,7 @@ RSpec.describe Dsu::Support::TimesSortable do
 
       context 'when argument :entries_display_order is not a valid sort order' do
         let(:entries_display_order) { 'sideways' }
-        let(:expected_error) { /entries_display_order is invalid/ }
+        let(:expected_error) { /entries_display_order is the wrong object type/ }
 
         it 'raises an error' do
           expect { times_sortable.times_sort(times: times, entries_display_order: entries_display_order) }.to raise_error(expected_error)
@@ -54,7 +54,7 @@ RSpec.describe Dsu::Support::TimesSortable do
       end
 
       context 'when argument :entries_display_order is "asc"' do
-        let(:entries_display_order) { 'asc' }
+        let(:entries_display_order) { :asc }
 
         it 'returns the times in ascending order' do
           expect(times_sortable.times_sort(times: times, entries_display_order: entries_display_order)).to eq times.sort
@@ -62,7 +62,7 @@ RSpec.describe Dsu::Support::TimesSortable do
       end
 
       context 'when argument :entries_display_order is "desc"' do
-        let(:entries_display_order) { 'desc' }
+        let(:entries_display_order) { :desc }
 
         it 'returns the times in descending order' do
           expect(times_sortable.times_sort(times: times, entries_display_order: entries_display_order)).to eq times.reverse

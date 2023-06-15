@@ -5,7 +5,7 @@ module Dsu
     module TimesSortable
       def times_sort(times:, entries_display_order: nil)
         times = times.dup
-        entries_display_order ||= 'asc'
+        entries_display_order ||= :asc
 
         validate_times_argument!(times: times)
         validate_entries_display_order_argument!(entries_display_order: entries_display_order)
@@ -18,7 +18,7 @@ module Dsu
         # properly reverse the times array, it needs to first be sorted in
         # ascending order before being reversed.
         times.sort!
-        times.reverse! if entries_display_order == 'desc'
+        times.reverse! if entries_display_order == :desc
 
         times
       end
@@ -48,12 +48,12 @@ module Dsu
       end
 
       def validate_entries_display_order_argument!(entries_display_order:)
-        unless entries_display_order.nil? || entries_display_order.is_a?(String)
+        unless entries_display_order.nil? || entries_display_order.is_a?(Symbol)
           raise ArgumentError, "entries_display_order is the wrong object type: \"#{entries_display_order.class}\""
         end
 
-        unless %w[asc desc].include?(entries_display_order)
-          raise ArgumentError, "entries_display_order is invalid: \"#{entries_display_order}\""
+        unless %i[asc desc].include?(entries_display_order)
+          raise ArgumentError, "entries_display_order is invalid: \":#{entries_display_order}\""
         end
       end
 

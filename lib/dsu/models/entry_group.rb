@@ -3,6 +3,7 @@
 require 'active_model'
 require_relative '../crud/entry_group/'
 require_relative '../services/entry_group/editor_service'
+require_relative '../support/fileable'
 require_relative '../support/presentable'
 require_relative '../support/time_comparable'
 require_relative '../support/time_formatable'
@@ -16,13 +17,14 @@ module Dsu
     # This class represents a group of entries for a given day. IOW,
     # things someone might want to share at their daily standup (DSU).
     class EntryGroup
+      extend Support::Fileable
       include ActiveModel::Model
       include Crud::EntryGroup
       include Support::Presentable
       include Support::TimeComparable
       include Support::TimeFormatable
 
-      VERSION = '1.0.0'
+      VERSION = 0
 
       attr_accessor :time, :version
       attr_reader :entries
@@ -33,6 +35,7 @@ module Dsu
 
       def initialize(time: nil, entries: [], version: nil)
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?
+        raise ArgumentError, 'version is the wrong object type' unless version.is_a?(Integer) || version.nil?
 
         @time = ensure_local_time(time)
         @version = version || VERSION

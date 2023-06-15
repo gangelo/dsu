@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative '../base_cli'
+require_relative 'base_subcommand'
 require_relative '../support/command_options/dsu_times'
 require_relative '../support/time_formatable'
 
 module Dsu
   module Subcommands
-    class List < Dsu::BaseCLI
+    class List < BaseSubcommand
       include Support::CommandOptions::DsuTimes
       include Support::TimeFormatable
 
