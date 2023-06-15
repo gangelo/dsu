@@ -33,10 +33,7 @@ module Dsu
         # hydrated from the JSON string.
         def hydrate
           JSON.parse(config_json, symbolize_names: true).tap do |hash|
-            hash[:version] = hash[:version].to_i
             hash[:entries_display_order] = hash[:entries_display_order].to_sym
-            hash[:carry_over_entries_to_today] = hash[:carry_over_entries_to_today] == 'true'
-            hash[:include_all] = hash[:include_all] == 'true'
           end
         rescue JSON::ParserError => e
           Models::Configuration::DEFAULT_CONFIGURATION

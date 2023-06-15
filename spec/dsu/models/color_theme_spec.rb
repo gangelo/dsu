@@ -213,7 +213,7 @@ RSpec.describe Dsu::Models::ColorTheme do
           version: described_class::VERSION,
           description: 'Default theme.',
           help: { color: :cyan },
-          headers: { color: :cyan, mode: :underline },
+          subheaders: { color: :cyan, mode: :underline },
           footers: { color: :light_cyan },
           names: { color: :cyan, mode: :bold },
           descriptions: { mode: :bold },

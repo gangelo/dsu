@@ -60,7 +60,10 @@ module Dsu
       LONG_DESC
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def delete(theme_name)
+        display_dsu_header
+
         if theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
+          display_dsu_header
           Views::Shared::Messages.new(messages: "Color theme \"#{theme_name}\" cannot be deleted.",
             message_type: :error).render
           return
@@ -108,11 +111,24 @@ module Dsu
       LONG_DESC
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def use(theme_name = Models::ColorTheme::DEFAULT_THEME_NAME)
-        return unless Models::ColorTheme.exist?(theme_name: theme_name) || create(theme_name)
+        unless Models::ColorTheme.exist?(theme_name: theme_name)
+          display_dsu_header
+          return unless create(theme_name)
+        end
 
         configuration.theme_name = theme_name
         configuration.save!
+        # We need to display the header after the theme is updated so that it is displayed in the
+        # correct theme color.
+        display_dsu_header
         Views::Shared::Messages.new(messages: "Using color theme \"#{theme_name}\".", message_type: :info).render
+      end
+
+      private
+
+      def display_dsu_header
+        puts apply_color_theme('Dsu', color_theme_color: color_theme.dsu_header)
+        puts
       end
     end
   end

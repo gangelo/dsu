@@ -32,7 +32,9 @@ module Dsu
       #                    `String.colors` array.
       DEFAULT_THEME_COLORS = {
         help: { color: :cyan },
-        headers: { color: :cyan, mode: :underline },
+        dsu_header: { color: :cyan, mode: :bold },
+        dsu_footer: { color: :light_cyan },
+        subheaders: { color: :cyan, mode: :underline },
         footers: { color: :light_cyan },
         names: { color: :cyan, mode: :bold },
         descriptions: { mode: :bold },

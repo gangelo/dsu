@@ -14,7 +14,7 @@ module Dsu
       end
 
       def header
-        apply_color_theme('Color Themes', color_theme_color: color_theme.headers)
+        apply_color_theme('Color Themes', color_theme_color: color_theme.subheaders)
       end
 
       def footer
