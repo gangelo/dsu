@@ -213,6 +213,8 @@ RSpec.describe Dsu::Models::ColorTheme do
           version: described_class::VERSION,
           description: 'Default theme.',
           help: { color: :cyan },
+          dsu_header: { color: :cyan, mode: :bold },
+          dsu_footer: { color: :light_cyan },
           subheaders: { color: :cyan, mode: :underline },
           footers: { color: :light_cyan },
           names: { color: :cyan, mode: :bold },
@@ -230,7 +232,7 @@ RSpec.describe Dsu::Models::ColorTheme do
           # Prompts
           prompt: { color: :cyan, mode: :bold },
           prompt_options: { color: :white, mode: :bold }
-          }
+        }
       end
 
       it 'returns the correct default theme hash' do
