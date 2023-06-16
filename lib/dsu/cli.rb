@@ -86,7 +86,7 @@ module Dsu
       'Manage DSU themes'
     subcommand :theme, Subcommands::Theme
 
-    if ENV['DEV_ENV']
+    if Dsu.env.development?
       desc 'generate, -g SUBCOMMAND',
         'Runs the DSU generator for the given SUBCOMMAND'
       subcommand :generate, Subcommands::Generate

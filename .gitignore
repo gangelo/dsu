@@ -22,7 +22,7 @@ snippets.rb
 readme.txt
 todo.txt
 
-.env
+*.env
 /spec/.tmp
 
 migration_version.yml

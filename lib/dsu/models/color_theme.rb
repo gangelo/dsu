@@ -33,7 +33,7 @@ module Dsu
       DEFAULT_THEME_COLORS = {
         help: { color: :cyan },
         dsu_header: { color: :white, mode: :bold, background: :cyan },
-        dsu_footer: { color: :light_cyan },
+        dsu_footer: { color: :cyan },
         header: { color: :cyan, mode: :bold },
         subheader: { color: :cyan, mode: :underline },
         body: { color: :cyan },

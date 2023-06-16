@@ -29,7 +29,7 @@ module Dsu
 
       module ClassMethods
         def safe_create_unless_exists!
-          return unless exist?
+          return if exist?
 
           FileUtils.mkdir_p config_folder
           File.write(config_path, JSON.pretty_generate(self::DEFAULT_CONFIGURATION))

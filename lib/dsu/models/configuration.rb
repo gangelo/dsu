@@ -65,7 +65,10 @@ module Dsu
         :theme_name
 
       def initialize
-        reload! and return if exist?
+        if exist?
+          reload!
+          return
+        end
 
         load(config_hash: DEFAULT_CONFIGURATION).save!
       end
