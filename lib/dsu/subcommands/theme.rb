@@ -43,10 +43,10 @@ module Dsu
           theme_hash = Models::ColorTheme::DEFAULT_THEME.dup
           theme_hash[:description] = options[:description] || "#{theme_name.capitalize} color theme"
           Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
-          Views::Shared::Messages.new(messages: "Created color theme \"#{theme_name}\".", message_type: :success).render
+          Views::Shared::Messages.new(messages: "\nCreated color theme \"#{theme_name}\".", message_type: :info).render
           true
         else
-          Views::Shared::Messages.new(messages: 'Canceled.', message_type: :info).render
+          Views::Shared::Messages.new(messages: "\nCanceled.", message_type: :info).render
           false
         end
       end
@@ -79,9 +79,9 @@ module Dsu
           options: %w[y N])
         if yes?(prompt, options: options)
           Models::ColorTheme.delete!(theme_name: theme_name)
-          Views::Shared::Messages.new(messages: "Deleted color theme \"#{theme_name}\".", message_type: :success).render
+          Views::Shared::Messages.new(messages: "\nDeleted color theme \"#{theme_name}\".", message_type: :info).render
         else
-          Views::Shared::Messages.new(messages: 'Canceled.', message_type: :info).render
+          Views::Shared::Messages.new(messages: "\nCanceled.", message_type: :info).render
         end
       end
 

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-require_relative 'base_subcommand'
 require_relative '../support/command_options/dsu_times'
 require_relative '../support/time_formatable'
+require_relative '../views/entry_group/shared/no_entries_to_display'
+require_relative 'base_subcommand'
 
 module Dsu
   module Subcommands
@@ -151,7 +152,8 @@ module Dsu
         # displaying DSU entries are applied; this is more of a list command.
         times = times_sort(times: times, entries_display_order: entries_display_order)
         view_entry_groups(times: times, options: options) do |total_entry_groups, _total_entry_groups_not_shown|
-          nothing_to_display_banner_for(times) if total_entry_groups.zero?
+          #nothing_to_display_banner_for(times) if total_entry_groups.zero?
+          Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options) if total_entry_groups.zero?
         end
       rescue ArgumentError => e
         puts apply_color_theme("Error: #{e.message}", color_theme_color: color_theme.error)
@@ -160,13 +162,13 @@ module Dsu
 
       private
 
-      def nothing_to_display_banner_for(entry_group_times)
-        entry_group_times.sort!
-        time_range = "#{formatted_time(time: entry_group_times.first)} " \
-                     "through #{formatted_time(time: entry_group_times.last)}"
-        message = "(nothing to display for #{time_range})"
-        puts apply_color_theme(message, color_theme_color: color_theme.info)
-      end
+      # def nothing_to_display_banner_for(entry_group_times)
+      #   entry_group_times.sort!
+      #   time_range = "#{formatted_time(time: entry_group_times.first)} " \
+      #                "through #{formatted_time(time: entry_group_times.last)}"
+      #   message = "(nothing to display for #{time_range})"
+      #   puts apply_color_theme(message, color_theme_color: color_theme.info)
+      # end
 
       # This method will unconditionally display the FIRST and LAST entry groups
       # associated with the times provided by the <times> argument. All other

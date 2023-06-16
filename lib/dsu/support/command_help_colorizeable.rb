@@ -5,7 +5,7 @@ require_relative '../support/color_themable'
 
 module Dsu
   module Support
-    module SubcommandHelpColorizable
+    module CommandHelpColorizable
       class << self
         def included(base)
           base.extend(ClassMethods)

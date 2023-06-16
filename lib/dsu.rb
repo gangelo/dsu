@@ -20,3 +20,6 @@ Hash.include(ColorThemeMode)
 Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
   require file
 end
+
+Dsu::Models::ColorTheme.safe_create_unless_exists!
+Dsu::Models::Configuration.safe_create_unless_exists!

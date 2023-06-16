@@ -7,14 +7,6 @@ module Dsu
     module Version10
       # This is the base class for all migration services.
       class MigrationService
-        # attr_reader :object
-
-        # def initialize(object:)
-        #   raise ArgumentError, 'object is nil' if object.nil?
-
-        #   @object = object.dup
-        # end
-
         class << self
           # To run migrations, run this class method.
           def run_migrations!
@@ -75,14 +67,7 @@ module Dsu
         end
 
         def call
-          # NOTE: This method must be implemented by the subclass. The subclass is responsible for
-          # making any updates necessary to the object before calling super!
-
-          #save_model!
           update_migration_version!
-
-          # Make sure we return the updated object before returning.
-          #object
         end
 
         def migrate?
@@ -90,11 +75,6 @@ module Dsu
         end
 
         private
-
-        # Override this method and save any changes to the model to disk here.
-        # def save_model!
-        #   raise NotImplementedError, 'You must implement the #save_model! method.'
-        # end
 
         # This updates the migration version file with the current migration version.
         # This method is called from the #call method; however, you can call it directly
@@ -120,10 +100,6 @@ module Dsu
           # migration file.
           raise NotImplementedError, 'You must implement the #migration_version method.'
         end
-
-        # def migration_version_hash_for(migration_version:)
-        #   { migration_version: migration_version }
-        # end
 
         def migration_version_file_path
           self.class.send(:migration_version_file_path)

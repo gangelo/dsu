@@ -32,22 +32,19 @@ module Dsu
       #                    `String.colors` array.
       DEFAULT_THEME_COLORS = {
         help: { color: :cyan },
-        dsu_header: { color: :cyan, mode: :bold },
+        dsu_header: { color: :white, mode: :bold, background: :cyan },
         dsu_footer: { color: :light_cyan },
-        subheaders: { color: :cyan, mode: :underline },
-        footers: { color: :light_cyan },
-        names: { color: :cyan, mode: :bold },
-        descriptions: { mode: :bold },
-        dates: { color: :cyan, mode: :bold },
-        indexes: { color: :light_cyan, mode: :italic },
+        header: { color: :cyan, mode: :bold },
+        subheader: { color: :cyan, mode: :underline },
+        body: { color: :cyan },
+        footer: { color: :light_cyan },
+        date: { color: :cyan, mode: :bold },
+        index: { color: :light_cyan },
         # Status colors.
         info: { color: :cyan },
         success: { color: :green },
         warning: { color: :yellow },
         error: { color: :light_yellow, background: :red },
-        # Messages dsu displays other than status.
-        message_headers: { color: :cyan, mode: :bold },
-        messages: { color: :cyan },
         # Prompts
         prompt: { color: :cyan, mode: :bold },
         prompt_options: { color: :white, mode: :bold }

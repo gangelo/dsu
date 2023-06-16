@@ -39,12 +39,6 @@ module Dsu
           entry_group.validate!
           puts entry_group_presenter.no_entries_available and return if entry_group.entries.empty?
 
-          # entry_group.entries.each_with_index do |entry, index|
-          #   prefix = apply_color_theme("#{format('%03s', index + 1)}. ",
-          #     color_theme_color: color_theme.indexes)
-          #   description = apply_color_theme(entry.description, color_theme_color: color_theme.descriptions)
-          #   puts "#{prefix} #{description}"
-          # end
           entry_group.entries.each_with_index do |entry, index|
             entry_presenter = entry.presenter
             puts entry_presenter.formatted_description_with_index(index: index)

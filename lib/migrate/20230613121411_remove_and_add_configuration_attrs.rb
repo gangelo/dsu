@@ -5,6 +5,7 @@ require_relative '../dsu/models/color_theme'
 require_relative '../dsu/models/configuration'
 require_relative '../dsu/models/entry'
 require_relative '../dsu/models/entry_group'
+require_relative '../dsu/support/fileable'
 
 module Dsu
   module Migrate
@@ -17,7 +18,7 @@ module Dsu
         end
 
         # No sense in updating the configuration if it's not saved to disk.
-        if Models::Configuration.exist?
+        if File.exist?(config_path)
           config_folder = Support::Fileable.root_folder
           config_path = File.join(config_folder, '.dsu')
           old_config_hash = Psych.safe_load(File.read(config_path), [Symbol])
@@ -26,11 +27,11 @@ module Dsu
           config_hash.delete('entries_file_name')
           config_hash.delete('themes_folder')
           config_hash['version'] = migration_version
-          binding.pry
           puts config_hash
           Models::Configuration.new(config_hash: config_hash).save!
         else
-          Models::Configuration.default.save!
+
+          Models::Configuration.instance
         end
 
         # TODO: Apply Entry Group/Entry changes here.

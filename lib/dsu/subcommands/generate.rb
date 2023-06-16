@@ -79,6 +79,7 @@ module Dsu
           require_relative '../dsu/models/configuration'
           require_relative '../dsu/models/entry'
           require_relative '../dsu/models/entry_group'
+          require_relative '../dsu/support/fileable'
 
           module Dsu
             module Migrate

@@ -55,7 +55,6 @@ module Dsu
     option :tomorrow, type: :boolean, aliases: '-t'
     option :yesterday, type: :boolean, aliases: '-y'
     option :today, type: :boolean, aliases: '-n', default: true
-
     def add(description)
       time = if options[:date].present?
         Time.parse(options[:date])

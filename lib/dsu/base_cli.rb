@@ -6,18 +6,19 @@ require_relative 'command_services/add_entry_service'
 require_relative 'models/color_theme'
 require_relative 'models/configuration'
 require_relative 'models/entry_group'
+require_relative 'services/stdout_redirector_service'
 require_relative 'support/color_themable'
+require_relative 'support/command_help_colorizeable'
 require_relative 'support/command_hookable'
 require_relative 'support/entry_group_viewable'
 require_relative 'support/times_sortable'
 require_relative 'version'
 require_relative 'views/entry_group/show'
 
-require_relative 'services/stdout_redirector_service'
-
 module Dsu
   class BaseCLI < ::Thor
     include Support::ColorThemable
+    include Support::CommandHelpColorizable
     include Support::CommandHookable
     include Support::EntryGroupViewable
     include Support::TimesSortable
@@ -26,12 +27,14 @@ module Dsu
 
     default_command :help
 
-    class << self
-      def help(shell, subcommand = false) # rubocop:disable Style/OptionalBooleanParameter
-        help_text = Services::StdoutRedirectorService.call { super }
-        puts apply_color_theme(help_text, color_theme_color: color_theme.help)
-      end
+    def initialize(*args)
+      super
 
+      @configuration = Models::Configuration.instance
+    end
+
+
+    class << self
       def exit_on_failure?
         false
       end
@@ -60,12 +63,6 @@ module Dsu
           In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted.
         OPTION_DESC
       end
-    end
-
-    def initialize(*args)
-      super
-
-      @configuration = Models::Configuration.instance
     end
 
     private

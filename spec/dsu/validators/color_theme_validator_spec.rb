@@ -20,12 +20,12 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
 
   context 'when a color theme color Hash is empty' do
     before do
-      allow(color_theme_validator).to receive(:dates).and_return({}) # rubocop:disable RSpec/SubjectStub
+      allow(color_theme_validator).to receive(:date).and_return({}) # rubocop:disable RSpec/SubjectStub
     end
 
     let(:expected_errors) do
       [
-        /:dates colors Hash is empty/
+        /:date colors Hash is empty/
       ]
     end
 
@@ -34,7 +34,7 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
 
   context 'when a color theme color Hash value is not a Symbol' do
     before do
-      allow(color_theme_validator).to receive(:dates) # rubocop:disable RSpec/SubjectStub
+      allow(color_theme_validator).to receive(:date) # rubocop:disable RSpec/SubjectStub
         .and_return({ color: :default, mode: :default, background: 'bad' })
     end
 
@@ -52,12 +52,12 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
 
   context 'when a color theme color Hash is not a Hash' do
     before do
-      allow(color_theme_validator).to receive(:dates).and_return(:foo) # rubocop:disable RSpec/SubjectStub
+      allow(color_theme_validator).to receive(:date).and_return(:foo) # rubocop:disable RSpec/SubjectStub
     end
 
     let(:expected_errors) do
       [
-        /:dates value is the wrong object type. "Hash" was expected, but "Symbol" was received./
+        /:date value is the wrong object type. "Hash" was expected, but "Symbol" was received./
       ]
     end
 

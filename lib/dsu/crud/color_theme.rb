@@ -37,6 +37,15 @@ module Dsu
       end
 
       module ClassMethods
+        def safe_create_unless_exists!
+          theme_name = self::DEFAULT_THEME_NAME
+          return if exist?(theme_name: theme_name)
+
+          FileUtils.mkdir_p themes_folder
+          themes_path = themes_path(theme_name: theme_name)
+          File.write(themes_path, Psych.dump(self::DEFAULT_THEME))
+        end
+
         def delete!(theme_name:)
           raise file_does_not_exist_message(theme_name) unless exist?(theme_name: theme_name)
 
@@ -104,11 +113,11 @@ module Dsu
         # we need to reset the configuration theme to the default theme.
         def reset_default_configuration_color_theme_if!(deleted_theme_name:)
           config = configuration
-          return if config.theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
+          return if config.theme_name == self::DEFAULT_THEME_NAME
           return unless config.theme_name == deleted_theme_name
           return unless config.exist?
 
-          config.theme_name = Models::ColorTheme::DEFAULT_THEME_NAME
+          config.theme_name = self::DEFAULT_THEME_NAME
           config.save!
         end
 

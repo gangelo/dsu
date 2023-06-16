@@ -28,13 +28,13 @@ module Dsu
         end
 
         def display_dsu_header
-          puts apply_color_theme('Dsu', color_theme_color: color_theme.dsu_header)
+          puts apply_color_theme("Dsu v#{Dsu::VERSION}", color_theme_color: color_theme.dsu_header)
           puts
         end
 
         def display_dsu_footer
           puts apply_color_theme('______________', color_theme_color: color_theme.dsu_footer)
-          puts apply_color_theme("v#{Dsu::VERSION} | Theme: #{color_theme.theme_name}",
+          puts apply_color_theme("Theme: #{color_theme.theme_name}",
             color_theme_color: color_theme.dsu_footer)
         end
 

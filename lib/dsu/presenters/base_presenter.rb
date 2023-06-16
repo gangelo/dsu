@@ -13,7 +13,7 @@ module Dsu
 
       def formatted_index(index:)
         apply_color_theme("#{format('%02s', index + 1)}. ",
-          color_theme_color: color_theme.indexes)
+          color_theme_color: color_theme.index)
       end
 
       def color_theme

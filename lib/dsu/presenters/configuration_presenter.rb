@@ -16,26 +16,21 @@ module Dsu
 
       def configuration_exists_header
         if exist?
-          return apply_color_theme("Configuration file (#{config_path}) contents:",
-            color_theme_color: color_theme.success.underline!)
+          return apply_color_theme("Configuration file contents (#{config_path})",
+            color_theme_color: color_theme.header)
         end
 
         [
-          apply_color_theme("Configuration file (#{config_path}) does not exist.",
-            color_theme_color: color_theme.warning),
+          apply_color_theme("Configuration file does not exist (#{config_path})",
+            color_theme_color: color_theme.header),
           apply_color_theme('The default configuration is being used:',
-            color_theme_color: color_theme.warning.underline!)
+            color_theme_color: color_theme.warning)
         ].join("\n")
       end
 
       def configuration_details
-        color = if exist?
-          color_theme.success
-        else
-          color_theme.warning
-        end
         to_h.each_with_index.filter_map do |config_entry, index|
-          formatted_config_entry_with_index(config_entry, index: index, color_theme_color: color)
+          formatted_config_entry_with_index(config_entry, index: index, color_theme_color: color_theme.body)
         end
       end
 

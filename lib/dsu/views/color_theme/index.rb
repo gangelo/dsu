@@ -18,7 +18,9 @@ module Dsu
         def render!
           presenter = color_theme.presenter
           puts presenter.header
+          puts
           render_theme_details
+          puts
           puts presenter.footer
         end
 

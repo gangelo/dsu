@@ -15,7 +15,7 @@ module Dsu
       end
 
       def formatted_time
-        colors = color_theme.dates
+        colors = color_theme.date
         apply_color_theme(Support::TimeFormatable.formatted_time(time: time), color_theme_color: colors)
       end
 
