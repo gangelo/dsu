@@ -152,7 +152,7 @@ module Dsu
         # displaying DSU entries are applied; this is more of a list command.
         times = times_sort(times: times, entries_display_order: entries_display_order)
         view_entry_groups(times: times, options: options) do |total_entry_groups, _total_entry_groups_not_shown|
-          #nothing_to_display_banner_for(times) if total_entry_groups.zero?
+          # nothing_to_display_banner_for(times) if total_entry_groups.zero?
           Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options) if total_entry_groups.zero?
         end
       rescue ArgumentError => e

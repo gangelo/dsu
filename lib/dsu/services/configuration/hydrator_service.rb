@@ -35,7 +35,7 @@ module Dsu
           JSON.parse(config_json, symbolize_names: true).tap do |hash|
             hash[:entries_display_order] = hash[:entries_display_order].to_sym
           end
-        rescue JSON::ParserError => e
+        rescue JSON::ParserError => _e
           Models::Configuration::DEFAULT_CONFIGURATION
         end
       end

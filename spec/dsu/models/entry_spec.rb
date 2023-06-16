@@ -54,7 +54,6 @@ RSpec.describe Dsu::Models::Entry do
       expect(described_class).to validate_with_validator(Dsu::Validators::VersionValidator)
     end
 
-
     it 'validates #description with DescriptionValidator' do
       expect(described_class).to validate_with_validator(Dsu::Validators::DescriptionValidator)
     end

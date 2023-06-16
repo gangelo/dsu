@@ -62,7 +62,7 @@ RSpec.describe Dsu::Models::Configuration do
         let(:expected_errors) do
           [
             "Entries display order can't be blank",
-            "Entries display order must be :asc or :desc"
+            'Entries display order must be :asc or :desc'
           ]
         end
 

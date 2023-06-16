@@ -15,7 +15,7 @@ module Dsu
         unless version.is_a?(Integer)
           record.errors.add(:version, 'is the wrong object type. ' \
                                       "\"Integer\" was expected, but \"#{version.class}\" was received.")
-          return
+          nil
         end
 
         # TODO: This validation should check the configuration version

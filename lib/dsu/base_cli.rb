@@ -33,7 +33,6 @@ module Dsu
       @configuration = Models::Configuration.instance
     end
 
-
     class << self
       def exit_on_failure?
         false
