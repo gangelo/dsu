@@ -5,15 +5,15 @@ module Dsu
     def env
       @env ||= Struct.new(:env) do
         def test?
-          env.fetch('DSU_DEV', nil) == 'test'
+          env.fetch('DSU_ENV', nil) == 'test'
         end
 
         def development?
-          env.fetch('DSU_DEV', nil) == 'development'
+          env.fetch('DSU_ENV', nil) == 'development'
         end
 
         def production?
-          env.fetch('DSU_DEV', 'production') == 'production'
+          env.fetch('DSU_ENV', 'production') == 'production'
         end
       end.new(ENV)
     end
