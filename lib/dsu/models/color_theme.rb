@@ -92,6 +92,14 @@ module Dsu
       end
 
       class << self
+        def build_color_theme(theme_name:, base_color:, description:)
+          theme_hash = Models::ColorTheme.send(:replace, color_theme: default,
+            replace_color: :cyan, with_color: base_color).tap do |hash|
+            hash[:description] = description
+          end
+          new(theme_name: theme_name, theme_hash: theme_hash)
+        end
+
         # Returns the current color theme if it exists; otherwise,
         # it returns the default color theme.
         def current_or_default
@@ -124,6 +132,24 @@ module Dsu
 
         def default_theme_color_keys
           DEFAULT_THEME_COLORS.keys
+        end
+
+        def replace(color_theme:, replace_color:, with_color:)
+          colors_theme_hash = color_theme.to_theme_colors_h.tap do |hash|
+            hash.each_key do |key|
+              hash[key] = replace_color(theme_color: hash[key],
+                replace_color: replace_color, with_color: with_color)
+            end
+          end
+          DEFAULT_THEME.merge(colors_theme_hash)
+        end
+
+        def replace_color(theme_color:, replace_color:, with_color:)
+          %i[color background].each do |color_type|
+            color = theme_color[color_type].to_s.sub(replace_color.to_s, with_color.to_s)
+            theme_color[color_type] = color.sub('light_light_', 'light_').to_sym
+          end
+          theme_color
         end
       end
 
@@ -166,6 +192,8 @@ module Dsu
       end
 
       private
+
+      attr_writer :theme_name, :description
 
       def default_theme_color_keys
         @default_theme_color_keys ||= self.class.send(:default_theme_color_keys)

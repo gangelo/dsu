@@ -35,6 +35,19 @@ RSpec.describe 'Migrations' do
   describe 'migrating from version 0 to version 20230613121411' do
     subject(:migration_service_version) { Dsu::Migration::Service[1.0] }
 
+    before do
+      migrate_folder = Dsu::Migration::Service.migrate_folder
+      all_migration_file_info = [
+        {
+          migration_class: 'Dsu::Migrate::RemoveAndAddConfigurationAttrs',
+          path: File.join(migrate_folder, '20230613121411_remove_and_add_configuration_attrs.rb').to_s,
+          require_file: File.join(migrate_folder, '20230613121411_remove_and_add_configuration_attrs').to_s,
+          version: 20230613121411 # rubocop:disable Style/NumericLiterals
+        }
+      ]
+      allow(Dsu::Migration::Service).to receive(:all_migration_files_info).and_return(all_migration_file_info)
+    end
+
     let(:start_migration_version) { 0 }
     let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
 

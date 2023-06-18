@@ -3,11 +3,15 @@
 require 'thor'
 
 require_relative '../migration/service'
+require_relative '../models/color_theme'
+require_relative '../support/color_themable'
 require_relative 'base_subcommand'
 
 module Dsu
   module Subcommands
     class Generate < BaseSubcommand
+      include Support::ColorThemable
+
       map %w[m] => :migration
 
       default_command :help
@@ -26,20 +30,29 @@ module Dsu
       long_desc <<-LONG_DESC
         NAME
 
-        `dsu generate migration` -- will create dsu migration file in the dsu `migrate` folder ("#{migrate_folder}") given an option OPTION.
+        `dsu generate migration MIGRATION` -- will create dsu migration file named MIGRATION in the dsu `migrate` folder ("#{migrate_folder}").
 
         SYNOPSIS
 
-        dsu generate|-g migration
+        dsu generate|-g migration MIGRATION
+
+        EXAMPLES
+
+        `dsu generate migration AddThemeNameToConfiguration` will generate a migration file named "<%Y%m%d%H%M%S>_add_theme_name_to_configuration.rb" in the dsu `migrate` folder ("#{migrate_folder}").
       LONG_DESC
-      option :config, type: :boolean, aliases: '-c', default: false
       def migration(migration_name)
         # TODO: Perform validations.
-        puts "Migration service version: #{Dsu::Migration::Service::MIGRATION_SERVICE_VERSION}"
-        create_migration_file(migration_name)
+        puts apply_color_theme("Migration service version: #{Dsu::Migration::Service::MIGRATION_SERVICE_VERSION}",
+          color_theme_color: color_theme.info)
+        migration_file = create_migration_file(migration_name)
+        puts apply_color_theme("Migration file \"#{File.basename(migration_file)}\" created.", color_theme_color: color_theme.info)
       end
 
       private
+
+      def color_theme
+        @color_theme ||= Models::ColorTheme.current_or_default
+      end
 
       def create_migration_file(migration_name)
         migration_file, migration_class = migration_file_for(migration_name)
@@ -50,6 +63,8 @@ module Dsu
           migration_file_content(migration_class)
         end
         File.write(migration_file, migration_file_content)
+
+        migration_file
       end
 
       def time
@@ -80,17 +95,17 @@ module Dsu
           require_relative '../dsu/models/configuration'
           require_relative '../dsu/models/entry'
           require_relative '../dsu/models/entry_group'
+          require_relative '../dsu/support/fileable'
 
           module Dsu
             module Migrate
               class #{migration_class} < Migration::Service[#{Dsu::Migration::Service::MIGRATION_SERVICE_VERSION}]
-                unless migration.migrate?
-                  raise 'This migration should not be run' \\
-                        "this migration file migration version (\#{migration_version}) " \\
-                        "is > the current migration version (\#{current_migration_version})."
-                end
-
                 def call
+                  unless migrate?
+                    raise "This migration file migration version (\#{migration_version}) " \\
+                          "is > the current migration version (\#{current_migration_version})."
+                  end
+
                   # TODO: Apply Configuration changes here.
                   # TODO: Apply Entry changes here.
                   # TODO: If all Entries in an entry group are updated,

@@ -31,15 +31,10 @@ RSpec.describe Dsu::Migration::Service do
 
   describe '.all_migration_files_info' do
     let(:expected_migration_files_info) do
-      file_path = File.join(migrate_folder, '20230613121411_remove_and_add_configuration_attrs.rb')
-      file_name = File.basename(file_path)
-      migration_class = file_name.match(/\A\d+_(.+)\.rb\z/)[1].camelize
-      [{
-        migration_class: "Dsu::Migrate::#{migration_class}",
-        path: file_path,
-        require_file: file_path.sub(/\.[^.]+\z/, ''),
-        version: 20230_6_13_121411 # rubocop:disable Style/NumericLiterals
-      }]
+      [
+        migration_service_info_for(migration_file: '20230613121411_remove_and_add_configuration_attrs.rb', migrate_folder: migrate_folder),
+        migration_service_info_for(migration_file: '20230618204141_copy_color_theme_files.rb', migrate_folder: migrate_folder)
+      ]
     end
 
     it 'returns the information on all migration files' do
