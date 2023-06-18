@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # froen_string_literal: true
 
 RSpec.describe 'Migrations' do
@@ -32,7 +34,7 @@ RSpec.describe 'Migrations' do
 
   describe 'migrating from version 0 to version 20230613121411' do
     let(:start_migration_version) { 0 }
-    let(:end_migration_version) { 20230613121411 }
+    let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
 
     before do
       Dsu::Migration::Service[1.0].run_migrations!

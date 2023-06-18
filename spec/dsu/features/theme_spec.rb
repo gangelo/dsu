@@ -1,19 +1,5 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'the color theme exists' do
-  it 'creates the color theme' do
-    cli
-    expect(Dsu::Models::ColorTheme.exist?(theme_name: theme_name)).to be(true)
-  end
-end
-
-RSpec.shared_examples 'the color theme does not exist' do
-  it 'does not create the color theme' do
-    cli
-    expect(Dsu::Models::ColorTheme.exist?(theme_name: theme_name)).to be(false)
-  end
-end
-
 def color_theme_regex_for(theme_names:, default_theme_name: Dsu::Models::ColorTheme::DEFAULT_THEME_NAME)
   theme_names << default_theme_name unless theme_names.include?(default_theme_name)
   regex_string = theme_names.sort.each_with_index.map do |theme_name, index|
@@ -28,6 +14,20 @@ RSpec.describe Dsu::Subcommands::Theme do
 
   let(:theme_name) { 'test' }
   let(:color_theme) { Dsu::Models::ColorTheme.default }
+
+  shared_examples 'the color theme exists' do
+    it 'creates the color theme' do
+      cli
+      expect(Dsu::Models::ColorTheme.exist?(theme_name: theme_name)).to be(true)
+    end
+  end
+
+  shared_examples 'the color theme does not exist' do
+    it 'does not create the color theme' do
+      cli
+      expect(Dsu::Models::ColorTheme.exist?(theme_name: theme_name)).to be(false)
+    end
+  end
 
   describe '#create' do
     context 'when the theme does not exist' do
