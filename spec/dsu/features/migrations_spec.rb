@@ -42,6 +42,22 @@ RSpec.describe 'Migrations' do
       expect(Dsu::Migration::Service[1.0].current_migration_version).to eq(end_migration_version)
     end
 
+    context 'when the configuration file exists' do
+      it 'updates the configuration file with the correct version' do
+        expect(Dsu::Models::Configuration.instance.version).to eq(end_migration_version)
+      end
+    end
+
+    xcontext 'when the configuration file does not exist' do
+      it 'creates the configuration file' do
+        expect(File.exist?(Dsu::Support::Fileable.config_path)).to be_true
+      end
+
+      it 'creates the configuration file with the correct version' do
+        expect(Dsu::Models::Configuration.instance.version).to eq(end_migration_version)
+      end
+    end
+
     it 'updates the configuration to the new version'
 
     it 'updates the entries to the new version'
