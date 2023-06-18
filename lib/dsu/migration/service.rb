@@ -15,6 +15,7 @@ module Dsu
 
       class << self
         def [](version)
+          version = current_migration_version if version == :current
           require_relative "#{version}/migration_service"
 
           "Dsu::Migration::Version#{version.to_s.delete('.')}::MigrationService".constantize

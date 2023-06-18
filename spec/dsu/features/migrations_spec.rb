@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-# froen_string_literal: true
-
 RSpec.describe 'Migrations' do
-  subject(:migrations) { nil }
+  subject(:current_migration_service) { Dsu::Migration::Service[:current] }
 
   shared_context 'with migrations'
 
   before do
-    puts "Test data to copy from: #{source_folder}"
-    puts "Folder to copy test data to: #{destination_folder}"
+    puts "Copying test data from: #{source_folder}..."
+    puts "Copying test data to: #{destination_folder}..."
     FileUtils.cp_r("#{source_folder}/.", destination_folder)
 
     allow(Dsu::Migration::Service).to receive(:migration_version_folder).and_return(destination_folder)
+    migration_version_file = Dsu::Migration::MIGRATION_VERSION_FILE_NAME
+    allow(Dsu::Migration::Service).to receive(:migration_version_path).and_return(File.join(destination_folder, migration_version_file))
   end
 
   after do
@@ -29,34 +29,44 @@ RSpec.describe 'Migrations' do
   end
 
   let(:destination_folder) do
-    File.join(gem_dir, 'spec/dsu/test_data/dsu')
+    File.join(temp_folder, 'dsu')
   end
 
   describe 'migrating from version 0 to version 20230613121411' do
+    subject(:migration_service_version) { Dsu::Migration::Service[1.0] }
+
     let(:start_migration_version) { 0 }
     let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
 
-    before do
-      Dsu::Migration::Service[1.0].run_migrations!
-    end
+    # before do
+    #   Dsu::Migration::Service[1.0].run_migrations!
+    # end
 
     it 'updates the migration file version' do
-      expect(Dsu::Migration::Service[1.0].current_migration_version).to eq(end_migration_version)
+      migration_service_version.run_migrations!
+      expect(migration_service_version.current_migration_version).to eq(end_migration_version)
     end
 
     context 'when the configuration file exists' do
+      before do
+        migration_service_version.run_migrations!
+      end
+
       it 'updates the configuration file with the correct version' do
         expect(Dsu::Models::Configuration.instance.version).to eq(end_migration_version)
       end
     end
 
-    xcontext 'when the configuration file does not exist' do
-      it 'creates the configuration file' do
-        expect(File.exist?(Dsu::Support::Fileable.config_path)).to be_true
+    context 'when the configuration file does not exist' do
+      before do
+        File.delete(Dsu::Support::Fileable.config_path)
+        migration_service_version.run_migrations!
       end
 
-      it 'creates the configuration file with the correct version' do
-        expect(Dsu::Models::Configuration.instance.version).to eq(end_migration_version)
+      it 'creates a default configuration file' do
+        default_configuration_h = Dsu::Models::Configuration::DEFAULT_CONFIGURATION
+        configuration = Dsu::Models::Configuration.instance
+        expect(configuration.to_h).to eq(default_configuration_h)
       end
     end
 

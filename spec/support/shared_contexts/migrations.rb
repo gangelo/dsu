@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.shared_context 'with migrations' do
-  include_context 'with dirs'
-
   # TODO: Clean and implement
   # let(:migrate_folder) { FileUtils.mkdir_p(File.join(tmp_folder, 'migrate')).first }
   # let(:test_migrations_folder) { FileUtils.mkdir_p(File.join(tmp_folder, 'test_migrations')).first }

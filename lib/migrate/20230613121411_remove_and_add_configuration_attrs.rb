@@ -21,7 +21,7 @@ module Dsu
         if File.exist?(config_path)
           update_configuration!
         else
-          Models::Configuration.instance
+          Models::Configuration.instance.save!
         end
 
         # TODO: Apply Entry Group/Entry changes here.
