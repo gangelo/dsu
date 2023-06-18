@@ -33,7 +33,8 @@ module Dsu
               puts "Running migration: #{File.basename(migration_file_info[:require_file])}..."
               migration.call
             else
-              puts "Bypassing migration: #{File.basename(migration_file_info[:require_file])}, #migrate? returned false."
+              puts 'Bypassing migration: ' \
+                   "#{File.basename(migration_file_info[:require_file])}, #migrate? returned false."
             end
           end
 
