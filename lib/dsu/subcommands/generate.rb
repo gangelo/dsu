@@ -79,14 +79,9 @@ module Dsu
           require_relative '../dsu/models/configuration'
           require_relative '../dsu/models/entry'
           require_relative '../dsu/models/entry_group'
-          require_relative '../dsu/support/fileable'
 
           module Dsu
             module Migrate
-              class << self
-                Models::EntryGroup
-              end
-
               class #{migration_class} < Migration::Service[#{Dsu::Migration::Service::MIGRATION_SERVICE_VERSION}]
                 unless migration.migrate?
                   raise 'This migration should not be run' \\
@@ -95,17 +90,10 @@ module Dsu
                 end
 
                 def call
-                  # No sense in updating the configuration if it's not saved to disk.
-                  if Models::Configuration.exist?
-                    # TODO: Make your configuration changes here; for example:
-                    # config_hash = Dsu::Models::Configuration.current_h!
-                    # config_hash[:my_change] = 'my change'
-                    # config_hash.delete(:delete_me)
-                    # config_hash[:version] = migration_version
-                    # Models::Configuration.new(config_hash: config_hash).save!
-                  end
-
-                  # TODO: Apply Entry Group/Entry changes here.
+                  # TODO: Apply Configuration changes here.
+                  # TODO: Apply Entry changes here.
+                  # TODO: If all Entries in an entry group are updated,
+                  #       apply Entry Group changes here.
                   # TODO: Apply Color Theme changes here.
 
                   super
@@ -122,10 +110,6 @@ module Dsu
               end
             end
           end
-
-          # Run it
-          migration = Dsu::Migrate::#{migration_class}.new
-          migration.call if migration.migrate?
         MIGRATION_FILE_CONTENT
       end
     end
