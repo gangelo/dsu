@@ -43,16 +43,6 @@ RSpec.describe 'Migrations' do
       expect(migration_service_version.current_migration_version).to eq(end_migration_version)
     end
 
-    context 'when the configuration file exists' do
-      before do
-        migration_service_version.run_migrations!
-      end
-
-      it 'updates the configuration file with the correct version' do
-        expect(Dsu::Models::Configuration.instance.version).to eq(end_migration_version)
-      end
-    end
-
     context 'when the configuration file does not exist' do
       before do
         File.delete(Dsu::Support::Fileable.config_path)
@@ -68,20 +58,12 @@ RSpec.describe 'Migrations' do
 
     context 'when the configuration file exists' do
       before do
-        old_configuration_h = {
-          editor: 'vim',
-          entries_display_order: 'asc',
-          entries_file_name: '%Y-%m-%d.json',
-          entries_folder: '/Users/gangelo/dsu/entries',
-          carry_over_entries_to_today: true,
-          include_all: true
-        }
-        File.write(Dsu::Support::Fileable.config_path, old_configuration_h.to_yaml)
+        File.write(Dsu::Support::Fileable.config_path, ConfigurationHelpers::CONFIGURATION_HASHES['0'].to_yaml)
         migration_service_version.run_migrations!
       end
 
-      let(:expected_configuration_h) do
-        {
+      it 'updates the configuration file' do
+        expected_configuration_h =  {
           version: end_migration_version,
           editor: 'vim',
           entries_display_order: :asc,
@@ -89,11 +71,7 @@ RSpec.describe 'Migrations' do
           include_all: true,
           theme_name: 'default'
         }
-      end
-
-      it 'updates the configuration file' do
-        configuration = Dsu::Models::Configuration.instance
-        expect(configuration.to_h).to eq(expected_configuration_h)
+        expect(Dsu::Models::Configuration.instance.to_h).to eq(expected_configuration_h)
       end
     end
   end
