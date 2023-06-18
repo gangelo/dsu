@@ -32,11 +32,14 @@ RSpec.describe Dsu::Migration::Service do
 
   describe '.all_migration_files_info' do
     let(:expected_migration_files_info) do
-      path = File.join(migrate_folder, '20230613121411_remove_and_add_configuration_attrs.rb')
+      file_path = File.join(migrate_folder, '20230613121411_remove_and_add_configuration_attrs.rb')
+      file_name = File.basename(file_path)
+      migration_class = file_name.match(/\A\d+_(.+)\.rb\z/)[1].camelize
       [{
-        version: 20230_6_13_121411, # rubocop:disable Style/NumericLiterals
-        require_file: path.sub(/\.[^.]+\z/, ''),
-        path: path
+        migration_class: "Dsu::Migrate::#{migration_class}",
+        path: file_path,
+        require_file: file_path.sub(/\.[^.]+\z/, ''),
+        version: 20230_6_13_121411 # rubocop:disable Style/NumericLiterals
       }]
     end
 
