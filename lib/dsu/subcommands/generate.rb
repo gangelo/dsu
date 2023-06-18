@@ -3,10 +3,11 @@
 require 'thor'
 
 require_relative '../migration/service'
+require_relative 'base_subcommand'
 
 module Dsu
   module Subcommands
-    class Generate < ::Thor
+    class Generate < BaseSubcommand
       map %w[m] => :migration
 
       default_command :help
