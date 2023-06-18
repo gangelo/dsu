@@ -38,12 +38,7 @@ RSpec.describe 'Migrations' do
     before do
       migrate_folder = Dsu::Migration::Service.migrate_folder
       all_migration_file_info = [
-        {
-          migration_class: 'Dsu::Migrate::RemoveAndAddConfigurationAttrs',
-          path: File.join(migrate_folder, '20230613121411_remove_and_add_configuration_attrs.rb').to_s,
-          require_file: File.join(migrate_folder, '20230613121411_remove_and_add_configuration_attrs').to_s,
-          version: 20230613121411 # rubocop:disable Style/NumericLiterals
-        }
+        migration_service_info_for(migration_file: '20230613121411_remove_and_add_configuration_attrs.rb', migrate_folder: migrate_folder)
       ]
       allow(Dsu::Migration::Service).to receive(:all_migration_files_info).and_return(all_migration_file_info)
     end
