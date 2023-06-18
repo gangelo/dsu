@@ -18,21 +18,21 @@ module Dsu
         end
 
         # No sense in updating the configuration if it's not saved to disk.
-        if File.exist?(config_path)
-          config_folder = Support::Fileable.root_folder
-          config_path = File.join(config_folder, '.dsu')
-          old_config_hash = Psych.safe_load(File.read(config_path), [Symbol])
-          config_hash = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.merge(old_config_hash)
-          config_hash.delete('entries_folder')
-          config_hash.delete('entries_file_name')
-          config_hash.delete('themes_folder')
-          config_hash['version'] = migration_version
-          puts config_hash
-          Models::Configuration.new(config_hash: config_hash).save!
-        else
+        # if File.exist?(config_path)
+        #   config_folder = Support::Fileable.root_folder
+        #   config_path = File.join(config_folder, '.dsu')
+        #   old_config_hash = Psych.safe_load(File.read(config_path), [Symbol])
+        #   config_hash = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.merge(old_config_hash)
+        #   config_hash.delete('entries_folder')
+        #   config_hash.delete('entries_file_name')
+        #   config_hash.delete('themes_folder')
+        #   config_hash['version'] = migration_version
+        #   puts config_hash
+        #   Models::Configuration.new(config_hash: config_hash).save!
+        # else
 
-          Models::Configuration.instance
-        end
+        #   Models::Configuration.instance
+        # end
 
         # TODO: Apply Entry Group/Entry changes here.
         # TODO: Apply Color Theme changes here.
@@ -53,5 +53,5 @@ module Dsu
 end
 
 # Run it
-migration = Dsu::Migrate::RemoveAndAddConfigurationAttrs.new
-migration.call if migration.migrate?
+#migration = Dsu::Migrate::RemoveAndAddConfigurationAttrs.new
+#migration.call if migration.migrate?

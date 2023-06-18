@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 require 'psych'
+require_relative '../service'
 
 module Dsu
   module Migration
     module Version10
       # This is the base class for all migration services.
-      class MigrationService
+      class MigrationService < Migration::Service
         class << self
           # To run migrations, run this class method.
           def run_migrations!
@@ -16,49 +17,54 @@ module Dsu
 
             before_migration_version = current_migration_version
 
-            migration_files_info.each_value { |file_path| run_migration!(migration_path: file_path) }
+            migration_files_to_run_info.each do |migration_file_info|
+              run_migration!(migration_file_info: migration_file_info)
+            end
 
             puts "Migration version (after migrations): #{current_migration_version}"
             puts 'Nothing to do.' if current_migration_version == before_migration_version
           end
 
-          def run_migration!(migration_path:)
-            migration_path = migration_path.sub(/\.[^.]+\z/, '')
-            puts "Running migration: #{File.basename(migration_path)}..."
-            # Requiring the migration files will run the migrations in each file.
-            require migration_path
+          def run_migration!(migration_file_info:)
+            require migration_file_info[:require_file]
+binding.pry
+            migration = migration_file_info[:migration_class].constantize.new
+            if migration.migrate?
+              puts "Running migration: #{File.basename(migration_file_info[:require_file])}..."
+              migration.call
+            else
+              puts "Bypassing migration: #{File.basename(migration_file_info[:require_file])}, #migrate? returned false."
+            end
           end
 
           # Migrate version file methods
-          def migration_version_file_path
-            @migration_version_file_path ||= File.join(migrate_folder, Migration::MIGRATION_VERSION_FILE_NAME)
-          end
+          # def migration_version_path
+          #   @migration_version_path ||= File.join(migrate_folder, Migration::MIGRATION_VERSION_FILE_NAME)
+          # end
 
           private
 
           # This method returns the current migration version from the migration version file.
-          def current_migration_version
-            return 0 unless File.exist?(migration_version_file_path)
+          # def current_migration_version
+          #   return 0 unless File.exist?(migration_version_path)
 
-            Psych.safe_load(File.read(migration_version_file_path), [Symbol])[:migration_version]
-          end
+          #   Psych.safe_load(File.read(migration_version_path), [Symbol])[:migration_version]
+          # end
 
-          def migrate_folder
-            @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
-          end
+          # def migrate_folder
+          #   @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
+          # end
 
           # Returns a hash of migration files that need to be applied, sorted asc by migration version.
-          def migration_files_info
-            migration_files_info = Dir.glob("#{migrate_folder}/*").filter_map do |file_path|
-              migration_version = File.basename(file_path).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
-              next if migration_version.nil? || current_migration_version >= migration_version
-
-              { migration_version: migration_version, file_path: file_path }
+          def migration_files_to_run_info
+            # NOTE: super.all_migration_files_info returns an array sorted ascending order
+             # of migration version. Below, #select will maintain the order in which the
+             # migrations are returned which is wnat we want, because the migrations need to
+             # be run in ascending version order.
+            @migration_files_to_run_info ||= all_migration_files_info.select do |migration_file_info|
+              migration_file_version = migration_file_info[:version]
+              migration_file_version && (migration_file_version > current_migration_version)
             end
-
-            migration_files_info.sort_by do |migration_file_info|
-              migration_file_info[:migration_version]
-            end.to_h(&:values) || {}
           end
         end
 
@@ -71,7 +77,7 @@ module Dsu
         end
 
         def migrate?
-          migration_version > current_migration_version
+          migration_version > self.class.current_migration_version
         end
 
         private
@@ -84,16 +90,17 @@ module Dsu
           # Do nothing unless the migration version is greater than the current migration version.
           return unless migrate?
 
-          File.write(migration_version_file_path, Psych.dump({ migration_version: migration_version }))
+          migration_version_path = self.class.migration_version_path
+          File.write(migration_version_path, Psych.dump({ migration_version: migration_version }))
         end
 
         #
         # Below are migration version file methods
         #
 
-        def current_migration_version
-          self.class.send(:current_migration_version)
-        end
+        # def current_migration_version
+        #   self.class.send(:current_migration_version)
+        # end
 
         def migration_version
           # This method must be overridden and return the migration version of the current
@@ -101,9 +108,9 @@ module Dsu
           raise NotImplementedError, 'You must implement the #migration_version method.'
         end
 
-        def migration_version_file_path
-          self.class.send(:migration_version_file_path)
-        end
+        # def migration_version_path
+        #   self.class.send(:migration_version_path)
+        # end
       end
     end
   end

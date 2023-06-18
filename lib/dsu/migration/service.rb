@@ -26,6 +26,40 @@ module Dsu
           @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
         end
 
+        def migration_version_folder
+          @migration_version_folder ||= migrate_folder
+        end
+
+        def migration_version_path
+          @migration_version_path ||= File.join(migration_version_folder, MIGRATION_VERSION_FILE_NAME)
+        end
+
+        def all_migration_files_info
+          @all_migration_files_info ||= begin
+            migration_files_info = Dir.glob("#{migrate_folder}/*").filter_map do |file_path|
+              file_name = File.basename(file_path)
+              version = file_name.match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
+              migration_class = file_name.match(/\A\d+_(.+)\.rb\z/)[1].camelize
+              {
+                migration_class: "Dsu::Migrate::#{migration_class}",
+                path: file_path,
+                require_file: file_path.sub(/\.[^.]+\z/, ''),
+                version: version
+              }
+            end
+
+            migration_files_info.sort_by do |migration_file_info|
+              migration_file_info[:version]
+            end || {}
+          end
+        end
+
+        def current_migration_version
+          return 0 unless File.exist?(migration_version_path)
+
+          Psych.safe_load(File.read(migration_version_path), [Symbol])[:migration_version]
+        end
+
         # def configuration_hash
         #   config_file_path = File.join(Support::Fileable.root_folder, '.dsu')
         #   return Psych.safe_load(File.read(config_file_path), [Symbol]) if File.exist?(config_file_path)
