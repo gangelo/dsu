@@ -8,6 +8,7 @@ require 'pry-byebug'
 require 'securerandom'
 require 'tempfile'
 require 'time'
+require 'yaml'
 
 require_relative 'support/custom_matchers'
 

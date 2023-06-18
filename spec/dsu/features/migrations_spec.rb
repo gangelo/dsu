@@ -38,10 +38,6 @@ RSpec.describe 'Migrations' do
     let(:start_migration_version) { 0 }
     let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
 
-    # before do
-    #   Dsu::Migration::Service[1.0].run_migrations!
-    # end
-
     it 'updates the migration file version' do
       migration_service_version.run_migrations!
       expect(migration_service_version.current_migration_version).to eq(end_migration_version)
@@ -70,8 +66,35 @@ RSpec.describe 'Migrations' do
       end
     end
 
-    it 'updates the configuration to the new version'
+    context 'when the configuration file exists' do
+      before do
+        old_configuration_h = {
+          editor: 'vim',
+          entries_display_order: 'asc',
+          entries_file_name: '%Y-%m-%d.json',
+          entries_folder: '/Users/gangelo/dsu/entries',
+          carry_over_entries_to_today: true,
+          include_all: true
+        }
+        File.write(Dsu::Support::Fileable.config_path, old_configuration_h.to_yaml)
+        migration_service_version.run_migrations!
+      end
 
-    it 'updates the entries to the new version'
+      let(:expected_configuration_h) do
+        {
+          version: end_migration_version,
+          editor: 'vim',
+          entries_display_order: :asc,
+          carry_over_entries_to_today: true,
+          include_all: true,
+          theme_name: 'default'
+        }
+      end
+
+      it 'updates the configuration file' do
+        configuration = Dsu::Models::Configuration.instance
+        expect(configuration.to_h).to eq(expected_configuration_h)
+      end
+    end
   end
 end
