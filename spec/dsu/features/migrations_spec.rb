@@ -83,4 +83,59 @@ RSpec.describe 'Migrations' do
       end
     end
   end
+
+  describe 'migrating from version 0 to version 20230618204155' do
+    subject(:migration_service_version) { Dsu::Migration::Service[1.0] }
+
+    before do
+      migrate_folder = Dsu::Migration::Service.migrate_folder
+      all_migration_file_info = [
+        migration_service_info_for(migration_file: '20230613121411_remove_and_add_configuration_attrs.rb', migrate_folder: migrate_folder),
+        migration_service_info_for(migration_file: '20230618204155_copy_color_theme_files.rb', migrate_folder: migrate_folder)
+      ]
+      allow(Dsu::Migration::Service).to receive(:all_migration_files_info).and_return(all_migration_file_info)
+    end
+
+    let(:start_migration_version) { 0 }
+    let(:end_migration_version) { 20230618204155 } # rubocop:disable Style/NumericLiterals
+
+    it 'updates the migration file version' do
+      binding.pry
+      migration_service_version.run_migrations!
+      expect(migration_service_version.current_migration_version).to eq(end_migration_version)
+    end
+
+    context 'when the configuration file does not exist' do
+      before do
+        File.delete(Dsu::Support::Fileable.config_path)
+        migration_service_version.run_migrations!
+      end
+
+      it 'creates a default configuration file' do
+        default_configuration_h = Dsu::Models::Configuration::DEFAULT_CONFIGURATION
+        configuration = Dsu::Models::Configuration.instance
+        expect(configuration.to_h).to eq(default_configuration_h)
+      end
+    end
+
+    xcontext 'when the configuration file exists' do
+      before do
+        config_hash = ConfigurationHelpers::CONFIGURATION_HASHES[end_migration_version.to_s]
+        File.write(Dsu::Support::Fileable.config_path, JSON.pretty_generate(config_hash))
+        migration_service_version.run_migrations!
+      end
+
+      it 'updates the configuration file' do
+        expected_configuration_h =  {
+          version: end_migration_version,
+          editor: 'vim',
+          entries_display_order: :asc,
+          carry_over_entries_to_today: true,
+          include_all: true,
+          theme_name: 'default'
+        }
+        expect(Dsu::Models::Configuration.instance.to_h).to eq(expected_configuration_h)
+      end
+    end
+  end
 end

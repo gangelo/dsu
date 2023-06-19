@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/StringHashKeys
+# rubocop:disable Style/StringHashKeys, Style/NumericLiterals
 module ConfigurationHelpers
   # Store configuration hashes per migration version so
   # that we can use these in migration testing.
@@ -15,7 +15,15 @@ module ConfigurationHelpers
         include_all: true
       },
       '20230613121411' => {
-        version: 0,
+        version: 20230613121411,
+        editor: 'nano',
+        entries_display_order: :desc,
+        carry_over_entries_to_today: false,
+        include_all: false,
+        theme_name: 'matrix'
+      },
+      '20230618204155' => {
+        version: 20230618204155,
         editor: 'nano',
         entries_display_order: :desc,
         carry_over_entries_to_today: false,
@@ -24,4 +32,4 @@ module ConfigurationHelpers
       }
     }
 end
-# rubocop:enable Style/StringHashKeys
+# rubocop:enable Style/StringHashKeys, Style/NumericLiterals
