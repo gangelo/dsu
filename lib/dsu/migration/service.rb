@@ -76,6 +76,10 @@ module Dsu
         end
       end
 
+      def current_migration_version
+        self.class.current_migration_version
+      end
+
       MIGRATION_SERVICE_VERSION = migration_service_version.freeze
     end
   end

@@ -24,7 +24,7 @@ module Dsu
       include Support::TimeComparable
       include Support::TimeFormatable
 
-      VERSION = 0
+      VERSION = Migration::Service.current_migration_version.freeze
 
       attr_accessor :time, :version
       attr_reader :entries

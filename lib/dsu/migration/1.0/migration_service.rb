@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'psych'
 require_relative '../service'
 
 module Dsu
@@ -15,7 +14,7 @@ module Dsu
             puts "Migration version is #{current_migration_version}."
 
             before_migration_version = current_migration_version
-binding.pry
+
             migration_files_to_run_info.each do |migration_file_info|
               run_migration!(migration_file_info: migration_file_info)
             end
@@ -61,7 +60,7 @@ binding.pry
         end
 
         def migrate?
-          migration_version > self.class.current_migration_version
+          migration_version > current_migration_version
         end
 
         private

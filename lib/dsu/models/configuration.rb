@@ -3,6 +3,7 @@
 require 'active_model'
 require 'singleton'
 require_relative '../crud/configuration'
+require_relative '../migration/service'
 require_relative '../support/fileable'
 require_relative '../support/presentable'
 require_relative '../validators/version_validator'
@@ -17,7 +18,7 @@ module Dsu
       include Singleton
       include Support::Presentable
 
-      VERSION = 0
+      VERSION = Migration::Service.current_migration_version.freeze
 
       DEFAULT_CONFIGURATION = {
         version: VERSION,

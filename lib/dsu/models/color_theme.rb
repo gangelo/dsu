@@ -21,7 +21,7 @@ module Dsu
       include Support::Descriptable
       include Support::Presentable
 
-      VERSION = 0
+      VERSION = Migration::Service.current_migration_version.freeze
 
       DEFAULT_THEME_NAME = 'default'
       # Theme colors key/value pair format:

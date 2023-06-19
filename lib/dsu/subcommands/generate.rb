@@ -95,7 +95,6 @@ module Dsu
           require_relative '../dsu/models/configuration'
           require_relative '../dsu/models/entry'
           require_relative '../dsu/models/entry_group'
-          require_relative '../dsu/support/fileable'
 
           module Dsu
             module Migrate
@@ -106,11 +105,9 @@ module Dsu
                           "is > the current migration version (\#{current_migration_version})."
                   end
 
-                  # TODO: Apply Configuration changes here.
-                  # TODO: Apply Entry changes here.
-                  # TODO: If all Entries in an entry group are updated,
-                  #       apply Entry Group changes here.
-                  # TODO: Apply Color Theme changes here.
+                  update_color_themes!
+                  update_configuration!
+                  update_entry_groups!
 
                   super
                 rescue StandardError => e
@@ -122,6 +119,23 @@ module Dsu
 
                 def migration_version
                   File.basename(__FILE__).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
+                end
+
+                def update_color_themes!
+                  # TODO: Apply Color Theme changes here.
+                end
+
+                def update_configuration!
+                  # TODO: Apply Configuration changes here.
+                end
+
+                def update_entry_groups!
+                  # TODO: Apply Entry changes here.
+                  # TODO: If all Entries in an entry group are updated, apply Entry Group changes here.
+                end
+
+                def migrate_color_themes?
+                  themes_path = Support::Fileable.themes_path
                 end
               end
             end
