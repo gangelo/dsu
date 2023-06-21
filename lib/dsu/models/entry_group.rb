@@ -75,6 +75,10 @@ module Dsu
         formatted_time(time: time)
       end
 
+      def time_yyyy_mm_dd
+        yyyy_mm_dd_time(time: time)
+      end
+
       def to_h
         {
           version: version,

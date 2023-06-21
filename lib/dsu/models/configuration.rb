@@ -74,12 +74,6 @@ module Dsu
         load(config_hash: DEFAULT_CONFIGURATION).save!
       end
 
-      class << self
-        def default
-          load(config_hash: DEFAULT_CONFIGURATION)
-        end
-      end
-
       def reload!
         raise "Config file does not exist: \"#{config_path}\"" unless exist?
 

@@ -25,9 +25,47 @@ RSpec.shared_context 'with migrations' do
     ensure_safe_source_folder!
     ensure_safe_destination_folder!
 
-    puts "Copying test data from: #{source_folder}..."
-    puts "Copying test data to: #{destination_folder}..."
-    FileUtils.cp_r("#{source_folder}/.", destination_folder)
+    puts 'Copy test config file to destibation folder...'
+    if with_config
+      config_file_name = Dsu::Support::Fileable.config_file_name
+      puts "From: #{File.join(source_folder, config_file_name)}" \
+           "\n  To: #{Dsu::Support::Fileable.config_path}"
+      FileUtils.cp(File.join(source_folder, config_file_name), Dsu::Support::Fileable.config_path)
+    else
+      puts 'Skipped (:with_config == false).'
+    end
+
+    puts 'Copy test color theme files to destibation folder...'
+    FileUtils.mkdir_p(Dsu::Support::Fileable.themes_folder)
+    if with_themes
+      Dir.glob("#{source_folder}/themes/*").each do |file_path|
+        theme_path = File.join(Dsu::Support::Fileable.themes_folder, File.basename(file_path))
+        puts "From: #{file_path}" \
+             "\n  To: #{theme_path}"
+        FileUtils.cp(file_path, theme_path)
+      end
+    else
+      puts 'Skipped (:with_themes == false).'
+    end
+
+    puts 'Copy test entry files to destibation folder...'
+    FileUtils.mkdir_p(Dsu::Support::Fileable.entries_folder)
+    if with_entries
+      Dir.glob("#{source_folder}/entries/*").each do |file_path|
+        entries_path = File.join(Dsu::Support::Fileable.entries_folder, File.basename(file_path))
+        puts "From: #{file_path}" \
+             "\n  To: #{entries_path}"
+        FileUtils.cp(file_path, entries_path)
+      end
+    else
+      puts 'Skipped (:with_entries == false).'
+    end
+
+    # Dir.glob("#{source_folder}/entries/*").each do |file_path|
+    #   puts "Copying test data from: #{source_folder}..."
+    #   puts "Copying test data to: #{destination_folder}..."
+    #   FileUtils.cp_r("#{source_folder}/.", destination_folder)
+    # end
 
     allow(Dsu::Migration::Service).to receive(:migration_version_folder).and_return(destination_folder)
     migration_version_file = Dsu::Migration::MIGRATION_VERSION_FILE_NAME
@@ -54,27 +92,11 @@ RSpec.shared_context 'with migrations' do
       raise "temp_folder must be defined and begin with #{Dir.tmpdir}"
     end
 
-    File.join(temp_folder, end_migration_version.to_s)
+    File.join(temp_folder, 'dsu')
   end
-
-  # let(:start_migration_version) do
-  #   raise 'start_migration_version must be defined in the context of the spec'
-  # end
-  # let(:end_migration_version) do
-  #   raise 'end_migration_version must be defined in the context of the spec'
-  # end
-
-  # it 'defines safe and correct source_folder variable for testing' do
-  #   expect { ensure_safe_source_folder! }.not_to raise_error
-  # end
-
-  # it 'defines safe and correct destination_folder variable for testing' do
-  #   expect { ensure_safe_destination_folder! }.not_to raise_error
-  # end
-
-  # it 'defines safe and correct gem_dir variable for testing' do
-  #   expect { ensure_safe_gem_dir! }.not_to raise_error
-  # end
+  let(:with_config) { true }
+  let(:with_entries) { true }
+  let(:with_themes) { true }
 end
 
 RSpec.configure do |config|

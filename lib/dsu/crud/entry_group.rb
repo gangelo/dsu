@@ -11,6 +11,9 @@ module Dsu
     module EntryGroup
       include Support::Fileable
 
+      ENTRIES_FILE_NAME_REGEX = /\d{4}-\d{2}-\d{2}.json/
+      ENTRIES_FILE_NAME_TIME_REGEX = /\d{4}-\d{2}-\d{2}/
+
       class << self
         def included(base)
           base.extend(ClassMethods)
@@ -40,6 +43,22 @@ module Dsu
       end
 
       module ClassMethods
+        def all
+          entry_files.map do |file_path|
+            entry_date = File.basename(file_path, '.*')
+            next unless entry_date.match?(ENTRIES_FILE_NAME_TIME_REGEX)
+
+            find(time: Time.parse(entry_date))
+          end
+        end
+
+        def any?
+          entry_files.any? do |file_path|
+            entry_date = File.basename(file_path, '.*')
+            entry_date.match?(ENTRIES_FILE_NAME_TIME_REGEX)
+          end
+        end
+
         def delete!(time:)
           raise file_does_not_exist_message(time) unless exist?(time: time)
 
@@ -105,6 +124,10 @@ module Dsu
 
         def configuration
           Models::Configuration.instance
+        end
+
+        def entry_files
+          Dir.glob("#{entries_folder}/*")
         end
 
         def file_does_not_exist_message(time)

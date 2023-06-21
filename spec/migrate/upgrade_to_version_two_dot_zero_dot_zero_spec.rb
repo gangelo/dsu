@@ -5,6 +5,38 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
 
   include_context 'with migrations'
 
+  shared_examples 'the migration version file is updated to the latest migration version' do
+    it 'updates the migration file version' do
+      expect(migration.current_migration_version).to eq(end_migration_version)
+    end
+  end
+
+  shared_examples 'the color theme files are created' do
+    it 'creates the 6 default color theme files' do
+      expected_color_theme_names = %w[default cherry cloudy fozzy lemon matrix]
+      expect(Dsu::Models::ColorTheme.all.map(&:theme_name)).to match_array expected_color_theme_names
+    end
+  end
+
+  shared_examples 'the entry group files are created' do
+    it 'creates the expected entry group files' do
+      expected_entry_group_times = %w[2023-06-15 2023-06-16 2023-06-17]
+      expect(Dsu::Models::EntryGroup.all.map(&:time_yyyy_mm_dd)).to match_array(expected_entry_group_times)
+    end
+  end
+
+  shared_examples 'no entry group files are created' do
+    it 'does not create any entry group files' do
+      expect(Dsu::Models::EntryGroup.any?).to be false
+    end
+  end
+
+  shared_examples 'the entry group files are updated' do
+  end
+
+  shared_examples 'the entry group files and entries are correct' do
+  end
+
   describe '#call' do
     #subject(:migration_service_version) { Dsu::Migration::Service[1.0] }
 
@@ -20,19 +52,17 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
     let(:start_migration_version) { 0 }
     let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
 
-    it 'updates the migration file version' do
-      migration.call
-      expect(migration.current_migration_version).to eq(end_migration_version)
-    end
-
     context 'when the configuration file does not exist' do
       before do
         File.delete(Dsu::Support::Fileable.config_path)
         migration.call
       end
 
+      it_behaves_like 'the color theme files are created'
+      it_behaves_like 'the migration version file is updated to the latest migration version'
+
       it 'creates a default configuration file' do
-        expect(Dsu::Models::Configuration.exist?).to eq(true)
+        expect(Dsu::Models::Configuration.exist?).to be(true)
       end
     end
 
@@ -44,14 +74,44 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
 
       let(:configuration) { Dsu::Models::Configuration.instance }
 
-      it 'creates the configuration file and carries over the values from the old configuration file' do
+      it_behaves_like 'the color theme files are created'
+      it_behaves_like 'the migration version file is updated to the latest migration version'
+
+      it 'creates the configuration file and carries over the values from the old configuration file' do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
         expect(configuration.version).to eq(end_migration_version)
         expect(configuration.editor).to eq('vim')
         expect(configuration.entries_display_order).to eq(:asc)
-        expect(configuration.carry_over_entries_to_today).to eq(true)
-        expect(configuration.include_all).to eq(true)
+        expect(configuration.carry_over_entries_to_today).to be(true)
+        expect(configuration.include_all).to be(true)
         expect(configuration.theme_name).to eq('default')
       end
+    end
+
+    context 'when there are entry group files' do
+      before do
+        migration.call
+      end
+
+      context 'when the entry group files need to be moved to the new entries folder' do
+        it_behaves_like 'the entry group files are created'
+        it_behaves_like 'the migration version file is updated to the latest migration version'
+      end
+
+      context 'when the entry group files do not need to be moved to the new entries folder' do
+        it_behaves_like 'the entry group files are created'
+        it_behaves_like 'the migration version file is updated to the latest migration version'
+      end
+    end
+
+    context 'when there are no entry group files' do
+      before do
+        migration.call
+      end
+
+      let(:with_entries) { false}
+
+      it_behaves_like 'no entry group files are created'
+      it_behaves_like 'the migration version file is updated to the latest migration version'
     end
   end
 end

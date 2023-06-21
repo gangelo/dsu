@@ -21,14 +21,6 @@ module ConfigurationHelpers
         carry_over_entries_to_today: false,
         include_all: false,
         theme_name: 'matrix'
-      },
-      '20230618204155' => {
-        version: 20230618204155,
-        editor: 'nano',
-        entries_display_order: :desc,
-        carry_over_entries_to_today: false,
-        include_all: false,
-        theme_name: 'matrix'
       }
     }
 end

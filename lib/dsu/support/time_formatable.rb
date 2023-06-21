@@ -28,6 +28,10 @@ module Dsu
         time.strftime("%A, (#{today_yesterday_or_tomorrow}) %Y-%m-%d #{time_zone}")
       end
 
+      def yyyy_mm_dd_time(time:)
+        time.strftime('%Y-%m-%d')
+      end
+
       def timezone_for(time:)
         time.zone
       end

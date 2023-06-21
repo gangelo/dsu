@@ -37,6 +37,13 @@ module Dsu
       end
 
       module ClassMethods
+        def all
+          Dir.glob("#{themes_folder}/*").map do |file_path|
+            theme_name = File.basename(file_path, '.*')
+            find(theme_name: theme_name)
+          end
+        end
+
         def safe_create_unless_exists!
           theme_name = self::DEFAULT_THEME_NAME
           return if exist?(theme_name: theme_name)

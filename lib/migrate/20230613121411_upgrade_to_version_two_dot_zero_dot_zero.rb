@@ -17,13 +17,6 @@ module Dsu
 
         update_color_themes!
         update_configuration!
-        if safe_old_entries_folder? && entries_folder_changed?
-          Dir.glob("#{old_entries_folder}/*").each do |file|
-            #FileUtils.cp(file, entries_folder)
-            old_entries_folder ||= 'nil'
-            puts "Copying #{File.join(old_entries_folder, file)} to #{entries_folder}..."
-          end
-        end
         update_entry_groups!
 
         super
@@ -110,10 +103,19 @@ module Dsu
         end
       end
 
+      def copy_entry_groups_if
+        return unless safe_old_entries_folder? && entries_folder_changed?
+
+        Dir.glob("#{old_entries_folder}/*").each do |file|
+          FileUtils.cp(file, entries_folder)
+          puts "Copying #{File.join(old_entries_folder, file)} to #{entries_folder}..."
+        end
+      end
+
       def update_entry_groups!
+        copy_entry_groups_if
         Dir.glob("#{entries_folder}/*").each do |entry_group_file|
           entry_group_hash = JSON.parse(File.read(entry_group_file)).with_indifferent_access
-          binding.pry
           next if entry_group_hash[:version] == migration_version
 
           time = Time.parse(entry_group_hash[:time])
@@ -142,8 +144,10 @@ module Dsu
 
         return unless entries_file_name_changed? && File.exist?(old_entries_path)
 
-        puts "Renaming #{old_entries_path} to #{entries_path(time: time)}..."
-        #File.rename(old_entries_path, entries_path(time: time))
+        renamed_old_entries_file_name_format = "old.#{ENTRIES_FILE_NAME_FORMAT}"
+        renamed_old_entries_path = entries_path(time: time, file_name_format: renamed_old_entries_file_name_format)
+        puts "Renaming #{old_entries_path} to #{renamed_old_entries_path}..."
+        File.rename(old_entries_path, renamed_old_entries_path)
       end
     end
   end
