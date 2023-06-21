@@ -102,7 +102,7 @@ module Dsu
                 def call
                   unless migrate?
                     raise "This migration file migration version (\#{migration_version}) " \\
-                          "is > the current migration version (\#{current_migration_version})."
+                          "is not < the current migration version (\#{current_migration_version})."
                   end
 
                   update_color_themes!
@@ -118,7 +118,7 @@ module Dsu
                 private
 
                 def migration_version
-                  File.basename(__FILE__).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
+                  @migration_version ||= File.basename(__FILE__).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
                 end
 
                 def update_color_themes!

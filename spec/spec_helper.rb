@@ -21,7 +21,7 @@ SimpleCov.start do
 end
 
 require 'dsu'
-
+Dir[File.join(Dir.pwd, 'lib/migrate/**/*.rb')].each { |f| require f }
 Dir[File.join(Dir.pwd, 'spec/support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|

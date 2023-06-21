@@ -12,15 +12,16 @@ module Dsu
       def call
         unless migrate?
           raise "This migration file migration version (#{migration_version}) " \
-                "is > the current migration version (#{current_migration_version})."
+                "is not < the current migration version (#{current_migration_version})."
         end
 
         update_color_themes!
         update_configuration!
-        binding.pry
-        unless old_entries_folder && (old_entries_folder == entries_folder)
+        if safe_old_entries_folder? && entries_folder_changed?
           Dir.glob("#{old_entries_folder}/*").each do |file|
-            FileUtils.mv(file, entries_folder)
+            #FileUtils.cp(file, entries_folder)
+            old_entries_folder ||= 'nil'
+            puts "Copying #{File.join(old_entries_folder, file)} to #{entries_folder}..."
           end
         end
         update_entry_groups!
@@ -36,7 +37,35 @@ module Dsu
       attr_reader :old_entries_folder, :old_entries_file_name
 
       def migration_version
-        File.basename(__FILE__).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
+        @migration_version ||= File.basename(__FILE__).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
+      end
+
+      def old_entries_file_name?
+        old_entries_file_name.present?
+      end
+
+      def entries_file_name_changed?
+        return if old_entries_file_name.nil?
+
+        old_entries_file_name != ENTRIES_FILE_NAME_FORMAT
+      end
+
+      def old_entries_folder?
+        old_entries_folder.present?
+      end
+
+      def safe_old_entries_folder?
+        return if old_entries_folder.nil?
+        return unless old_entries_folder.start_with?(root_folder)
+        return unless Dir.exist?(old_entries_folder)
+
+        true
+      end
+
+      def entries_folder_changed?
+        return unless safe_old_entries_folder?
+
+        old_entries_folder != entries_folder
       end
 
       def read_old_configuration
@@ -64,7 +93,7 @@ module Dsu
       def update_configuration!
         if File.exist?(config_path)
           old_config_hash = Psych.safe_load(File.read(config_path), [Symbol]).transform_keys(&:to_sym)
-          config_hash = Dsu::Models::Configuration::DEFAULT_CONFIGURATION.merge(old_config_hash)
+          config_hash = Models::Configuration::DEFAULT_CONFIGURATION.merge(old_config_hash)
           config_hash[:entries_display_order] = config_hash[:entries_display_order].to_sym
           config_hash.delete(:entries_file_name)
 
@@ -83,25 +112,38 @@ module Dsu
 
       def update_entry_groups!
         Dir.glob("#{entries_folder}/*").each do |entry_group_file|
+          entry_group_hash = JSON.parse(File.read(entry_group_file)).with_indifferent_access
           binding.pry
-          entry_group_hash = JSON.parse(File.read(entry_group_file))
+          next if entry_group_hash[:version] == migration_version
+
           time = Time.parse(entry_group_hash[:time])
-          Model::EntryGroup.new(time: time).tap do |entry_group|
+          Models::EntryGroup.new(time: time).tap do |entry_group|
+            entry_group_hash[:version] = migration_version
             entry_group_hash[:entries].each do |entry_hash|
-              entry_group.entries << Model::Entry.new(description: entry_hash[:description])
+              entry_group.entries << Models::Entry.new(description: entry_hash[:description])
             end
-            delete_old_entry_group_file_if(time: time)
+            rename_old_entry_group_file_if(time: time)
           end.save!
         end
       end
 
-      def delete_old_entry_group_file_if(time:)
-        old_entries_path = entries_path(time: time, file_name_format: :old_entries_file_name)
-        return if entries_path(time: time) == old_entries_path
-        return unless File.exist?(old_entries_path)
+      def rename_old_entry_group_file_if(time:)
+        return unless old_entries_folder?
+        return unless entries_folder_changed? || entries_file_name_changed?
 
-        binding.pry
-        #File.delete(old_entries_path)
+        unless safe_old_entries_folder?
+          puts "Old entries folder #{old_entries_folder} contains old entry files " \
+               'that were copied and updated. These old entry files and folder may ' \
+               'be deleted at your discretion.'
+          return
+        end
+
+        old_entries_path = entries_path(time: time, file_name_format: old_entries_file_name)
+
+        return unless entries_file_name_changed? && File.exist?(old_entries_path)
+
+        puts "Renaming #{old_entries_path} to #{entries_path(time: time)}..."
+        #File.rename(old_entries_path, entries_path(time: time))
       end
     end
   end

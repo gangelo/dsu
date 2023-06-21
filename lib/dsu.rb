@@ -22,3 +22,8 @@ require 'pry-byebug' if Dsu.env.development?
 Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
   require file
 end
+
+module Dsu
+  module Migrate
+  end
+end
