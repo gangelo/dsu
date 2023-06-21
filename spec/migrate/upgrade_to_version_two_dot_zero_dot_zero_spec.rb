@@ -36,22 +36,21 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
       end
     end
 
-    xcontext 'when the configuration file exists' do
+    context 'when the configuration file exists' do
       before do
         File.write(Dsu::Support::Fileable.config_path, ConfigurationHelpers::CONFIGURATION_HASHES[start_migration_version.to_s].to_yaml)
-        migration_service_version.call
+        migration.call
       end
 
-      it 'updates the configuration file' do
-        expected_configuration_h =  {
-          version: end_migration_version,
-          editor: 'vim',
-          entries_display_order: :asc,
-          carry_over_entries_to_today: true,
-          include_all: true,
-          theme_name: 'default'
-        }
-        expect(Dsu::Models::Configuration.instance.to_h).to eq(expected_configuration_h)
+      let(:configuration) { Dsu::Models::Configuration.instance }
+
+      it 'creates the configuration file and carries over the values from the old configuration file' do
+        expect(configuration.version).to eq(end_migration_version)
+        expect(configuration.editor).to eq('vim')
+        expect(configuration.entries_display_order).to eq(:asc)
+        expect(configuration.carry_over_entries_to_today).to eq(true)
+        expect(configuration.include_all).to eq(true)
+        expect(configuration.theme_name).to eq('default')
       end
     end
   end
