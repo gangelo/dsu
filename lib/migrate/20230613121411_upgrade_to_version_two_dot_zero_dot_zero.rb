@@ -107,6 +107,7 @@ module Dsu
         return unless safe_old_entries_folder? && entries_folder_changed?
 
         Dir.glob("#{old_entries_folder}/*").each do |file|
+          binding.pry
           FileUtils.cp(file, entries_folder)
           puts "Copying #{File.join(old_entries_folder, file)} to #{entries_folder}..."
         end
