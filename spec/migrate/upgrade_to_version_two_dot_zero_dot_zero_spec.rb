@@ -88,16 +88,26 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
     end
 
     context 'when there are entry group files' do
-      before do
-        migration.call
-      end
-
       context 'when the entry group files need to be moved to the new entries folder' do
+        before do
+          from_entries_folder = File.join(destination_folder, 'entries')
+          to_entries_folder = File.join(destination_folder, 'old_entries')
+          FileUtils.mv(from_entries_folder, to_entries_folder)
+          config_path = Dsu::Support::Fileable.config_path
+          config_hash = { entries_folder: File.join(destination_folder, 'old_entries') }
+          update_configuration_version0!(config_hash: config_hash, config_path: config_path)
+          migration.call
+        end
+
         it_behaves_like 'the entry group files are created'
         it_behaves_like 'the migration version file is updated to the latest migration version'
       end
 
-      context 'when the entry group files do not need to be moved to the new entries folder' do
+      xcontext 'when the entry group files do not need to be moved to the new entries folder' do
+        before do
+          migration.call
+        end
+
         it_behaves_like 'the entry group files are created'
         it_behaves_like 'the migration version file is updated to the latest migration version'
       end

@@ -25,17 +25,18 @@ RSpec.shared_context 'with migrations' do
     ensure_safe_source_folder!
     ensure_safe_destination_folder!
 
-    puts 'Copy test config file to destibation folder...'
+    puts 'Copy test config file to destination folder...'
     if with_config
       config_file_name = Dsu::Support::Fileable.config_file_name
+      config_path = Dsu::Support::Fileable.config_path
       puts "From: #{File.join(source_folder, config_file_name)}" \
-           "\n  To: #{Dsu::Support::Fileable.config_path}"
-      FileUtils.cp(File.join(source_folder, config_file_name), Dsu::Support::Fileable.config_path)
+           "\n  To: #{config_path}"
+      FileUtils.cp(File.join(source_folder, config_file_name), config_path)
     else
       puts 'Skipped (:with_config == false).'
     end
 
-    puts 'Copy test color theme files to destibation folder...'
+    puts 'Copy test color theme files to destination folder...'
     FileUtils.mkdir_p(Dsu::Support::Fileable.themes_folder)
     if with_themes
       Dir.glob("#{source_folder}/themes/*").each do |file_path|
@@ -48,7 +49,7 @@ RSpec.shared_context 'with migrations' do
       puts 'Skipped (:with_themes == false).'
     end
 
-    puts 'Copy test entry files to destibation folder...'
+    puts 'Copy test entry files to destination folder...'
     FileUtils.mkdir_p(Dsu::Support::Fileable.entries_folder)
     if with_entries
       Dir.glob("#{source_folder}/entries/*").each do |file_path|

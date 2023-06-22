@@ -15,8 +15,8 @@ module Dsu
                 "is not < the current migration version (#{current_migration_version})."
         end
 
-        update_color_themes!
         update_configuration!
+        update_color_themes!
         update_entry_groups!
 
         super
@@ -84,6 +84,8 @@ module Dsu
       end
 
       def update_configuration!
+        FileUtils.mkdir_p(Dsu::Support::Fileable.entries_folder)
+
         if File.exist?(config_path)
           old_config_hash = Psych.safe_load(File.read(config_path), [Symbol]).transform_keys(&:to_sym)
           config_hash = Models::Configuration::DEFAULT_CONFIGURATION.merge(old_config_hash)
@@ -103,15 +105,6 @@ module Dsu
         end
       end
 
-      def copy_entry_groups_if
-        return unless safe_old_entries_folder? && entries_folder_changed?
-
-        Dir.glob("#{old_entries_folder}/*").each do |file|
-          FileUtils.cp(file, entries_folder)
-          puts "Copying #{File.join(old_entries_folder, file)} to #{entries_folder}..."
-        end
-      end
-
       def update_entry_groups!
         copy_entry_groups_if
         Dir.glob("#{entries_folder}/*").each do |entry_group_file|
@@ -126,6 +119,17 @@ module Dsu
             end
             rename_old_entry_group_file_if(time: time)
           end.save!
+        end
+      end
+
+      def copy_entry_groups_if
+        return unless safe_old_entries_folder? && entries_folder_changed?
+
+        Dir.glob("#{old_entries_folder}/*").each do |file_path|
+          new_file_path = File.join(entries_folder, File.basename(file_path))
+          puts "Copying: #{file_path}" \
+               "\n     to: #{new_file_path}..."
+          FileUtils.cp(file_path, new_file_path)
         end
       end
 
