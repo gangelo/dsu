@@ -61,12 +61,6 @@ RSpec.shared_context 'with migrations' do
       puts 'Skipped (:with_entries == false).'
     end
 
-    # Dir.glob("#{source_folder}/entries/*").each do |file_path|
-    #   puts "Copying test data from: #{source_folder}..."
-    #   puts "Copying test data to: #{destination_folder}..."
-    #   FileUtils.cp_r("#{source_folder}/.", destination_folder)
-    # end
-
     allow(Dsu::Migration::Service).to receive(:migration_version_folder).and_return(destination_folder)
     migration_version_file = Dsu::Migration::MIGRATION_VERSION_FILE_NAME
     allow(Dsu::Migration::Service).to receive(:migration_version_path).and_return(File.join(destination_folder, migration_version_file))

@@ -16,7 +16,7 @@ RSpec.shared_context 'when dir mock and cleanup is needed' do
 
   after do
     # Clean up the files and directories created within the temporary directory.
-    FileUtils.rm_rf(temp_folder)
+    FileUtils.rm_rf(File.join(temp_folder, 'dsu'))
   end
 
   let(:temp_folder) { Dir.tmpdir }
