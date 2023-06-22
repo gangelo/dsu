@@ -32,8 +32,7 @@ RSpec.describe Dsu::Migration::Service do
   describe '.all_migration_files_info' do
     let(:expected_migration_files_info) do
       [
-        migration_service_info_for(migration_file: '20230613121411_remove_and_add_configuration_attrs.rb', migrate_folder: migrate_folder),
-        migration_service_info_for(migration_file: '20230618204155_copy_color_theme_files.rb', migrate_folder: migrate_folder)
+        migration_service_info_for(migration_file: '20230613121411_upgrade_to_version_two_dot_zero_dot_zero.rb', migrate_folder: migrate_folder)
       ]
     end
 
