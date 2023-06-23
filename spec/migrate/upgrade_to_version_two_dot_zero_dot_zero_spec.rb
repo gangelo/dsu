@@ -126,7 +126,16 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
 
       context 'when the entry group files need to be moved to the new entries folder' do
         context 'when the old entries folder is not "safe" to manipulate' do
+          before do
+            from_folder = File.join(destination_folder, 'entries')
+            to_folder = File.join(destination_folder, 'old_entries')
+            move_entry_group_files(from_folder: from_folder, to_folder: to_folder)
+            migration.call
+          end
 
+          it_behaves_like 'the entry group files exist in the right folder'
+          it_behaves_like 'the entry group files are updated'
+          it_behaves_like 'the migration version file is updated to the latest migration version'
         end
 
         context 'when the old entries folder is "safe" to manipulate' do
