@@ -83,17 +83,6 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
   end
 
   describe '#call' do
-    #subject(:migration_service_version) { Dsu::Migration::Service[1.0] }
-
-    # let(:migrate_folder) { Dsu::Migration::Service.migrate_folder }
-
-    # before do
-    #   all_migration_file_info = [
-    #     migration_service_info_for(migration_file: '20230613121411_upgrade_to_version_two_dot_zero_dot_zero.rb', migrate_folder: migrate_folder)
-    #   ]
-    #   allow(Dsu::Migration::Service).to receive(:all_migration_files_info).and_return(all_migration_file_info)
-    # end
-
     let(:start_migration_version) { 0 }
     let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
 
@@ -136,16 +125,22 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
       let(:expected_entry_group_times) { %w[2023-06-15 2023-06-16 2023-06-17] }
 
       context 'when the entry group files need to be moved to the new entries folder' do
-        before do
-          from_folder = File.join(destination_folder, 'entries')
-          to_folder = File.join(destination_folder, 'old_entries')
-          move_entry_group_files(from_folder: from_folder, to_folder: to_folder)
-          migration.call
+        context 'when the old entries folder is not "safe" to manipulate' do
+
         end
 
-        it_behaves_like 'the entry group files exist in the right folder'
-        it_behaves_like 'the entry group files are updated'
-        it_behaves_like 'the migration version file is updated to the latest migration version'
+        context 'when the old entries folder is "safe" to manipulate' do
+          before do
+            from_folder = File.join(destination_folder, 'entries')
+            to_folder = File.join(destination_folder, 'old_entries')
+            move_entry_group_files(from_folder: from_folder, to_folder: to_folder)
+            migration.call
+          end
+
+          it_behaves_like 'the entry group files exist in the right folder'
+          it_behaves_like 'the entry group files are updated'
+          it_behaves_like 'the migration version file is updated to the latest migration version'
+        end
       end
 
       context 'when the entry group files DO NOT need to be moved to the new entries folder' do
