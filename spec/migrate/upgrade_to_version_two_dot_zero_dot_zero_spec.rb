@@ -1,5 +1,32 @@
 # frozen_string_literal: true
 
+def move_entry_group_files(from_folder:, to_folder:)
+  FileUtils.mv(from_folder, to_folder)
+  config_path = Dsu::Support::Fileable.config_path
+  config_hash = { entries_folder: File.join(destination_folder, File.basename(to_folder)) }
+  update_configuration_version0!(config_hash: config_hash, config_path: config_path)
+end
+
+def rename_entry_group_files(entries_folder:, file_strftime: '%m-%d-%Y.json')
+  puts "Renaming entry group files using format \"#{file_strftime}\"..."
+  Dir.glob("#{entries_folder}/*").each do |file_path|
+    time = Time.parse(File.basename(file_path, '.*'))
+    new_file_path = File.join(entries_folder, time.strftime(file_strftime))
+    puts "From: #{file_path}" \
+         "\n  to: #{new_file_path}"
+    FileUtils.mv(file_path, new_file_path)
+
+    # We have to update the configuration to recognize the entries folder and new
+    # file name format.
+    config_path = Dsu::Support::Fileable.config_path
+    config_hash = {
+      entries_file_name: file_strftime,
+      entries_folder: File.dirname(new_file_path)
+    }
+    update_configuration_version0!(config_hash: config_hash, config_path: config_path)
+  end
+end
+
 RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
   subject(:migration) { described_class.new }
 
@@ -21,7 +48,16 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
   shared_examples 'the entry group files exist in the right folder' do
     it 'creates the expected entry group files' do
       expected_entry_group_times = %w[2023-06-15 2023-06-16 2023-06-17]
-      expect(Dsu::Models::EntryGroup.all.map(&:time_yyyy_mm_dd)).to match_array(expected_entry_group_times)
+      expect(Dsu::Models::EntryGroup.all&.map(&:time_yyyy_mm_dd)).to match_array(expected_entry_group_times)
+    end
+  end
+
+  shared_examples 'the old entry group files are renamed and exist in the right folder' do
+    it 'renames the old entry group files' do
+      expected_entry_group_times = %w[06-15-2023.json.old 06-16-2023.json.old 06-17-2023.json.old]
+      expect(expected_entry_group_times.all? do |old_file|
+        File.exist?(File.join(Dsu::Support::Fileable.entries_folder, old_file))
+      end).to be true
     end
   end
 
@@ -101,12 +137,9 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
 
       context 'when the entry group files need to be moved to the new entries folder' do
         before do
-          from_entries_folder = File.join(destination_folder, 'entries')
-          to_entries_folder = File.join(destination_folder, 'old_entries')
-          FileUtils.mv(from_entries_folder, to_entries_folder)
-          config_path = Dsu::Support::Fileable.config_path
-          config_hash = { entries_folder: File.join(destination_folder, 'old_entries') }
-          update_configuration_version0!(config_hash: config_hash, config_path: config_path)
+          from_folder = File.join(destination_folder, 'entries')
+          to_folder = File.join(destination_folder, 'old_entries')
+          move_entry_group_files(from_folder: from_folder, to_folder: to_folder)
           migration.call
         end
 
@@ -115,12 +148,27 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
         it_behaves_like 'the migration version file is updated to the latest migration version'
       end
 
-      context 'when the entry group files do not need to be moved to the new entries folder' do
+      context 'when the entry group files DO NOT need to be moved to the new entries folder' do
         before do
           migration.call
         end
 
         it_behaves_like 'the entry group files exist in the right folder'
+        it_behaves_like 'the entry group files are updated'
+        it_behaves_like 'the migration version file is updated to the latest migration version'
+      end
+
+      context 'when the entry group files need to be renamed' do
+        before do
+          # TODO: Change entries_file_name in the configuration to '%m-%d-%Y.json'.
+          entries_folder = File.join(destination_folder, File.basename(Dsu::Support::Fileable.entries_folder))
+          rename_entry_group_files(entries_folder: entries_folder)
+
+          migration.call
+        end
+
+        it_behaves_like 'the entry group files exist in the right folder'
+        it_behaves_like 'the old entry group files are renamed and exist in the right folder'
         it_behaves_like 'the entry group files are updated'
         it_behaves_like 'the migration version file is updated to the latest migration version'
       end

@@ -38,7 +38,7 @@ module Dsu
       end
 
       def entries_file_name_changed?
-        return if old_entries_file_name.nil?
+        return unless old_entries_file_name?
 
         old_entries_file_name != ENTRIES_FILE_NAME_FORMAT
       end
@@ -62,7 +62,6 @@ module Dsu
       end
 
       def read_old_configuration
-        config_path = Support::Fileable.config_path
         Psych.safe_load(File.read(config_path), [Symbol]).transform_keys(&:to_sym)
       end
 
@@ -87,7 +86,7 @@ module Dsu
         FileUtils.mkdir_p(Dsu::Support::Fileable.entries_folder)
 
         if File.exist?(config_path)
-          old_config_hash = Psych.safe_load(File.read(config_path), [Symbol]).transform_keys(&:to_sym)
+          old_config_hash = read_old_configuration
           config_hash = Models::Configuration::DEFAULT_CONFIGURATION.merge(old_config_hash)
           config_hash[:entries_display_order] = config_hash[:entries_display_order].to_sym
           config_hash.delete(:entries_file_name)
@@ -144,10 +143,9 @@ module Dsu
         end
 
         old_entries_path = entries_path(time: time, file_name_format: old_entries_file_name)
-
         return unless entries_file_name_changed? && File.exist?(old_entries_path)
 
-        renamed_old_entries_file_name_format = "old.#{ENTRIES_FILE_NAME_FORMAT}"
+        renamed_old_entries_file_name_format = "#{old_entries_file_name}.old"
         renamed_old_entries_path = entries_path(time: time, file_name_format: renamed_old_entries_file_name_format)
         puts "Renaming #{old_entries_path} to #{renamed_old_entries_path}..."
         File.rename(old_entries_path, renamed_old_entries_path)

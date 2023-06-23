@@ -44,10 +44,11 @@ module Dsu
 
       module ClassMethods
         def all
-          entry_files.map do |file_path|
-            entry_date = File.basename(file_path, '.*')
-            next unless entry_date.match?(ENTRIES_FILE_NAME_TIME_REGEX)
+          entry_files.filter_map do |file_path|
+            entry_file_name = File.basename(file_path)
+            next unless entry_file_name.match?(ENTRIES_FILE_NAME_REGEX)
 
+            entry_date = File.basename(entry_file_name, '.*')
             find(time: Time.parse(entry_date))
           end
         end
