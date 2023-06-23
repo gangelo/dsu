@@ -112,8 +112,7 @@ module Dsu
           next if entry_group_hash[:version] == migration_version
 
           time = Time.parse(entry_group_hash[:time])
-          Models::EntryGroup.new(time: time).tap do |entry_group|
-            entry_group_hash[:version] = migration_version
+          Models::EntryGroup.new(time: time, version: migration_version).tap do |entry_group|
             entry_group_hash[:entries].each do |entry_hash|
               entry_group.entries << Models::Entry.new(description: entry_hash[:description])
             end
