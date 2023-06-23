@@ -32,7 +32,7 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
   end
 
   shared_examples 'the entry group files are updated' do
-    it 'updates the entry group files' do # rubocop:disable RSpec/ExampleLength
+    it 'updates the entry group files' do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
       expected_entry_group_times.each do |time|
         entry_group_time = Time.parse(time)
         entry_group = Dsu::Models::EntryGroup.find(time: entry_group_time)
@@ -44,9 +44,6 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
         expect(entry_group.entries[1].description).to eq "#{formatted_entry_group_time} description 1"
       end
     end
-  end
-
-  shared_examples 'the entry group files and entries are correct' do
   end
 
   describe '#call' do
