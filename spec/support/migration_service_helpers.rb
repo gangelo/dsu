@@ -1,4 +1,4 @@
-# frozen_strint_literal: true
+# frozen_string_literal: true
 
 module MigrationServiceHelpers
   def migration_service_info_for(migration_file:, migrate_folder:)

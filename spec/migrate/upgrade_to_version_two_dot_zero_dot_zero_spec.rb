@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 # rubocop:disable RSpec/NestedGroups
+
+# All this preprocessing does is make the old entries folder "unsafe" to manipulate
+# by moving the entry group files to the '/tmp/dsu/entries' folder. The configuration
+# file is also updated to point to the 'unsafe' entries folder so that the migration
+# process knows where to find the entry group files.
 def setup_unsafe_entries_folder(unsafe_entries_folder:)
-  # All this preprocessing does is make the old entries folder "unsafe" to manipulate
-  # by moving the entry group files to the '/tmp/dsu/entries' folder. The configuration
-  # file is also updated to point to the 'unsafe' entries folder so that the migration
-  # process knows where to find the entry group files.
   config_path = Dsu::Support::Fileable.config_path
   config_hash = read_configuration_version0!(config_path: config_path)
   entries_folder = unsafe_entries_folder
@@ -47,7 +48,7 @@ def rename_entry_group_files(entries_folder:, file_strftime: '%m-%d-%Y.json')
   end
 end
 
-RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
+RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do # rubocop:disable RSpec/FilePath
   subject(:migration) { described_class.new }
 
   include_context 'with migrations'

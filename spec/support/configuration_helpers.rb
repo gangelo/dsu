@@ -25,7 +25,7 @@ module ConfigurationHelpers
         include_all: false,
         theme_name: 'matrix'
       }
-    }
+    }.freeze
 
   def read_configuration_version0!(config_path:)
     raise ArgumentError, 'config_path must exist' unless File.exist?(config_path)

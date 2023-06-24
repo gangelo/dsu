@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # # frozen_string_literal: true
 
 # RSpec.describe 'Migrations 0 to 20230613121411', type: :feature do
@@ -44,7 +45,7 @@
 #     end
 
 #     let(:start_migration_version) { 0 }
-#     let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
+#     let(:end_migration_version) { 20230613121411 }
 
 #     it 'updates the migration file version' do
 #       migration_service_version.run_migrations!

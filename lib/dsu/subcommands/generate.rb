@@ -45,7 +45,8 @@ module Dsu
         puts apply_color_theme("Migration service version: #{Dsu::Migration::Service::MIGRATION_SERVICE_VERSION}",
           color_theme_color: color_theme.info)
         migration_file = create_migration_file(migration_name)
-        puts apply_color_theme("Migration file \"#{File.basename(migration_file)}\" created.", color_theme_color: color_theme.info)
+        puts apply_color_theme("Migration file \"#{File.basename(migration_file)}\" created.",
+          color_theme_color: color_theme.info)
       end
 
       private
