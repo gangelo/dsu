@@ -27,6 +27,12 @@ module ConfigurationHelpers
       }
     }
 
+  def read_configuration_version0!(config_path:)
+    raise ArgumentError, 'config_path must exist' unless File.exist?(config_path)
+
+    Psych.safe_load(File.read(config_path), [Symbol]).transform_keys(&:to_sym)
+  end
+
   def update_configuration_version0!(config_hash:, config_path:)
     raise ArgumentError, 'config_hash must be a Hash' unless config_hash.is_a?(Hash)
     raise ArgumentError, 'config_path must be a String' unless config_path.is_a?(String)

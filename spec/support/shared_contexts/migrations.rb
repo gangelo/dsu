@@ -11,13 +11,13 @@ RSpec.shared_context 'with migrations' do
 
   def ensure_safe_source_folder!
     unless source_folder.present? && source_folder.start_with?(gem_dir)
-      raise "source_folder must be defined and begin with #{source_folder.start_with?(gem_dir)}"
+      raise "source_folder must be defined and begin with #{gem_dir}"
     end
   end
 
   def ensure_safe_destination_folder!
-    unless destination_folder.present? && destination_folder.start_with?(Dir.tmpdir)
-      raise "destination_folder must be defined and begin with #{destination_folder.start_with?(Dir.tmpdir)}"
+    unless destination_folder.present? && destination_folder.start_with?(Dir.tmpdir, '/tmp')
+      raise "destination_folder must be defined and begin with #{Dir.tmpdir}"
     end
   end
 
@@ -83,7 +83,7 @@ RSpec.shared_context 'with migrations' do
     File.join(source_folder, start_migration_version.to_s)
   end
   let(:destination_folder) do
-    unless temp_folder.present? && temp_folder.start_with?(Dir.tmpdir)
+    unless temp_folder.present? && temp_folder.start_with?(Dir.tmpdir, '/tmp')
       raise "temp_folder must be defined and begin with #{Dir.tmpdir}"
     end
 

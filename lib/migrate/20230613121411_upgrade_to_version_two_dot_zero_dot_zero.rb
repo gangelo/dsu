@@ -43,6 +43,12 @@ module Dsu
         old_entries_file_name != ENTRIES_FILE_NAME_FORMAT
       end
 
+      def entries_folder_changed?
+        return unless old_entries_folder?
+
+        old_entries_folder != entries_folder
+      end
+
       def old_entries_folder?
         old_entries_folder.present?
       end
@@ -53,12 +59,6 @@ module Dsu
         return unless Dir.exist?(old_entries_folder)
 
         true
-      end
-
-      def entries_folder_changed?
-        return unless safe_old_entries_folder?
-
-        old_entries_folder != entries_folder
       end
 
       def read_old_configuration
@@ -121,7 +121,7 @@ module Dsu
       end
 
       def copy_entry_groups_if
-        return unless safe_old_entries_folder? && entries_folder_changed?
+        return unless entries_folder_changed?
 
         Dir.glob("#{old_entries_folder}/*").each do |file_path|
           new_file_path = File.join(entries_folder, File.basename(file_path))
@@ -136,8 +136,8 @@ module Dsu
         return unless entries_folder_changed? || entries_file_name_changed?
 
         unless safe_old_entries_folder?
-          puts "Old entries folder #{old_entries_folder} contains old entry files " \
-               'that were copied and updated. These old entry files and folder may ' \
+          puts "Old entries folder \"#{old_entries_folder}\" contains old entry files " \
+               'that were copied and updated. This folder along with its old entry files may ' \
                'be deleted at your discretion.'
           return
         end
