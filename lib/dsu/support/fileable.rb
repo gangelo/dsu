@@ -4,6 +4,7 @@ module Dsu
   module Support
     module Fileable
       ENTRIES_FILE_NAME_FORMAT = '%Y-%m-%d.json'
+      MIGRATION_VERSION_FILE_NAME = 'migration_version.yml'
 
       # Configuration
 
@@ -42,6 +43,21 @@ module Dsu
 
       def themes_path(theme_name:)
         File.join(themes_folder, "#{theme_name}.yml")
+      end
+
+      # Migration
+
+      # The folder where generated migration files will be stored (i.e. dsu/lib/migrate).
+      def migrate_folder
+        @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
+      end
+
+      def migration_version_folder
+        @migration_version_folder ||= migrate_folder
+      end
+
+      def migration_version_path
+        @migration_version_path ||= File.join(migration_version_folder, MIGRATION_VERSION_FILE_NAME)
       end
 
       # Base folders

@@ -148,6 +148,21 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do # rubocop:disa
       end
     end
 
+    context 'when the migration version file exists' do
+      xcontext 'when the migration version file version is greater than the migration version' do
+        subject(:migration) { described_class.new.call }
+
+        let(:with_migration_version_file) { true }
+        let(:migration_version_file_version) { end_migration_version }
+        let(:expected_error) { /is not < the current migration version/ }
+
+        it_behaves_like 'an error is raised'
+      end
+
+      context 'when the migration version file version is less than the migration version' do
+      end
+    end
+
     context 'when there are entry group files' do
       let(:expected_entry_group_times) { %w[2023-06-15 2023-06-16 2023-06-17] }
 

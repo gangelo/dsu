@@ -12,7 +12,7 @@
 #   #   FileUtils.cp_r("#{source_folder}/.", destination_folder)
 
 #   #   allow(Dsu::Migration::Service).to receive(:migration_version_folder).and_return(destination_folder)
-#   #   migration_version_file = Dsu::Migration::MIGRATION_VERSION_FILE_NAME
+#   #   migration_version_file = Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME
 #   #   allow(Dsu::Migration::Service).to receive(:migration_version_path).and_return(File.join(destination_folder, migration_version_file))
 #   # end
 

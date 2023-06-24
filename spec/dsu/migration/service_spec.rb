@@ -51,7 +51,7 @@ RSpec.describe Dsu::Migration::Service do
     context 'when the migration version file exists' do
       before do
         allow(described_class).to receive(:migrate_folder).and_return(temp_folder)
-        migration_version_path = File.join(temp_folder, Dsu::Migration::MIGRATION_VERSION_FILE_NAME)
+        migration_version_path = File.join(temp_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME)
         allow(described_class).to receive(:migration_version_path).and_return(migration_version_path)
         File.write(migration_version_path, Psych.dump({ migration_version: 999 }))
       end
@@ -68,7 +68,7 @@ RSpec.describe Dsu::Migration::Service do
 
   describe '.migration_version_path' do
     it 'points to the migration version file' do
-      expect(service.migration_version_path).to eq File.join(migrate_folder, Dsu::Migration::MIGRATION_VERSION_FILE_NAME)
+      expect(service.migration_version_path).to eq File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME)
     end
   end
 end

@@ -25,6 +25,12 @@ RSpec.shared_context 'with migrations' do
     ensure_safe_source_folder!
     ensure_safe_destination_folder!
 
+    if with_migration_version_file
+      # migration_version_path = Dsu::Migration::Service.migration_version_path
+      # puts "Creating migration version file: #{migration_version_path} with version #{migration_version_file_version}..."
+      # File.write(migration_version_path, Psych.dump({ migration_version: migration_version }))
+    end
+
     puts 'Copy test config file to destination folder...'
     if with_config
       config_file_name = Dsu::Support::Fileable.config_file_name
@@ -63,7 +69,7 @@ RSpec.shared_context 'with migrations' do
     end
 
     allow(Dsu::Migration::Service).to receive(:migration_version_folder).and_return(destination_folder)
-    migration_version_file = Dsu::Migration::MIGRATION_VERSION_FILE_NAME
+    migration_version_file = Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME
     allow(Dsu::Migration::Service).to receive(:migration_version_path).and_return(File.join(destination_folder, migration_version_file))
   end
 
@@ -92,6 +98,8 @@ RSpec.shared_context 'with migrations' do
   let(:with_config) { true }
   let(:with_entries) { true }
   let(:with_themes) { true }
+  let(:with_migration_version_file) { false }
+  let(:migration_version_file_version) { 0 }
 end
 
 RSpec.configure do |config|

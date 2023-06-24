@@ -9,7 +9,6 @@ require_relative '../support/fileable'
 module Dsu
   module Migration
     MIGRATION_VERSION_REGEX = /(\A\d+)/
-    MIGRATION_VERSION_FILE_NAME = 'migration_version.yml'
 
     class Service
       include Support::Fileable
@@ -22,17 +21,16 @@ module Dsu
           "Dsu::Migration::Version#{version.to_s.delete('.')}::MigrationService".constantize
         end
 
-        # The folder where generated migration files will be stored (i.e. dsu/lib/migrate).
         def migrate_folder
-          @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
+          Support::Fileable.migrate_folder
         end
 
         def migration_version_folder
-          @migration_version_folder ||= migrate_folder
+          Support::Fileable.migration_version_folder
         end
 
         def migration_version_path
-          @migration_version_path ||= File.join(migration_version_folder, MIGRATION_VERSION_FILE_NAME)
+          Support::Fileable.migration_version_path
         end
 
         def all_migration_files_info

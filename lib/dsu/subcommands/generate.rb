@@ -22,7 +22,7 @@ module Dsu
         end
 
         def migrate_folder
-          Dsu::Migration::Service.migrate_folder
+          Support::Fileable.migrate_folder
         end
       end
 
