@@ -39,8 +39,11 @@ module Dsu
           @all_migration_files_info ||= begin
             migration_files_info = Dir.glob("#{migrate_folder}/*").filter_map do |file_path|
               file_name = File.basename(file_path)
+              match = file_name.match(/\A\d+_(.+)\.rb\z/)
+              next unless match
+
               version = file_name.match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
-              migration_class = file_name.match(/\A\d+_(.+)\.rb\z/)[1].camelize
+              migration_class = match[1].camelize
               {
                 migration_class: "Dsu::Migrate::#{migration_class}",
                 path: file_path,
