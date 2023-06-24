@@ -162,14 +162,6 @@ module Dsu
 
       private
 
-      # def nothing_to_display_banner_for(entry_group_times)
-      #   entry_group_times.sort!
-      #   time_range = "#{formatted_time(time: entry_group_times.first)} " \
-      #                "through #{formatted_time(time: entry_group_times.last)}"
-      #   message = "(nothing to display for #{time_range})"
-      #   puts apply_color_theme(message, color_theme_color: color_theme.info)
-      # end
-
       # This method will unconditionally display the FIRST and LAST entry groups
       # associated with the times provided by the <times> argument. All other
       # entry groups will be conditionally displayed based on the :include_all
