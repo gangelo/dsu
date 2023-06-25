@@ -148,11 +148,20 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do # rubocop:disa
       end
     end
 
+    context 'when the migration version file does not exist' do
+      let(:with_migration_version_file) { false }
+      let(:expected_entry_group_times) { %w[2023-06-15 2023-06-16 2023-06-17] }
+
+      it_behaves_like 'the color theme files are created'
+      it_behaves_like 'the entry group files exist in the right folder'
+      it_behaves_like 'the entry group files are updated'
+      it_behaves_like 'the migration version file is updated to the latest migration version'
+    end
+
     context 'when the migration version file exists' do
-      xcontext 'when the migration version file version is greater than the migration version' do
+      context 'when the migration version file version is greater than the migration version' do
         subject(:migration) { described_class.new.call }
 
-        let(:with_migration_version_file) { true }
         let(:migration_version_file_version) { end_migration_version }
         let(:expected_error) { /is not < the current migration version/ }
 
@@ -160,6 +169,11 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do # rubocop:disa
       end
 
       context 'when the migration version file version is less than the migration version' do
+        subject(:migration) { described_class.new.call }
+
+        let(:migration_version_file_version) { 0 }
+
+        it_behaves_like 'no error is raised'
       end
     end
 
@@ -167,7 +181,7 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do # rubocop:disa
       let(:expected_entry_group_times) { %w[2023-06-15 2023-06-16 2023-06-17] }
 
       context 'when the entry group files need to be moved to the new entries folder' do
-        context 'when the old entries folder is not "safe" to manipulate' do
+        context 'when the old entries folder is not "safe" to manipulate' do # rubocop:disable RSpec/MultipleMemoizedHelpers
           before do
             setup_unsafe_entries_folder(unsafe_entries_folder: unsafe_entries_folder)
           end

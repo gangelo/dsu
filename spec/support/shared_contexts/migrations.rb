@@ -5,7 +5,7 @@ RSpec.shared_context 'with migrations' do
 
   def ensure_safe_gem_dir!
     unless gem_dir.present? && gem_dir.start_with?(Gem.loaded_specs['dsu'].gem_dir)
-      raise "gem_dir must be defined and begin with #{gem_dir.start_with?(Gem.loaded_specs['dsu'].gem_dir)}"
+      raise "gem_dir must be defined and begin with #{gem_dir}"
     end
   end
 
@@ -17,7 +17,7 @@ RSpec.shared_context 'with migrations' do
 
   def ensure_safe_destination_folder!
     unless destination_folder.present? && destination_folder.start_with?(Dir.tmpdir, '/tmp')
-      raise "destination_folder must be defined and begin with #{Dir.tmpdir}"
+      raise "destination_folder must be defined and begin with #{Dir.tmpdir} or /tmp"
     end
   end
 
@@ -25,10 +25,15 @@ RSpec.shared_context 'with migrations' do
     ensure_safe_source_folder!
     ensure_safe_destination_folder!
 
+    migrate_folder = destination_folder
+    FileUtils.mkdir_p(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
     if with_migration_version_file
-      # migration_version_path = Dsu::Migration::Service.migration_version_path
-      # puts "Creating migration version file: #{migration_version_path} with version #{migration_version_file_version}..."
-      # File.write(migration_version_path, Psych.dump({ migration_version: migration_version }))
+      migration_version_path = Dsu::Support::Fileable.migration_version_path
+      puts "Creating migration version file \"#{migration_version_path}\" with version #{migration_version_file_version}..."
+      File.write(migration_version_path, Psych.dump({ migration_version: migration_version_file_version }))
     end
 
     puts 'Copy test config file to destination folder...'
@@ -98,7 +103,7 @@ RSpec.shared_context 'with migrations' do
   let(:with_config) { true }
   let(:with_entries) { true }
   let(:with_themes) { true }
-  let(:with_migration_version_file) { false }
+  let(:with_migration_version_file) { true }
   let(:migration_version_file_version) { 0 }
 end
 

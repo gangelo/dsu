@@ -23,12 +23,6 @@ RSpec.describe Dsu::Migration::Service do
     end
   end
 
-  describe '.migrate_folder' do
-    it 'returns the lib/migrate folder' do
-      expect(service.migrate_folder).to eq migrate_folder
-    end
-  end
-
   describe '.all_migration_files_info' do
     let(:expected_migration_files_info) do
       [
@@ -50,25 +44,17 @@ RSpec.describe Dsu::Migration::Service do
 
     context 'when the migration version file exists' do
       before do
-        allow(described_class).to receive(:migrate_folder).and_return(temp_folder)
-        migration_version_path = File.join(temp_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME)
-        allow(described_class).to receive(:migration_version_path).and_return(migration_version_path)
+        migrate_folder = temp_folder
+        allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(migrate_folder)
+        allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(migrate_folder)
+        allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
+        migration_version_path = Dsu::Support::Fileable.migration_version_path
         File.write(migration_version_path, Psych.dump({ migration_version: 999 }))
-      end
-
-      after do
-        File.delete(described_class.migration_version_path)
       end
 
       it 'returns the correct version' do
         expect(service.current_migration_version).to eq 999
       end
-    end
-  end
-
-  describe '.migration_version_path' do
-    it 'points to the migration version file' do
-      expect(service.migration_version_path).to eq File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME)
     end
   end
 end

@@ -21,21 +21,9 @@ module Dsu
           "Dsu::Migration::Version#{version.to_s.delete('.')}::MigrationService".constantize
         end
 
-        def migrate_folder
-          Support::Fileable.migrate_folder
-        end
-
-        def migration_version_folder
-          Support::Fileable.migration_version_folder
-        end
-
-        def migration_version_path
-          Support::Fileable.migration_version_path
-        end
-
         def all_migration_files_info
           @all_migration_files_info ||= begin
-            migration_files_info = Dir.glob("#{migrate_folder}/*").filter_map do |file_path|
+            migration_files_info = Dir.glob("#{Support::Fileable.migrate_folder}/*").filter_map do |file_path|
               file_name = File.basename(file_path)
               match = file_name.match(/\A\d+_(.+)\.rb\z/)
               next unless match
@@ -57,6 +45,7 @@ module Dsu
         end
 
         def current_migration_version
+          migration_version_path = Support::Fileable.migration_version_path
           return 0 unless File.exist?(migration_version_path)
 
           Psych.safe_load(File.read(migration_version_path), [Symbol])[:migration_version]
