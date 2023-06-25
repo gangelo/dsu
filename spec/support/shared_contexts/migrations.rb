@@ -37,15 +37,11 @@ RSpec.shared_context 'with migrations' do
     end
 
     puts 'Copy test config file to destination folder...'
-    if with_config
-      config_file_name = Dsu::Support::Fileable.config_file_name
-      config_path = Dsu::Support::Fileable.config_path
-      puts "From: #{File.join(source_folder, config_file_name)}" \
-           "\n  To: #{config_path}"
-      FileUtils.cp(File.join(source_folder, config_file_name), config_path)
-    else
-      puts 'Skipped (:with_config == false).'
-    end
+    config_file_name = Dsu::Support::Fileable.config_file_name
+    config_path = Dsu::Support::Fileable.config_path
+    puts "From: #{File.join(source_folder, config_file_name)}" \
+         "\n  To: #{config_path}"
+    FileUtils.cp(File.join(source_folder, config_file_name), config_path)
 
     puts 'Copy test color theme files to destination folder...'
     FileUtils.mkdir_p(Dsu::Support::Fileable.themes_folder)
@@ -100,7 +96,6 @@ RSpec.shared_context 'with migrations' do
 
     File.join(temp_folder, 'dsu')
   end
-  let(:with_config) { true }
   let(:with_entries) { true }
   let(:with_themes) { true }
   let(:with_migration_version_file) { true }
