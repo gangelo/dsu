@@ -42,4 +42,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor_nested_subcommand', '~> 1.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
+
+  spec.post_install_message = 'dsu_migrate.rb'
 end
