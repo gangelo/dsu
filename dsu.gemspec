@@ -36,11 +36,13 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '~> 7.0', '>= 7.0.4'
   spec.add_dependency 'activemodel', '~> 7.0', '>= 7.0.4.3'
-  spec.add_dependency 'highline', '~> 2.1'
   spec.add_dependency 'colorize', '~> 0.8.1'
   spec.add_dependency 'os', '~> 1.1', '>= 1.1.4'
   spec.add_dependency 'thor', '~> 1.2', '>= 1.2.1'
   spec.add_dependency 'thor_nested_subcommand', '~> 1.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
+
+  spec.post_install_message = 'Checking migrations...'
+  spec.executables << 'migrate'
 end
