@@ -11,14 +11,46 @@ module Dsu
     MIGRATION_VERSION_REGEX = /(\A\d+)/
 
     class Service
-      include Support::Fileable
-
       class << self
         def [](version)
           version = current_migration_version if version == :current
           require_relative "#{version}/migration_service"
 
           "Dsu::Migration::Version#{version.to_s.delete('.')}::MigrationService".constantize
+        end
+
+        def run_migrations?
+          latest_migration_version = migration_files_to_run_info.last.try(:[], :version) || 0
+          current_migration_version < latest_migration_version
+        end
+
+        def run_migrations!
+          puts "dsu version: #{Dsu::VERSION}"
+          puts 'Running migrations...'
+          puts "Migration version is #{current_migration_version}."
+
+          before_migration_version = current_migration_version
+
+          migration_files_to_run_info.each do |migration_file_info|
+            run_migration!(migration_file_info: migration_file_info)
+          end
+
+          puts "Migration version is now #{current_migration_version}."
+          puts 'Done.' if current_migration_version > before_migration_version
+          puts 'Nothing to do.' if current_migration_version == before_migration_version
+        end
+
+        def run_migration!(migration_file_info:)
+          require migration_file_info[:require_file]
+
+          migration = migration_file_info[:migration_class].constantize.new
+          if migration.migrate?
+            puts "Running migration: #{File.basename(migration_file_info[:require_file])}..."
+            migration.call
+          else
+            puts 'Bypassing migration: ' \
+                 "#{File.basename(migration_file_info[:require_file])}, #migrate? returned false."
+          end
         end
 
         def all_migration_files_info
@@ -53,6 +85,17 @@ module Dsu
 
         private
 
+        def migration_files_to_run_info
+          # NOTE: super.all_migration_files_info returns an array sorted ascending order
+          # of migration version. Below, #select will maintain the order in which the
+          # migrations are returned which is wnat we want, because the migrations need to
+          # be run in ascending version order.
+          @migration_files_to_run_info ||= all_migration_files_info.select do |migration_file_info|
+            migration_file_version = migration_file_info[:version]
+            migration_file_version && (migration_file_version > current_migration_version)
+          end
+        end
+
         # Returns the current migration service version.
         def migration_service_version
           folder_path = File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/dsu/migration')
@@ -71,7 +114,7 @@ module Dsu
         self.class.current_migration_version
       end
 
-      MIGRATION_SERVICE_VERSION = migration_service_version.freeze
+      MIGRATION_SERVICE_VERSION = migration_service_version.freeze # rubocop:disable Layout/ClassStructure
     end
   end
 end

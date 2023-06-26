@@ -3,7 +3,7 @@
 RSpec.describe Dsu::Migration::Service do
   subject(:service) { described_class }
 
-  let(:migrate_folder) { File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate') }
+  let(:migrate_folder) { Dsu::Support::Fileable.migrate_folder }
 
   describe 'class constants' do
     describe 'MIGRATION_SERVICE_VERSION' do

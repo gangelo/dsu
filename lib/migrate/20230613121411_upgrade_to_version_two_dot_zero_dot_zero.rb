@@ -15,8 +15,8 @@ module Dsu
                 "is not < the current migration version (#{current_migration_version})."
         end
 
-        update_configuration!
         update_color_themes!
+        update_configuration!
         update_entry_groups!
 
         super
@@ -29,6 +29,22 @@ module Dsu
 
       attr_reader :old_entries_folder, :old_entries_file_name
 
+      def root_folder
+        Support::Fileable.root_folder
+      end
+
+      def config_path
+        Support::Fileable.config_path
+      end
+
+      def entries_folder
+        Support::Fileable.entries_folder
+      end
+
+      def entries_path(time:, file_name_format: nil)
+        Support::Fileable.entries_path(time: time, file_name_format: file_name_format)
+      end
+
       def migration_version
         @migration_version ||= File.basename(__FILE__).match(Migration::MIGRATION_VERSION_REGEX).try(:[], 0)&.to_i
       end
@@ -40,7 +56,7 @@ module Dsu
       def entries_file_name_changed?
         return unless old_entries_file_name?
 
-        old_entries_file_name != ENTRIES_FILE_NAME_FORMAT
+        old_entries_file_name != Support::Fileable::ENTRIES_FILE_NAME_FORMAT
       end
 
       def entries_folder_changed?

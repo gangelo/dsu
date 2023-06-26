@@ -49,7 +49,7 @@ module Dsu
 
       # The folder where generated migration files will be stored (i.e. dsu/lib/migrate).
       def migrate_folder
-        @migrate_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/migrate')
+        @migrate_folder ||= File.join(gem_dir, 'lib/migrate')
       end
 
       def migration_version_folder
@@ -68,6 +68,10 @@ module Dsu
 
       def temp_folder
         Dir.tmpdir
+      end
+
+      def gem_dir
+        @gem_dir ||= Gem.loaded_specs['dsu'].gem_dir
       end
 
       extend self # rubocop:disable Style/ModuleFunction

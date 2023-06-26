@@ -1,9 +1,10 @@
-## 1.3.0 - 2023-??-??
+## 2.0.0.alpha.0 - 2023-06-26
 
+- This is an alpha release. It is not recommended for public use.
 - Changes
-  - Added version to Configuration an EntryGroup classes. This will help current and future migrations of their respective files.
-  - Added color theme support. See `dsu help <TBD>` for more information.
-  - Added (WIP) skeleton code for migration services that will enable us to migrate Entry files, Configuration file and ColorTheme::Theme files from one dsu version to another.
+  - Major refactors to the `dsu` codebase.
+  - Added color themes. See `dsu help theme` for more information.
+  - Added migrations so functionality can be added that involves changes to the dsu files and codebase without users having to lose their data.
 
 ## [1.2.1] 2023-06-02
 
