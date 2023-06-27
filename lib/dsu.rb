@@ -22,3 +22,12 @@ require 'pry-byebug' if Dsu.env.development?
 Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
   require file
 end
+
+if Dsu.env.production? && Dsu::Migration::Service.run_migrations?
+  begin
+    Dsu::Migration::Service.run_migrations!
+  rescue StandardError => e
+    puts "Error running migrations: #{e.message}"
+    exit 1
+  end
+end

@@ -20,6 +20,12 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
+if File.exist?('.env.test')
+  # This loads our test environment when running tests.
+  require 'dotenv'
+  Dotenv.load('.env.test')
+end
+
 require 'dsu'
 Dir[File.join(Dir.pwd, 'lib/migrate/**/*.rb')].each { |f| require f }
 Dir[File.join(Dir.pwd, 'spec/support/**/*.rb')].each { |f| require f }

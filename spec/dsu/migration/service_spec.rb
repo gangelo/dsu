@@ -3,8 +3,6 @@
 RSpec.describe Dsu::Migration::Service do
   subject(:service) { described_class }
 
-  let(:migrate_folder) { Dsu::Support::Fileable.migrate_folder }
-
   describe 'class constants' do
     describe 'MIGRATION_SERVICE_VERSION' do
       it 'exists' do
@@ -26,7 +24,8 @@ RSpec.describe Dsu::Migration::Service do
   describe '.all_migration_files_info' do
     let(:expected_migration_files_info) do
       [
-        migration_service_info_for(migration_file: '20230613121411_upgrade_to_version_two_dot_zero_dot_zero.rb', migrate_folder: migrate_folder)
+        migration_service_info_for(migration_file: '20230613121411_upgrade_to_version_two_dot_zero_dot_zero.rb',
+          migrate_folder: Dsu::Support::Fileable.migrate_folder)
       ]
     end
 
@@ -44,13 +43,17 @@ RSpec.describe Dsu::Migration::Service do
 
     context 'when the migration version file exists' do
       before do
-        migrate_folder = temp_folder
-        allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(migrate_folder)
-        allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(migrate_folder)
-        allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
-        migration_version_path = Dsu::Support::Fileable.migration_version_path
+        allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(temp_folder)
+        allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(temp_folder)
+        allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(temp_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
         File.write(migration_version_path, Psych.dump({ migration_version: 999 }))
       end
+
+      after do
+        File.delete(migration_version_path)
+      end
+
+      let(:migration_version_path) { Dsu::Support::Fileable.migration_version_path }
 
       it 'returns the correct version' do
         expect(service.current_migration_version).to eq 999

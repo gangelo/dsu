@@ -43,5 +43,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 
-  spec.post_install_message = 'dsu_migrate.rb'
+  spec.post_install_message = <<~MESSAGE
+
+  MESSAGE
 end
