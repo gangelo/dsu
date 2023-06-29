@@ -21,14 +21,15 @@ if Dsu.env.development?
     module Support
       module Fileable
         def root_folder
-          @root_folder ||= File.join(Gem.loaded_specs['dsu'].gem_dir, '.development_home')
+          # @root_folder ||= File.join(gem_dir, '.development_home')
+          File.join(gem_dir, '.development_home')
         end
       end
     end
   end
 end
 
-Dsu::Models::ColorTheme.safe_create_unless_exists!
-Dsu::Models::Configuration.safe_create_unless_exists!
+#Dsu::Models::ColorTheme.safe_create_unless_exists!
+#Dsu::Models::Configuration.safe_create_unless_exists!
 
 Dsu::CLI.start

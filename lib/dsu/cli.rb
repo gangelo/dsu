@@ -95,7 +95,30 @@ module Dsu
     desc 'version, -v',
       'Displays this gem version'
     def version
-      puts VERSION
+      configuration_version = Models::Configuration::VERSION
+      entry_group_version = Models::EntryGroup::VERSION
+      color_theme_version = Models::ColorTheme::VERSION
+      info = <<~INFO
+                  dsu version: #{VERSION}
+        Configuration version: #{configuration_version}
+          Entry group version: #{entry_group_version}
+          Color theme version: #{color_theme_version}
+
+                  Root folder: #{Support::Fileable.root_folder}
+                  Temp folder: #{Support::Fileable.temp_folder}
+               Entries folder: #{Support::Fileable.entries_folder}
+                Themes folder: #{Support::Fileable.themes_folder}
+               Migrate folder: #{Support::Fileable.migrate_folder}
+                   Gem folder: #{Support::Fileable.gem_dir}
+
+                  Config path: #{Support::Fileable.config_path}
+          Migration file path: #{Support::Fileable.migration_version_path}
+
+                   Migrations: #{Migration::Service.all_migration_files_info.map { |file_info| file_info[:version] }.wrap_and_join}
+
+
+      INFO
+      puts apply_color_theme(info, color_theme_color: color_theme.body)
     end
   end
 end

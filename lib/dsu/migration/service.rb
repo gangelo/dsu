@@ -96,9 +96,9 @@ module Dsu
           end
         end
 
-        # Returns the current migration service version.
+        # Returns the most recent migration service version.
         def migration_service_version
-          folder_path = File.join(Gem.loaded_specs['dsu'].gem_dir, 'lib/dsu/migration')
+          folder_path = File.join(Support::Fileable.gem_dir, 'lib/dsu/migration')
           subfolders = Dir.entries(folder_path)
             .select { |entry| File.directory?(File.join(folder_path, entry)) }
             .reject { |entry| entry.start_with?('.') }

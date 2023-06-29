@@ -23,7 +23,7 @@ Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
   require file
 end
 
-if Dsu.env.production? && Dsu::Migration::Service.run_migrations?
+if !(Dsu.env.test? || Dsu.env.development?) && Dsu::Migration::Service.run_migrations?
   begin
     Dsu::Migration::Service.run_migrations!
   rescue StandardError => e

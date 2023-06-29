@@ -11,6 +11,14 @@ RSpec.describe Dsu::Models::ColorTheme do
     described_class.new(theme_name: theme_name, theme_hash: theme_hash)
   end
 
+  before do
+    migrate_folder = File.join(temp_folder, 'dsu')
+    FileUtils.mkdir_p(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
+  end
+
   let(:theme_name) { described_class.default.theme_name }
   let(:theme_hash) { described_class::DEFAULT_THEME }
 

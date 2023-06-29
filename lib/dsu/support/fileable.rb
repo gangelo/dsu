@@ -23,7 +23,7 @@ module Dsu
       # Entries
 
       def entries_folder
-        "#{root_folder}/dsu/entries"
+        File.join(root_folder, 'dsu', 'entries')
       end
 
       def entries_file_name(time:, file_name_format: nil)
@@ -38,7 +38,7 @@ module Dsu
       # Themes
 
       def themes_folder
-        "#{root_folder}/dsu/themes"
+        File.join(root_folder, 'dsu', 'themes')
       end
 
       def themes_path(theme_name:)
@@ -49,15 +49,15 @@ module Dsu
 
       # The folder where generated migration files will be stored (i.e. dsu/lib/migrate).
       def migrate_folder
-        @migrate_folder ||= File.join(gem_dir, 'lib/migrate')
+        File.join(gem_dir, 'lib/migrate')
       end
 
       def migration_version_folder
-        @migration_version_folder ||= migrate_folder
+        File.join(root_folder, 'dsu')
       end
 
       def migration_version_path
-        @migration_version_path ||= File.join(migration_version_folder, MIGRATION_VERSION_FILE_NAME)
+        File.join(migration_version_folder, MIGRATION_VERSION_FILE_NAME)
       end
 
       # Base folders

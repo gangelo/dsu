@@ -9,6 +9,8 @@ require_relative '../dsu/models/entry_group'
 module Dsu
   module Migrate
     class UpgradeToVersionTwoDotZeroDotZero < Migration::Service[1.0]
+      OLD_FILENAME_EXT = '.old'
+
       def call
         unless migrate?
           raise "This migration file migration version (#{migration_version}) " \
@@ -18,6 +20,8 @@ module Dsu
         update_color_themes!
         update_configuration!
         update_entry_groups!
+        display_entries_folder_changed_message_if
+        display_entries_file_name_changed_message_if
 
         super
       rescue StandardError => e
@@ -151,20 +155,33 @@ module Dsu
         return unless old_entries_folder?
         return unless entries_folder_changed? || entries_file_name_changed?
 
-        unless safe_old_entries_folder?
-          puts "Old entries folder \"#{old_entries_folder}\" contains old entry files " \
-               'that were copied and updated. This folder along with its old entry files may ' \
-               'be deleted at your discretion.'
-          return
-        end
-
         old_entries_path = entries_path(time: time, file_name_format: old_entries_file_name)
         return unless entries_file_name_changed? && File.exist?(old_entries_path)
 
-        renamed_old_entries_file_name_format = "#{old_entries_file_name}.old"
+        renamed_old_entries_file_name_format = "#{old_entries_file_name}#{OLD_FILENAME_EXT}"
         renamed_old_entries_path = entries_path(time: time, file_name_format: renamed_old_entries_file_name_format)
         puts "Renaming #{old_entries_path} to #{renamed_old_entries_path}..."
         File.rename(old_entries_path, renamed_old_entries_path)
+      end
+
+      def display_entries_folder_changed_message_if
+        return unless entries_folder_changed?
+
+        puts "Old entries folder \"#{old_entries_folder}\" contains old entry files " \
+             'that were copied and updated...'
+        puts 'This folder along with its old entry files may be deleted at your discretion.'
+      end
+
+      def display_entries_file_name_changed_message_if
+        return unless entries_file_name_changed?
+
+        new_entries_file_name = Support::Fileable::ENTRIES_FILE_NAME_FORMAT
+        old_entries_file_name_moved_to = File.join(entries_folder, "#{old_entries_file_name}#{OLD_FILENAME_EXT}")
+        puts 'Entry group file name format has changed...' \
+             "\n  from \"#{old_entries_file_name}\"" \
+             "\n    to \"#{new_entries_file_name}\"" \
+             "\nThe OLD files were moved and renamed to \"#{old_entries_file_name_moved_to}\" " \
+             'and may be deleted at your discretion.'
       end
     end
   end
