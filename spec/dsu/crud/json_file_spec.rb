@@ -170,6 +170,35 @@ RSpec.describe Dsu::Crud::JsonFile do
     end
   end
 
+  describe 'delete' do
+    context 'when the file exists' do
+      before do
+        with_existing_file_path
+      end
+
+      specify 'the file exists before the delete' do
+        expect(File.exist?(file_path)).to be true
+      end
+
+      it 'deletes the file' do
+        json_file.delete
+        expect(File.exist?(file_path)).to be false
+      end
+    end
+
+    context 'when the file does not exist' do
+      subject(:json_file) { described_class.new(file_path: file_path, options: options).delete }
+
+      specify 'the file does not exist before the delete' do
+        expect(File.exist?(file_path)).to be false
+      end
+
+      it 'returns false' do
+        expect(json_file).to be false
+      end
+    end
+  end
+
   describe 'delete!' do
     context 'when the file exists' do
       before do
