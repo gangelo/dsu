@@ -46,7 +46,7 @@ RSpec.describe Dsu::Migration::Service do
         allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(temp_folder)
         allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(temp_folder)
         allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(temp_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
-        File.write(migration_version_path, Psych.dump({ migration_version: 999 }))
+        File.write(migration_version_path, JSON.pretty_generate({ migration_version: 999 }))
       end
 
       after do

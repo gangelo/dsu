@@ -4,7 +4,7 @@ module Dsu
   module Support
     module Fileable
       ENTRIES_FILE_NAME_FORMAT = '%Y-%m-%d.json'
-      MIGRATION_VERSION_FILE_NAME = 'migration_version.yml'
+      MIGRATION_VERSION_FILE_NAME = 'migration_version.json'
 
       # Configuration
 
@@ -42,7 +42,7 @@ module Dsu
       end
 
       def themes_path(theme_name:)
-        File.join(themes_folder, "#{theme_name}.yml")
+        File.join(themes_folder, "#{theme_name}.json")
       end
 
       # Migration

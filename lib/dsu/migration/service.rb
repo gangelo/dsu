@@ -2,8 +2,8 @@
 
 require 'fileutils'
 require 'json'
-require 'psych'
 require_relative '../models/configuration'
+require_relative '../services/migration_version/hydrator_service'
 require_relative '../support/fileable'
 
 module Dsu
@@ -80,7 +80,9 @@ module Dsu
           migration_version_path = Support::Fileable.migration_version_path
           return 0 unless File.exist?(migration_version_path)
 
-          Psych.safe_load(File.read(migration_version_path), [Symbol])[:migration_version]
+          migration_version_json = File.read(migration_version_path)
+          migration_version_hash = Services::MigrationVersion::HydratorService.new(migration_version_json: migration_version_json).call
+          migration_version_hash[:migration_version]
         end
 
         private

@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require 'fileutils'
-require 'psych'
+require 'json'
 require_relative '../models/configuration'
+require_relative '../services/color_theme/hydrator_service'
 require_relative '../support/fileable'
 
 module Dsu
@@ -50,7 +51,7 @@ module Dsu
 
           FileUtils.mkdir_p themes_folder
           themes_path = themes_path(theme_name: theme_name)
-          File.write(themes_path, Psych.dump(self::DEFAULT_THEME))
+          File.write(themes_path, JSON.pretty_generate(self::DEFAULT_THEME))
         end
 
         def delete!(theme_name:)
@@ -79,8 +80,8 @@ module Dsu
           raise "Color theme does not exist: \"#{theme_name}\"" unless exist?(theme_name: theme_name)
 
           themes_path = themes_path(theme_name: theme_name)
-          color_theme_hash = Psych.safe_load(File.read(themes_path), [Symbol])
-          new(theme_name: theme_name, theme_hash: color_theme_hash)
+          theme_json = File.read(themes_path)
+          Services::ColorTheme::HydratorService.new(theme_name: theme_name, theme_json: theme_json).call
         end
 
         def find_or_create(theme_name:)
@@ -100,7 +101,7 @@ module Dsu
 
           FileUtils.mkdir_p themes_folder
           themes_path = themes_path(theme_name: color_theme.theme_name)
-          File.write(themes_path, Psych.dump(color_theme.to_h))
+          File.write(themes_path, JSON.pretty_generate(color_theme.to_h))
 
           true
         end

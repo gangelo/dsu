@@ -33,7 +33,7 @@ RSpec.shared_context 'with migrations' do
     if with_migration_version_file
       migration_version_path = Dsu::Support::Fileable.migration_version_path
       puts "Creating migration version file \"#{migration_version_path}\" with version #{migration_version_file_version}..."
-      File.write(migration_version_path, Psych.dump({ migration_version: migration_version_file_version }))
+      File.write(migration_version_path, JSON.pretty_generate({ migration_version: migration_version_file_version }))
     end
 
     puts 'Copy test config file to destination folder...'

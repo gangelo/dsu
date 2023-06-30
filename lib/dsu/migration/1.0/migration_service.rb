@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require_relative '../../support/fileable'
 require_relative '../service'
 
@@ -30,7 +31,7 @@ module Dsu
           return unless migrate?
 
           migration_version_path = Support::Fileable.migration_version_path
-          File.write(migration_version_path, Psych.dump({ migration_version: migration_version }))
+          File.write(migration_version_path, JSON.pretty_generate({ migration_version: migration_version }))
         end
 
         def migration_version
