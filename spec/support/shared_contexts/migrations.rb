@@ -86,7 +86,7 @@ RSpec.shared_context 'with migrations' do
   let(:source_folder) do
     ensure_safe_gem_dir!
 
-    source_folder = File.join(gem_dir, 'spec/dsu/test_data')
+    source_folder = File.join(gem_dir, 'spec/fixtures/migration/versions')
     File.join(source_folder, start_migration_version.to_s)
   end
   let(:destination_folder) do
