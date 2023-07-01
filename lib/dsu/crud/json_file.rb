@@ -2,13 +2,10 @@
 
 require 'fileutils'
 require 'json'
-require_relative '../support/fileable'
 
 module Dsu
   module Crud
     class JsonFile
-      include Support::Fileable
-
       attr_reader :file_path
 
       def initialize(file_path:, options: {})
