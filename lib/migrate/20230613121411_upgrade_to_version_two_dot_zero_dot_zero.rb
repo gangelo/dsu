@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../dsu/crud/json_file'
 require_relative '../dsu/migration/service'
 require_relative '../dsu/models/color_theme'
 require_relative '../dsu/models/configuration'
@@ -81,40 +82,64 @@ module Dsu
         true
       end
 
-      def read_old_configuration
-        Psych.safe_load(File.read(config_path), [Symbol]).transform_keys(&:to_sym)
-      end
+      # NOTE: This migration includes color themes so it's okay to use
+      # our models here as long as we use raw json files in future
+      # migrations.
+      def update_color_themes! # rubocop:disable Metrics/MethodLength
+        themes_folder = Support::Fileable.themes_folder
+        FileUtils.mkdir_p(themes_folder)
 
-      def update_color_themes!
-        Models::ColorTheme.default.save!
+        unless Crud::JsonFile.exist?(file_path: File.join(themes_folder, 'default.json'))
+          Models::ColorTheme.default.save!
+        end
 
         Models::ColorTheme.tap do |color_theme|
-          color_theme.build_color_theme(theme_name: 'cherry', base_color: :red,
-            description: 'As in bomb!').save!
-          color_theme.build_color_theme(theme_name: 'cloudy', base_color: :light_black,
-            description: 'Feeling melancholy?').save!
-          color_theme.build_color_theme(theme_name: 'fozzy', base_color: :magenta,
-            description: 'But not bear.').save!
-          color_theme.build_color_theme(theme_name: 'lemon', base_color: :yellow,
-            description: 'Citrus delight!').save!
-          color_theme.build_color_theme(theme_name: 'matrix', base_color: :green,
-            description: 'Hello Morpheus!').save!
+          unless Crud::JsonFile.exist?(file_path: File.join(themes_folder, 'cherry.json'))
+            color_theme.build_color_theme(theme_name: 'cherry', base_color: :red,
+              description: 'As in bomb!').save!
+          end
+
+          unless Crud::JsonFile.exist?(file_path: File.join(themes_folder, 'cloudy.json'))
+            color_theme.build_color_theme(theme_name: 'cloudy', base_color: :light_black,
+              description: 'Feeling melancholy?').save!
+          end
+
+          unless Crud::JsonFile.exist?(file_path: File.join(themes_folder, 'fozzy.json'))
+            color_theme.build_color_theme(theme_name: 'fozzy', base_color: :magenta,
+              description: 'But not bear.').save!
+          end
+
+          unless Crud::JsonFile.exist?(file_path: File.join(themes_folder, 'lemon.json'))
+            color_theme.build_color_theme(theme_name: 'lemon', base_color: :yellow,
+              description: 'Citrus delight!').save!
+          end
+
+          unless Crud::JsonFile.exist?(file_path: File.join(themes_folder, 'green.json'))
+            color_theme.build_color_theme(theme_name: 'matrix', base_color: :green,
+              description: 'Hello Morpheus!').save!
+          end
         end
       end
 
       def update_configuration!
         FileUtils.mkdir_p(Dsu::Support::Fileable.entries_folder)
 
-        if File.exist?(config_path)
-          old_config_hash = read_old_configuration
-          config_hash = Models::Configuration::DEFAULT_CONFIGURATION.merge(old_config_hash)
+        current_config_hash = if File.exist?(config_path)
+          Psych.safe_load(File.read(config_path), [Symbol]).transform_keys(&:to_sym)
+        end
+        current_config_hash ||= {}
+
+        return unless current_config_hash.fetch(:version, 0).zero?
+
+        if current_config_hash
+          config_hash = Models::Configuration::DEFAULT_CONFIGURATION.merge(current_config_hash)
           config_hash[:entries_display_order] = config_hash[:entries_display_order].to_sym
           config_hash.delete(:entries_file_name)
 
           # Save the old entries folder so we can move the entries file to the new
           # entries folder if necessary.
-          @old_entries_folder = old_config_hash[:entries_folder]
-          @old_entries_file_name = old_config_hash[:entries_file_name]
+          @old_entries_folder = current_config_hash[:entries_folder]
+          @old_entries_file_name = current_config_hash[:entries_file_name]
 
           config_hash.delete(:entries_folder)
           config_hash[:version] = migration_version

@@ -91,6 +91,7 @@ module Dsu
         <<~MIGRATION_FILE_CONTENT
           # frozen_string_literal: true
 
+          require_relative '../dsu/crud/json_file'
           require_relative '../dsu/migration/service'
           require_relative '../dsu/models/color_theme'
           require_relative '../dsu/models/configuration'
@@ -106,8 +107,8 @@ module Dsu
                           "is not < the current migration version (\#{current_migration_version})."
                   end
 
-                  update_color_themes!
                   update_configuration!
+                  update_color_themes!
                   update_entry_groups!
 
                   super

@@ -26,6 +26,8 @@ if Dsu.env.development?
       end
     end
   end
+
+  puts "ATTENTION: Dsu root folder is: #{Dsu::Support::Fileable.root_folder}!"
 end
 
 Dsu::CLI.start

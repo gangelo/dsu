@@ -2,13 +2,35 @@
 # frozen_string_literal: true
 
 require 'bundler/setup'
-require 'dsu'
 
+if File.exist?('.env.development')
+  # This loads our development environment when running dev.
+  require 'dotenv'
+  Dotenv.load('.env.development')
+end
+
+require 'dsu'
 require 'pry-byebug'
 
 # So we can use FactoryBot in the console.
 require 'factory_bot'
 require 'ffaker'
 FactoryBot.find_definitions
+
+if Dsu.env.development?
+  # This simply allows us to use a folder other than dsu folder for the production
+  # release, so we don't mess with our current production dsu folder.
+  module Dsu
+    module Support
+      module Fileable
+        def root_folder
+          File.join(gem_dir, '.development_home')
+        end
+      end
+    end
+  end
+
+  puts "ATTENTION: Dsu root folder is: #{Dsu::Support::Fileable.root_folder}!"
+end
 
 Pry.start
