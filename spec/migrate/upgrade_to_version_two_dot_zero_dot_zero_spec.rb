@@ -189,7 +189,7 @@ RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do # rubocop:disa
           let(:destination_folder) { '/tmp/dsu' }
           let(:unsafe_entries_folder) { File.join(destination_folder, 'entries') }
           let(:expected_console_output) do
-            /.*Old entries folder "#{unsafe_entries_folder}".*may be deleted at your discretion.*/
+            /.*Old entries folder "#{unsafe_entries_folder}".*This folder along with its old entry files may be deleted at your discretion.*/m
           end
 
           it 'displays a message to the user that the old entries folder and entry files are safe to delete' do

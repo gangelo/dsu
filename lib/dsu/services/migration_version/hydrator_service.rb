@@ -6,7 +6,11 @@ module Dsu
       class HydratorService
         def initialize(migration_version_json:, options: {})
           raise ArgumentError, 'migration_version_json is nil' if migration_version_json.nil?
-          raise ArgumentError, "migration_version_json is the wrong object type: \"#{migration_version_json}\"" unless migration_version_json.is_a?(String)
+
+          unless migration_version_json.is_a?(String)
+            raise ArgumentError,
+              "migration_version_json is the wrong object type: \"#{migration_version_json}\""
+          end
           raise ArgumentError, 'options is nil' if options.nil?
           raise ArgumentError, "options is the wrong object type:\"#{options}\"" unless options.is_a?(Hash)
 

@@ -107,6 +107,32 @@ RSpec.describe Dsu::Crud::JsonFile do
     end
   end
 
+  describe '#read!' do
+    context 'when the file exists' do
+      before do
+        with_existing_file_path
+      end
+
+      let(:expected_hash) do
+        {
+          version: 1_234_567_890
+        }
+      end
+
+      it 'returns the file_hash representation of the file' do
+        expect(json_file.read).to eq(expected_hash)
+      end
+    end
+
+    context 'when the file does not exist' do
+      subject(:json_file) { described_class.new(file_path: file_path, options: options).read! }
+
+      let(:expected_error) { /does not exist/ }
+
+      it_behaves_like 'an error is raised'
+    end
+  end
+
   describe '#write!' do
     subject(:json_file) do
       described_class.new(file_path: file_path, options: options).write!(file_hash: file_hash)
@@ -218,7 +244,7 @@ RSpec.describe Dsu::Crud::JsonFile do
     context 'when the file does not exist' do
       subject(:json_file) { described_class.new(file_path: file_path, options: options).delete! }
 
-      let(:expected_error) { /does not exist/}
+      let(:expected_error) { /does not exist/ }
 
       specify 'the file does not exist before the delete' do
         expect(File.exist?(file_path)).to be false
