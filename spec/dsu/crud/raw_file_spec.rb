@@ -1,19 +1,19 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Crud::JsonFile do
-  subject(:json_file) { described_class.new(file_path: file_path, options: options) }
+RSpec.describe Dsu::Crud::RawFile do
+  subject(:raw_file) { described_class.new(file_path: file_path, options: options) }
 
-  shared_examples 'the correct file_hash: argument errors are raised' do
+  shared_examples 'the correct file_data: argument errors are raised' do
     context 'when nil' do
-      let(:file_hash) { nil }
-      let(:expected_error) { /file_hash is nil/ }
+      let(:file_data) { nil }
+      let(:expected_error) { /file_data is nil/ }
 
       it_behaves_like 'an error is raised'
     end
 
     context 'when not a Hash' do
-      let(:file_hash) { :invalid }
-      let(:expected_error) { /file_hash is the wrong object type/ }
+      let(:file_data) { :invalid }
+      let(:expected_error) { /file_data is the wrong object type/ }
 
       it_behaves_like 'an error is raised'
     end
@@ -24,11 +24,11 @@ RSpec.describe Dsu::Crud::JsonFile do
   end
 
   let(:with_existing_file_path) do
-    file_path = 'spec/fixtures/files/json_file.json'
+    file_path = 'spec/fixtures/files/raw_file.txt'
     raise "The fixture file (#{file_path}) does not exist" unless File.exist?(file_path)
 
-    file_hash = JSON.parse(File.read(file_path))
-    File.write(temp_file, JSON.pretty_generate(file_hash))
+    file_data = File.read(file_path)
+    File.write(temp_file, file_data)
   end
   let(:file_path) { temp_file.path }
   let(:options) { {} }
@@ -78,7 +78,7 @@ RSpec.describe Dsu::Crud::JsonFile do
       end
 
       it 'returns true' do
-        expect(json_file.exist?).to be true
+        expect(raw_file.exist?).to be true
       end
     end
 
@@ -86,7 +86,7 @@ RSpec.describe Dsu::Crud::JsonFile do
       let(:file_path) { '$invalid path$' }
 
       it 'returns false' do
-        expect(json_file.exist?).to be false
+        expect(raw_file.exist?).to be false
       end
     end
   end
@@ -96,14 +96,10 @@ RSpec.describe Dsu::Crud::JsonFile do
       with_existing_file_path
     end
 
-    let(:expected_hash) do
-      {
-        version: 1_234_567_890
-      }
-    end
+    let(:expected_data) { "raw file data\n" }
 
-    it 'returns the file_hash representation of the file' do
-      expect(json_file.read).to eq(expected_hash)
+    it 'returns the file_data representation of the file' do
+      expect(raw_file.read).to eq(expected_data)
     end
   end
 
@@ -113,19 +109,15 @@ RSpec.describe Dsu::Crud::JsonFile do
         with_existing_file_path
       end
 
-      let(:expected_hash) do
-        {
-          version: 1_234_567_890
-        }
-      end
+      let(:expected_data) { "raw file data\n" }
 
-      it 'returns the file_hash representation of the file' do
-        expect(json_file.read).to eq(expected_hash)
+      it 'returns the file_data representation of the file' do
+        expect(raw_file.read).to eq(expected_data)
       end
     end
 
     context 'when the file does not exist' do
-      subject(:json_file) { described_class.new(file_path: file_path, options: options).read! }
+      subject(:raw_file) { described_class.new(file_path: file_path, options: options).read! }
 
       let(:expected_error) { /does not exist/ }
 
@@ -134,15 +126,11 @@ RSpec.describe Dsu::Crud::JsonFile do
   end
 
   describe '#write!' do
-    subject(:json_file) do
-      described_class.new(file_path: file_path, options: options).write!(file_hash: file_hash)
+    subject(:raw_file) do
+      described_class.new(file_path: file_path, options: options).write!(file_data: file_data)
     end
 
-    let(:file_hash) do
-      {
-        version: 987_654_321
-      }
-    end
+    let(:file_data) { 'file data' }
     let(:file_path) { File.join(temp_folder, 'test.json') }
 
     context 'when the file does not exist' do
@@ -151,15 +139,15 @@ RSpec.describe Dsu::Crud::JsonFile do
       end
 
       it 'writes the file as json' do
-        json_file
-        actual_hash = described_class.new(file_path: file_path, options: options).read!
-        expect(actual_hash).to eq(file_hash)
+        raw_file
+        actual_data = described_class.new(file_path: file_path, options: options).read!
+        expect(actual_data).to eq(file_data)
       end
     end
 
     context 'when the file already exists' do
       before do
-        described_class.new(file_path: file_path, options: options).write(file_hash: file_hash)
+        described_class.new(file_path: file_path, options: options).write(file_data: file_data)
       end
 
       let(:expected_error) { /already exists/ }
@@ -169,30 +157,26 @@ RSpec.describe Dsu::Crud::JsonFile do
   end
 
   describe '#write' do
-    subject(:json_file) do
-      described_class.new(file_path: file_path, options: options).write(file_hash: file_hash)
+    subject(:raw_file) do
+      described_class.new(file_path: file_path, options: options).write(file_data: file_data)
     end
 
-    context 'when the file_hash argument is valid' do
-      let(:file_hash) do
-        {
-          version: 987_654_321
-        }
-      end
+    context 'when the file_data argument is valid' do
+      let(:file_data) { 'file data' }
 
       specify 'the file does not exist before the write' do
         expect(File.exist?(file_path)).to be false
       end
 
-      it 'writes the file as json' do
-        json_file
-        actual_hash = described_class.new(file_path: file_path, options: options).read!
-        expect(actual_hash).to eq(file_hash)
+      it 'writes the file' do
+        raw_file
+        actual_data = described_class.new(file_path: file_path, options: options).read!
+        expect(actual_data).to eq(file_data)
       end
     end
 
-    context 'when the file_hash argument is invalid' do
-      it_behaves_like 'the correct file_hash: argument errors are raised'
+    context 'when the file_data argument is invalid' do
+      it_behaves_like 'the correct file_data: argument errors are raised'
     end
   end
 
@@ -207,20 +191,20 @@ RSpec.describe Dsu::Crud::JsonFile do
       end
 
       it 'deletes the file' do
-        json_file.delete
+        raw_file.delete
         expect(File.exist?(file_path)).to be false
       end
     end
 
     context 'when the file does not exist' do
-      subject(:json_file) { described_class.new(file_path: file_path, options: options).delete }
+      subject(:raw_file) { described_class.new(file_path: file_path, options: options).delete }
 
       specify 'the file does not exist before the delete' do
         expect(File.exist?(file_path)).to be false
       end
 
       it 'returns false' do
-        expect(json_file).to be false
+        expect(raw_file).to be false
       end
     end
   end
@@ -236,13 +220,13 @@ RSpec.describe Dsu::Crud::JsonFile do
       end
 
       it 'deletes the file' do
-        json_file.delete!
+        raw_file.delete!
         expect(File.exist?(file_path)).to be false
       end
     end
 
     context 'when the file does not exist' do
-      subject(:json_file) { described_class.new(file_path: file_path, options: options).delete! }
+      subject(:raw_file) { described_class.new(file_path: file_path, options: options).delete! }
 
       let(:expected_error) { /does not exist/ }
 
