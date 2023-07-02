@@ -34,16 +34,16 @@ module Dsu
           raise ArgumentError, 'file_hash is nil' if file_hash.nil?
           raise ArgumentError, "file_hash is the wrong object type:\"#{file_hash}\"" unless file_hash.is_a?(Hash)
 
-          file_hash = JSON.pretty_generate(file_hash) if file_hash
-          superclass.write!(file_data: file_hash, file_path: file_path)
+          file_data = JSON.pretty_generate(file_hash) if file_hash
+          superclass.write!(file_data: file_data, file_path: file_path)
         end
 
         def write(file_hash:, file_path:)
           raise ArgumentError, 'file_hash is nil' if file_hash.nil?
           raise ArgumentError, "file_hash is the wrong object type:\"#{file_hash}\"" unless file_hash.is_a?(Hash)
 
-          file_hash = JSON.pretty_generate(file_hash) if file_hash
-          superclass.write(file_data: file_hash, file_path: file_path)
+          file_data = JSON.pretty_generate(file_hash) if file_hash
+          superclass.write(file_data: file_data, file_path: file_path)
         end
 
         private

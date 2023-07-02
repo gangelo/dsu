@@ -17,26 +17,42 @@ module Dsu
 
       class << self
         def read!(file_path:)
-          raise file_does_not_exist_message(file_path: file_path) unless exist?(file_path: file_path)
+          file_hash = parse_yaml(superclass.read!(file_path: file_path))
+          yield file_hash if block_given?
 
-          read(file_path: file_path)
+          file_hash
         end
 
         def read(file_path:)
-          file_data = super.read(file_path: file_path) || ''
-          file_hash = YAML.safe_load(ERB.new(file_data).result)
-
+          file_hash = parse_yaml(superclass.read(file_path: file_path))
           yield file_hash if block_given?
 
           file_hash
         end
 
         def write!(file_hash:, file_path:)
-          super.write(file_data: file_hash, file_path: file_path)
+          raise ArgumentError, 'file_hash is nil' if file_hash.nil?
+          raise ArgumentError, "file_hash is the wrong object type:\"#{file_hash}\"" unless file_hash.is_a?(Hash)
+
+          file_data = file_hash&.to_yaml
+          superclass.write!(file_data: file_data, file_path: file_path)
         end
 
         def write(file_hash:, file_path:)
-          super.write(file_data: file_hash&.to_yaml, file_path: file_path)
+          raise ArgumentError, 'file_hash is nil' if file_hash.nil?
+          raise ArgumentError, "file_hash is the wrong object type:\"#{file_hash}\"" unless file_hash.is_a?(Hash)
+
+          file_data = file_hash&.to_yaml
+          superclass.write(file_data: file_data, file_path: file_path)
+        end
+
+
+        private
+
+        def parse_yaml(file_data)
+          return '' if file_data.nil?
+
+          YAML.safe_load(ERB.new(file_data).result)
         end
       end
     end

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Crud::JsonFile do
-  subject(:json_file) { described_class.new(file_path: file_path, options: options) }
+RSpec.describe Dsu::Crud::YamlFile do
+  subject(:yaml_file) { described_class.new(file_path: file_path, options: options) }
 
   shared_examples 'the correct file_hash: argument errors are raised' do
     context 'when nil' do
@@ -24,11 +24,11 @@ RSpec.describe Dsu::Crud::JsonFile do
   end
 
   let(:with_existing_file_path) do
-    file_path = 'spec/fixtures/files/json_file.json'
+    file_path = 'spec/fixtures/files/yaml_file.yaml'
     raise "The fixture file (#{file_path}) does not exist" unless File.exist?(file_path)
 
-    file_hash = JSON.parse(File.read(file_path))
-    File.write(temp_file, JSON.pretty_generate(file_hash))
+    file_data = File.read(file_path)
+    File.write(temp_file, file_data)
   end
   let(:file_path) { temp_file.path }
   let(:options) { {} }
@@ -76,14 +76,14 @@ RSpec.describe Dsu::Crud::JsonFile do
       with_existing_file_path
     end
 
-    let(:expected_hash) do
+    let(:expected_file_data) do
       {
-        version: 1_234_567_890
+       'yaml_key' => 'yaml_value' # rubocop:disable Layout/FirstHashElementIndentation
       }
-    end
+     end
 
     it 'returns the file_hash representation of the file' do
-      expect(json_file.read).to eq(expected_hash)
+      expect(yaml_file.read).to eq(expected_file_data)
     end
   end
 
@@ -93,19 +93,19 @@ RSpec.describe Dsu::Crud::JsonFile do
         with_existing_file_path
       end
 
-      let(:expected_hash) do
-        {
-          version: 1_234_567_890
-        }
+      let(:expected_file_data) do
+       {
+        'yaml_key' => 'yaml_value' # rubocop:disable Layout/FirstHashElementIndentation
+       }
       end
 
       it 'returns the file_hash representation of the file' do
-        expect(json_file.read!).to eq(expected_hash)
+        expect(yaml_file.read!).to eq(expected_file_data)
       end
     end
 
     context 'when the file does not exist' do
-      subject(:json_file) { described_class.new(file_path: file_path, options: options).read! }
+      subject(:yaml_file) { described_class.new(file_path: file_path, options: options).read! }
 
       let(:expected_error) { /does not exist/ }
 
@@ -114,24 +114,24 @@ RSpec.describe Dsu::Crud::JsonFile do
   end
 
   describe '#write!' do
-    subject(:json_file) do
+    subject(:yaml_file) do
       described_class.new(file_path: file_path, options: options).write!(file_hash: file_hash)
     end
 
     let(:file_hash) do
       {
-        version: 987_654_321
+        'yaml_key' => 'yaml_value'
       }
     end
-    let(:file_path) { File.join(temp_folder, 'test.json') }
+    let(:file_path) { File.join(temp_folder, 'test.yaml') }
 
     context 'when the file does not exist' do
       before do
         File.delete(file_path)
       end
 
-      it 'writes the file as json' do
-        json_file
+      it 'writes the file as yaml' do
+        yaml_file
         actual_hash = described_class.new(file_path: file_path, options: options).read!
         expect(actual_hash).to eq(file_hash)
       end
@@ -149,14 +149,14 @@ RSpec.describe Dsu::Crud::JsonFile do
   end
 
   describe '#write' do
-    subject(:json_file) do
+    subject(:yaml_file) do
       described_class.new(file_path: file_path, options: options).write(file_hash: file_hash)
     end
 
     context 'when the file_hash argument is valid' do
       let(:file_hash) do
         {
-          version: 987_654_321
+          'yaml_key' => 'yaml_value'
         }
       end
 
@@ -164,8 +164,8 @@ RSpec.describe Dsu::Crud::JsonFile do
         expect(File.exist?(file_path)).to be false
       end
 
-      it 'writes the file as json' do
-        json_file
+      it 'writes the file as yaml' do
+        yaml_file
         actual_hash = described_class.new(file_path: file_path, options: options).read!
         expect(actual_hash).to eq(file_hash)
       end
