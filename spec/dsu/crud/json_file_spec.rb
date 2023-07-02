@@ -23,14 +23,14 @@ RSpec.describe Dsu::Crud::JsonFile do
     File.delete(temp_file)
   end
 
+  let(:input_file) { 'spec/fixtures/files/json_file.json' }
+  let(:file_path) { temp_file.path }
   let(:with_existing_file_path) do
-    file_path = 'spec/fixtures/files/json_file.json'
-    raise "The fixture file (#{file_path}) does not exist" unless File.exist?(file_path)
+    raise "The fixture file (#{input_file}) does not exist" unless File.exist?(input_file)
 
-    file_hash = JSON.parse(File.read(file_path))
+    file_hash = JSON.parse(File.read(input_file))
     File.write(temp_file, JSON.pretty_generate(file_hash))
   end
-  let(:file_path) { temp_file.path }
   let(:options) { {} }
 
   describe '#initialize' do
@@ -78,7 +78,7 @@ RSpec.describe Dsu::Crud::JsonFile do
 
     let(:expected_hash) do
       {
-        version: 1_234_567_890
+        json_key: 'json_value'
       }
     end
 
@@ -95,7 +95,7 @@ RSpec.describe Dsu::Crud::JsonFile do
 
       let(:expected_hash) do
         {
-          version: 1_234_567_890
+          json_key: 'json_value'
         }
       end
 
@@ -173,6 +173,40 @@ RSpec.describe Dsu::Crud::JsonFile do
 
     context 'when the file_hash argument is invalid' do
       it_behaves_like 'the correct file_hash: argument errors are raised'
+    end
+  end
+
+  describe '#version' do
+    subject(:json_file) do
+      described_class.new(file_path: file_path, options: options).version
+    end
+
+    context 'when the file does not exist' do
+      it 'returns 0' do
+        expect(json_file).to eq(0)
+      end
+    end
+
+    context 'when the file exists and there is no version' do
+      before do
+        with_existing_file_path
+      end
+
+      it 'returns 0' do
+        expect(json_file).to eq(0)
+      end
+    end
+
+    context 'when the file exists and there is a version' do
+      before do
+        with_existing_file_path
+      end
+
+      let(:input_file) { 'spec/fixtures/files/json_file_with_version.json' }
+
+      it 'returns the version' do
+        expect(json_file).to eq(123_456_789)
+      end
     end
   end
 end

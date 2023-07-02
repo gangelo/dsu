@@ -46,13 +46,16 @@ module Dsu
           superclass.write(file_data: file_data, file_path: file_path)
         end
 
+        def version(file_path:)
+          read(file_path: file_path).fetch(:version, 0).to_i
+        end
 
         private
 
         def parse_yaml(file_data)
-          return '' if file_data.nil?
+          return {} if file_data.nil?
 
-          YAML.safe_load(ERB.new(file_data).result)
+          YAML.safe_load(ERB.new(file_data).result).with_indifferent_access
         end
       end
     end

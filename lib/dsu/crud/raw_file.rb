@@ -47,7 +47,7 @@ module Dsu
       end
 
       def version
-        self.class.version
+        self.class.version(file_path: file_path)
       end
 
       class << self
@@ -90,11 +90,13 @@ module Dsu
           true
         end
 
-        private
-
-        def version
+        def version(file_path:)
           raise NotImplementedError, 'You must implement the version method in your subclass'
         end
+
+        private
+
+        attr_reader :options
 
         def file_does_not_exist_message(file_path:)
           "File \"#{file_path}\" does not exist"
@@ -104,8 +106,6 @@ module Dsu
           "File \"#{file_path}\" already exists"
         end
       end
-
-      attr_reader :options
     end
   end
 end

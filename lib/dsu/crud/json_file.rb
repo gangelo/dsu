@@ -46,6 +46,10 @@ module Dsu
           superclass.write(file_data: file_data, file_path: file_path)
         end
 
+        def version(file_path:)
+          read(file_path: file_path).fetch(:version, 0).to_i
+        end
+
         private
 
         def parse_json(file_data)
