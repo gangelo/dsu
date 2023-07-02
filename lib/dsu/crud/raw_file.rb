@@ -46,6 +46,10 @@ module Dsu
         self.class.delete(file_path: file_path)
       end
 
+      def version
+        self.class.version
+      end
+
       class << self
         def exist?(file_path:)
           File.exist?(file_path)
@@ -86,6 +90,12 @@ module Dsu
           true
         end
 
+        private
+
+        def version
+          raise NotImplementedError, 'You must implement the version method in your subclass'
+        end
+
         def file_does_not_exist_message(file_path:)
           "File \"#{file_path}\" does not exist"
         end
@@ -94,8 +104,6 @@ module Dsu
           "File \"#{file_path}\" already exists"
         end
       end
-
-      private
 
       attr_reader :options
     end
