@@ -92,6 +92,7 @@ module Dsu
           # frozen_string_literal: true
 
           require_relative '../dsu/crud/json_file'
+          require_relative '../dsu/crud/yaml_file'
           require_relative '../dsu/migration/service'
           require_relative '../dsu/models/color_theme'
           require_relative '../dsu/models/configuration'

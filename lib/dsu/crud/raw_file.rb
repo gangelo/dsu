@@ -7,14 +7,16 @@ module Dsu
   module Crud
     class RawFile
       attr_reader :file_path
+      attr_accessor :file_data
 
-      def initialize(file_path:, options: {})
+      def initialize(file_path:, file_data: nil, options: {})
         raise ArgumentError, 'file_path is nil' if file_path.nil?
         raise ArgumentError, "file_path is the wrong object type: \"#{file_path}\"" unless file_path.is_a?(String)
         raise ArgumentError, 'options is nil' if options.nil?
         raise ArgumentError, "options is the wrong object type:\"#{options}\"" unless options.is_a?(Hash)
 
         @file_path = file_path
+        @file_data = file_data || read if exist?
         @options = options || {}
       end
 
@@ -23,11 +25,11 @@ module Dsu
       end
 
       def read
-        self.class.read(file_path: file_path)
+        self.file_data = self.class.read(file_path: file_path)
       end
 
       def read!
-        self.class.read!(file_path: file_path)
+        self.file_data = self.class.read!(file_path: file_path)
       end
 
       def write!(file_data:)
