@@ -7,17 +7,17 @@ module Dsu
   module Services
     module Configuration
       class HydratorService
-        def initialize(config_json:, options: {})
-          raise ArgumentError, 'config_json is nil' if config_json.nil?
+        def initialize(config_hash:, options: {})
+          raise ArgumentError, 'config_hash is nil' if config_hash.nil?
 
-          unless config_json.is_a?(String)
+          unless config_hash.is_a?(Hash)
             raise ArgumentError,
-              "config_json is the wrong object type: \"#{config_json}\""
+              "config_hash is the wrong object type: \"#{config_hash}\""
           end
           raise ArgumentError, 'options is nil' if options.nil?
           raise ArgumentError, "options is the wrong object type:\"#{options}\"" unless options.is_a?(Hash)
 
-          @config_json = config_json
+          @config_hash = config_hash.dup
           @options = options || {}
         end
 
@@ -27,14 +27,12 @@ module Dsu
 
         private
 
-        attr_reader :config_json, :options
+        attr_reader :config_hash, :options
 
-        # Returns a Hash with all the keys as symbols and datatypes
-        # hydrated from the JSON string.
         def hydrate
-          JSON.parse(config_json, symbolize_names: true).tap do |hash|
-            hash[:entries_display_order] = hash[:entries_display_order].to_sym
-          end
+          config_hash[:version] = config_hash[:version].to_i
+          config_hash[:entries_display_order] = config_hash[:entries_display_order].to_sym
+          config_hash
         rescue JSON::ParserError => _e
           Models::Configuration::DEFAULT_CONFIGURATION
         end

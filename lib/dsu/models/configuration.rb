@@ -2,8 +2,8 @@
 
 require 'active_model'
 require 'singleton'
-require_relative '../crud/configuration'
-require_relative '../migration/service'
+require_relative '../crud/json_file'
+require_relative '../migration/version'
 require_relative '../support/fileable'
 require_relative '../support/presentable'
 require_relative '../validators/version_validator'
@@ -12,13 +12,13 @@ module Dsu
   module Models
     # This class represents the dsu configuration.
     class Configuration
-      extend Support::Fileable
       include ActiveModel::Model
-      include Crud::Configuration
+      include Crud::JsonFile
       include Singleton
+      include Support::Fileable
       include Support::Presentable
 
-      VERSION = Migration::Service.current_migration_version.freeze
+      VERSION = Migration::VERSION
 
       DEFAULT_CONFIGURATION = {
         version: VERSION,
@@ -66,28 +66,38 @@ module Dsu
         :theme_name
 
       def initialize
-        if exist?
-          reload!
-          return
-        end
+        FileUtils.mkdir_p config_folder
 
-        load(config_hash: DEFAULT_CONFIGURATION).save!
+        restore!
+
+        write! unless exist?
       end
 
-      def reload!
-        raise "Config file does not exist: \"#{config_path}\"" unless exist?
-
-        config_json = File.read(config_path)
-        config_hash = Services::Configuration::HydratorService.new(config_json: config_json).call
-        load(config_hash: config_hash)
-      end
-
-      def load(config_hash: {})
+      # Temporarily sets the configuration to the given config_hash.
+      # To reset the configuration to its original state, call #restore!
+      def replace!(config_hash: {})
         raise ArgumentError, 'config_hash is nil.' if config_hash.nil?
         raise ArgumentError, "config_hash must be a Hash: \"#{config_hash}\"." unless config_hash.is_a?(Hash)
 
-        @config_hash = config_hash.dup
-        assign_attributes_from config_hash
+        assign_attributes_from config_hash.dup
+
+        self
+      end
+
+      # Restores the configuration to its original state from disk.
+      def restore!
+        @file_path = config_path
+
+        file_hash = if exist?
+          read do |config_hash|
+            hydrated_hash = Services::Configuration::HydratorService.new(config_hash: config_hash).call
+            config_hash.merge!(hydrated_hash)
+          end
+        else
+          DEFAULT_CONFIGURATION.dup
+        end
+
+        assign_attributes_from file_hash
 
         self
       end
@@ -124,12 +134,10 @@ module Dsu
       end
 
       def merge(hash)
-        load(config_hash: to_h.merge(hash))
+        replace!(config_hash: to_h.merge(hash))
       end
 
       private
-
-      attr_accessor :config_hash
 
       def assign_attributes_from(config_hash)
         @version = config_hash.fetch(:version, VERSION)

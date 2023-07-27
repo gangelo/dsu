@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::Models::Configuration do
-  subject(:config) { described_class.instance.load(config_hash: config_hash) }
-
-  before do
-    create(:color_theme)
-  end
+  subject(:config) { build(:configuration, config_hash: config_hash) }
 
   let(:config_hash) { described_class::DEFAULT_CONFIGURATION }
 
@@ -169,26 +165,6 @@ RSpec.describe Dsu::Models::Configuration do
     end
   end
 
-  describe 'class methods' do
-    describe '.exist?' do
-      context 'when the config file exists' do
-        it 'returns true' do
-          expect(described_class.exist?).to be true
-        end
-      end
-
-      context 'when the config file does not exist' do
-        before do
-          File.delete(described_class.config_path)
-        end
-
-        it 'returns false' do
-          expect(described_class.exist?).to be false
-        end
-      end
-    end
-  end
-
   describe '#carry_over_entries_to_today?' do
     context 'when carry_over_entries_to_today is true' do
       let(:config_hash) do
@@ -208,38 +184,26 @@ RSpec.describe Dsu::Models::Configuration do
   end
 
   describe '#to_h' do
-    before do
-      config.save!
-    end
-
     it 'returns a hash' do
-      expect(described_class.instance.reload!.to_h).to eq described_class::DEFAULT_CONFIGURATION
+      expect(config.to_h).to eq described_class::DEFAULT_CONFIGURATION
     end
   end
 
   describe '#==' do
-    before do
-      config.save!
-    end
-
     context 'when the other object is not a Configuration' do
       it 'returns false' do
-        expect(described_class.instance.reload! == 'foo').to be false
+        expect(config.restore! == 'foo').to be false
       end
     end
 
     context 'when the configurations are equal' do
       it 'returns true' do
-        expect(described_class.instance.reload!.to_h == described_class::DEFAULT_CONFIGURATION.dup).to be true
+        expect(config.to_h == described_class::DEFAULT_CONFIGURATION.dup).to be true
       end
     end
   end
 
   describe '#hash' do
-    before do
-      config.save!
-    end
-
     let(:expected_hash) do
       described_class::DEFAULT_CONFIGURATION.each_key.map do |key|
         described_class.instance.public_send(key)
@@ -251,22 +215,27 @@ RSpec.describe Dsu::Models::Configuration do
     end
   end
 
-  describe '#save!' do
+  describe '#write' do
     context 'when the configuration is valid' do
+      before do
+        config.delete!
+      end
+
       let(:config_hash) do
         described_class::DEFAULT_CONFIGURATION.merge(editor: 'doom')
       end
 
-      before do
-        config.save!
+      it 'returns true' do
+        expect(config.write).to be true
       end
 
       it 'saves the configuration' do
-        expect(described_class.exist?).to be true
+        config.write
+        expect(config.exist?).to be true
       end
 
       it 'saves the configuration values' do
-        expect(described_class.instance.reload!).to eq config
+        expect(config.restore!).to eq config
       end
     end
 
@@ -275,19 +244,15 @@ RSpec.describe Dsu::Models::Configuration do
         config.editor = nil
       end
 
-      let(:expected_error) do
-        /Editor can't be blank/
-      end
-
-      it 'raises an error' do
-        expect { config.save! }.to raise_error(expected_error)
+      it 'returns false' do
+        expect(config.write).to be false
       end
     end
   end
 
   describe '#merge' do
     let(:expected_config) do
-      config.merge(edito: 'doom')
+      config.merge(editor: 'doom')
     end
 
     it 'merges the hash into the configuration hash and returns a new config' do

@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'base_subcommand'
+require_relative '../support/fileable'
 require_relative '../views/color_theme/index'
+require_relative 'base_subcommand'
 
 module Dsu
   module Subcommands
@@ -16,7 +17,7 @@ module Dsu
       desc 'create THEME_NAME [OPTIONS]',
         'Creates a dsu color theme named THEME_NAME.'
       long_desc <<-LONG_DESC
-      Create a dsu color theme named THEME_NAME in the #{Models::ColorTheme.themes_folder} folder.
+      Create a dsu color theme named THEME_NAME in the #{Support::Fileable.themes_folder} folder.
 
       SYNOPSIS
       \x5
@@ -56,7 +57,7 @@ module Dsu
       long_desc <<-LONG_DESC
       NAME
 
-      `dsu delete [THEME_NAME]` -- will delete the dsu color theme named THEME_NAME located in the #{Models::ColorTheme.themes_folder} folder.
+      `dsu delete [THEME_NAME]` -- will delete the dsu color theme named THEME_NAME located in the #{Support::Fileable.themes_folder} folder.
       LONG_DESC
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def delete(theme_name)
@@ -90,7 +91,7 @@ module Dsu
       long_desc <<-LONG_DESC
       NAME
 
-      `dsu list` -- lists the available dsu color themes located in the #{Models::ColorTheme.themes_folder} folder.
+      `dsu list` -- lists the available dsu color themes located in the #{Support::Fileable.themes_folder} folder.
       LONG_DESC
       def list
         Views::ColorTheme::Index.new.render

@@ -5,7 +5,6 @@ require 'time'
 require_relative 'base_cli'
 require_relative 'subcommands/config'
 require_relative 'subcommands/edit'
-require_relative 'subcommands/generate'
 require_relative 'subcommands/list'
 require_relative 'subcommands/theme'
 
@@ -15,7 +14,6 @@ module Dsu
     map %w[a -a] => :add
     map %w[c -c] => :config
     map %w[e -e] => :edit
-    map %w[g -g] => :generate
     map %w[l -l] => :list
     map %w[t -t] => :theme
     map %w[v -v] => :version
@@ -85,12 +83,6 @@ module Dsu
     desc 'theme, -t SUBCOMMAND',
       'Manage DSU themes'
     subcommand :theme, Subcommands::Theme
-
-    if Dsu.env.development?
-      desc 'generate, -g SUBCOMMAND',
-        'Runs the DSU generator for the given SUBCOMMAND'
-      subcommand :generate, Subcommands::Generate
-    end
 
     desc 'version, -v',
       'Displays this gem version'

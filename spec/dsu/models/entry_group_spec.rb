@@ -311,7 +311,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
 
       context 'when an entry group file does NOT exists' do
-        let(:expected_error) { /Entry group file does not exist/ }
+        let(:expected_error) { /File ".+" does not exist/ }
 
         it_behaves_like 'an error is raised'
       end

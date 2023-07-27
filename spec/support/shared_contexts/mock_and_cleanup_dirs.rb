@@ -7,11 +7,13 @@ RSpec.shared_context 'when dir mock and cleanup is needed' do
     allow(Dir).to receive(:tmpdir).and_return(temp_folder)
     allow(Tempfile).to receive(:new).with('dsu').and_return(temp_file)
 
-    theme_name = Dsu::Models::ColorTheme::DEFAULT_THEME_NAME
-    theme_hash = Dsu::Models::ColorTheme::DEFAULT_THEME
-    Dsu::Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
+    create(:color_theme)
 
-    Dsu::Models::Configuration.instance.load(config_hash: Dsu::Models::Configuration::DEFAULT_CONFIGURATION).save!
+    migrate_folder = File.join(temp_folder, 'dsu')
+    FileUtils.mkdir_p(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(migrate_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
   end
 
   after do

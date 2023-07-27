@@ -1,22 +1,14 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'the color theme exists' do
-  it 'the color theme file exists' do
-    expect(described_class.exist?(theme_name: theme_name)).to be(true)
-  end
-end
-
 RSpec.describe Dsu::Models::ColorTheme do
   subject(:color_theme) do
     described_class.new(theme_name: theme_name, theme_hash: theme_hash)
   end
 
-  before do
-    migrate_folder = File.join(temp_folder, 'dsu')
-    FileUtils.mkdir_p(migrate_folder)
-    allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(migrate_folder)
-    allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(migrate_folder)
-    allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
+  shared_examples 'the color theme exists' do
+    it 'the color theme file exists' do
+      expect(described_class.exist?(theme_name: theme_name)).to be(true)
+    end
   end
 
   let(:theme_name) { described_class.default.theme_name }
@@ -82,7 +74,7 @@ RSpec.describe Dsu::Models::ColorTheme do
 
   describe 'constants' do
     it 'defines VERSION' do
-      expect(described_class::VERSION).to eq 0
+      expect(described_class::VERSION).to eq 20230613121411 # rubocop:disable Style/NumericLiterals
     end
 
     it_behaves_like 'the version is a valid version'
@@ -103,18 +95,6 @@ RSpec.describe Dsu::Models::ColorTheme do
   end
 
   describe 'instance methods' do
-    describe '#exist?' do
-      it 'returns true if the theme file exists' do
-        described_class.default.save!
-        expect(color_theme.exist?).to be true
-      end
-
-      it 'returns false if the theme file does not exist' do
-        described_class.default.delete!
-        expect(color_theme.exist?).to be false
-      end
-    end
-
     describe '#theme_name' do
       it 'returns the correct theme name' do
         expect(color_theme.theme_name).to eq theme_name
@@ -159,7 +139,7 @@ RSpec.describe Dsu::Models::ColorTheme do
 
     describe '#delete' do
       before do
-        color_theme.save!
+        color_theme.write
       end
 
       it 'deletes the theme file' do
@@ -171,7 +151,7 @@ RSpec.describe Dsu::Models::ColorTheme do
         before do
           Dsu::Models::Configuration.instance.tap do |configuration|
             configuration.theme_name = theme_name
-            configuration.save!
+            configuration.write
           end
         end
 
@@ -192,7 +172,7 @@ RSpec.describe Dsu::Models::ColorTheme do
           big_red = described_class.find_or_create(theme_name: 'big_red')
           Dsu::Models::Configuration.instance.tap do |configuration|
             configuration.theme_name = big_red.theme_name
-            configuration.save!
+            configuration.write
           end
         end
 
@@ -256,7 +236,7 @@ RSpec.describe Dsu::Models::ColorTheme do
     describe '.current_or_default' do
       context 'when the configuration theme is set to the default theme' do
         before do
-          described_class.default.save!
+          described_class.default.write
         end
 
         it 'returns the default color theme' do
@@ -269,7 +249,7 @@ RSpec.describe Dsu::Models::ColorTheme do
           custom_color_theme
           configuration = Dsu::Models::Configuration.instance
           configuration.theme_name = custom_color_theme.theme_name
-          configuration.save!
+          configuration.write
         end
 
         let(:custom_color_theme) do

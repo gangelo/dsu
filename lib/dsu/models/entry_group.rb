@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require_relative '../crud/entry_group/'
+require_relative '../crud/json_file'
+require_relative '../crud/raw_json_file'
+require_relative '../migration/version'
 require_relative '../services/entry_group/editor_service'
 require_relative '../support/fileable'
 require_relative '../support/presentable'
@@ -17,14 +19,16 @@ module Dsu
     # This class represents a group of entries for a given day. IOW,
     # things someone might want to share at their daily standup (DSU).
     class EntryGroup
-      extend Support::Fileable
       include ActiveModel::Model
-      include Crud::EntryGroup
+      include Crud::JsonFile
+      include Support::Fileable
       include Support::Presentable
       include Support::TimeComparable
       include Support::TimeFormatable
 
-      VERSION = Migration::Service.current_migration_version.freeze
+      ENTRIES_FILE_NAME_REGEX = /\d{4}-\d{2}-\d{2}.json/
+      ENTRIES_FILE_NAME_TIME_REGEX = /\d{4}-\d{2}-\d{2}/
+      VERSION = Migration::VERSION
 
       attr_accessor :time, :version
       attr_reader :entries
@@ -33,33 +37,40 @@ module Dsu
       validates_with Validators::TimeValidator
       validates_with Validators::VersionValidator
 
-      def initialize(time: nil, entries: [], version: nil)
+      def initialize(time: nil, entries: nil, version: nil)
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?
         raise ArgumentError, 'version is the wrong object type' unless version.is_a?(Integer) || version.nil?
 
+        FileUtils.mkdir_p(entries_folder)
+
         @time = ensure_local_time(time)
+        @file_path = entries_path(time: @time)
         @version = version || VERSION
         self.entries = entries || []
       end
 
-      class << self
-        def edit(time:, options: {})
-          # NOTE: Uncomment this line to prohibit edits on
-          # Entry Groups that do not exist (i.e. have no entries).
-          # return new(time: time) unless exists?(time: time)
+      # Override == and hash so that we can compare Entry Group objects.
+      def ==(other)
+        return false unless other.is_a?(EntryGroup) &&
+                            version == other.version &&
+                            time_equal?(other_time: other.time)
 
-          find_or_initialize(time: time).tap do |entry_group|
-            Services::EntryGroup::EditorService.new(entry_group: entry_group, options: options).call
-          end
-        end
+        entries == other.entries
       end
-
-      def valid_unique_entries
-        entries&.select(&:valid?)&.uniq(&:description)
-      end
+      alias eql? ==
 
       def clone
         self.class.new(time: time, entries: entries.map(&:clone), version: version)
+      end
+
+      def delete
+        self.class.delete(file_path: file_path)
+        entries.clear
+      end
+
+      def delete!
+        self.class.delete(file_path: file_path)
+        entries.clear
       end
 
       def entries=(entries)
@@ -69,6 +80,13 @@ module Dsu
         raise ArgumentError, 'entries contains the wrong object type' unless entries.all?(Entry)
 
         @entries = entries.map(&:clone)
+      end
+
+      def hash
+        entries.map(&:hash).tap do |hashes|
+          hashes << version.hash
+          hashes << time_equal_compare_string_for(time: time)
+        end.hash
       end
 
       def time_formatted
@@ -87,21 +105,80 @@ module Dsu
         }
       end
 
-      # Override == and hash so that we can compare Entry Group objects.
-      def ==(other)
-        return false unless other.is_a?(EntryGroup) &&
-                            version == other.version &&
-                            time_equal?(other_time: other.time)
-
-        entries == other.entries
+      def valid_unique_entries
+        entries&.select(&:valid?)&.uniq(&:description)
       end
-      alias eql? ==
 
-      def hash
-        entries.map(&:hash).tap do |hashes|
-          hashes << version.hash
-          hashes << time_equal_compare_string_for(time: time)
-        end.hash
+      class << self
+        def all
+          entry_files.filter_map do |file_path|
+            entry_file_name = File.basename(file_path)
+            next unless entry_file_name.match?(ENTRIES_FILE_NAME_REGEX)
+
+            entry_date = File.basename(entry_file_name, '.*')
+            file_path = entries_path_for(time: Time.parse(entry_date))
+            entry_group_hash = read!(file_path: file_path)
+            Services::EntryGroup::HydratorService.new(entry_group_hash: entry_group_hash).call
+          end
+        end
+
+        def any?
+          entry_files.any? do |file_path|
+            entry_date = File.basename(file_path, '.*')
+            entry_date.match?(ENTRIES_FILE_NAME_TIME_REGEX)
+          end
+        end
+
+        def edit(time:, options: {})
+          # NOTE: Uncomment this line to prohibit edits on
+          # Entry Groups that do not exist (i.e. have no entries).
+          # return new(time: time) unless exists?(time: time)
+
+          find_or_initialize(time: time).tap do |entry_group|
+            Services::EntryGroup::EditorService.new(entry_group: entry_group, options: options).call
+          end
+        end
+
+        def find(time:)
+          file_path = entries_path_for(time: time)
+          entry_group_hash = read!(file_path: file_path)
+          Services::EntryGroup::HydratorService.new(entry_group_hash: entry_group_hash).call
+        end
+
+        def find_or_create(time:)
+          find_or_initialize(time: time).tap do |entry_group|
+            entry_group.write! unless entry_group.exist?
+          end
+        end
+
+        def find_or_initialize(time:)
+          file_path = entries_path_for(time: time)
+          read(file_path: file_path) do |entry_group_hash|
+            Services::EntryGroup::HydratorService.new(entry_group_hash: entry_group_hash).call
+          end || new(time: time)
+        end
+
+        def write(file_data:, file_path:)
+          Crud::RawJsonFile.delete(file_path: file_path) and return true if file_data[:entries].empty?
+
+          Crud::RawJsonFile.write(file_data: file_data, file_path: file_path)
+        end
+
+        def write!(file_data:, file_path:)
+          Crud::RawJsonFile.delete!(file_path: file_path) and return if file_data[:entries].empty?
+
+          Crud::RawJsonFile.write(file_data: file_data, file_path: file_path)
+        end
+
+        private
+
+        def entries_path_for(time:)
+          Support::Fileable.entries_path(time: time)
+        end
+
+        def entry_files
+          Dir.glob("#{entries_folder}/*")
+        end
       end
 
       private
