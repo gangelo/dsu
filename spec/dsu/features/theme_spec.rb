@@ -9,7 +9,7 @@ def color_theme_regex_for(theme_names:, default_theme_name: Dsu::Models::ColorTh
   Regexp.new(regex_string, Regexp::MULTILINE)
 end
 
-RSpec.describe Dsu::Subcommands::Theme do
+RSpec.describe 'Color Theme features', type: :feature do
   subject(:cli) { Dsu::CLI.start(args) }
 
   let(:theme_name) { 'test' }

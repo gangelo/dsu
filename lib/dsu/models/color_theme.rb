@@ -109,8 +109,7 @@ module Dsu
 
         def current
           theme_name = configuration.theme_name
-          theme_path = themes_path_for(theme_name: configuration.theme_name)
-          return unless exist?(file_path: theme_path)
+          return unless exist?(theme_name: theme_name)
 
           find(theme_name: theme_name)
         end
@@ -125,6 +124,14 @@ module Dsu
           new(theme_name: DEFAULT_THEME_NAME, theme_hash: DEFAULT_THEME)
         end
 
+        def delete(theme_name:)
+          superclass.delete(file_path: themes_path_for(theme_name: theme_name))
+        end
+
+        def delete!(theme_name:)
+          superclass.delete!(file_path: themes_path_for(theme_name: theme_name))
+        end
+
         def ensure_color_theme_color_defaults_for(theme_hash: DEFAULT_THEME)
           theme_hash = theme_hash.dup
 
@@ -136,21 +143,23 @@ module Dsu
           theme_hash
         end
 
+        def exist?(theme_name:)
+          superclass.exist?(file_path: themes_path_for(theme_name: theme_name))
+        end
+
         def find(theme_name:)
           theme_hash = read!(file_path: themes_path_for(theme_name: theme_name))
           Services::ColorTheme::HydratorService.new(theme_name: theme_name, theme_hash: theme_hash).call
         end
 
         def find_or_create(theme_name:)
-          theme_path = themes_path_for(theme_name: theme_name)
-          return find(theme_name: theme_name) if exist?(file_path: theme_path)
+          return find(theme_name: theme_name) if exist?(theme_name: theme_name)
 
           new(theme_name: theme_name).tap(&:write!)
         end
 
         def find_or_initialize(theme_name:)
-          theme_path = themes_path_for(theme_name: theme_name)
-          return find(theme_name: theme_name) if exist?(file_path: theme_path)
+          return find(theme_name: theme_name) if exist?(file_name: theme_name)
 
           new(theme_name: theme_name)
         end
