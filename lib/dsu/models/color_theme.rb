@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-require 'active_model'
 require 'json'
 require_relative '../crud/json_file'
-require_relative '../crud/raw_json_file'
 require_relative '../migration/version'
 require_relative '../support/color_themable'
 require_relative '../support/descriptable'
@@ -17,9 +15,7 @@ require_relative 'configuration'
 module Dsu
   module Models
     # This class represents a dsu color theme.
-    class ColorTheme
-      include ActiveModel::Model
-      include Crud::JsonFile
+    class ColorTheme < Crud::JsonFile
       include Support::ColorThemable
       include Support::Descriptable
       include Support::Fileable
@@ -75,7 +71,9 @@ module Dsu
         FileUtils.mkdir_p themes_folder
 
         @theme_name = theme_name
-        @file_path = self.class.send(:themes_path_for, theme_name: @theme_name)
+
+        super(self.class.send(:themes_path_for, theme_name: @theme_name))
+
         theme_hash ||= DEFAULT_THEME.merge(description: "#{@theme_name.capitalize} theme")
 
         # Color themes I expect will change a lot, so we're using
@@ -111,7 +109,8 @@ module Dsu
 
         def current
           theme_name = configuration.theme_name
-          return unless exist?(theme_name: theme_name)
+          theme_path = themes_path_for(theme_name: configuration.theme_name)
+          return unless exist?(file_path: theme_path)
 
           find(theme_name: theme_name)
         end
@@ -137,24 +136,21 @@ module Dsu
           theme_hash
         end
 
-        def exist?(theme_name:)
-          theme_path = themes_path_for(theme_name: theme_name)
-          Crud::RawJsonFile.exist?(file_path: theme_path)
-        end
-
         def find(theme_name:)
           theme_hash = read!(file_path: themes_path_for(theme_name: theme_name))
           Services::ColorTheme::HydratorService.new(theme_name: theme_name, theme_hash: theme_hash).call
         end
 
         def find_or_create(theme_name:)
-          return find(theme_name: theme_name) if exist?(theme_name: theme_name)
+          theme_path = themes_path_for(theme_name: theme_name)
+          return find(theme_name: theme_name) if exist?(file_path: theme_path)
 
           new(theme_name: theme_name).tap(&:write!)
         end
 
         def find_or_initialize(theme_name:)
-          return find(theme_name: theme_name) if exist?(theme_name: theme_name)
+          theme_path = themes_path_for(theme_name: theme_name)
+          return find(theme_name: theme_name) if exist?(file_path: theme_path)
 
           new(theme_name: theme_name)
         end

@@ -192,7 +192,7 @@ RSpec.describe Dsu::Models::Configuration do
   describe '#==' do
     context 'when the other object is not a Configuration' do
       it 'returns false' do
-        expect(config.restore! == 'foo').to be false
+        expect(config.reload == 'foo').to be false
       end
     end
 
@@ -235,7 +235,7 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       it 'saves the configuration values' do
-        expect(config.restore!).to eq config
+        expect(config.reload).to eq config
       end
     end
 

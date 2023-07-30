@@ -1,70 +1,84 @@
 # frozen_string_literal: true
 
+require 'active_model'
 require 'json'
 require_relative 'raw_json_file'
 
 module Dsu
   module Crud
-    module JsonFile
+    class JsonFile
+      include ActiveModel::Model
+
       attr_reader :file_path
 
-      class << self
-        def included(base)
-          base.extend(ClassMethods)
-        end
+      def initialize(file_path)
+        @file_path = file_path
       end
 
       def delete
-        RawJsonFile.delete(file_path: file_path)
+        self.class.delete(file_path: file_path)
       end
 
       def delete!
-        RawJsonFile.delete!(file_path: file_path)
+        self.class.delete!(file_path: file_path)
       end
 
       def exist?
-        RawJsonFile.exist?(file_path: file_path)
+        self.class.exist?(file_path: file_path)
       end
 
-      def read
-        hash = self.class.parse(RawJsonFile.read(file_path: file_path) || '{}')
-        return yield hash if block_given?
-
-        hash
+      def persisted?
+        exist?
       end
 
-      def read!
-        hash = self.class.parse(RawJsonFile.read!(file_path: file_path) || '{}')
-        return yield hash if block_given?
+      # Override this method to reload data from the file
+      def reload
+        @version = read_version
 
-        hash
+        self
+      end
+
+      def to_h
+        raise NotImplementedError, 'You must implement this method in a your subclass'
+      end
+
+      def to_model
+        self
+      end
+
+      def version
+        @version ||= read_version
       end
 
       def write
-        return false if respond_to?(:valid?) && !valid?
+        return false unless valid?
 
-        RawJsonFile.write(file_data: to_h, file_path: file_path)
+        self.class.write(file_data: to_h, file_path: file_path)
         true
       end
 
       def write!
-        validate! if respond_to?(:validate!)
-        RawJsonFile.write(file_data: to_h, file_path: file_path)
-      end
+        validate!
 
-      def version
-        return 0 unless exist?
-
-        hash = read
-        return 0 if hash.nil?
-
-        hash.fetch(:version, 0).to_i
+        self.class.write(file_data: to_h, file_path: file_path)
       end
 
       alias save write
       alias save! write!
 
-      module ClassMethods
+      class << self
+        def exist?(file_path:)
+          RawJsonFile.exist?(file_path: file_path)
+        end
+
+        def delete(file_path:)
+          RawJsonFile.delete(file_path: file_path)
+        end
+
+        def delete!(file_path:)
+          RawJsonFile.delete!(file_path: file_path)
+        end
+
         def parse(json)
           return if json.nil?
 
@@ -72,21 +86,52 @@ module Dsu
         end
 
         def read(file_path:)
-          hash = parse(RawJsonFile.read(file_path: file_path) || '{}')
-          return yield hash if block_given?
+          hash = parse(RawJsonFile.read(file_path: file_path))
+          return yield hash if hash && block_given?
 
           hash
         end
 
         def read!(file_path:)
-          hash = parse(RawJsonFile.read!(file_path: file_path) || '{}')
-          return yield hash if block_given?
+          hash = parse(RawJsonFile.read!(file_path: file_path))
+          return yield hash if hash && block_given?
 
           hash
+        end
+
+        def write(file_data:, file_path:)
+          Crud::RawJsonFile.write(file_data: file_data, file_path: file_path)
+        end
+
+        def write!(file_data:, file_path:)
+          write(file_data: file_data, file_path: file_path)
         end
       end
 
       private
+
+      def read
+        hash = self.class.parse(RawJsonFile.read(file_path: file_path))
+        return yield hash if block_given?
+
+        hash
+      end
+
+      def read!
+        hash = self.class.parse(RawJsonFile.read!(file_path: file_path))
+        return yield hash if hash && block_given?
+
+        hash
+      end
+
+      def read_version
+        return 0 unless exist?
+
+        hash = read
+        return 0 if hash.nil?
+
+        hash.fetch(:version, 0).to_i
+      end
 
       attr_writer :file_path, :version
     end

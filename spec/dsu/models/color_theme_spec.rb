@@ -7,7 +7,8 @@ RSpec.describe Dsu::Models::ColorTheme do
 
   shared_examples 'the color theme exists' do
     it 'the color theme file exists' do
-      expect(described_class.exist?(theme_name: theme_name)).to be(true)
+      theme_path = Dsu::Support::Fileable.themes_path(theme_name: theme_name)
+      expect(File.exist?(theme_path)).to be(true)
     end
   end
 
@@ -163,7 +164,8 @@ RSpec.describe Dsu::Models::ColorTheme do
 
         it 'deletes the theme file' do
           color_theme.delete!
-          expect(described_class.exist?(theme_name: theme_name)).to be(false)
+          theme_path = Dsu::Support::Fileable.themes_path(theme_name: theme_name)
+          expect(File.exist?(theme_path)).to be(false)
         end
       end
 
@@ -184,7 +186,8 @@ RSpec.describe Dsu::Models::ColorTheme do
 
         it 'deletes the theme file' do
           color_theme.delete!
-          expect(described_class.exist?(theme_name: theme_name)).to be(false)
+          theme_path = Dsu::Support::Fileable.themes_path(theme_name: theme_name)
+          expect(File.exist?(theme_path)).to be(false)
         end
 
         it 'does not change the current theme in the configuration' do

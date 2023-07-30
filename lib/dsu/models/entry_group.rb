@@ -2,7 +2,6 @@
 
 require 'active_model'
 require_relative '../crud/json_file'
-require_relative '../crud/raw_json_file'
 require_relative '../migration/version'
 require_relative '../services/entry_group/editor_service'
 require_relative '../support/fileable'
@@ -18,9 +17,7 @@ module Dsu
   module Models
     # This class represents a group of entries for a given day. IOW,
     # things someone might want to share at their daily standup (DSU).
-    class EntryGroup
-      include ActiveModel::Model
-      include Crud::JsonFile
+    class EntryGroup < Crud::JsonFile
       include Support::Fileable
       include Support::Presentable
       include Support::TimeComparable
@@ -44,7 +41,9 @@ module Dsu
         FileUtils.mkdir_p(entries_folder)
 
         @time = ensure_local_time(time)
-        @file_path = entries_path(time: @time)
+
+        super(entries_path(time: @time))
+
         @version = version || VERSION
         self.entries = entries || []
       end
@@ -64,12 +63,12 @@ module Dsu
       end
 
       def delete
-        self.class.delete(file_path: file_path)
+        super
         entries.clear
       end
 
       def delete!
-        self.class.delete(file_path: file_path)
+        super
         entries.clear
       end
 
@@ -80,6 +79,10 @@ module Dsu
         raise ArgumentError, 'entries contains the wrong object type' unless entries.all?(Entry)
 
         @entries = entries.map(&:clone)
+      end
+
+      def exist?
+        self.class.exist?(time: time)
       end
 
       def hash
@@ -129,6 +132,14 @@ module Dsu
           end
         end
 
+        def delete(time:)
+          superclass.delete(file_path: entries_path_for(time: time))
+        end
+
+        def delete!(time:)
+          superclass.delete!(file_path: entries_path_for(time: time))
+        end
+
         def edit(time:, options: {})
           # NOTE: Uncomment this line to prohibit edits on
           # Entry Groups that do not exist (i.e. have no entries).
@@ -137,6 +148,10 @@ module Dsu
           find_or_initialize(time: time).tap do |entry_group|
             Services::EntryGroup::EditorService.new(entry_group: entry_group, options: options).call
           end
+        end
+
+        def exist?(time:)
+          superclass.exist?(file_path: entries_path_for(time: time))
         end
 
         def find(time:)
@@ -159,15 +174,15 @@ module Dsu
         end
 
         def write(file_data:, file_path:)
-          Crud::RawJsonFile.delete(file_path: file_path) and return true if file_data[:entries].empty?
+          delete(file_path: file_path) and return true if file_data[:entries].empty?
 
-          Crud::RawJsonFile.write(file_data: file_data, file_path: file_path)
+          super
         end
 
         def write!(file_data:, file_path:)
-          Crud::RawJsonFile.delete!(file_path: file_path) and return if file_data[:entries].empty?
+          delete!(file_path: file_path) and return if file_data[:entries].empty?
 
-          Crud::RawJsonFile.write(file_data: file_data, file_path: file_path)
+          super
         end
 
         private

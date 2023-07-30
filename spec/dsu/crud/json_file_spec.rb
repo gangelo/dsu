@@ -6,30 +6,17 @@ end
 
 RSpec.describe Dsu::Crud::JsonFile do
   subject(:json_file) do
-    Class.new do
-      include ActiveModel::Model
-      include Dsu::Crud::JsonFile
+    Class.new(described_class) do
+      def initialize(file_path, file_data)
+        super(file_path)
 
-      class << self
-        def name
-          'Klass'
-        end
-      end
-
-      attr_accessor :file_data, :file_path, :options
-
-      validates :file_data, presence: true
-
-      def initialize(file_path:, file_data:, options:)
-        @file_path = file_path
         @file_data = file_data
-        @options = options
       end
 
       def to_h
-        @file_data.dup
+        @file_data
       end
-    end.new(file_path: file_path, file_data: file_data, options: options)
+    end.new(file_path, file_data)
   end
 
   before do
@@ -125,48 +112,6 @@ RSpec.describe Dsu::Crud::JsonFile do
     end
   end
 
-  describe '#read' do
-    before do
-      with_existing_file_path
-    end
-
-    let(:expected_hash) do
-      {
-        json_key: 'json_value'
-      }
-    end
-
-    it 'returns the file_hash representation of the file' do
-      expect(json_file.read).to eq(expected_hash)
-    end
-  end
-
-  describe '#read!' do
-    context 'when the file exists' do
-      before do
-        with_existing_file_path
-      end
-
-      let(:expected_hash) do
-        {
-          json_key: 'json_value'
-        }
-      end
-
-      it 'returns the file_hash representation of the file' do
-        expect(json_file.read!).to eq(expected_hash)
-      end
-    end
-
-    context 'when the file does not exist' do
-      let(:expected_error) { /does not exist/ }
-
-      it 'raises an error' do
-        expect { json_file.read! }.to raise_error(expected_error)
-      end
-    end
-  end
-
   describe '#write!' do
     let(:file_data) do
       {
@@ -199,7 +144,7 @@ RSpec.describe Dsu::Crud::JsonFile do
       subject(:json_file_write) { json_file.write! }
 
       let(:file_data) { nil }
-      let(:expected_error) { /Validation failed/ }
+      let(:expected_error) { /file_data is nil/ }
 
       it_behaves_like 'an error is raised'
     end

@@ -22,6 +22,10 @@ FactoryBot.define do
       new(time: time, entries: entries, version: version)
     end
 
+    after(:create) do |entry_group, _evaluator|
+      entry_group.write!
+    end
+
     after(:build) do |entry_group, evaluator|
       evaluator.entries&.each_with_index do |entry, index|
         raise 'Entry must be an instance of Dsu::Models::Entry' unless entry.is_a?(Dsu::Models::Entry)

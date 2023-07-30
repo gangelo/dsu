@@ -3,6 +3,10 @@
 RSpec.describe Dsu::Models::EntryGroup do
   subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
+  before do
+    build(:configuration, config_hash: Dsu::Models::Configuration::DEFAULT_CONFIGURATION)
+  end
+
   let(:time) { Time.now }
   let(:entries) { [] }
 
@@ -228,13 +232,15 @@ RSpec.describe Dsu::Models::EntryGroup do
 
         it 'deletes the file' do
           described_class.delete!(time: time)
-          expect(described_class.exist?(time: time)).to be false
+          entry_path = Dsu::Support::Fileable.entries_path(time: time)
+          expect(File.exist?(entry_path)).to be false
         end
       end
 
       context 'when an entry group file does NOT exist for :time' do
         it 'does not exist before it is deleted' do
-          expect(described_class.exist?(time: time)).to be false
+          entry_path = Dsu::Support::Fileable.entries_path(time: time)
+          expect(File.exist?(entry_path)).to be false
         end
 
         it 'does NOT raise an error' do
@@ -245,7 +251,6 @@ RSpec.describe Dsu::Models::EntryGroup do
 
     describe '.edit' do
       before do
-        described_class.delete(time: time)
         allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
         editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION[:editor]
         allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(true)
@@ -270,28 +275,6 @@ RSpec.describe Dsu::Models::EntryGroup do
       it 'edits and saves the entry group file' do
         described_class.edit(time: time)
         expect(described_class.find(time: time).entries.size).to eq 2
-      end
-    end
-
-    describe '.exists?' do
-      context 'when an entry group file exists' do
-        before do
-          create(:entry_group, :with_entries, time: time).save!
-        end
-
-        it 'returns true' do
-          expect(described_class.exist?(time: time)).to be true
-        end
-      end
-
-      context 'when an entry group file does NOT exist for :time' do
-        before do
-          described_class.delete(time: time)
-        end
-
-        it 'returns false' do
-          expect(described_class.exist?(time: time)).to be false
-        end
       end
     end
 

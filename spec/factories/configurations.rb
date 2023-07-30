@@ -12,6 +12,8 @@ FactoryBot.define do
       if evaluator.config_hash
         configuration.replace!(config_hash: evaluator.config_hash)
         configuration.write
+      else
+        configuration.replace!(config_hash: configuration.class::DEFAULT_CONFIGURATION)
       end
     end
 

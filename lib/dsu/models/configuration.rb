@@ -11,9 +11,7 @@ require_relative '../validators/version_validator'
 module Dsu
   module Models
     # This class represents the dsu configuration.
-    class Configuration
-      include ActiveModel::Model
-      include Crud::JsonFile
+    class Configuration < Crud::JsonFile
       include Singleton
       include Support::Fileable
       include Support::Presentable
@@ -66,15 +64,17 @@ module Dsu
         :theme_name
 
       def initialize
+        super(config_path)
+
         FileUtils.mkdir_p config_folder
 
-        restore!
+        reload
 
         write! unless exist?
       end
 
       # Temporarily sets the configuration to the given config_hash.
-      # To reset the configuration to its original state, call #restore!
+      # To reset the configuration to its original state, call #reload
       def replace!(config_hash: {})
         raise ArgumentError, 'config_hash is nil.' if config_hash.nil?
         raise ArgumentError, "config_hash must be a Hash: \"#{config_hash}\"." unless config_hash.is_a?(Hash)
@@ -85,9 +85,7 @@ module Dsu
       end
 
       # Restores the configuration to its original state from disk.
-      def restore!
-        @file_path = config_path
-
+      def reload
         file_hash = if exist?
           read do |config_hash|
             hydrated_hash = Services::Configuration::HydratorService.new(config_hash: config_hash).call
