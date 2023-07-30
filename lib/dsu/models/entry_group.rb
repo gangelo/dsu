@@ -63,12 +63,12 @@ module Dsu
       end
 
       def delete
-        super
+        self.class.delete(time: time)
         entries.clear
       end
 
       def delete!
-        super
+        self.class.delete!(time: time)
         entries.clear
       end
 

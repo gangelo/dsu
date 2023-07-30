@@ -95,6 +95,18 @@ module Dsu
         end
       end
 
+      def delete
+        self.class.delete(theme_name: theme_name)
+      end
+
+      def delete!
+        self.class.delete!(theme_name: theme_name)
+      end
+
+      def exist?
+        self.class.exist?(theme_name: theme_name)
+      end
+
       class << self
         def all
           Dir.glob("#{themes_folder}/*").map do |file_path|
