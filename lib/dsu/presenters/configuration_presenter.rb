@@ -37,7 +37,7 @@ module Dsu
       private
 
       def config_path
-        @config_path ||= config.class.config_path
+        @config_path ||= config.file_path
       end
 
       def formatted_config_entry_with_index(config_entry, index:, color_theme_color:)

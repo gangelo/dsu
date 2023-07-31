@@ -22,31 +22,27 @@ module Dsu
       'Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION'
     long_desc <<-LONG_DESC
       NAME
-      \x5
-      `dsu add, -a [OPTIONS] DESCRIPTION` -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
+
+      $ dsu add, -a [OPTIONS] DESCRIPTION -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
 
       SYNOPSIS
-      \x5
-      `dsu add, -a [-d DATE|-n|-t|-y] DESCRIPTION`
+
+      $ dsu add, -a [-d DATE|-n|-t|-y] DESCRIPTION
 
       OPTIONS:
-      \x5
+
       -d DATE: Adds a DSU entry having DESCRIPTION to the DATE.
 
-      \x5
       #{date_option_description}
 
-      \x5
       -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
 
-      \x5
       -t: Adds a DSU entry having DESCRIPTION to tomorrow's date (`Time.new.tomorrow`).
 
-      \x5
       -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
 
       DESCRIPTION:
-      \x5
+
       Must be be between 2 and 256 characters (inclusive) in length.
     LONG_DESC
     option :date, type: :string, aliases: '-d'
@@ -105,9 +101,6 @@ module Dsu
 
                   Config path: #{Support::Fileable.config_path}
           Migration file path: #{Support::Fileable.migration_version_path}
-
-                   Migrations: #{Migration::Service.all_migration_files_info.map { |file_info| file_info[:version] }.wrap_and_join}
-
 
       INFO
       puts apply_color_theme(info, color_theme_color: color_theme.body)

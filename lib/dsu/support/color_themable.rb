@@ -5,6 +5,13 @@ require 'colorized_string'
 module Dsu
   module Support
     module ColorThemable
+      def prompt_with_options(prompt:, options:)
+        options = "[#{options.join('/')}]"
+        "#{apply_color_theme(prompt, color_theme_color: self.prompt)} " \
+          "#{apply_color_theme(options, color_theme_color: prompt_options)}" \
+          "#{apply_color_theme('>', color_theme_color: self.prompt)}"
+      end
+
       module_function
 
       def apply_color_theme(input, color_theme_color:)

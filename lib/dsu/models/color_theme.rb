@@ -257,14 +257,6 @@ module Dsu
         end.hash
       end
 
-      # TODO: Place in a module?
-      def prompt_with_options(prompt:, options:)
-        options = "[#{options.join('/')}]"
-        "#{apply_color_theme(prompt, color_theme_color: self.prompt)} " \
-          "#{apply_color_theme(options, color_theme_color: prompt_options)}" \
-          "#{apply_color_theme('>', color_theme_color: self.prompt)}"
-      end
-
       private
 
       attr_writer :theme_name, :description
