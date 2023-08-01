@@ -49,6 +49,5 @@ RSpec.configure do |config|
   end
 
   config.include ColorThemeHelpers
-  config.include MigrationServiceHelpers
   config.include TimeHelpers
 end

@@ -10,6 +10,8 @@ module Dsu
       module TimeMneumonic
         include TimeMneumonics
 
+        module_function
+
         def time_from_mneumonic(command_option:, relative_time: nil)
           time_from_mneumonic!(command_option: command_option, relative_time: relative_time)
         rescue ArgumentError
@@ -45,7 +47,7 @@ module Dsu
           mneumonic.match?(RELATIVE_REGEX)
         end
 
-        private
+        # Add private_class_methods here.
 
         # Returns a Time object from a mneumonic.
         def time_for_mneumonic(mneumonic:, relative_time:)
@@ -96,6 +98,10 @@ module Dsu
             raise ArgumentError, "#{command_option_name} is an invalid mneumonic: \"#{command_option}\"."
           end
         end
+
+        private_class_method :time_for_mneumonic, :relative_time_for,
+          :mneumonic?, :today_mneumonic?, :tomorrow_mneumonic?,
+          :yesterday_mneumonic?, :validate_argument!
       end
     end
   end

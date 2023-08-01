@@ -3,6 +3,12 @@
 module Dsu
   module Support
     module TimesSortable
+      def sorted_dsu_times_for(times:)
+        configuration = Models::Configuration.instance unless defined?(configuration) && configuration
+        entries_display_order = configuration.entries_display_order
+        times_sort(times: times_for(times: times), entries_display_order: entries_display_order)
+      end
+
       def times_sort(times:, entries_display_order: nil)
         times = times.dup
         entries_display_order ||= :asc

@@ -97,7 +97,7 @@ module Dsu
       end
 
       def time_yyyy_mm_dd
-        yyyy_mm_dd_time(time: time)
+        yyyy_mm_dd(time: time)
       end
 
       def to_h

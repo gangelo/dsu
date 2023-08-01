@@ -9,9 +9,7 @@ end
 # rubocop:disable RSpec/NestedGroups
 RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
   subject(:time_from_mneumonic) do
-    Class.new do
-      include Dsu::Support::CommandOptions::TimeMneumonic
-    end.new.time_from_mneumonic!(command_option: command_option, relative_time: relative_time)
+    described_class.time_from_mneumonic!(command_option: command_option, relative_time: relative_time)
   end
 
   before do
@@ -20,9 +18,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
 
   describe '#time_from_mneumonic' do
     subject(:time_from_mneumonic) do
-      Class.new do
-        include Dsu::Support::CommandOptions::TimeMneumonic
-      end.new.time_from_mneumonic(command_option: command_option, relative_time: relative_time)
+      described_class.time_from_mneumonic(command_option: command_option, relative_time: relative_time)
     end
 
     context 'when an argument is invalid' do

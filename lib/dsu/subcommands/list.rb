@@ -1,14 +1,16 @@
 # frozen_string_literal: true
 
 require_relative '../support/command_options/dsu_times'
+require_relative '../support/command_options/time_mneumonic'
 require_relative '../support/time_formatable'
 require_relative '../views/entry_group/shared/no_entries_to_display'
+require_relative '../views/shared/generic_errors'
 require_relative 'base_subcommand'
 
 module Dsu
   module Subcommands
     class List < BaseSubcommand
-      include Support::CommandOptions::DsuTimes
+      include Support::CommandOptions::TimeMneumonic
       include Support::TimeFormatable
 
       map %w[d] => :date
@@ -26,7 +28,7 @@ module Dsu
       def today
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time])
-        view_list_for(times: times)
+        view_list_for(times: times, options: options)
       end
 
       desc 'tomorrow, t',
@@ -38,7 +40,7 @@ module Dsu
       def tomorrow
         time = Time.now
         times = sorted_dsu_times_for(times: [time, time.tomorrow])
-        view_list_for(times: times)
+        view_list_for(times: times, options: options)
       end
 
       desc 'yesterday, y',
@@ -50,7 +52,7 @@ module Dsu
       def yesterday
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time.yesterday.yesterday])
-        view_list_for(times: times)
+        view_list_for(times: times, options: options)
       end
 
       desc 'date, d DATE|MNEUMONIC',
@@ -58,27 +60,24 @@ module Dsu
       long_desc <<-LONG_DESC
         Displays the DSU entries for the DATE or MNEUMONIC provided.
 
-        \x5
         #{date_option_description}
 
-        \x5
         #{mneumonic_option_description}
       LONG_DESC
       option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
-      def date(param)
-        time = if time_mneumonic?(param)
-          time_from_mneumonic(command_option: param)
+      def date(date_or_mneumonic)
+        time = if time_mneumonic?(date_or_mneumonic)
+          time_from_mneumonic(command_option: date_or_mneumonic)
         else
-          Time.parse(param)
+          Time.parse(date_or_mneumonic)
         end
         times = sorted_dsu_times_for(times: [time, time.yesterday])
-        view_list_for(times: times)
+        view_list_for(times: times, options: options)
       rescue ArgumentError => e
-        puts apply_color_theme("Error: #{e.message}", color_theme_color: color_theme.error)
-        exit 1
+        Views::Shared::GenericErrors.new(errors: e.message).render
       end
 
-      desc 'dates, dd OPTIONS',
+      desc 'dates|dd OPTIONS',
         'Displays the DSU entries for the OPTIONS provided'
       long_desc <<~LONG_DESC
         NAME
@@ -127,7 +126,6 @@ module Dsu
 
         $ dsu list dates --from -7 --to +6
 
-
         The above can be accomplished MUCH easier by simply using the `yesterday` mneumonic...
 
         This (assuming "today" is 5/23) will display the DSU entries back 1 week from yesterday's date 5/16 to 5/22:
@@ -135,42 +133,28 @@ module Dsu
         $ dsu list dates --from yesterday --to -6
       LONG_DESC
       # -f, --from FROM [DATE|MNEMONIC] (e.g. -f, --from 1/1[/yyy]|n|t|y|today|tomorrow|yesterday)
-      option :from, type: :string, aliases: '-f', banner: 'DATE|MNEMONIC'
+      option :from, type: :string, required: true, aliases: '-f', banner: 'DATE|MNEMONIC'
       # -t, --to TO [DATE|MNEMONIC] (e.g. -t, --to 1/1[/yyy]|n|t|y|today|tomorrow|yesterday)
-      option :to, type: :string, aliases: '-t', banner: 'DATE|MNEMONIC'
+      option :to, type: :string, required: true, aliases: '-t', banner: 'DATE|MNEMONIC'
       # Include dates that have no DSU entries.
       option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
       def dates
         options = configuration.to_h.merge(self.options).with_indifferent_access
-        times = dsu_times_from!(from_command_option: options[:from], to_command_option: options[:to])
-        # Note special sort here, unlike the other commands where rules for
+        times, errors = Support::CommandOptions::DsuTimes.dsu_times_for(from_option: options[:from], to_option: options[:to]) # rubocop:disable Layout/LineLength
+        if errors.any?
+          Views::Shared::GenericErrors.new(errors: errors).render
+          return
+        end
+
+        # NOTE: special sort here, unlike the other commands where rules for
         # displaying DSU entries are applied; this is more of a list command.
-        times = times_sort(times: times, entries_display_order: entries_display_order)
+        times = times_sort(times: times, entries_display_order: options[:entries_display_order])
         view_entry_groups(times: times, options: options) do |total_entry_groups, _total_entry_groups_not_shown|
           # nothing_to_display_banner_for(times) if total_entry_groups.zero?
           Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options) if total_entry_groups.zero?
         end
       rescue ArgumentError => e
-        puts apply_color_theme("Error: #{e.message}", color_theme_color: color_theme.error)
-        exit 1
-      end
-
-      private
-
-      # This method will unconditionally display the FIRST and LAST entry groups
-      # associated with the times provided by the <times> argument. All other
-      # entry groups will be conditionally displayed based on the :include_all
-      # value in the <options> argument.
-      def view_list_for(times:)
-        options = configuration.to_h.merge(self.options).with_indifferent_access
-        times_first_and_last = [times.first, times.last]
-        times.each do |time|
-          view_options = options.dup
-          view_options[:include_all] = true if times_first_and_last.include?(time)
-          view_entry_group(time: time, options: view_options) do
-            puts
-          end
-        end
+        Views::Shared::GenericErrors.new(errors: e.message).render
       end
     end
   end

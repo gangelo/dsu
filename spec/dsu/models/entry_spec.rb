@@ -7,7 +7,12 @@ RSpec.describe Dsu::Models::Entry do
     described_class.new(description: description)
   end
 
-  let(:description) { entry_0_hash[:description] }
+  let(:description) { entry_hash[:description] }
+  let(:entry_hash) do
+    {
+      description: '0 description'
+    }
+  end
 
   describe '#initialize' do
     it 'initializes #description' do
@@ -45,13 +50,13 @@ RSpec.describe Dsu::Models::Entry do
 
   describe '#to_h' do
     it 'returns a Hash representing the Entry' do
-      expect(entry.to_h).to eq(entry_0_hash)
+      expect(entry.to_h).to eq(entry_hash)
     end
   end
 
   describe '#==' do
     context 'when the entries are equal' do
-      let(:equal_entry) { described_class.new(**entry_0_hash) }
+      let(:equal_entry) { described_class.new(**entry_hash) }
 
       it 'returns true' do
         expect(entry == equal_entry).to be true

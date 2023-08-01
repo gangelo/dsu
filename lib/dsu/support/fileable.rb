@@ -74,6 +74,22 @@ module Dsu
         @gem_dir ||= Gem.loaded_specs['dsu'].gem_dir
       end
 
+      # Display
+
+      def display_all
+        <<~INFO
+          DSU Folder/Path Information:
+          ----------------------------------------------
+                     Root folder: #{root_folder}
+                     Config path: #{config_path}
+                  Entries folder: #{entries_folder}
+                   Themes folder: #{themes_folder}
+          Migration version path: #{migration_version_path}
+                     Temp folder: #{temp_folder}
+                      Gem folder: #{gem_dir}
+        INFO
+      end
+
       extend self # rubocop:disable Style/ModuleFunction
     end
   end

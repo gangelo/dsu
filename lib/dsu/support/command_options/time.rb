@@ -3,12 +3,16 @@
 module Dsu
   module Support
     module CommandOptions
+      # TODO: Make this into an ActiveModel class that uses validations.
+      #
       # The purpose of this module is to take a command option that is a string and return a Time object.
       # The command option is expected to be a date in the format of [M]M/[D]D[/YYYY]. MM and DD with
       # leading zeroes is optional (i.e. only M and D are required), YYYY is optionl and will be replaced
       # with the current year if not provided.
       module Time
         DATE_CAPTURE_REGEX = %r{\A(?<month>0?[1-9]|1[0-2])/(?<day>0?[1-9]|1\d|2\d|3[01])(?:/(?<year>\d{4}))?\z}
+
+        module_function
 
         def time_from_date_string!(command_option:)
           raise ArgumentError, 'command_option is nil.' if command_option.nil?
@@ -35,7 +39,7 @@ module Dsu
           nil
         end
 
-        private
+        # private_class_methods go here.
 
         # This method returns the time parts for the given time string in a hash
         # (i.e. month, day, year) IF the time string matches the DATE_CAPTURE_REGEX
@@ -71,6 +75,8 @@ module Dsu
           time_parts[:year] = ::Time.now.year if time_parts[:year].nil?
           "#{time_parts[:year]}/#{time_parts[:month]}/#{time_parts[:day]}"
         end
+
+        private_class_method :time_parts_for, :time_parts?, :valid_time!, :time_string_for
       end
     end
   end

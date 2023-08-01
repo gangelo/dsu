@@ -32,13 +32,30 @@ module Dsu
         yield if block_given?
       end
 
+      # This method will unconditionally display the FIRST and LAST entry groups
+      # associated with the times provided by the <times> argument. All other
+      # entry groups will be conditionally displayed based on the :include_all
+      # value in the <options> argument.
+      def view_list_for(times:, options:)
+        configuration = Models::Configuration.instance unless defined?(configuration) && configuration
+        options = configuration.to_h.merge(options).with_indifferent_access
+        times_first_and_last = [times.first, times.last]
+        times.each do |time|
+          view_options = options.dup
+          view_options[:include_all] = true if times_first_and_last.include?(time)
+          view_entry_group(time: time, options: view_options) do
+            puts
+          end
+        end
+      end
+
       private
 
       def show_entry_group?(time:, options:)
         Models::EntryGroup.exist?(time: time) || options[:include_all]
       end
 
-      module_function :view_entry_group, :view_entry_groups, :show_entry_group?
+      module_function :view_entry_group, :view_entry_groups, :view_list_for, :show_entry_group?
     end
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'messages'
+require_relative 'generic_errors'
 
 module Dsu
   module Views
@@ -20,8 +20,8 @@ module Dsu
         def render
           return if model.valid?
 
-          messages = model.errors.full_messages
-          Messages.new(messages: messages, message_type: :error, options: { header: header }).render
+          errors = model.errors.full_messages
+          GenericErrors.new(errors: errors, options: { header: header }).render
         end
 
         private

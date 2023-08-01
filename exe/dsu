@@ -30,4 +30,4 @@ if Dsu.env.development?
   puts "ATTENTION: Dsu root folder is: #{Dsu::Support::Fileable.root_folder}!"
 end
 
-Dsu::CLI.start
+Dsu::CLI.start(ARGV)

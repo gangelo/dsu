@@ -65,14 +65,6 @@ module Dsu
 
     attr_reader :configuration
 
-    def sorted_dsu_times_for(times:)
-      times_sort(times: times_for(times: times), entries_display_order: entries_display_order)
-    end
-
-    def entries_display_order
-      @entries_display_order ||= configuration.entries_display_order
-    end
-
     def color_theme
       Models::ColorTheme.current_or_default
     end
