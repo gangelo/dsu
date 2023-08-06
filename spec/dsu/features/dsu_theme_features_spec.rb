@@ -1,15 +1,6 @@
 # frozen_string_literal: true
 
-def color_theme_regex_for(theme_names:, default_theme_name: Dsu::Models::ColorTheme::DEFAULT_THEME_NAME)
-  theme_names << default_theme_name unless theme_names.include?(default_theme_name)
-  regex_string = theme_names.sort.each_with_index.map do |theme_name, index|
-    theme_name = "*#{theme_name}" if theme_name == default_theme_name
-    ".*#{index + 1}..*#{theme_name}"
-  end.join('.*')
-  Regexp.new(regex_string, Regexp::MULTILINE)
-end
-
-RSpec.describe 'Color Theme features', type: :feature do
+RSpec.describe 'Dsu theme features', type: :feature do
   subject(:cli) { Dsu::CLI.start(args) }
 
   let(:theme_name) { 'test' }
@@ -183,4 +174,13 @@ RSpec.describe 'Color Theme features', type: :feature do
       end
     end
   end
+end
+
+def color_theme_regex_for(theme_names:, default_theme_name: Dsu::Models::ColorTheme::DEFAULT_THEME_NAME)
+  theme_names << default_theme_name unless theme_names.include?(default_theme_name)
+  regex_string = theme_names.sort.each_with_index.map do |theme_name, index|
+    theme_name = "*#{theme_name}" if theme_name == default_theme_name
+    ".*#{index + 1}..*#{theme_name}"
+  end.join('.*')
+  Regexp.new(regex_string, Regexp::MULTILINE)
 end
