@@ -50,7 +50,7 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
       let(:expected_error) { ActiveModel::ValidationError }
 
       it 'writes an error message to the console' do
-        expect { add_entry_service }.to output(/An error was encountered; the entry could not be added added/).to_stdout
+        expect { add_entry_service }.to output(/An error was encountered; the entry could not be added/).to_stdout
       end
 
       it 'does not add the entry' do

@@ -38,7 +38,7 @@ module Dsu
         entry_group.save!
         entry
       rescue ActiveModel::ValidationError => e
-        header = 'An error was encountered; the entry could not be added added:'
+        header = 'An error was encountered; the entry could not be added:'
         Views::Shared::Messages.new(messages: e.message, message_type: :error, options: { header: header }).render
       end
 
