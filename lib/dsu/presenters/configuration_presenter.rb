@@ -47,7 +47,7 @@ module Dsu
 
       def formatted_config_entry(config_entry:, color_theme_color:)
         config_entry = "#{config_entry[0]}: '#{config_entry[1]}'"
-        apply_color_theme(config_entry, color_theme_color: color_theme_color.light!)
+        apply_color_theme(config_entry, color_theme_color: color_theme_color)
       end
     end
   end
