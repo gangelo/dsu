@@ -20,11 +20,11 @@ module Dsu
       desc 'info', 'Displays information about this gem configuration'
       long_desc <<-LONG_DESC
         NAME
-        \x5
+
         `dsu config info` -- Displays information about this gem configuration.
 
         SYNOPSIS
-        \x5
+
         dsu config info
       LONG_DESC
       def info
@@ -91,15 +91,15 @@ module Dsu
         desc 'delete', 'Deletes the configuration file'
         long_desc <<-LONG_DESC
           NAME
-          \x5
+
           `dsu config delete` -- Deletes the configuration.
 
           SYNOPSIS
-          \x5
+
           dsu config delete
 
           NOTES
-          \x5
+
           Deleting the dsu configuration file will simply cause dsu to use the default configuration options (`Dsu::Models::Configuration::DEFAULT_CONFIGURATION`).
         LONG_DESC
         def delete
