@@ -98,11 +98,10 @@ module Dsu
                 Themes folder: #{Support::Fileable.themes_folder}
                Migrate folder: #{Support::Fileable.migrate_folder}
                    Gem folder: #{Support::Fileable.gem_dir}
-                   Temp folder: #{Support::Fileable.temp_folder}
+                  Temp folder: #{Support::Fileable.temp_folder}
 
                   Config path: #{Support::Fileable.config_path}
           Migration file path: #{Support::Fileable.migration_version_path}
-
       INFO
       puts apply_color_theme(info, color_theme_color: color_theme.body)
     end
