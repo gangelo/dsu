@@ -2,6 +2,8 @@
 
 require_relative '../support/fileable'
 require_relative '../views/color_theme/index'
+require_relative '../views/shared/error'
+require_relative '../views/shared/info'
 require_relative 'base_subcommand'
 
 module Dsu
@@ -35,8 +37,7 @@ module Dsu
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def create(theme_name)
         if Models::ColorTheme.exist?(theme_name: theme_name)
-          Views::Shared::Messages.new(messages: "Color theme \"#{theme_name}\" already exists.",
-            message_type: :error).render
+          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" already exists.").render
           return false
         end
         prompt = color_theme.prompt_with_options(prompt: "Create color theme \"#{theme_name}\"?", options: %w[y N])
@@ -44,10 +45,10 @@ module Dsu
           theme_hash = Models::ColorTheme::DEFAULT_THEME.dup
           theme_hash[:description] = options[:description] || "#{theme_name.capitalize} color theme"
           Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
-          Views::Shared::Messages.new(messages: "\nCreated color theme \"#{theme_name}\".", message_type: :info).render
+          Views::Shared::Info.new(messages: "\nCreated color theme \"#{theme_name}\".").render
           true
         else
-          Views::Shared::Messages.new(messages: "\nCanceled.", message_type: :info).render
+          Views::Shared::Info.new(messages: "\nCanceled.").render
           false
         end
       end
@@ -65,14 +66,12 @@ module Dsu
 
         if theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
           display_dsu_header
-          Views::Shared::Messages.new(messages: "Color theme \"#{theme_name}\" cannot be deleted.",
-            message_type: :error).render
+          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" cannot be deleted.").render
           return
         end
 
         unless Models::ColorTheme.exist?(theme_name: theme_name)
-          Views::Shared::Messages.new(messages: "Color theme \"#{theme_name}\" does not exist.",
-            message_type: :error).render
+          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
           return
         end
 
@@ -80,9 +79,9 @@ module Dsu
           options: %w[y N])
         if yes?(prompt, options: options)
           Models::ColorTheme.delete!(theme_name: theme_name)
-          Views::Shared::Messages.new(messages: "\nDeleted color theme \"#{theme_name}\".", message_type: :info).render
+          Views::Shared::Info.new(messages: "\nDeleted color theme \"#{theme_name}\".").render
         else
-          Views::Shared::Messages.new(messages: "\nCanceled.", message_type: :info).render
+          Views::Shared::Info.new(messages: "\nCanceled.").render
         end
       end
 
@@ -122,7 +121,7 @@ module Dsu
         # We need to display the header after the theme is updated so that it is displayed in the
         # correct theme color.
         display_dsu_header
-        Views::Shared::Messages.new(messages: "Using color theme \"#{theme_name}\".", message_type: :info).render
+        Views::Shared::Info.new(messages: "Using color theme \"#{theme_name}\".").render
       end
 
       private

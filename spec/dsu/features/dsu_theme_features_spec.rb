@@ -59,7 +59,7 @@ RSpec.describe 'Dsu theme features', type: :feature do
       end
 
       it 'displays an already exists error to the console' do
-        expect { cli }.to output(/Color theme "#{theme_name}" already exists/).to_stdout
+        expect { cli }.to output(/Color theme "#{theme_name}" already exists/).to_stderr
       end
     end
   end
@@ -70,7 +70,7 @@ RSpec.describe 'Dsu theme features', type: :feature do
       let(:args) { ['theme', 'delete', theme_name] }
 
       it 'displays a does not exist error to the console' do
-        expect { cli }.to output(/Color theme "#{theme_name}" cannot be deleted/).to_stdout
+        expect { cli }.to output(/Color theme "#{theme_name}" cannot be deleted/).to_stderr
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe 'Dsu theme features', type: :feature do
       let(:args) { ['theme', 'delete', theme_name] }
 
       it 'displays a does not exist error to the console' do
-        expect { cli }.to output(/Color theme "#{theme_name}" does not exist/).to_stdout
+        expect { cli }.to output(/Color theme "#{theme_name}" does not exist/).to_stderr
       end
     end
 

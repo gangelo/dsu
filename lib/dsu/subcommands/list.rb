@@ -4,7 +4,7 @@ require_relative '../support/command_options/dsu_times'
 require_relative '../support/command_options/time_mneumonic'
 require_relative '../support/time_formatable'
 require_relative '../views/entry_group/shared/no_entries_to_display'
-require_relative '../views/shared/generic_errors'
+require_relative '../views/shared/error'
 require_relative 'base_subcommand'
 
 module Dsu
@@ -74,7 +74,7 @@ module Dsu
         times = sorted_dsu_times_for(times: [time, time.yesterday])
         view_list_for(times: times, options: options)
       rescue ArgumentError => e
-        Views::Shared::GenericErrors.new(errors: e.message).render
+        Views::Shared::Error.new(messages: e.message).render
       end
 
       desc 'dates|dd OPTIONS',
@@ -142,7 +142,7 @@ module Dsu
         options = configuration.to_h.merge(self.options).with_indifferent_access
         times, errors = Support::CommandOptions::DsuTimes.dsu_times_for(from_option: options[:from], to_option: options[:to]) # rubocop:disable Layout/LineLength
         if errors.any?
-          Views::Shared::GenericErrors.new(errors: errors).render
+          Views::Shared::Error.new(messages: errors).render
           return
         end
 
@@ -154,7 +154,7 @@ module Dsu
           Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options) if total_entry_groups.zero?
         end
       rescue ArgumentError => e
-        Views::Shared::GenericErrors.new(errors: e.message).render
+        Views::Shared::Error.new(messages: e.message).render
       end
     end
   end

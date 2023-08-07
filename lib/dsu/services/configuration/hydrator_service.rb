@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../models/configuration'
-require_relative '../../views/shared/messages'
+require_relative '../../views/shared/message'
 
 module Dsu
   module Services

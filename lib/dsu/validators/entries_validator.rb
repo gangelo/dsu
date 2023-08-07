@@ -17,8 +17,8 @@ module Dsu
         end
 
         return if validate_entry_types record
-        return if validate_unique_entry record
 
+        validate_unique_entry record
         validate_entries record
       end
 
@@ -45,9 +45,9 @@ module Dsu
         return if descriptions.uniq.length == descriptions.length
 
         non_unique_descriptions = descriptions.select { |description| descriptions.count(description) > 1 }.uniq
-        if non_unique_descriptions.any?
-          record.errors.add(:entries, 'Array contains a duplicate entry: ' \
-                                      "#{format_non_unique_descriptions(non_unique_descriptions)}.",
+        non_unique_descriptions.each do |non_unique_description|
+          record.errors.add(:entries,
+            "array contains duplicate entry: \"#{short_description(non_unique_description)}\".",
             type: Support::FieldErrors::FIELD_DUPLICATE_ERROR)
         end
 
@@ -65,10 +65,6 @@ module Dsu
             record.errors.add(:entries_entry, error.full_message)
           end
         end
-      end
-
-      def format_non_unique_descriptions(non_unique_descriptions)
-        non_unique_descriptions.map { |description| "\"#{short_description(description)}\"" }.join(', ')
       end
 
       def short_description(description)

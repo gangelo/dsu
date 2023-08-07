@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative '../models/color_theme'
+require_relative '../services/stderr_redirector_service'
+require_relative '../views/shared/error'
 require_relative 'color_themable'
 
 module Dsu
@@ -16,7 +18,10 @@ module Dsu
       module ClassMethods
         def start(args = ARGV, options = {})
           display_dsu_header unless suspend_header?(args, options)
-          super
+          stderror = Services::StderrRedirectorService.call do
+            super
+          end
+          display_errors_if(stderror)
           display_dsu_footer
         end
 
@@ -39,6 +44,14 @@ module Dsu
             footer = "#{footer} | #{apply_color_theme('Development', color_theme_color: color_theme.error)}"
           end
           puts footer
+        end
+
+        def display_errors_if(stderror_string)
+          stderror_string = stderror_string.strip
+          return unless stderror_string.present?
+
+          errors = stderror_string.split("\n").map(&:strip)
+          Views::Shared::Error.new(messages: errors, options: options.merge({ ordered_list: false})).render
         end
 
         def color_theme

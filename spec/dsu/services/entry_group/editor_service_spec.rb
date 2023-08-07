@@ -212,7 +212,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
         it 'displays the validation error in the console' do
           expect do
             entry_group_editor_service.call
-          end.to output(/The following ERRORS were encountered/).to_stdout
+          end.to output(/The following ERRORS were encountered/).to_stderr
         end
 
         it 'saves all the valid entries to the entry group file and ignores the invalid entries' do

@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'base_subcommand'
 require_relative '../models/configuration'
 require_relative '../views/configuration/show'
-require_relative '../views/shared/messages'
 require_relative '../views/shared/model_errors'
+require_relative '../views/shared/success'
+require_relative '../views/shared/warning'
+require_relative 'base_subcommand'
 
 module Dsu
   module Subcommands
@@ -83,7 +84,7 @@ module Dsu
           Models::Configuration.default.tap do |configuration|
             configuration.save!
             messages = ["Configuration file (#{Models::Configuration.config_file}) created."]
-            Views::Shared::Messages.new(messages: messages, message_type: :success).render
+            Views::Shared::Success.new(messages: messages).render
             Views::Configuration::Show.new(config: configuration).render
           end
         end
@@ -105,12 +106,12 @@ module Dsu
         def delete
           unless Models::Configuration.exist?
             messages = ["Configuration file (#{Models::Configuration.config_file}) does not exist."]
-            Views::Shared::Messages.new(messages: messages, message_type: :warning).render
+            Views::Shared::Warning.new(messages: messages).render
             exit 1
           end
           Models::Configuration.delete!
           messages = ["Configuration file (#{Models::Configuration.config_file}) deleted."]
-          Views::Shared::Messages.new(messages: messages, message_type: :success).render
+          Views::Shared::Success.new(messages: messages).render
         end
       end
 
@@ -119,10 +120,10 @@ module Dsu
       def configuration_errors_or_wanings?
         if Models::Configuration.exist?
           messages = ["Configuration file (#{Models::Configuration.config_file}) already exists"]
-          Views::Shared::Messages.new(messages: messages, message_type: :warning).render
+          Views::Shared::Warning.new(messages: messages).render
         elsif !Dir.exist?(Models::Configuration.config_folder)
           messages = ["Destination folder for configuration file (#{Models::Configuration.config_folder}) does not exist"] # rubocop:disable Layout/LineLength
-          Views::Shared::Messages.new(messages: messages, message_type: :error).render
+          Views::Shared::Error.new(messages: messages).render
         else
           configuration = Models::Configuration.default
           return false if configuration.valid?

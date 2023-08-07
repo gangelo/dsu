@@ -4,7 +4,7 @@ require_relative '../models/entry'
 require_relative '../support/color_themable'
 require_relative '../support/descriptable'
 require_relative '../support/fileable'
-require_relative '../views/shared/messages'
+require_relative '../views/shared/error'
 
 module Dsu
   module CommandServices
@@ -39,7 +39,7 @@ module Dsu
         entry
       rescue ActiveModel::ValidationError => e
         header = 'An error was encountered; the entry could not be added:'
-        Views::Shared::Messages.new(messages: e.message, message_type: :error, options: { header: header }).render
+        Views::Shared::Error.new(messages: e.message, header: header).render
       end
 
       private

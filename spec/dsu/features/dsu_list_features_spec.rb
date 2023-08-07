@@ -25,14 +25,6 @@ RSpec.describe 'Dsu list features', type: :feature do
     end
   end
 
-  shared_examples 'an error is display to stdout' do
-    it 'lists the entry group entries for the dates' do
-      escaped_expected_output = Regexp.escape(expected_output)
-
-      expect { cli }.to output(/.*#{escaped_expected_output}.*/m).to_stdout
-    end
-  end
-
   before do
     [-3, -2, -1, 0, 1, 2, 3].each do |index|
       time = Time.now.localtime + index.days
@@ -160,7 +152,7 @@ RSpec.describe 'Dsu list features', type: :feature do
           'Option -f, [--from=DATE|MNEMONIC] value is invalid ["bad-from-date"]'
         end
 
-        it_behaves_like 'an error is display to stdout'
+        it_behaves_like 'an error is display to stderr'
       end
 
       context 'with invalid FROM_DATE' do
@@ -176,7 +168,7 @@ RSpec.describe 'Dsu list features', type: :feature do
           'Option -f, [--from=DATE|MNEMONIC] value is invalid ["bad-date"]'
         end
 
-        it_behaves_like 'an error is display to stdout'
+        it_behaves_like 'an error is display to stderr'
       end
 
       context 'with invalid TO_DATE' do
@@ -192,8 +184,7 @@ RSpec.describe 'Dsu list features', type: :feature do
           'Option -t, [--to=DATE|MNEMONIC] value is invalid ["bad-date"]'
         end
 
-        it_behaves_like 'an error is display to stdout'
-
+        it_behaves_like 'an error is display to stderr'
       end
     end
 
