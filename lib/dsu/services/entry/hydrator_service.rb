@@ -8,11 +8,7 @@ module Dsu
       class HydratorService
         def initialize(entries_array:, options: {})
           raise ArgumentError, 'entries_array is nil' if entries_array.nil?
-          unless entries_array.is_a?(Array)
-            raise ArgumentError, "entries_array is the wrong object type: \"#{entries_array}\""
-          end
           raise ArgumentError, 'options is nil' if options.nil?
-          raise ArgumentError, "options is the wrong object type:\"#{options}\"" unless options.is_a?(Hash)
 
           @entries_array = entries_array
           @options = options || {}

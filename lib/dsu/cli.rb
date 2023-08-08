@@ -88,20 +88,21 @@ module Dsu
       entry_group_version = Models::EntryGroup::VERSION
       color_theme_version = Models::ColorTheme::VERSION
       info = <<~INFO
-                  Dsu version: #{dsu_version}
-        Configuration version: #{configuration_version}
-          Entry group version: #{entry_group_version}
-          Color theme version: #{color_theme_version}
+                     Dsu version: #{dsu_version}
+           Configuration version: #{configuration_version}
+             Entry group version: #{entry_group_version}
+             Color theme version: #{color_theme_version}
 
-                  Root folder: #{Support::Fileable.root_folder}
-               Entries folder: #{Support::Fileable.entries_folder}
-                Themes folder: #{Support::Fileable.themes_folder}
-               Migrate folder: #{Support::Fileable.migrate_folder}
-                   Gem folder: #{Support::Fileable.gem_dir}
-                  Temp folder: #{Support::Fileable.temp_folder}
+                     Config path: #{Support::Fileable.config_path}
+                     Root folder: #{Support::Fileable.root_folder}
+                  Entries folder: #{Support::Fileable.entries_folder}
+                   Themes folder: #{Support::Fileable.themes_folder}
+                      Gem folder: #{Support::Fileable.gem_dir}
+                     Temp folder: #{Support::Fileable.temp_folder}
 
-                  Config path: #{Support::Fileable.config_path}
-          Migration file path: #{Support::Fileable.migration_version_path}
+                  Migrate folder: #{Support::Fileable.migrate_folder}
+        Migration version folder: #{Support::Fileable.migration_version_folder}
+             Migration file path: #{Support::Fileable.migration_version_path}
       INFO
       puts apply_color_theme(info, color_theme_color: color_theme.body)
     end

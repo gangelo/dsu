@@ -40,9 +40,6 @@ module Dsu
         def display_dsu_footer
           puts apply_color_theme('_' * 35, color_theme_color: color_theme.dsu_footer)
           footer = apply_color_theme("Theme: #{color_theme.theme_name}", color_theme_color: color_theme.dsu_footer)
-          if Dsu.env.development?
-            footer = "#{footer} | #{apply_color_theme('Development', color_theme_color: color_theme.error)}"
-          end
           puts footer
         end
 

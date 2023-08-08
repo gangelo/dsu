@@ -64,8 +64,12 @@ RSpec.describe 'Dsu info features', type: :feature do
       expect(cli_output).to include "Config path: #{fileable.config_path}"
     end
 
+    it 'displays the migration version folder' do
+      expect(cli_output).to include "Migration version folder: #{fileable.migration_version_folder}"
+    end
+
     it 'displays the migration file path' do
-      expect(cli_output).to include " Migration file path: #{fileable.migration_version_path}"
+      expect(cli_output).to include "Migration file path: #{fileable.migration_version_path}"
     end
   end
 end

@@ -9,13 +9,7 @@ module Dsu
       class HydratorService
         def initialize(entry_group_hash:, options: {})
           raise ArgumentError, 'entry_group_hash is nil' if entry_group_hash.nil?
-
-          unless entry_group_hash.is_a?(Hash)
-            raise ArgumentError,
-              "entry_group_hash is the wrong object type: \"#{entry_group_hash}\""
-          end
           raise ArgumentError, 'options is nil' if options.nil?
-          raise ArgumentError, "options is the wrong object type:\"#{options}\"" unless options.is_a?(Hash)
 
           @entry_group_hash = entry_group_hash
           @options = options || {}

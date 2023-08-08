@@ -12,10 +12,11 @@ module Dsu
 
         def initialize(messages:, message_type:, options: {})
           messages = [messages] unless messages.is_a?(Array)
+          messages = messages.select(&:present?)
 
           validate_arguments!(messages, message_type, options)
 
-          @messages = messages.select(&:present?)
+          @messages = messages
           @message_type = message_type
           @message_color = color_theme.public_send(message_type)
           @options = options || {}
@@ -56,33 +57,17 @@ module Dsu
         end
 
         def validate_arguments!(messages, message_type, options)
-          validate_messages!(messages)
-          validate_message_type!(message_type)
-          validate_options!(options)
-        end
-
-        def validate_messages!(messages)
-          raise ArgumentError, 'messages is nil' if messages.nil?
-          raise ArgumentError, 'messages is the wrong object type' unless messages.is_a?(Array)
-          raise ArgumentError, 'messages elements are the wrong object type' unless messages.all?(String)
-        end
-
-        def validate_message_type!(message_type)
-          raise ArgumentError, 'message_type is nil' if message_type.nil?
-          raise ArgumentError, 'message_type is the wrong object type' unless message_type.is_a?(Symbol)
+          raise ArgumentError, 'messages is empty' if messages.empty?
           unless Models::ColorTheme::DEFAULT_THEME_COLORS.key?(message_type)
             raise ArgumentError, 'message_type is not a valid message type'
           end
-        end
-
-        def validate_options!(options)
           raise ArgumentError, 'options is nil' if options.nil?
-          raise ArgumentError, 'options is the wrong object type' unless options.is_a?(Hash)
 
-          header = options[:header]
-          return if header.nil? || header.is_a?(String)
+          %i[\[\] fetch].each do |method|
+            next if options.respond_to?(method)
 
-          raise ArgumentError, "header is the wrong object type: \"#{header}\""
+            raise ArgumentError, "options does not respond to :#{method}"
+          end
         end
       end
     end
