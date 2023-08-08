@@ -32,7 +32,7 @@ module Dsu
 
         def render!
           presenter = Dsu::Models::Configuration.instance.presenter
-          puts presenter.configuration_exists_header
+          puts presenter.configuration_header
           puts presenter.configuration_details
         end
       end

@@ -14,18 +14,9 @@ module Dsu
         @config = config
       end
 
-      def configuration_exists_header
-        if exist?
-          return apply_color_theme("Configuration file contents (#{config_path})",
-            color_theme_color: color_theme.header)
-        end
-
-        [
-          apply_color_theme("Configuration file does not exist (#{config_path})",
-            color_theme_color: color_theme.header),
-          apply_color_theme('The default configuration is being used:',
-            color_theme_color: color_theme.warning)
-        ].join("\n")
+      def configuration_header
+        apply_color_theme("Configuration file contents (#{config_path})",
+          color_theme_color: color_theme.header)
       end
 
       def configuration_details

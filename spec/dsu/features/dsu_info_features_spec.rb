@@ -3,13 +3,6 @@
 RSpec.describe 'Dsu info features', type: :feature do
   subject(:cli) { Dsu::CLI.start(args) }
 
-  # let(:with_config) do
-  #   file_path = 'spec/fixtures/files/.dsu'
-  #   file_name = File.basename(file_path)
-  #   destination_path = File.join(Dsu::Support::Fileable.config_folder, file_name)
-  #   FileUtils.cp(file_path, destination_path)
-  # end
-
   context "when 'dsu help info' is called" do
     let(:args) { %w[help info] }
 

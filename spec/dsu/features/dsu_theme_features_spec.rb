@@ -157,6 +157,10 @@ RSpec.describe 'Dsu theme features', type: :feature do
     let(:args) { %w[theme list] }
 
     context 'when there are no color themes' do
+      before do
+        Dsu::Models::ColorTheme.current_or_default.delete
+      end
+
       it 'displays the default color theme' do
         expect { cli }.to output(/1\..+\*default.+-.+Default theme/).to_stdout
       end
