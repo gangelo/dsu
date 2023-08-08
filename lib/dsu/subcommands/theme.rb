@@ -13,7 +13,7 @@ module Dsu
       # map %w[e] => :edit
       map %w[d] => :delete
       map %w[l] => :list
-      # map %w[v] => :view
+      map %w[v] => :view
       map %w[u] => :use
 
       desc 'create THEME_NAME [OPTIONS]',
@@ -22,15 +22,15 @@ module Dsu
       Create a dsu color theme named THEME_NAME in the #{Support::Fileable.themes_folder} folder.
 
       SYNOPSIS
-      \x5
+
       `dsu create THEME_NAME [-d|--description DESCRIPTION]`
 
       OPTIONS:
-      \x5
+
       -d|--description DESCRIPTION: Creates the dsu color theme with having DESCRIPTION as the color theme description.
 
       DESCRIPTION:
-      \x5
+
       Must be be between 2 and 256 characters (inclusive) in length.
       LONG_DESC
       option :description, type: :string, aliases: '-d', banner: 'DESCRIPTION'
@@ -124,11 +124,21 @@ module Dsu
         Views::Shared::Info.new(messages: "Using color theme \"#{theme_name}\".").render
       end
 
+      desc 'view THEME_NAME',
+        'Displays the dsu color theme.'
+      long_desc <<-LONG_DESC
+      NAME
+
+      `dsu view THEME_NAME` -- displays the dsu color theme for THEME_NAME.
+      LONG_DESC
+      def view(_theme_name)
+        # Views::ColorTheme::View.new.(theme_name: theme_name)render
+      end
+
       private
 
       def display_dsu_header
-        puts apply_color_theme('Dsu', color_theme_color: color_theme.dsu_header)
-        puts
+        self.class.display_dsu_header
       end
     end
   end
