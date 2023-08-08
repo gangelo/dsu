@@ -25,16 +25,16 @@ module Dsu
           display_dsu_footer
         end
 
+        def display_dsu_header
+          puts apply_color_theme("Dsu v#{Dsu::VERSION}", color_theme_color: color_theme.dsu_header)
+          puts
+        end
+
         private
 
         def suspend_header?(args, _options)
           return unless args.count > 1
           return true if args[0] == 'theme' && %w[use delete].include?(args[1])
-        end
-
-        def display_dsu_header
-          puts apply_color_theme("Dsu v#{Dsu::VERSION}", color_theme_color: color_theme.dsu_header)
-          puts
         end
 
         def display_dsu_footer
