@@ -6,7 +6,7 @@ RSpec.describe Dsu::Support::CommandOptions::DsuTimes do
 
   shared_examples 'the correct times are returned' do
     it 'returns the expected times' do
-      times, errors = from_to_time
+      times, _errors = from_to_time
       expect(to_yyyymmdd_string_array(times)).to eq(to_yyyymmdd_string_array(expected_times))
     end
   end

@@ -48,7 +48,7 @@ module Dsu
           return unless stderror_string.present?
 
           errors = stderror_string.split("\n").map(&:strip)
-          Views::Shared::Error.new(messages: errors, options: options.merge({ ordered_list: false})).render
+          Views::Shared::Error.new(messages: errors, options: options.merge({ ordered_list: false })).render
         end
 
         def color_theme

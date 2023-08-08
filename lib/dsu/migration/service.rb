@@ -27,9 +27,6 @@ module Dsu
           backup!
           migrate!
 
-          # Models::MigrationVersion.instance.load(migration_version_hash: { Models::MigrationVersion::MigrationVersion::CURRENT_MIGRATION_VERSION)
-          # Models::MigrationVersion.instance.save!(migration_version)
-
           puts "Migration version after migration is #{current_migration_version}."
           puts 'Done.' if current_migration_version > before_migration_version
           puts 'Nothing to do.' if current_migration_version == before_migration_version

@@ -110,9 +110,9 @@ RSpec.describe 'Dsu list features', type: :feature do
   context "when 'dsu list dates OPTIONS' is used" do
     context 'with no OPTIONS or OPTION values' do
       let(:args) do
-        [
-          'list',
-          'dates'
+        %w[
+          list
+          dates
         ]
       end
       let(:expected_output) do

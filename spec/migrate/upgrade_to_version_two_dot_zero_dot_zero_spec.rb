@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/NestedGroups
-
 # All this preprocessing does is make the old entries folder "unsafe" to manipulate
 # by moving the entry group files to the '/tmp/dsu/entries' folder. The configuration
 # file is also updated to point to the 'unsafe' entries folder so that the migration
@@ -48,12 +46,12 @@ def rename_entry_group_files(entries_folder:, file_strftime: '%m-%d-%Y.json')
   end
 end
 
-# RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do # rubocop:disable RSpec/FilePath
+# RSpec.describe Dsu::Migrate::UpgradeToVersionTwoDotZeroDotZero do
 #   subject(:migration) { described_class.new }
 
 #   include_context 'with migrations'
 
-#   let(:version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
+#   let(:version) { 20230613121411 }
 
 #   shared_examples 'the migration version file is updated to the latest migration version' do
 #     it 'updates the migration file version' do
@@ -96,7 +94,7 @@ end
 #   end
 
 #   shared_examples 'the entry group files are updated' do
-#     it 'updates the entry group files' do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
+#     it 'updates the entry group files' do
 #       subject.call
 #       expected_entry_group_times.each do |time|
 #         entry_group_time = Time.parse(time)
@@ -113,7 +111,7 @@ end
 
 #   describe '#call' do
 #     let(:start_migration_version) { 0 }
-#     let(:end_migration_version) { 20230613121411 } # rubocop:disable Style/NumericLiterals
+#     let(:end_migration_version) { 20230613121411 }
 
 #     context 'when the configuration file does not exist' do
 #       before do
@@ -139,7 +137,7 @@ end
 #       it_behaves_like 'the color theme files are created'
 #       it_behaves_like 'the migration version file is updated to the latest migration version'
 
-#       it 'creates the configuration file and carries over the values from the old configuration file' do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
+#       it 'creates the configuration file and carries over the values from the old configuration file' do
 #         migration.call
 #         expect(configuration[:version]).to eq(end_migration_version)
 #         expect(configuration[:editor]).to eq('vim')
@@ -183,7 +181,7 @@ end
 #       let(:expected_entry_group_times) { %w[2023-06-15 2023-06-16 2023-06-17] }
 
 #       context 'when the entry group files need to be moved to the new entries folder' do
-#         context 'when the old entries folder is not "safe" to manipulate' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+#         context 'when the old entries folder is not "safe" to manipulate' do
 #           before do
 #             setup_unsafe_entries_folder(unsafe_entries_folder: unsafe_entries_folder)
 #           end
@@ -243,4 +241,3 @@ end
 #     end
 #   end
 # end
-# rubocop:enable RSpec/NestedGroups
