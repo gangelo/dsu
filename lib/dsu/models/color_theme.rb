@@ -59,9 +59,9 @@ module Dsu
       validates_with Validators::ColorThemeValidator
       validates_with Validators::VersionValidator
 
-      attr_reader :theme_name
+      attr_reader :theme_name, :options
 
-      def initialize(theme_name:, theme_hash: nil)
+      def initialize(theme_name:, theme_hash: nil, options: {})
         raise ArgumentError, 'theme_name is nil.' if theme_name.nil?
         raise ArgumentError, "theme_name is the wrong object type: \"#{theme_name}\"." unless theme_name.is_a?(String)
         unless theme_hash.is_a?(Hash) || theme_hash.nil?
@@ -71,6 +71,7 @@ module Dsu
         FileUtils.mkdir_p themes_folder
 
         @theme_name = theme_name
+        @options = options || {}
 
         super(self.class.send(:themes_path_for, theme_name: @theme_name))
 
@@ -171,7 +172,7 @@ module Dsu
         end
 
         def find_or_initialize(theme_name:)
-          return find(theme_name: theme_name) if exist?(file_name: theme_name)
+          return find(theme_name: theme_name) if exist?(theme_name: theme_name)
 
           new(theme_name: theme_name)
         end

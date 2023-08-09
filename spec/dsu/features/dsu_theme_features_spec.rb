@@ -4,7 +4,7 @@ RSpec.describe 'Dsu theme features', type: :feature do
   subject(:cli) { Dsu::CLI.start(args) }
 
   let(:theme_name) { 'test' }
-  let(:color_theme) { Dsu::Models::ColorTheme.default }
+  let(:color_theme) { create(:color_theme) }
 
   shared_examples 'the color theme exists' do
     it 'creates the color theme' do
@@ -155,16 +155,6 @@ RSpec.describe 'Dsu theme features', type: :feature do
 
   describe '#list' do
     let(:args) { %w[theme list] }
-
-    context 'when there are no color themes' do
-      before do
-        Dsu::Models::ColorTheme.current_or_default.delete
-      end
-
-      it 'displays the default color theme' do
-        expect { cli }.to output(/1\..+\*default.+-.+Default theme/).to_stdout
-      end
-    end
 
     context 'when there are color themes' do
       before do

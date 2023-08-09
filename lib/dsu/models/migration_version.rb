@@ -13,10 +13,14 @@ module Dsu
       include Singleton
       include Support::Fileable
 
-      def initialize
+      attr_reader :options
+
+      def initialize(options: {})
         super(migration_version_path)
 
         FileUtils.mkdir_p migration_version_folder
+
+        @options = options || {}
 
         file_hash = if exist?
           read do |migration_version_hash|

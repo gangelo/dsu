@@ -8,7 +8,7 @@ module Dsu
     class ConfigurationPresenter < BasePresenter
       attr_reader :config
 
-      def initialize(config)
+      def initialize(config, options: {})
         super
 
         @config = config

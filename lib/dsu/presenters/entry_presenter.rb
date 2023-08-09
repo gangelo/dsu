@@ -7,7 +7,7 @@ module Dsu
     class EntryPresenter < BasePresenter
       attr_reader :entry
 
-      def initialize(entry)
+      def initialize(entry, options: {})
         super
 
         @entry = entry

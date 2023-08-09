@@ -2,6 +2,7 @@
 
 require_relative '../support/fileable'
 require_relative '../views/color_theme/index'
+require_relative '../views/color_theme/show'
 require_relative '../views/shared/error'
 require_relative '../views/shared/info'
 require_relative 'base_subcommand'
@@ -13,7 +14,7 @@ module Dsu
       # map %w[e] => :edit
       map %w[d] => :delete
       map %w[l] => :list
-      map %w[v] => :view
+      map %w[s] => :show
       map %w[u] => :use
 
       desc 'create THEME_NAME [OPTIONS]',
@@ -124,15 +125,15 @@ module Dsu
         Views::Shared::Info.new(messages: "Using color theme \"#{theme_name}\".").render
       end
 
-      desc 'view THEME_NAME',
+      desc 'show THEME_NAME',
         'Displays the dsu color theme.'
       long_desc <<-LONG_DESC
       NAME
 
-      `dsu view THEME_NAME` -- displays the dsu color theme for THEME_NAME.
+      `dsu show THEME_NAME` -- displays the dsu color theme for THEME_NAME.
       LONG_DESC
-      def view(_theme_name)
-        # Views::ColorTheme::View.new.(theme_name: theme_name)render
+      def show(theme_name)
+        Views::ColorTheme::Show.new(theme_name: theme_name).render
       end
 
       private

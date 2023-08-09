@@ -7,7 +7,7 @@ module Dsu
     class ColorThemePresenter < BasePresenter
       attr_reader :color_theme
 
-      def initialize(color_theme)
+      def initialize(color_theme, options: {})
         super
 
         @color_theme = color_theme

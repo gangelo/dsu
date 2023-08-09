@@ -16,13 +16,14 @@ module Dsu
 
       validates_with Validators::DescriptionValidator
 
-      attr_reader :description
+      attr_reader :description, :options
 
-      def initialize(description:)
+      def initialize(description:, options: {})
         raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
 
         # Make sure to call the setter method so that the description is cleaned up.
         self.description = description
+        @options = options || {}
       end
 
       class << self

@@ -28,13 +28,13 @@ module Dsu
       VERSION = Migration::VERSION
 
       attr_accessor :time, :version
-      attr_reader :entries
+      attr_reader :entries, :options
 
       validates_with Validators::EntriesValidator
       validates_with Validators::TimeValidator
       validates_with Validators::VersionValidator
 
-      def initialize(time: nil, entries: nil, version: nil)
+      def initialize(time: nil, entries: nil, version: nil, options: {})
         raise ArgumentError, 'time is the wrong object type' unless time.is_a?(Time) || time.nil?
         raise ArgumentError, 'version is the wrong object type' unless version.is_a?(Integer) || version.nil?
 
@@ -46,6 +46,7 @@ module Dsu
 
         @version = version || VERSION
         self.entries = entries || []
+        @options = options || {}
       end
 
       # Override == and hash so that we can compare Entry Group objects.

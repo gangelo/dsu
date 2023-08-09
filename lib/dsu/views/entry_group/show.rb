@@ -33,26 +33,25 @@ module Dsu
         attr_reader :entry_group, :options
 
         def render!
-          entry_group_presenter = entry_group.presenter
-          puts entry_group_presenter.formatted_time
+          puts presenter.formatted_time
 
           entry_group.validate!
-          puts entry_group_presenter.no_entries_available and return if entry_group.entries.empty?
+          puts presenter.no_entries_available and return if entry_group.entries.empty?
 
           entry_group.entries.each_with_index do |entry, index|
             entry_presenter = entry.presenter
             puts entry_presenter.formatted_description_with_index(index: index)
           end
         rescue ActiveModel::ValidationError
-          puts apply_color_theme(errors(entry_group), color_theme_color: color_theme.error)
+          puts apply_color_theme(errors(entry_group), color_theme_color: presenter.color_theme.error)
         end
 
         def errors(model)
           model.errors.full_messages.join(', ')
         end
 
-        def color_theme
-          @color_theme ||= Models::ColorTheme.current_or_default
+        def presenter
+          @presenter ||= entry_group.presenter
         end
       end
     end

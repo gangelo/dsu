@@ -18,8 +18,8 @@ module Dsu
 
           @messages = messages
           @message_type = message_type
-          @message_color = color_theme.public_send(message_type)
           @options = options || {}
+          @message_color = color_theme.public_send(message_type)
           @header = options[:header]
           @ordered_list = options.fetch(:ordered_list, true)
         end
@@ -45,7 +45,10 @@ module Dsu
         attr_reader :messages, :message_color, :message_type, :header, :options
 
         def color_theme
-          @color_theme ||= Models::ColorTheme.current_or_default
+          @color_theme ||= begin
+            theme_name = options.fetch(:theme_name, Models::Configuration.instance.theme_name)
+            Models::ColorTheme.find(theme_name: theme_name)
+          end
         end
 
         def ordered_list?

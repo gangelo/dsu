@@ -63,11 +63,14 @@ module Dsu
         :include_all,
         :theme_name
 
-      def initialize
+      attr_reader :options
+
+      def initialize(options: {})
         super(config_path)
 
         FileUtils.mkdir_p config_folder
 
+        @options = options || {}
         reload
 
         write! unless exist?

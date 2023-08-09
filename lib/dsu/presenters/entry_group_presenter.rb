@@ -8,7 +8,7 @@ module Dsu
     class EntryGroupPresenter < BasePresenter
       attr_reader :entry_group
 
-      def initialize(entry_group)
+      def initialize(entry_group, options: {})
         super
 
         @entry_group = entry_group
