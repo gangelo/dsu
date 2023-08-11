@@ -15,7 +15,7 @@ module Dsu
         super(object)
 
         @options = options || {}
-        theme_name = options.fetch(:theme_name, Models::Configuration.instance.theme_name)
+        theme_name = options.fetch(:theme_name, Models::Configuration.new.theme_name)
         @color_theme = Models::ColorTheme.find(theme_name: theme_name)
       end
 
@@ -24,8 +24,8 @@ module Dsu
       attr_reader :options
 
       def formatted_index(index:)
-        apply_color_theme("#{format('%02s', index + 1)}. ",
-          color_theme_color: color_theme.index)
+        apply_theme("#{format('%02s', index + 1)}. ",
+          theme_color: color_theme.index)
       end
     end
   end

@@ -10,11 +10,11 @@ module Dsu
       end
 
       def header
-        apply_color_theme("Viewing color theme: #{color_theme.theme_name}", color_theme_color: color_theme.subheader)
+        apply_theme("Viewing color theme: #{color_theme.theme_name}", theme_color: color_theme.subheader)
       end
 
       def footer
-        apply_color_theme('Footer: TODO', color_theme_color: color_theme.footer)
+        apply_theme('Footer: TODO', theme_color: color_theme.footer)
       end
 
       def detail
@@ -35,13 +35,13 @@ module Dsu
 
       def puts_detail(index, color_key, color_hash, header: false)
         if header
-          puts "#{apply_color_theme(index.to_s.ljust(4), color_theme_color: color_theme.index.bold!)} " \
-               "#{apply_color_theme(color_key.to_s.ljust(15), color_theme_color: color_theme.index.bold!)} " \
-               "#{apply_color_theme(color_hash.to_s.ljust(10), color_theme_color: color_theme.index.bold!)}"
+          puts "#{apply_theme(index.to_s.ljust(4), theme_color: color_theme.index.bold!)} " \
+               "#{apply_theme(color_key.to_s.ljust(15), theme_color: color_theme.index.bold!)} " \
+               "#{apply_theme(color_hash.to_s.ljust(10), theme_color: color_theme.index.bold!)}"
         else
-          puts "#{apply_color_theme(index.to_s.ljust(4), color_theme_color: color_theme.index)} " \
-               "#{apply_color_theme(color_key.to_s.ljust(15), color_theme_color: color_hash)} " \
-               "#{apply_color_theme(color_hash.to_s.ljust(10), color_theme_color: color_theme.body)}"
+          puts "#{apply_theme(index.to_s.ljust(4), theme_color: color_theme.index)} " \
+               "#{apply_theme(color_key.to_s.ljust(15), theme_color: color_hash)} " \
+               "#{apply_theme(color_hash.to_s.ljust(10), theme_color: color_theme.body)}"
         end
       end
     end

@@ -150,7 +150,7 @@ RSpec.describe Dsu::Models::ColorTheme do
 
       context 'when the theme is the current theme in the configuration' do
         before do
-          Dsu::Models::Configuration.instance.tap do |configuration|
+          create(:configuration).tap do |configuration|
             configuration.theme_name = theme_name
             configuration.write
           end
@@ -172,7 +172,7 @@ RSpec.describe Dsu::Models::ColorTheme do
       context 'when the theme is not the current theme in the configuration' do
         before do
           big_red = described_class.find_or_create(theme_name: 'big_red')
-          Dsu::Models::Configuration.instance.tap do |configuration|
+          create(:configuration).tap do |configuration|
             configuration.theme_name = big_red.theme_name
             configuration.write
           end
@@ -190,7 +190,7 @@ RSpec.describe Dsu::Models::ColorTheme do
         end
 
         it 'does not change the current theme in the configuration' do
-          expect(Dsu::Models::Configuration.instance.theme_name).to eq('big_red')
+          expect(create(:configuration).theme_name).to eq('big_red')
         end
       end
     end
@@ -249,7 +249,7 @@ RSpec.describe Dsu::Models::ColorTheme do
       context 'when the configuration theme is set to a custom theme' do
         before do
           custom_color_theme
-          configuration = Dsu::Models::Configuration.instance
+          configuration = create(:configuration)
           configuration.theme_name = custom_color_theme.theme_name
           configuration.write
         end

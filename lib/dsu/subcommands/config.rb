@@ -29,7 +29,7 @@ module Dsu
         dsu config info
       LONG_DESC
       def info
-        configuration = Models::Configuration.instance
+        configuration = Models::Configuration.new
         Views::Configuration::Show.new(config: configuration).call
       end
 

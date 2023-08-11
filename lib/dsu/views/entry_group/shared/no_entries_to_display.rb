@@ -26,7 +26,7 @@ module Dsu
             time_range = "#{formatted_time(time: times.first)} " \
                          "through #{formatted_time(time: times.last)}"
             message = "(nothing to display for #{time_range})"
-            puts apply_color_theme(message, color_theme_color: color_theme.info)
+            puts apply_theme(message, theme_color: color_theme.info)
           end
 
           private

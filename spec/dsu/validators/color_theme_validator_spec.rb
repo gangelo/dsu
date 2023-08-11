@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'the extra key/value pairs are ignored' do
-  it 'passes validation' do
-    expect(subject.valid?).to be true
-  end
-end
-
 RSpec.describe Dsu::Validators::ColorThemeValidator do
   subject(:color_theme_validator) do
     Dsu::Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash)
+  end
+
+  shared_examples 'the extra key/value pairs are ignored' do
+    it 'passes validation' do
+      expect(subject.valid?).to be true
+    end
   end
 
   let(:theme_name) { 'test' }

@@ -117,7 +117,7 @@ module Dsu
         end
 
         def configuration
-          Models::Configuration.instance
+          Models::Configuration.new
         end
 
         def current

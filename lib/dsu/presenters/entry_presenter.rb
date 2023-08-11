@@ -14,7 +14,7 @@ module Dsu
       end
 
       def formatted_description
-        apply_color_theme(description, color_theme_color: color_theme.body)
+        apply_theme(description, theme_color: color_theme.body)
       end
 
       def formatted_description_with_index(index:)

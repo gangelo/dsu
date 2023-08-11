@@ -30,7 +30,7 @@ module Dsu
     def initialize(*args)
       super
 
-      @configuration = Models::Configuration.instance
+      @configuration = Models::Configuration.new
     end
 
     class << self

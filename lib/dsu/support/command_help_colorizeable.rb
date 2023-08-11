@@ -14,7 +14,7 @@ module Dsu
         module ClassMethods
           def help(shell, subcommand = false) # rubocop:disable Style/OptionalBooleanParameter
             help_text = Services::StdoutRedirectorService.call { super }
-            puts apply_color_theme(help_text, color_theme_color: color_theme.help)
+            puts apply_theme(help_text, theme_color: color_theme.help)
           end
 
           def color_theme

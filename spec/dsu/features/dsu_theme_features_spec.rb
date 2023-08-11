@@ -3,8 +3,12 @@
 RSpec.describe 'Dsu theme features', type: :feature do
   subject(:cli) { Dsu::CLI.start(args) }
 
+  # before do
+  #   build(:configuration).delete
+  # end
+
   let(:theme_name) { 'test' }
-  let(:color_theme) { create(:color_theme) }
+  #let(:color_theme) { build(:color_theme) }
 
   shared_examples 'the color theme exists' do
     it 'creates the color theme' do
@@ -22,10 +26,6 @@ RSpec.describe 'Dsu theme features', type: :feature do
 
   describe '#create' do
     context 'when the theme does not exist' do
-      let(:create_color_theme_prompt) do
-        color_theme.prompt_with_options(prompt: "Create color theme \"#{theme_name}\"?", options: %w[y N])
-      end
-
       context 'when the user does not want to create the color theme' do
         let(:args) { ['theme', 'create', theme_name, '--prompts', "#{create_color_theme_prompt}:false"] }
 
@@ -49,7 +49,7 @@ RSpec.describe 'Dsu theme features', type: :feature do
 
     context 'when the color theme exists' do
       before do
-        Dsu::Models::ColorTheme.find_or_create(theme_name: theme_name)
+        create(:color_theme, theme_name: theme_name)
       end
 
       let(:args) { ['theme', 'create', theme_name] }
@@ -87,10 +87,6 @@ RSpec.describe 'Dsu theme features', type: :feature do
         Dsu::Models::ColorTheme.find_or_create(theme_name: theme_name)
       end
 
-      let(:delete_color_theme_prompt) do
-        color_theme.prompt_with_options(prompt: "Delete color theme \"#{theme_name}\"?", options: %w[y N])
-      end
-
       context 'when the user does not want to delete the color theme' do
         let(:args) { ['theme', 'delete', theme_name, '--prompts', "#{delete_color_theme_prompt}:false"] }
 
@@ -116,7 +112,8 @@ RSpec.describe 'Dsu theme features', type: :feature do
   describe '#use' do
     context 'when the color theme file exists' do
       before do
-        Dsu::Models::ColorTheme.find_or_create(theme_name: theme_name)
+        color_theme = create(:color_theme, theme_name: theme_name)
+        create(:configuration, color_theme: color_theme)
       end
 
       let(:args) { ['theme', 'use', theme_name] }
@@ -127,11 +124,12 @@ RSpec.describe 'Dsu theme features', type: :feature do
     end
 
     context 'when the color theme file does not exist' do
-      let(:create_color_theme_prompt) do
-        color_theme.prompt_with_options(prompt: "Create color theme \"#{theme_name}\"?", options: %w[y N])
-      end
-
       context 'when the user does not want to create the color theme' do
+        before do
+          color_theme = create(:color_theme)
+          create(:configuration, color_theme: color_theme)
+        end
+
         let(:args) { ['theme', 'use', theme_name, '--prompts', "#{create_color_theme_prompt}:false"] }
 
         it 'displays a canceled message to the console' do
@@ -168,6 +166,14 @@ RSpec.describe 'Dsu theme features', type: :feature do
       end
     end
   end
+end
+
+def create_color_theme_prompt
+  "Create color theme \"#{theme_name}\"? [y/N]>"
+end
+
+def delete_color_theme_prompt
+  "Delete color theme \"#{theme_name}\"? [y/N]>"
 end
 
 def color_theme_regex_for(theme_names:, default_theme_name: Dsu::Models::ColorTheme::DEFAULT_THEME_NAME)

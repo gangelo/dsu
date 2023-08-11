@@ -20,11 +20,13 @@ RSpec.shared_context 'when dir mock and cleanup is needed' do
     FileUtils.mkdir_p(Dsu::Support::Fileable.themes_folder)
 
     create(:color_theme)
+    # create(:configuration)
   end
 
   after do
     # Clean up the files and directories created within the temporary directory.
     FileUtils.rm_rf(File.join(temp_folder, 'dsu'))
+    FileUtils.rm_rf(File.join(temp_folder, '.dsu'))
   end
 
   let(:temp_folder) { Dir.tmpdir }

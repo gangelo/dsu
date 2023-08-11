@@ -15,13 +15,13 @@ module Dsu
       end
 
       def configuration_header
-        apply_color_theme("Configuration file contents (#{config_path})",
-          color_theme_color: color_theme.header)
+        apply_theme("Configuration file contents (#{config_path})",
+          theme_color: color_theme.header)
       end
 
       def configuration_details
         to_h.each_with_index.filter_map do |config_entry, index|
-          formatted_config_entry_with_index(config_entry, index: index, color_theme_color: color_theme.body)
+          formatted_config_entry_with_index(config_entry, index: index, theme_color: color_theme.body)
         end
       end
 
@@ -31,14 +31,14 @@ module Dsu
         @config_path ||= config.file_path
       end
 
-      def formatted_config_entry_with_index(config_entry, index:, color_theme_color:)
+      def formatted_config_entry_with_index(config_entry, index:, theme_color:)
         "#{formatted_index(index: index)} #{formatted_config_entry(config_entry: config_entry,
-          color_theme_color: color_theme_color)}"
+          theme_color: theme_color)}"
       end
 
-      def formatted_config_entry(config_entry:, color_theme_color:)
+      def formatted_config_entry(config_entry:, theme_color:)
         config_entry = "#{config_entry[0]}: '#{config_entry[1]}'"
-        apply_color_theme(config_entry, color_theme_color: color_theme_color)
+        apply_theme(config_entry, theme_color: theme_color)
       end
     end
   end

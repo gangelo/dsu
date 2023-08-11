@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require 'singleton'
 require_relative '../crud/json_file'
 require_relative '../migration/version'
 require_relative '../support/fileable'
@@ -12,7 +11,6 @@ module Dsu
   module Models
     # This class represents the dsu configuration.
     class Configuration < Crud::JsonFile
-      include Singleton
       include Support::Fileable
       include Support::Presentable
 

@@ -5,6 +5,19 @@ RSpec.describe Dsu::Views::Shared::Message do
     described_class.new(messages: messages, message_type: message_type, options: options)
   end
 
+  shared_examples 'the expecged output is sent to $stdout' do
+    let(:output) do
+      output = Dsu::Services::StdoutRedirectorService.call do
+        message.render
+      end
+      strip_escapes(output).strip
+    end
+
+    it 'outputs the expected out to $stdout' do
+      expect(output).to eq(expected_output)
+    end
+  end
+
   let(:messages) { 'Test message' }
   let(:message_type) { :success }
   let(:options) { {} }
@@ -16,20 +29,14 @@ RSpec.describe Dsu::Views::Shared::Message do
   end
 
   describe '#render' do
-    context 'when #output_stream is not overridden' do
-      it 'raises an error' do
-        expect { message.render }.to raise_error(NotImplementedError)
-      end
+    context 'when #output_stream is not provided' do
+      let(:expected_output) { messages }
+
+      it_behaves_like 'the expecged output is sent to $stdout'
     end
 
-    context 'when #output_stream is overridden' do
-      subject(:message) do
-        Class.new(described_class) do
-          def output_stream
-            $stdout
-          end
-        end.new(messages: messages, message_type: message_type, options: options)
-      end
+    context 'when #output_stream is provided' do
+      let(:options) { { output_stream: $stdout } }
 
       context 'with an invalid message type' do
         let(:message_type) { :invalid }
@@ -64,15 +71,9 @@ RSpec.describe Dsu::Views::Shared::Message do
       end
 
       context 'when there is only one message' do
-        let(:output) do
-          Dsu::Services::StdoutRedirectorService.call do
-            message.render
-          end
-        end
+        let(:expected_output) { messages }
 
-        it 'renders the message to the console' do
-          expect(strip_escapes(output).strip).to eq(messages)
-        end
+        it_behaves_like 'the expecged output is sent to $stdout'
       end
 
       context 'when there are multiple messages' do

@@ -48,18 +48,18 @@ module Dsu
         end
 
         def display_entry_group_example
-          puts apply_color_theme('`dsu list` example', color_theme_color: color_theme.subheader)
+          puts apply_theme('`dsu list` example', theme_color: color_theme.subheader)
           puts
 
-          options = options_with_color_theme
+          options = custom_options
           entry_group = mock_entry_group(options)
           EntryGroup::Show.new(entry_group: entry_group, options: options).render
         end
 
         def display_messages_example
-          puts apply_color_theme('Message examples', color_theme_color: color_theme.subheader)
+          puts apply_theme('Message examples', theme_color: color_theme.subheader)
 
-          options = options_with_color_theme
+          options = custom_options
           messages = ['Example 1', 'Example 2', 'Example 3']
           Shared::Error.new(messages: messages, header: 'Errors example', options: options).render
           puts
@@ -82,8 +82,8 @@ module Dsu
           ], options: options)
         end
 
-        def options_with_color_theme
-          options.merge(theme_name: color_theme.theme_name)
+        def custom_options
+          options.merge(theme_name: color_theme.theme_name, output_stream: $stdout)
         end
       end
     end

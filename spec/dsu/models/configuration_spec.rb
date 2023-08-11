@@ -204,9 +204,11 @@ RSpec.describe Dsu::Models::Configuration do
   end
 
   describe '#hash' do
+    subject(:config) { build(:configuration) }
+
     let(:expected_hash) do
       described_class::DEFAULT_CONFIGURATION.each_key.map do |key|
-        described_class.instance.public_send(key)
+        config.public_send(key)
       end.hash
     end
 
@@ -217,10 +219,6 @@ RSpec.describe Dsu::Models::Configuration do
 
   describe '#write' do
     context 'when the configuration is valid' do
-      before do
-        config.delete!
-      end
-
       let(:config_hash) do
         described_class::DEFAULT_CONFIGURATION.merge(editor: 'doom')
       end
@@ -235,6 +233,7 @@ RSpec.describe Dsu::Models::Configuration do
       end
 
       it 'saves the configuration values' do
+        config.write
         expect(config.reload).to eq config
       end
     end

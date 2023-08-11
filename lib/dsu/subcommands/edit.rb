@@ -53,7 +53,7 @@ module Dsu
         entry_group = Models::EntryGroup.edit(time: Time.parse(date))
         Views::EntryGroup::Show.new(entry_group: entry_group).render
       rescue ArgumentError => e
-        puts apply_color_theme("Error: #{e.message}", color_theme_color: color_theme.error)
+        puts apply_theme("Error: #{e.message}", theme_color: color_theme.error)
         exit 1
       end
     end

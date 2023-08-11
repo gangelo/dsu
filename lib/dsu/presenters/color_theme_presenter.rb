@@ -14,16 +14,16 @@ module Dsu
       end
 
       def header
-        apply_color_theme('Color Themes', color_theme_color: color_theme.subheader)
+        apply_theme('Color Themes', theme_color: color_theme.subheader)
       end
 
       def footer
-        apply_color_theme('* current theme', color_theme_color: color_theme.footer)
+        apply_theme('* current theme', theme_color: color_theme.footer)
       end
 
       def detail
-        "#{apply_color_theme(theme_name_formatted, color_theme_color: color_theme.body)} - " \
-          "#{apply_color_theme(description, color_theme_color: color_theme.body)}"
+        "#{apply_theme(theme_name_formatted, theme_color: color_theme.body)} - " \
+          "#{apply_theme(description, theme_color: color_theme.body)}"
       end
 
       def detail_with_index(index:)

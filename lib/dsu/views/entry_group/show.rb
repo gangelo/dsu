@@ -43,7 +43,7 @@ module Dsu
             puts entry_presenter.formatted_description_with_index(index: index)
           end
         rescue ActiveModel::ValidationError
-          puts apply_color_theme(errors(entry_group), color_theme_color: presenter.color_theme.error)
+          puts apply_theme(errors(entry_group), theme_color: presenter.color_theme.error)
         end
 
         def errors(model)

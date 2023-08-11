@@ -37,7 +37,7 @@ module Dsu
       # entry groups will be conditionally displayed based on the :include_all
       # value in the <options> argument.
       def view_list_for(times:, options:)
-        configuration = Models::Configuration.instance unless defined?(configuration) && configuration
+        configuration = Models::Configuration.new unless defined?(configuration) && configuration
         options = configuration.to_h.merge(options).with_indifferent_access
         times_first_and_last = [times.first, times.last]
         times.each do |time|

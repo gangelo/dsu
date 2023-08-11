@@ -2,19 +2,21 @@
 
 FactoryBot.define do
   factory :configuration, class: 'Dsu::Models::Configuration' do
+    options { {} }
+
     transient do
       config_hash { nil }
+      color_theme { nil }
     end
 
-    initialize_with { Dsu::Models::Configuration.instance }
+    initialize_with { Dsu::Models::Configuration.new(options: options) }
 
     after(:create) do |configuration, evaluator|
-      if evaluator.config_hash
-        configuration.replace!(config_hash: evaluator.config_hash)
-      else
-        configuration.replace!(config_hash: configuration.class::DEFAULT_CONFIGURATION)
+      if evaluator.color_theme
+        evaluator.color_theme.save! unless evaluator.color_theme.persisted?
+        configuration.theme_name = evaluator.color_theme.theme_name
+        configuration.save!
       end
-      configuration.write!
     end
 
     after(:build) do |configuration, evaluator|

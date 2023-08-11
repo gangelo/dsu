@@ -27,16 +27,16 @@ module Dsu
         def render
           return if messages.empty?
 
-          output_stream.puts apply_color_theme(header, color_theme_color: color_theme.header) if header.present?
+          output_stream.puts apply_theme(header, theme_color: color_theme.header) if header.present?
 
           if messages.one?
-            output_stream.puts apply_color_theme(messages[0], color_theme_color: message_color)
+            output_stream.puts apply_theme(messages[0], theme_color: message_color)
             return
           end
 
           messages.each_with_index do |message, index|
             message = "#{index + 1}. #{message}" if ordered_list?
-            output_stream.puts apply_color_theme(message, color_theme_color: message_color)
+            output_stream.puts apply_theme(message, theme_color: message_color)
           end
         end
 
@@ -46,7 +46,7 @@ module Dsu
 
         def color_theme
           @color_theme ||= begin
-            theme_name = options.fetch(:theme_name, Models::Configuration.instance.theme_name)
+            theme_name = options.fetch(:theme_name, Models::Configuration.new.theme_name)
             Models::ColorTheme.find(theme_name: theme_name)
           end
         end
@@ -56,7 +56,7 @@ module Dsu
         end
 
         def output_stream
-          raise NotImplementedError, 'output_stream must be implemented'
+          @output_stream ||= options.fetch(:output_stream, $stdout)
         end
 
         def validate_arguments!(messages, message_type, options)

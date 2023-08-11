@@ -12,6 +12,7 @@ module Dsu
 
       def yes?(prompt, options: {})
         auto_prompt = auto_prompt(prompt, options)
+
         return auto_prompt unless auto_prompt.nil?
 
         Thor::Base.shell.new.yes?(prompt)
@@ -20,6 +21,7 @@ module Dsu
       private
 
       def auto_prompt(prompt, options)
+        prompt = Utils.strip_escapes(prompt)
         @auto_prompt ||= begin
           value = options.dig('prompts', prompt)
           value = (value == 'true' unless value.nil?)

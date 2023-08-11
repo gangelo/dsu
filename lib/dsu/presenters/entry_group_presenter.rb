@@ -16,19 +16,19 @@ module Dsu
 
       def formatted_time
         colors = color_theme.date
-        apply_color_theme(Support::TimeFormatable.formatted_time(time: time), color_theme_color: colors)
+        apply_theme(Support::TimeFormatable.formatted_time(time: time), theme_color: colors)
       end
 
       def formatted_errors
         return if valid?
 
         colors = color_theme.error
-        apply_color_theme(errors.full_messages.join(', '), color_theme_color: colors)
+        apply_theme(errors.full_messages.join(', '), theme_color: colors)
       end
 
       def no_entries_available
         colors = color_theme.info
-        apply_color_theme('(no entries available for this day)', color_theme_color: colors)
+        apply_theme('(no entries available for this day)', theme_color: colors)
       end
     end
   end

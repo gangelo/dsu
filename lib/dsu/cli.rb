@@ -104,13 +104,13 @@ module Dsu
         Migration version folder: #{Support::Fileable.migration_version_folder}
              Migration file path: #{Support::Fileable.migration_version_path}
       INFO
-      puts apply_color_theme(info, color_theme_color: color_theme.body)
+      puts apply_theme(info, theme_color: color_theme.body)
     end
 
     desc 'version, -v',
       'Displays the version for this gem'
     def version
-      puts apply_color_theme(dsu_version, color_theme_color: color_theme.body)
+      puts apply_theme(dsu_version, theme_color: color_theme.body)
     end
 
     private

@@ -112,7 +112,7 @@ module Dsu
         end
 
         def carry_over_entries_to_today?
-          Models::Configuration.instance.merge(options).carry_over_entries_to_today?
+          Models::Configuration.new.merge(options).carry_over_entries_to_today?
         end
       end
     end
