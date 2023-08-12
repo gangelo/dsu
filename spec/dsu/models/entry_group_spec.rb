@@ -23,7 +23,7 @@ RSpec.describe Dsu::Models::EntryGroup do
         let(:time) { nil }
 
         it 'uses Time.now' do
-          expect(!entry_group.time.utc?).to eq true
+          expect(!entry_group.time.utc?).to be true
         end
       end
 
@@ -87,7 +87,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       result = cloned_entry_group.entries.each_with_index.any? do |entry, index|
         entry_group.entries[index].equal?(entry)
       end
-      expect(result).to eq false
+      expect(result).to be false
     end
   end
 

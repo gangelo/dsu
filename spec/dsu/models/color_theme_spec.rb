@@ -62,13 +62,13 @@ RSpec.describe Dsu::Models::ColorTheme do
       it 'creates attributes for each theme hash key' do
         expect(described_class::DEFAULT_THEME.each_key.all? do |key|
           color_theme.respond_to?(key)
-        end).to eq true
+        end).to be true
       end
 
       it 'makes sure all the color theme colors are accounted for and assigns the color theme attribute values' do
         expect(described_class::DEFAULT_THEME_COLORS.each.all? do |key, value|
           color_theme.public_send(key) == value.merge_default_colors
-        end).to eq true
+        end).to be true
       end
     end
   end
