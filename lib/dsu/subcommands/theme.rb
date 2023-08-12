@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../env'
 require_relative '../support/fileable'
 require_relative '../views/color_theme/index'
 require_relative '../views/color_theme/show'
@@ -10,79 +11,80 @@ require_relative 'base_subcommand'
 module Dsu
   module Subcommands
     class Theme < BaseSubcommand
-      map %w[c] => :create
-      # map %w[e] => :edit
-      map %w[d] => :delete
+      map %w[c] => :create if Dsu.env.test?
+      map %w[d] => :delete if Dsu.env.test?
       map %w[l] => :list
       map %w[s] => :show
       map %w[u] => :use
 
-      desc 'create THEME_NAME [OPTIONS]',
-        'Creates a dsu color theme named THEME_NAME.'
-      long_desc <<-LONG_DESC
-      Create a dsu color theme named THEME_NAME in the #{Support::Fileable.themes_folder} folder.
+      if Dsu.env.test?
+        desc 'create THEME_NAME [OPTIONS]',
+          'Creates a dsu color theme named THEME_NAME.'
+        long_desc <<-LONG_DESC
+        Create a dsu color theme named THEME_NAME in the #{Support::Fileable.themes_folder} folder.
 
-      SYNOPSIS
+        SYNOPSIS
 
-      `dsu create THEME_NAME [-d|--description DESCRIPTION]`
+        `dsu create THEME_NAME [-d|--description DESCRIPTION]`
 
-      OPTIONS:
+        OPTIONS:
 
-      -d|--description DESCRIPTION: Creates the dsu color theme with having DESCRIPTION as the color theme description.
+        -d|--description DESCRIPTION: Creates the dsu color theme with having DESCRIPTION as the color theme description.
 
-      DESCRIPTION:
+        DESCRIPTION:
 
-      Must be be between 2 and 256 characters (inclusive) in length.
-      LONG_DESC
-      option :description, type: :string, aliases: '-d', banner: 'DESCRIPTION'
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def create(theme_name)
-        if Models::ColorTheme.exist?(theme_name: theme_name)
-          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" already exists.").render
-          return false
+        Must be be between 2 and 256 characters (inclusive) in length.
+        LONG_DESC
+        option :description, type: :string, aliases: '-d', banner: 'DESCRIPTION'
+        option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
+        def create(theme_name)
+          if Models::ColorTheme.exist?(theme_name: theme_name)
+            Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" already exists.").render
+            return false
+          end
+          prompt = color_theme.prompt_with_options(prompt: "Create color theme \"#{theme_name}\"?", options: %w[y N])
+          if yes?(prompt, options: options)
+            theme_hash = Models::ColorTheme::DEFAULT_THEME.dup
+            theme_hash[:description] = options[:description] || "#{theme_name.capitalize} color theme"
+            Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
+            Views::Shared::Info.new(messages: "\nCreated color theme \"#{theme_name}\".").render
+            true
+          else
+            Views::Shared::Info.new(messages: "\nCanceled.").render
+            false
+          end
         end
-        prompt = color_theme.prompt_with_options(prompt: "Create color theme \"#{theme_name}\"?", options: %w[y N])
-        if yes?(prompt, options: options)
-          theme_hash = Models::ColorTheme::DEFAULT_THEME.dup
-          theme_hash[:description] = options[:description] || "#{theme_name.capitalize} color theme"
-          Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
-          Views::Shared::Info.new(messages: "\nCreated color theme \"#{theme_name}\".").render
-          true
-        else
-          Views::Shared::Info.new(messages: "\nCanceled.").render
-          false
-        end
-      end
 
-      desc 'delete THEME_NAME',
-        'Deletes the existing dsu color theme THEME_NAME.'
-      long_desc <<-LONG_DESC
-      NAME
+        desc 'delete THEME_NAME',
+          'Deletes the existing dsu color theme THEME_NAME.'
+        long_desc <<-LONG_DESC
+        NAME
 
-      `dsu delete [THEME_NAME]` -- will delete the dsu color theme named THEME_NAME located in the #{Support::Fileable.themes_folder} folder.
-      LONG_DESC
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def delete(theme_name)
-        display_dsu_header
-
-        if theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
+        `dsu delete [THEME_NAME]` -- will delete the dsu color theme named THEME_NAME located in the #{Support::Fileable.themes_folder} folder.
+        LONG_DESC
+        option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
+        def delete(theme_name)
           display_dsu_header
-          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" cannot be deleted.").render
-          return
-        end
 
-        unless Models::ColorTheme.exist?(theme_name: theme_name)
-          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
-          return
-        end
+          if theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
+            display_dsu_header
+            Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" cannot be deleted.").render
+            return
+          end
 
-        prompt = color_theme.prompt_with_options(prompt: "Delete color theme \"#{theme_name}\"?",
-          options: %w[y N])
-        if yes?(prompt, options: options)
-          Models::ColorTheme.delete!(theme_name: theme_name)
-          Views::Shared::Info.new(messages: "\nDeleted color theme \"#{theme_name}\".").render
-        else
-          Views::Shared::Info.new(messages: "\nCanceled.").render
+          unless Models::ColorTheme.exist?(theme_name: theme_name)
+            Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
+            return
+          end
+
+          prompt = color_theme.prompt_with_options(prompt: "Delete color theme \"#{theme_name}\"?",
+            options: %w[y N])
+          if yes?(prompt, options: options)
+            Models::ColorTheme.delete!(theme_name: theme_name)
+            Views::Shared::Info.new(messages: "\nDeleted color theme \"#{theme_name}\".").render
+          else
+            Views::Shared::Info.new(messages: "\nCanceled.").render
+          end
         end
       end
 
