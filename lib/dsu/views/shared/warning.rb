@@ -7,7 +7,7 @@ module Dsu
     module Shared
       class Warning < Message
         def initialize(messages:, header: nil, options: {})
-          options = options.merge(header: header)
+          options = { header: header, output_stream: $stdout }.merge(options)
 
           super(messages: messages, message_type: :warning, options: options)
         end

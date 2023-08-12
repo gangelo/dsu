@@ -38,12 +38,19 @@ module Dsu
         def render!
           puts presenter.header
           puts
+
           presenter.detail
           puts
+
           display_entry_group_example
           puts
+
+          display_configuration_example
+          puts
+
           display_messages_example
           puts
+
           puts presenter.footer
         end
 
@@ -56,11 +63,20 @@ module Dsu
           EntryGroup::Show.new(entry_group: entry_group, options: options).render
         end
 
-        def display_messages_example
-          puts apply_theme('Message examples', theme_color: color_theme.subheader)
+        def display_configuration_example
+          puts apply_theme('`dsu config info` example', theme_color: color_theme.subheader)
+          puts
 
+          Views::Configuration::Show.new(config: Models::Configuration.new(options: custom_options)).render
+        end
+
+        def display_messages_example
           options = custom_options
           messages = ['Example 1', 'Example 2', 'Example 3']
+
+          puts apply_theme('Message examples', theme_color: color_theme.subheader)
+          puts
+
           Shared::Error.new(messages: messages, header: 'Errors example', options: options).render
           puts
 
@@ -71,7 +87,6 @@ module Dsu
           puts
 
           Shared::Warning.new(messages: messages, header: 'Warning example', options: options).render
-          puts
         end
 
         def mock_entry_group(options)

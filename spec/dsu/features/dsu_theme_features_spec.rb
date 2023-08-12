@@ -3,12 +3,7 @@
 RSpec.describe 'Dsu theme features', type: :feature do
   subject(:cli) { Dsu::CLI.start(args) }
 
-  # before do
-  #   build(:configuration).delete
-  # end
-
   let(:theme_name) { 'test' }
-  #let(:color_theme) { build(:color_theme) }
 
   shared_examples 'the color theme exists' do
     it 'creates the color theme' do
@@ -109,6 +104,22 @@ RSpec.describe 'Dsu theme features', type: :feature do
     end
   end
 
+  describe '#list' do
+    let(:args) { %w[theme list] }
+
+    context 'when there are color themes' do
+      before do
+        theme_names.each { |theme_name| create(:color_theme, theme_name: theme_name) }
+      end
+
+      let(:theme_names) { [theme_name, 'b_test', 'c_test'] }
+
+      it 'displays the color theme' do
+        expect { cli }.to output(color_theme_regex_for(theme_names: theme_names)).to_stdout
+      end
+    end
+  end
+
   describe '#use' do
     context 'when the color theme file exists' do
       before do
@@ -142,7 +153,7 @@ RSpec.describe 'Dsu theme features', type: :feature do
       context 'when the user wants to create the color theme' do
         let(:args) { ['theme', 'use', theme_name, '--prompts', "#{create_color_theme_prompt}:true"] }
 
-        it 'displays a created color theme message to the console' do
+        it 'displays the created color theme message to the console' do
           expect { cli }.to output(/Created color theme "#{theme_name}"/).to_stdout
         end
 
@@ -151,18 +162,26 @@ RSpec.describe 'Dsu theme features', type: :feature do
     end
   end
 
-  describe '#list' do
-    let(:args) { %w[theme list] }
-
-    context 'when there are color themes' do
+  describe '#show' do
+    context 'when the color theme file exists' do
       before do
-        theme_names.each { |theme_name| create(:color_theme, theme_name: theme_name) }
+        color_theme = create(:color_theme, theme_name: theme_name)
+        create(:configuration, color_theme: color_theme)
       end
 
-      let(:theme_names) { [theme_name, 'b_test', 'c_test'] }
+      let(:args) { ['theme', 'show', theme_name] }
 
-      it 'displays the color theme' do
-        expect { cli }.to output(color_theme_regex_for(theme_names: theme_names)).to_stdout
+      it 'displays the color theme to the console' do
+        expect { cli }.to output(/Viewing color theme: #{theme_name}/).to_stdout
+      end
+    end
+
+    context 'when the color theme file does not exist' do
+      let(:theme_name) { 'foo' }
+      let(:args) { ['theme', 'show', theme_name] }
+
+      it 'displays the color theme to the console' do
+        expect { cli }.to output(/Color theme "#{theme_name}" does not exist/).to_stderr
       end
     end
   end

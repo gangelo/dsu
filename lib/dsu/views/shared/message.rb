@@ -25,19 +25,26 @@ module Dsu
         end
 
         def render
+          output_stream.puts to_s
+        end
+
+        def to_s
           return if messages.empty?
 
-          output_stream.puts apply_theme(header, theme_color: color_theme.header) if header.present?
+          strings = []
 
-          if messages.one?
-            output_stream.puts apply_theme(messages[0], theme_color: message_color)
-            return
+          strings << apply_theme(header, theme_color: color_theme.header) if header.present?
+
+          strings << if messages.one?
+            apply_theme(messages[0], theme_color: message_color)
+          else
+            messages.each_with_index.map do |message, index|
+              message = "#{index + 1}. #{message}" if ordered_list?
+              apply_theme(message, theme_color: message_color)
+            end
           end
 
-          messages.each_with_index do |message, index|
-            message = "#{index + 1}. #{message}" if ordered_list?
-            output_stream.puts apply_theme(message, theme_color: message_color)
-          end
+          strings.flatten.join("\n")
         end
 
         private

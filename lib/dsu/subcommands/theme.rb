@@ -133,7 +133,12 @@ module Dsu
       `dsu show THEME_NAME` -- displays the dsu color theme for THEME_NAME.
       LONG_DESC
       def show(theme_name)
-        Views::ColorTheme::Show.new(theme_name: theme_name).render
+        if Dsu::Models::ColorTheme.exist?(theme_name: theme_name)
+          Views::ColorTheme::Show.new(theme_name: theme_name).render
+          return
+        end
+
+        Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
       end
 
       private

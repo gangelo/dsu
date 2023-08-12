@@ -9,14 +9,6 @@ module Dsu
         super(color_theme, options: options.merge(theme_name: color_theme.theme_name))
       end
 
-      def header
-        apply_theme("Viewing color theme: #{color_theme.theme_name}", theme_color: color_theme.subheader)
-      end
-
-      def footer
-        apply_theme('Footer: TODO', theme_color: color_theme.footer)
-      end
-
       def detail
         puts_detail('No.', 'Color', 'Values', header: true)
 
@@ -29,6 +21,14 @@ module Dsu
 
       def detail_with_index(index:)
         "#{formatted_index(index: index)} #{detail}"
+      end
+
+      def footer
+        apply_theme('Footer: TODO', theme_color: color_theme.footer)
+      end
+
+      def header
+        apply_theme("Viewing color theme: #{color_theme.theme_name}", theme_color: color_theme.subheader)
       end
 
       private

@@ -7,7 +7,7 @@ module Dsu
     module Shared
       class Error < Message
         def initialize(messages:, header: nil, options: {})
-          options = options.merge(header: header, output_stream: $stderr)
+          options = { header: header, output_stream: $stderr }.merge(options)
 
           super(messages: messages, message_type: :error, options: options)
         end
