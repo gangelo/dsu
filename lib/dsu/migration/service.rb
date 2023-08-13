@@ -56,7 +56,7 @@ module Dsu
           if File.exist?(config_path)
             backup_path = File.join(current_backup_folder, config_file_name)
             puts "Backing up #{config_path} to #{backup_path}..."
-            # FileUtils.cp(config_path, "#{config_path}.bak")
+            FileUtils.cp(config_path, backup_path)
           else
             puts 'No config to backup.'
           end
@@ -67,7 +67,7 @@ module Dsu
           if Dir.exist?(entries_folder)
             backup_folder = File.join(current_backup_folder, File.basename(entries_folder))
             puts "Backing up #{entries_folder} to #{backup_folder}..."
-            # FileUtils.cp_r(entries_folder, backup_path)
+            FileUtils.cp_r(entries_folder, backup_folder)
           else
             puts 'No entries to backup.'
           end
@@ -78,7 +78,7 @@ module Dsu
           if Dir.exist?(themes_folder)
             backup_folder = File.join(current_backup_folder, File.basename(themes_folder))
             puts "Backing up #{themes_folder} to #{backup_folder}..."
-            # FileUtils.cp_r(entries_folder, backup_path)
+            FileUtils.cp_r(themes_folder, backup_folder)
           else
             puts 'No entries to backup.'
           end
