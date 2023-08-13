@@ -73,6 +73,12 @@ module Dsu
         @gem_dir ||= Gem.loaded_specs['dsu'].gem_dir
       end
 
+      # Back up folder
+
+      def backup_folder(version:)
+        File.join(root_folder, 'dsu', 'backup', version.to_s)
+      end
+
       extend self # rubocop:disable Style/ModuleFunction
     end
   end
