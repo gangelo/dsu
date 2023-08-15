@@ -2,24 +2,28 @@
 
 # rubocop:disable Style/NumericLiterals
 RSpec.describe Dsu::Models::MigrationVersion do
-  subject(:migration_version) { build(:migration_version) }
-
   describe '#initialize' do
+    subject(:migration_version) { build(:migration_version) }
+
     context 'when the migration version file does not exist' do
+      specify 'the migration version file does not exists' do
+        expect(migration_version).not_to exist
+      end
+
       it 'has a version of 0' do
         expect(migration_version.version).to eq(0)
       end
     end
 
     context 'when the migration version file exists' do
-      subject(:migration_version) { create(:migration_version, version: 123456789) }
-
       specify 'the migration version file exists' do
+        migration_version = create(:migration_version)
         expect(migration_version).to exist
       end
 
       it 'loads the migration version file' do
-        expect(migration_version.version).to eq(123456789)
+        create(:migration_version, version: 123456789)
+        expect(described_class.new.version).to eq(123456789)
       end
     end
   end
