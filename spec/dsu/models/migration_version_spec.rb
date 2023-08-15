@@ -1,55 +1,53 @@
 # frozen_string_literal: true
 
+# rubocop:disable Style/NumericLiterals
 RSpec.describe Dsu::Models::MigrationVersion do
-  subject(:migration_version) { described_class.new }
-
-  let(:file_path) { temp_file.path }
-  let(:input_file) { 'spec/fixtures/files/json_file_with_version.json' }
-  let(:with_migration_version_file) do
-    raise "The fixture file (#{input_file}) does not exist" unless File.exist?(input_file)
-
-    file_hash = JSON.parse(File.read(input_file))
-    File.write(Dsu::Support::Fileable.migration_version_path, JSON.pretty_generate(file_hash))
-  end
+  subject(:migration_version) { build(:migration_version) }
 
   describe '#initialize' do
     context 'when the migration version file does not exist' do
-      it 'sets the version to 0' do
+      it 'has a version of 0' do
         expect(migration_version.version).to eq(0)
       end
     end
 
     context 'when the migration version file exists' do
-      before do
-        with_migration_version_file
-        migration_version.reload
+      subject(:migration_version) { create(:migration_version, version: 123456789) }
+
+      specify 'the migration version file exists' do
+        expect(migration_version).to exist
       end
 
       it 'loads the migration version file' do
-        expect(migration_version.version).to eq(123456789) # rubocop:disable Style/NumericLiterals
+        expect(migration_version.version).to eq(123456789)
       end
     end
   end
 
   describe '#current_migration?' do
-    context 'when the migration version file does not exist' do
+    context 'when the migration version is the current version' do
+      subject(:migration_version) { build(:migration_version, :with_current_version) }
+
+      it 'returns true' do
+        expect(migration_version.current_migration?).to be(true)
+      end
+    end
+
+    context 'when the migration version less than the current version' do
+      subject(:migration_version) { build(:migration_version, version: 1 - Dsu::Migration::VERSION ) }
+
       it 'returns false' do
         expect(migration_version.current_migration?).to be(false)
       end
     end
 
-    context 'when the migration version file exists' do
-      context 'when the migration version is the current version' do
-        before do
-          with_migration_version_file
-          migration_version.reload
-          stub_const('Dsu::Migration::VERSION', 123456789) # rubocop:disable Style/NumericLiterals
-        end
+    context 'when the migration version greater than the current version' do
+      subject(:migration_version) { build(:migration_version, version: 1 + Dsu::Migration::VERSION ) }
 
-        it 'returns true' do
-          expect(migration_version.current_migration?).to be(true)
-        end
+      it 'returns false' do
+        expect(migration_version.current_migration?).to be(false)
       end
     end
   end
 end
+# rubocop:enable Style/NumericLiterals

@@ -5,7 +5,7 @@ FactoryBot.define do
     version { nil }
     options { {} }
 
-    factory :migration_version_with_current_version do
+    trait :with_current_version do
       version { Dsu::Migration::VERSION }
     end
 

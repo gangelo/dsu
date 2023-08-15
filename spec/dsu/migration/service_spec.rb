@@ -11,7 +11,7 @@ RSpec.describe Dsu::Migration::Service do
 
   describe '#current_migration?' do
     context 'when the migration version is the current version' do
-      subject(:migration_version) { create(:migration_version_with_current_version) }
+      subject(:migration_version) { create(:migration_version, :with_current_version) }
 
       it 'returns true' do
         expect(migration_version.current_migration?).to be(true)
@@ -36,7 +36,7 @@ RSpec.describe Dsu::Migration::Service do
   end
 
   context 'when migrations should not be run' do
-    subject(:migration_version) { create(:migration_version_with_current_version) }
+    subject(:migration_version) { create(:migration_version, :with_current_version) }
 
     specify 'the migration version file exists' do
       expect(migration_version).to exist
