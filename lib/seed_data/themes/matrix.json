@@ -1,0 +1,79 @@
+{
+  "version": 20230613121411,
+  "description": "Matrix color theme",
+  "help": {
+    "color": "green",
+    "mode": "default",
+    "background": "default"
+  },
+  "dsu_header": {
+    "color": "white",
+    "mode": "bold",
+    "background": "green"
+  },
+  "dsu_footer": {
+    "color": "green",
+    "mode": "default",
+    "background": "default"
+  },
+  "header": {
+    "color": "green",
+    "mode": "bold",
+    "background": "default"
+  },
+  "subheader": {
+    "color": "green",
+    "mode": "underline",
+    "background": "default"
+  },
+  "body": {
+    "color": "green",
+    "mode": "default",
+    "background": "default"
+  },
+  "footer": {
+    "color": "light_green",
+    "mode": "default",
+    "background": "default"
+  },
+  "date": {
+    "color": "green",
+    "mode": "bold",
+    "background": "default"
+  },
+  "index": {
+    "color": "light_green",
+    "mode": "default",
+    "background": "default"
+  },
+  "info": {
+    "color": "green",
+    "mode": "default",
+    "background": "default"
+  },
+  "success": {
+    "color": "green",
+    "mode": "default",
+    "background": "default"
+  },
+  "warning": {
+    "color": "yellow",
+    "mode": "default",
+    "background": "default"
+  },
+  "error": {
+    "color": "light_yellow",
+    "mode": "default",
+    "background": "red"
+  },
+  "prompt": {
+    "color": "green",
+    "mode": "bold",
+    "background": "default"
+  },
+  "prompt_options": {
+    "color": "white",
+    "mode": "bold",
+    "background": "default"
+  }
+}

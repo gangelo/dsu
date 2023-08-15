@@ -6,6 +6,10 @@ module Dsu
       ENTRIES_FILE_NAME_FORMAT = '%Y-%m-%d.json'
       MIGRATION_VERSION_FILE_NAME = 'migration_version.json'
 
+      def dsu_folder
+        File.join(root_folder, 'dsu')
+      end
+
       # Configuration
 
       def config_folder
@@ -23,7 +27,7 @@ module Dsu
       # Entries
 
       def entries_folder
-        File.join(root_folder, 'dsu', 'entries')
+        File.join(dsu_folder, 'entries')
       end
 
       def entries_file_name(time:, file_name_format: nil)
@@ -38,7 +42,7 @@ module Dsu
       # Themes
 
       def themes_folder
-        File.join(root_folder, 'dsu', 'themes')
+        File.join(dsu_folder, 'themes')
       end
 
       def themes_path(theme_name:)
@@ -52,7 +56,7 @@ module Dsu
       end
 
       def migration_version_folder
-        File.join(root_folder, 'dsu')
+        File.join(dsu_folder)
       end
 
       def migration_version_path
@@ -70,13 +74,19 @@ module Dsu
       end
 
       def gem_dir
-        @gem_dir ||= Gem.loaded_specs['dsu'].gem_dir
+        Gem.loaded_specs['dsu'].gem_dir
       end
 
       # Back up folder
 
       def backup_folder(version:)
-        File.join(root_folder, 'dsu', 'backup', version.to_s)
+        File.join(dsu_folder, 'backup', version.to_s)
+      end
+
+      # Seed data folders
+
+      def seed_data_folder
+        File.join(gem_dir, 'lib/seed_data')
       end
 
       extend self # rubocop:disable Style/ModuleFunction

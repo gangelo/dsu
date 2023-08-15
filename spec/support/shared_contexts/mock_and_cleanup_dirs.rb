@@ -20,7 +20,6 @@ RSpec.shared_context 'when dir mock and cleanup is needed' do
     FileUtils.mkdir_p(Dsu::Support::Fileable.themes_folder)
 
     create(:color_theme)
-    # create(:configuration)
   end
 
   after do

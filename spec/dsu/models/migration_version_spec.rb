@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::Models::MigrationVersion do
-  subject(:migration_version) { described_class.instance }
+  subject(:migration_version) { described_class.new }
 
   let(:file_path) { temp_file.path }
   let(:input_file) { 'spec/fixtures/files/json_file_with_version.json' }

@@ -24,7 +24,7 @@ module Dsu
       end
 
       def footer
-        apply_theme('Footer: TODO', theme_color: color_theme.footer)
+        apply_theme('Footer example', theme_color: color_theme.footer)
       end
 
       def header

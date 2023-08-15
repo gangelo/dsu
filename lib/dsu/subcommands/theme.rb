@@ -114,9 +114,15 @@ module Dsu
       LONG_DESC
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def use(theme_name = Models::ColorTheme::DEFAULT_THEME_NAME)
-        unless Models::ColorTheme.exist?(theme_name: theme_name)
+        if Dsu.env.test?
+          unless Models::ColorTheme.exist?(theme_name: theme_name)
+            display_dsu_header
+            return unless create(theme_name)
+          end
+        else
           display_dsu_header
-          return unless create(theme_name)
+          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
+          return
         end
 
         configuration.theme_name = theme_name

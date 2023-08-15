@@ -1,0 +1,79 @@
+{
+  "version": 20230613121411,
+  "description": "Default color theme",
+  "help": {
+    "color": "cyan",
+    "mode": "default",
+    "background": "default"
+  },
+  "dsu_header": {
+    "color": "white",
+    "mode": "bold",
+    "background": "cyan"
+  },
+  "dsu_footer": {
+    "color": "cyan",
+    "mode": "default",
+    "background": "default"
+  },
+  "header": {
+    "color": "cyan",
+    "mode": "bold",
+    "background": "default"
+  },
+  "subheader": {
+    "color": "cyan",
+    "mode": "underline",
+    "background": "default"
+  },
+  "body": {
+    "color": "cyan",
+    "mode": "default",
+    "background": "default"
+  },
+  "footer": {
+    "color": "light_cyan",
+    "mode": "default",
+    "background": "default"
+  },
+  "date": {
+    "color": "cyan",
+    "mode": "bold",
+    "background": "default"
+  },
+  "index": {
+    "color": "light_cyan",
+    "mode": "default",
+    "background": "default"
+  },
+  "info": {
+    "color": "cyan",
+    "mode": "default",
+    "background": "default"
+  },
+  "success": {
+    "color": "green",
+    "mode": "default",
+    "background": "default"
+  },
+  "warning": {
+    "color": "yellow",
+    "mode": "default",
+    "background": "default"
+  },
+  "error": {
+    "color": "light_yellow",
+    "mode": "default",
+    "background": "red"
+  },
+  "prompt": {
+    "color": "cyan",
+    "mode": "bold",
+    "background": "default"
+  },
+  "prompt_options": {
+    "color": "white",
+    "mode": "bold",
+    "background": "default"
+  }
+}

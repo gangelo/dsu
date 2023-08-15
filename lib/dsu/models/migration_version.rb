@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'active_model'
-require 'singleton'
 require_relative '../crud/json_file'
 require_relative '../services/migration_version/hydrator_service'
 require_relative '../validators/version_validator'
@@ -10,17 +9,17 @@ module Dsu
   module Models
     # This class represents a dsu migration_version.
     class MigrationVersion < Crud::JsonFile
-      include Singleton
       include Support::Fileable
 
       attr_reader :options
 
-      def initialize(options: {})
+      def initialize(version: nil, options: {})
         super(migration_version_path)
 
         FileUtils.mkdir_p migration_version_folder
 
         @options = options || {}
+        @version = version and return if version
 
         file_hash = if exist?
           read do |migration_version_hash|
