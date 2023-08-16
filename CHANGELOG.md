@@ -1,3 +1,9 @@
+## 2.0.0 - 2023-08-16
+
+- Changes
+  - Bump to official release.
+  - None (see below).
+
 ## 2.0.0.alpha.1 - 2023-08-16
 
 - Changes
