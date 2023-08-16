@@ -25,8 +25,7 @@ end
 
 if !(Dsu.env.test? || Dsu.env.development?) && Dsu::Migration::Service.run_migrations?
   begin
-    # raise NotImplementedError, 'TODO: Implement migrations'
-    Dsu::Migration::Service.run_migrations!
+    Dsu::Migration::Service.new.call
   rescue StandardError => e
     puts "Error running migrations: #{e.message}"
     exit 1

@@ -3,7 +3,6 @@
 module Dsu
   module Support
     module Fileable
-      ENTRIES_FILE_NAME_FORMAT = '%Y-%m-%d.json'
       MIGRATION_VERSION_FILE_NAME = 'migration_version.json'
 
       def dsu_folder
@@ -31,7 +30,7 @@ module Dsu
       end
 
       def entries_file_name(time:, file_name_format: nil)
-        file_name_format ||= ENTRIES_FILE_NAME_FORMAT
+        file_name_format ||= '%Y-%m-%d.json'
         time.strftime(file_name_format)
       end
 
@@ -46,7 +45,11 @@ module Dsu
       end
 
       def themes_path(theme_name:)
-        File.join(themes_folder, "#{theme_name}.json")
+        File.join(themes_folder, theme_file_name(theme_name: theme_name))
+      end
+
+      def theme_file_name(theme_name:)
+        "#{theme_name}.json"
       end
 
       # Migration
