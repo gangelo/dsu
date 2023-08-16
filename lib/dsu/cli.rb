@@ -82,7 +82,7 @@ module Dsu
     subcommand :theme, Subcommands::Theme
 
     desc 'info, -i',
-      'Displays information about this gem'
+      'Displays information about this dsu release'
     def info
       configuration_version = Models::Configuration::VERSION
       entry_group_version = Models::EntryGroup::VERSION

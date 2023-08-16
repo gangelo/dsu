@@ -42,4 +42,15 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'thor_nested_subcommand', '~> 1.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
+
+  spec.post_install_message = <<~POST_INSTALL
+    Thank you for installing dsu.
+
+    Run `dsu` from your command line to get started.
+
+    View the dsu README.md here: https://github.com/gangelo/dsu
+    View the dsu CHANGELOG.md: https://github.com/gangelo/dsu/blob/main/CHANGELOG.md
+
+    Try a dsu theme by running `dsu theme list` and then `dsu theme use THEME_NAME` where THEME_NAME is the name of the theme you want to try :)
+  POST_INSTALL
 end

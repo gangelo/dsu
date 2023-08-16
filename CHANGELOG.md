@@ -1,10 +1,15 @@
-## 2.0.0.alpha.0 - 2023-06-26
+## 2.0.0.alpha.1 - 2023-08-16
 
-- This is an alpha release. It is not recommended for public use.
 - Changes
   - Major refactors to the `dsu` codebase.
-  - Added color themes. See `dsu help theme` for more information.
-  - Added migrations so functionality can be added that involves changes to the dsu files and codebase without users having to lose their data.
+  - Added `dsu theme` command to incorporate color themes. See `dsu help theme` for more information.
+  - Added `dsu info` command to display details about the current dsu release. See `dsu help info` for more information.
+  - Added "migrations", which is really a method of backup whereby user data is backed up to the dsu folder under `backup/<migration version>`. Backups will occur whenever a breaking change is made to any of the dsu models (ColorTheme, Configuration, EntryGroup or MigrationVersion). In this way, users can create their own scripts to migrate their associated model `.json`` files to the latest model version, and move them back into the appropriate dsu folder structure so data can be retained.
+  - Changes to command help to be more uniform.
+- Bug fixes
+  - Various bug fixes.
+
+## 2.0.0.alpha.0 - 2023-06-26 (yanked)
 
 ## [1.2.1] 2023-06-02
 
