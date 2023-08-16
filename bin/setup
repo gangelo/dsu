@@ -1,8 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 IFS=$'\n\t'
+# set -vx
+
+# This makes sure all of the scripts we need to load are loaded from
+# the executing script folder so they can be found
+DIR="$( cd "$( dirname $0 )" >/dev/null 2>&1 && pwd )"
+pushd $DIR >/dev/null 2>&1
+ruby ./migrate
+popd >/dev/null 2>&1
+
+exit_code=$?
+if [ $exit_code -ne 0 ]; then
+  exit $exit_code
+fi
+
 set -vx
-
 bundle install
-
-# Do any other automated setup that you need to do here

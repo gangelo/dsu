@@ -5,34 +5,29 @@ require 'thor'
 module Dsu
   module Support
     module Ask
-      ASK_YES = %w[y yes].freeze
-      # ASK_NO = %w[n no].freeze
-      # ASK_CANCEL = %w[c cancel].freeze
-      # ASK_YES_NO_CANCEL = ASK_YES.concat(ASK_NO).concat(ASK_CANCEL).freeze
-
       def ask(prompt)
         options = {}
         Thor::LineEditor.readline(prompt, options)
       end
 
-      def yes?(prompt, color = nil)
-        Thor::Base.shell.new.yes?(prompt, color)
+      def yes?(prompt, options: {})
+        auto_prompt = auto_prompt(prompt, options)
+
+        return auto_prompt unless auto_prompt.nil?
+
+        Thor::Base.shell.new.yes?(prompt)
       end
 
-      # def no?(prompt)
-      #   ask_with(prompt: prompt, values: ASK_NO)
-      # end
+      private
 
-      # def yes_no_cancel(prompt)
-      #   ask_with(prompt: prompt, values: ASK_YES_NO_CANCEL)
-      # end
-
-      # private
-
-      # def ask_with(prompt:, values:)
-      #   p "#{prompt}"
-      #   values.include? STDIN.gets.chomp
-      # end
+      def auto_prompt(prompt, options)
+        prompt = Utils.strip_escapes(prompt)
+        @auto_prompt ||= begin
+          value = options.dig('prompts', prompt)
+          value = (value == 'true' unless value.nil?)
+          value
+        end
+      end
     end
   end
 end

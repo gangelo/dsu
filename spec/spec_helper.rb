@@ -8,10 +8,9 @@ require 'pry-byebug'
 require 'securerandom'
 require 'tempfile'
 require 'time'
+require 'yaml'
 
-require_relative './support/configuration_helpers'
-require_relative './support/entry_group_helpers'
-require_relative './support/time_helpers'
+require_relative 'support/custom_matchers'
 
 require 'simplecov'
 
@@ -21,8 +20,14 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
-require 'dsu'
+if File.exist?('.env.test')
+  # This loads our test environment when running tests.
+  require 'dotenv'
+  Dotenv.load('.env.test')
+end
 
+require 'dsu'
+Dir[File.join(Dir.pwd, 'lib/migrate/**/*.rb')].each { |f| require f }
 Dir[File.join(Dir.pwd, 'spec/support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
@@ -43,7 +48,7 @@ RSpec.configure do |config|
     FactoryBot.find_definitions
   end
 
-  config.include ConfigurationHelpers
-  config.include EntryGroupHelpers
+  config.include ColorThemeHelpers
+  config.include StdxxxHelpers
   config.include TimeHelpers
 end

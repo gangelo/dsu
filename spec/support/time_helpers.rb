@@ -3,6 +3,10 @@
 # This module provides methods to help with Time
 # objects
 module TimeHelpers
+  def today_yyyymmdd_string
+    to_yyyymmdd_string(Time.now.localtime)
+  end
+
   def to_yyyymmdd_string(time)
     raise ArgumentError, "time is not a Time object: \"#{time}\"" unless time.is_a?(Time)
 

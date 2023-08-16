@@ -23,7 +23,9 @@ Commands:
   dsu config, -c SUBCOMMAND          # Manage configuration...
   dsu edit, -e SUBCOMMAND            # Edit DSU entries...
   dsu help [COMMAND]                 # Describe available...
+  dsu info, -i                       # Displays information...
   dsu list, -l SUBCOMMAND            # Displays DSU entries...
+  dsu theme, -t SUBCOMMAND           # Manage DSU themes...
   dsu version, -v                    # Displays this gem version
 
 Options:
@@ -230,31 +232,35 @@ from: Interative planning meeting 11:00AM.
 
 ## Customizing the `dsu` Configuration File
 
-It is **not** recommended that you create and customize a `dsu` configuration file while this gem is in alpha release. This is because changes to what configuration options are available may take place while in alpha that could break `dsu`. If you *do* want to create and customize the `dsu` configuration file reglardless, you may do the following.
+It is **not** recommended that you get too attached to the `dsu` configuration options when this gem is in pre-release (e.g. `n.n.n.alpha.n`, `n.n.n.beta.n`, etc.). This is because changes to the configuration file options could change; however, if you're curious, ambitious, or just like living on the edge, have at it. However, just keep in mind that things could change. With an official release (`n.n.n.n`), edit all you want. Regardless, if you *do* want to customize the `dsu` configuration file, you may do the following:
 
-### Initializing/Customizing the `dsu` Configuration File
+### Customizing the `dsu` Configuration File
 
 ```shell
-# Creates a dsu configuration file in your home folder.
-$ dsu config init
-
+# Locate the dsu configuration file in your home folder.
+$ dsu config info
 #=>
-Configuration file (/Users/<whoami>/.dsu) created.
-Config file (/Users/<whoami>/.dsu) contents:
----
-editor: nano
-entries_display_order: desc
-entries_file_name: "%Y-%m-%d.json"
-entries_folder: "/Users/gangelo/dsu/entries"
-carry_over_entries_to_today: false
-include_all: false
+Dsu v2.0.0
+
+Configuration file contents (/Users/<whoami>/dsu/.dsu)
+ 1.  version: '20230613121411'
+ 2.  editor: 'nano'
+ 3.  entries_display_order: 'desc'
+ 4.  carry_over_entries_to_today: 'false'
+ 5.  include_all: 'false'
+ 6.  theme_name: 'default'
+___________________________________
+Theme: default
 ```
 
 Where `<whoami>` would be your username (`$ whoami` on nix systems)
 
-Once the configuration file is created, you can locate where the `dsu` configuration file is located by running `$ dsu config info` and taking note of the confiruration file path. You may then edit this file using your favorite editor.
+Taking note of the confiruration file path above, you may then edit this file using your favorite editor.
 
 #### Configuration File Options
+
+##### version
+_DO NOT_ edit this value. This value coincides with the `dsu` migration version and should not be edited.
 
 ##### editor
 This is the default editor to use when editing entry groups if the EDITOR environment variable on your system is not set.
@@ -266,31 +272,18 @@ Valid values are 'asc' and 'desc', and will sort listed DSU entries in ascending
 
 Default: `'desc'`
 
-##### entries_file_name
-The entries file name format. It is recommended that you do not change this. The file name must include `%Y`, `%m` and `%d` `Time` formatting specifiers to make sure the file name is unique and able to be located by `dsu` functions. For example, the default file name is `%Y-%m-%d.json`; however, something like `%m-%d-%Y.json` or `entry-group-%m-%d-%Y.json` would work as well.
-
-ATTENTION: Please keep in mind that if you change this value `dsu` will not recognize entry files using a different format. You would (at this time), have to manually rename any existing entry file names to the new format.
-
-Default: `'%Y-%m-%d.json'`
-
-##### entries_folder
-This is the folder where `dsu` stores entry files. You may change this to anything you want. `dsu` will create this folder for you, as long as your system's write permissions allow this.
-
-ATTENTION: Please keep in mind that if you change this value `dsu` will not be able to find entry files in any previous folder. You would (at this time), have to manually mode any existing entry files to this new folder.
-
-Default: `'/Users/<whoami>/dsu/entries'` on nix systems.
-
-Where `<whoami>` would be your username (`$ whoami` on nix systems)
-
 ##### carry_over_entries_to_today
-Applicable to the `dsu edit` command.  Valid values are `true|false`. If `true`, when editing DSU entries *for the first time* on any  given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied into the editing session. If there are no DSU entries from the previous day, `dsu` will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply start with no previous DSU entries.
+Applicable to the `dsu edit` command.  Valid values are `true|false`. If `true`, when editing DSU entries *for the first time* on any  given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied into the current editing session. If there are no DSU entries from the previous day, `dsu` will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply provide no previous DSU entries.
 
-Default: false
+Default: `false`
 
 ##### include_all
-Applicable to `dsu` commands that display DSU date lists (e.g. `dsu list` commands). Valid values are `true|false`. If `true`, all DSU dates within the specified range will be displayed. If `false`, DSU dates between the first and last DSU dates that have NO entries *will NOT be displayed*. The default is taken from the dsu configuration setting `:include_all`, see `dsu config info`.
+Applicable to `dsu` commands that display DSU date lists (e.g. `dsu list` commands). Valid values are `true|false`. If `true`, all DSU dates within the specified range will be displayed, regardless of whether or not a particular date has entries. If `false`, only DSU dates between the first and last DSU dates that have entries *will be displayed*.
 
-Default: false
+Default: `false`
+
+##### theme_name
+Valid values are any theme names available as a result of running `dsu theme list`. For example: "cherry", default", "lemon", "matrix" and "whiteout".
 
 ## Dates
 

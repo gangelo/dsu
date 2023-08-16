@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
 module Dsu
-  VERSION = '1.2.1'
+  VERSION_REGEX = /\A\d+\.\d+\.\d+(\.alpha\.\d+)?\z/
+  VERSION = '2.0.0.alpha.1'
 end

@@ -7,9 +7,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
 
   describe '.time_from_date_string' do
     subject(:time) do
-      Class.new do
-        include Dsu::Support::CommandOptions::Time
-      end.new.time_from_date_string(command_option: command_option)
+      described_class.time_from_date_string(command_option: command_option)
     end
 
     context 'when the argument is invalid' do
@@ -41,9 +39,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
 
   describe '.time_from_date_string!' do
     subject(:time) do
-      Class.new do
-        include Dsu::Support::CommandOptions::Time
-      end.new.time_from_date_string!(command_option: command_option)
+      described_class.time_from_date_string!(command_option: command_option)
     end
 
     context 'when the argument is invalid' do

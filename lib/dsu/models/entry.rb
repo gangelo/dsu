@@ -2,6 +2,7 @@
 
 require 'active_model'
 require_relative '../support/descriptable'
+require_relative '../support/presentable'
 require_relative '../validators/description_validator'
 
 module Dsu
@@ -11,15 +12,18 @@ module Dsu
     class Entry
       include ActiveModel::Model
       include Support::Descriptable
+      include Support::Presentable
 
       validates_with Validators::DescriptionValidator
 
-      attr_reader :description
+      attr_reader :description, :options
 
-      def initialize(description:)
+      def initialize(description:, options: {})
         raise ArgumentError, 'description is the wrong object type' unless description.is_a?(String)
 
+        # Make sure to call the setter method so that the description is cleaned up.
         self.description = description
+        @options = options || {}
       end
 
       class << self

@@ -7,10 +7,15 @@ RSpec.describe Dsu::Models::Entry do
     described_class.new(description: description)
   end
 
-  let(:description) { entry_0_hash[:description] }
+  let(:description) { entry_hash[:description] }
+  let(:entry_hash) do
+    {
+      description: '0 description'
+    }
+  end
 
   describe '#initialize' do
-    it 'initializes the model attributes' do
+    it 'initializes #description' do
       expect(entry.description).to eq description
     end
 
@@ -38,52 +43,20 @@ RSpec.describe Dsu::Models::Entry do
   end
 
   describe 'validations' do
-    before do
-      entry.validate
-    end
-
-    describe '#description' do
-      context 'when < 2 chars in length' do
-        before do
-          entry.validate
-        end
-
-        let(:description) { 'x' }
-        let(:expected_errors) do
-          [
-            /Description is too short/
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
-
-      context 'when > 256 chars in length' do
-        before do
-          entry.validate
-        end
-
-        let(:description) { 'x' * 257 }
-        let(:expected_errors) do
-          [
-            /Description is too long/
-          ]
-        end
-
-        it_behaves_like 'the validation fails'
-      end
+    it 'validates #description with DescriptionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::DescriptionValidator)
     end
   end
 
   describe '#to_h' do
     it 'returns a Hash representing the Entry' do
-      expect(entry.to_h).to eq(entry_0_hash)
+      expect(entry.to_h).to eq(entry_hash)
     end
   end
 
   describe '#==' do
     context 'when the entries are equal' do
-      let(:equal_entry) { described_class.new(**entry_0_hash) }
+      let(:equal_entry) { described_class.new(**entry_hash) }
 
       it 'returns true' do
         expect(entry == equal_entry).to be true
@@ -114,8 +87,12 @@ RSpec.describe Dsu::Models::Entry do
   end
 
   describe '#hash' do
+    let(:expected_hash) do
+      description.hash
+    end
+
     it 'returns the hash of the entry description' do
-      expect(entry.hash).to eq(description.hash)
+      expect(entry.hash).to eq(expected_hash)
     end
   end
 end

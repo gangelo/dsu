@@ -3,18 +3,11 @@
 RSpec.describe Dsu::Models::EntryGroup do
   subject(:entry_group) { build(:entry_group, time: time, entries: entries) }
 
-  include_context 'with tmp'
-
   before do
-    config.create_config_file!
-    delete_entry_group_file!(time: time) if time.is_a?(Time)
+    build(:configuration, config_hash: Dsu::Models::Configuration::DEFAULT_CONFIGURATION)
   end
 
-  after do
-    config.delete_config_file!
-  end
-
-  let(:time) { time_utc }
+  let(:time) { Time.now }
   let(:entries) { [] }
 
   describe '#initialize' do
@@ -30,22 +23,22 @@ RSpec.describe Dsu::Models::EntryGroup do
         let(:time) { nil }
 
         it 'uses Time.now' do
-          expect(entry_group.time).to eq time_utc
+          expect(!entry_group.time.utc?).to be true
         end
       end
 
       context 'when utc' do
-        let(:time) { time_utc }
+        let(:time) { Time.now.utc }
 
-        it 'uses it' do
-          expect(entry_group.time).to eq time_utc
+        it 'converts it to localtime' do
+          expect(entry_group.time).to eq time.localtime
         end
       end
 
       context 'when localized' do
-        let(:time) { local_time }
+        let(:time) { Time.now }
 
-        it 'converts it to utc' do
+        it 'keeps the time localtime' do
           expect(entry_group.time).to eq time
         end
       end
@@ -83,7 +76,7 @@ RSpec.describe Dsu::Models::EntryGroup do
     let(:entries) { build_list(:entry, 2) }
 
     it 'returns a new object' do
-      expect(cloned_entry_group).not_to eq entry_group
+      expect(cloned_entry_group).not_to equal entry_group
     end
 
     it 'returns the entries in the same orded' do
@@ -94,7 +87,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       result = cloned_entry_group.entries.each_with_index.any? do |entry, index|
         entry_group.entries[index].equal?(entry)
       end
-      expect(result).to eq false
+      expect(result).to be false
     end
   end
 
@@ -183,6 +176,7 @@ RSpec.describe Dsu::Models::EntryGroup do
     let(:entries) { build_list(:entry, 2) }
     let(:entry_group_hash) do
       {
+        version: entry_group.version,
         time: time,
         entries: [
           entries[0].to_h,
@@ -197,6 +191,18 @@ RSpec.describe Dsu::Models::EntryGroup do
   end
 
   describe 'validation' do
+    it 'validates #version attribute with the VersionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::VersionValidator)
+    end
+
+    it 'validates #entries attribute with the EntriesValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::EntriesValidator)
+    end
+
+    it 'validates #time with TimeValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::TimeValidator)
+    end
+
     context 'when fields are valid' do
       it 'passes validation' do
         expect(entry_group.valid?).to be true
@@ -207,7 +213,7 @@ RSpec.describe Dsu::Models::EntryGroup do
       subject(:entry_group) { build(:entry_group, time: time, entries: entries).validate! }
 
       let(:entries) { build_list(:entry, 2, description: 'duplicate') }
-      let(:expected_error) { /Entries Array contains a duplicate entry/ }
+      let(:expected_error) { /Entries array contains duplicate entry/ }
 
       it_behaves_like 'an error is raised'
     end
@@ -217,44 +223,37 @@ RSpec.describe Dsu::Models::EntryGroup do
     describe '.delete' do
       context 'when an entry group file exists for :time' do
         before do
-          create_entry_group_file!(entry_group: build(:entry_group, :with_entries, time: time))
-        end
-
-        after do
-          delete_entry_group_file!(time: time)
+          create(:entry_group, :with_entries, time: time)
         end
 
         it 'exists before it is deleted' do
-          expect(described_class.exists?(time: time)).to be true
+          expect(described_class.exist?(time: time)).to be true
         end
 
         it 'deletes the file' do
           described_class.delete!(time: time)
-          expect(described_class.exists?(time: time)).to be false
+          entry_path = Dsu::Support::Fileable.entries_path(time: time)
+          expect(File.exist?(entry_path)).to be false
         end
       end
 
       context 'when an entry group file does NOT exist for :time' do
         it 'does not exist before it is deleted' do
-          expect(described_class.exists?(time: time)).to be false
+          entry_path = Dsu::Support::Fileable.entries_path(time: time)
+          expect(File.exist?(entry_path)).to be false
         end
 
         it 'does NOT raise an error' do
-          expect { described_class.delete!(time: time) }.not_to raise_error
+          expect { described_class.delete(time: time) }.not_to raise_error
         end
       end
     end
 
     describe '.edit' do
       before do
-        delete_entry_group_file!(time: time)
         allow(Dsu::Services::StdoutRedirectorService).to receive(:call).and_return(tmp_file_contents)
-        editor = Dsu::Support::Configuration::DEFAULT_DSU_OPTIONS['editor']
-        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{tmp_file.path}").and_return(true)
-      end
-
-      after do
-        delete_entry_group_file!(time: time)
+        editor = Dsu::Models::Configuration::DEFAULT_CONFIGURATION[:editor]
+        allow(Kernel).to receive(:system).with("${EDITOR:-#{editor}} #{temp_file.path}").and_return(true)
       end
 
       let!(:original_entry_group) { entry_group.clone }
@@ -270,88 +269,34 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
 
       it 'starts with no entry group file' do
-        expect(entry_group_file_exists?(time: time)).to be false
+        expect(described_class.exist?(time: time)).to be false
       end
 
       it 'edits and saves the entry group file' do
         described_class.edit(time: time)
-        expect(described_class.load(time: time).entries.size).to eq 2
+        expect(described_class.find(time: time).entries.size).to eq 2
       end
     end
 
-    describe '.exists?' do
-      context 'when an entry group file exists for :time' do
-        after do
-          delete_entry_group_file!(time: time)
-        end
+    describe '.find' do
+      subject(:entry_group) { described_class.find(time: time) }
 
-        it 'returns true' do
-          create_entry_group_file!(entry_group: create(:entry_group, :with_entries, time: time))
-          expect(described_class.exists?(time: time)).to be true
-        end
-      end
-
-      context 'when an entry group file does NOT exist for :time' do
+      context 'when an entry group file exists' do
         before do
-          delete_entry_group_file!(time: time)
+          expected_entry_group
         end
 
-        it 'returns false' do
-          expect(described_class.exists?(time: time)).to be false
-        end
-      end
-    end
+        let(:expected_entry_group) { create(:entry_group, :with_entries, time: time) }
 
-    describe '.load' do
-      subject(:entry_group) { described_class.load(time: time) }
-
-      context 'when an entry group file exists for :time and the entry group file has entries' do
-        before do
-          # Write our entry group to the file system so that when we
-          # call our subject, it will load the entries from the file system.
-          build(:entry_group, time: time, entries: entries).tap do |entry_group|
-            create_entry_group_file!(entry_group: entry_group)
-          end
-        end
-
-        let(:entries) { build_list(:entry, 2) }
-        let(:entry_group_hash) do
-          {
-            time: time,
-            entries: entries.map(&:to_h)
-          }
-        end
-
-        it 'loads the entry group and entries' do
-          expect(entry_group.to_h).to match_array entry_group_hash
+        it 'returns the entry group' do
+          expect(entry_group).to eq expected_entry_group
         end
       end
 
-      context 'when an entry group file exists for :time and the entry group file does NOT have entries' do
-        let(:entries) { [] }
-        let(:entry_group_hash) do
-          {
-            time: time,
-            entries: entries
-          }
-        end
+      context 'when an entry group file does NOT exists' do
+        let(:expected_error) { /File ".+" does not exist/ }
 
-        it 'loads the entry group and entries is initialized to an empty Array' do
-          expect(entry_group.to_h).to match_array entry_group_hash
-        end
-      end
-
-      context 'when an entry group file does NOT exists for :time' do
-        let(:time) { time_utc }
-        let(:time_utc) { Time.parse('1900-01-01 00:00:00 UTC') }
-
-        it '#time returns the time' do
-          expect(entry_group.time).to eq time_utc
-        end
-
-        it '#entries returns an empty Array ([])' do
-          expect(entry_group.entries).to eq []
-        end
+        it_behaves_like 'an error is raised'
       end
     end
   end

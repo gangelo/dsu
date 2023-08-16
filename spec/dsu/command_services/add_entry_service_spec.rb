@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::CommandServices::AddEntryService do
-  after do
-    delete_entry_group_file!(time: time) if time.is_a?(Time)
-  end
-
   let(:entry) { build(:entry) }
   let(:time) { Time.now }
 
@@ -54,34 +50,30 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
       let(:expected_error) { ActiveModel::ValidationError }
 
       it 'writes an error message to the console' do
-        expect { add_entry_service }.to output(/An error was encountered; the entry could not be added added/).to_stdout
+        expect { add_entry_service }.to output(/An error was encountered; the entry could not be added/).to_stderr
       end
 
       it 'does not add the entry' do
         # If the entry was added, the entry group file would have been created.
         # Checking the existance of the entry group file is a good way to ensure
         # that the entry was not added.
-        expect(entry_group_file_exists?(time: time)).not_to be true
+        expect(Dsu::Models::EntryGroup.exist?(time: time)).not_to be true
       end
     end
 
     context 'when the entry is added' do
       before do
-        delete_entry_group_file!(time: time)
         add_entry_service
       end
 
       it 'creates the entry group file' do
-        expect(entry_group_file_exists?(time: time)).to be true
+        expect(Dsu::Models::EntryGroup.exist?(time: time)).to be true
       end
 
       it 'creates the entry group file with the correct json' do
-        expected_entry_group_hash = {
-          time: time,
-          entries: [entry.to_h]
-        }
+        expected_entry_group = Dsu::Models::EntryGroup.new(time: time, entries: [entry])
 
-        expect(entry_group_file_matches?(time: time, entry_group_hash: expected_entry_group_hash)).to be true
+        expect(Dsu::Models::EntryGroup.find(time: time)).to eq expected_entry_group
       end
     end
   end

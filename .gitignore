@@ -20,6 +20,10 @@
 scratch*.rb
 snippets.rb
 readme.txt
+todo.txt
 
-.env
+.env.*
+/.development_home/*
 /spec/.tmp
+
+migration_version.yml

@@ -67,7 +67,7 @@ RSpec.describe Dsu::Validators::EntriesValidator do
       end
       let(:expected_errors) do
         [
-          'Entries Array contains a duplicate entry: "Duplicate...".'
+          'Entries array contains duplicate entry: "Duplicate...".'
         ]
       end
 

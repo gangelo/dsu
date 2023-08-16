@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require_relative '../base_cli'
+require_relative 'base_subcommand'
 require_relative '../models/entry_group'
 require_relative '../views/entry_group/show'
 
 module Dsu
   module Subcommands
-    class Edit < Dsu::BaseCLI
+    class Edit < BaseSubcommand
       map %w[d] => :date
       map %w[n] => :today
       map %w[t] => :tomorrow
@@ -53,7 +53,7 @@ module Dsu
         entry_group = Models::EntryGroup.edit(time: Time.parse(date))
         Views::EntryGroup::Show.new(entry_group: entry_group).render
       rescue ArgumentError => e
-        say "Error: #{e.message}", ERROR
+        puts apply_theme("Error: #{e.message}", theme_color: color_theme.error)
         exit 1
       end
     end

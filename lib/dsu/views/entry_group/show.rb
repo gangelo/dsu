@@ -3,16 +3,14 @@
 require 'time'
 require 'active_support/core_ext/numeric/time'
 require_relative '../../models/entry_group'
-require_relative '../../support/colorable'
-require_relative '../../support/say'
+require_relative '../../support/color_themable'
 require_relative '../../support/time_formatable'
 
 module Dsu
   module Views
     module EntryGroup
       class Show
-        include Support::Colorable
-        include Support::Say
+        include Support::ColorThemable
         include Support::TimeFormatable
 
         def initialize(entry_group:, options: {})
@@ -35,22 +33,25 @@ module Dsu
         attr_reader :entry_group, :options
 
         def render!
-          say formatted_time(time: entry_group.time), HIGHLIGHT
-          say('(no entries available for this day)') and return if entry_group.entries.empty?
+          puts presenter.formatted_time
+
+          entry_group.validate!
+          puts presenter.no_entries_available and return if entry_group.entries.empty?
 
           entry_group.entries.each_with_index do |entry, index|
-            prefix = "#{format('%03s', index + 1)}. "
-            description = colorize_string(string: entry.description, mode: :bold)
-            entry_info = "#{prefix} #{description}"
-            unless entry.valid?
-              entry_info = "#{entry_info} (validation failed: #{entry_errors(entry_group_deleter_service)})"
-            end
-            say entry_info
+            entry_presenter = entry.presenter
+            puts entry_presenter.formatted_description_with_index(index: index)
           end
+        rescue ActiveModel::ValidationError
+          puts apply_theme(errors(entry_group), theme_color: presenter.color_theme.error)
         end
 
-        def entry_errors(entry)
-          entry.errors.full_messages.join(', ')
+        def errors(model)
+          model.errors.full_messages.join(', ')
+        end
+
+        def presenter
+          @presenter ||= entry_group.presenter
         end
       end
     end

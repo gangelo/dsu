@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
+require 'fileutils'
 require 'time'
 require_relative 'base_cli'
 require_relative 'subcommands/config'
 require_relative 'subcommands/edit'
 require_relative 'subcommands/list'
+require_relative 'subcommands/theme'
 
 module Dsu
   # The `dsu` command.
@@ -13,44 +15,41 @@ module Dsu
     map %w[c -c] => :config
     map %w[e -e] => :edit
     map %w[l -l] => :list
+    map %w[t -t] => :theme
+    map %w[v -i] => :info
     map %w[v -v] => :version
 
     desc 'add, -a [OPTIONS] DESCRIPTION',
       'Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION'
     long_desc <<-LONG_DESC
       NAME
-      \x5
-      `dsu add, -a [OPTIONS] DESCRIPTION` -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
+
+      $ dsu add, -a [OPTIONS] DESCRIPTION -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
 
       SYNOPSIS
-      \x5
-      `dsu add, -a [-d DATE|-n|-t|-y] DESCRIPTION`
+
+      $ dsu add, -a [-d DATE|-n|-t|-y] DESCRIPTION
 
       OPTIONS:
-      \x5
+
       -d DATE: Adds a DSU entry having DESCRIPTION to the DATE.
 
-      \x5
       #{date_option_description}
 
-      \x5
       -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
 
-      \x5
       -t: Adds a DSU entry having DESCRIPTION to tomorrow's date (`Time.new.tomorrow`).
 
-      \x5
       -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
 
       DESCRIPTION:
-      \x5
+
       Must be be between 2 and 256 characters (inclusive) in length.
     LONG_DESC
     option :date, type: :string, aliases: '-d'
     option :tomorrow, type: :boolean, aliases: '-t'
     option :yesterday, type: :boolean, aliases: '-y'
     option :today, type: :boolean, aliases: '-n', default: true
-
     def add(description)
       time = if options[:date].present?
         Time.parse(options[:date])
@@ -66,30 +65,6 @@ module Dsu
       view_entry_group(time: time)
     end
 
-    # def add(description)
-    #   times = if options[:date].present?
-    #     time = Time.parse(options[:date])
-    #     [time, time.yesterday]
-    #   else
-    #     time = Time.now
-    #     if options[:tomorrow].present?
-    #       [time.tomorrow, time.tomorrow.yesterday]
-    #     elsif options[:yesterday].present?
-    #       [time.yesterday, time.yesterday.yesterday]
-    #     elsif options[:today].present?
-    #       [time, time.yesterday]
-    #     end
-    #   end
-    #   entry = Models::Entry.new(description: description)
-    #   # NOTE: We need to add the Entry to the date that is the furthest in the future
-    #   # (time.max) because this is the DSU entry that the user specified.
-    #   CommandServices::AddEntryService.new(entry: entry, time: times.max).call
-    #   sorted_dsu_times_for(times: times).each do |t|
-    #     view_entry_group(time: t)
-    #     puts
-    #   end
-    # end
-
     desc 'list, -l SUBCOMMAND',
       'Displays DSU entries for the given SUBCOMMAND'
     subcommand :list, Subcommands::List
@@ -102,10 +77,45 @@ module Dsu
       'Edit DSU entries for the given SUBCOMMAND'
     subcommand :edit, Subcommands::Edit
 
+    desc 'theme, -t SUBCOMMAND',
+      'Manage DSU themes'
+    subcommand :theme, Subcommands::Theme
+
+    desc 'info, -i',
+      'Displays information about this dsu release'
+    def info
+      configuration_version = Models::Configuration::VERSION
+      entry_group_version = Models::EntryGroup::VERSION
+      color_theme_version = Models::ColorTheme::VERSION
+      info = <<~INFO
+                     Dsu version: #{dsu_version}
+           Configuration version: #{configuration_version}
+             Entry group version: #{entry_group_version}
+             Color theme version: #{color_theme_version}
+
+                     Config path: #{Support::Fileable.config_path}
+                     Root folder: #{Support::Fileable.root_folder}
+                  Entries folder: #{Support::Fileable.entries_folder}
+                   Themes folder: #{Support::Fileable.themes_folder}
+                      Gem folder: #{Support::Fileable.gem_dir}
+                     Temp folder: #{Support::Fileable.temp_folder}
+
+        Migration version folder: #{Support::Fileable.migration_version_folder}
+             Migration file path: #{Support::Fileable.migration_version_path}
+      INFO
+      puts apply_theme(info, theme_color: color_theme.body)
+    end
+
     desc 'version, -v',
-      'Displays this gem version'
+      'Displays the version for this gem'
     def version
-      say VERSION
+      puts apply_theme(dsu_version, theme_color: color_theme.body)
+    end
+
+    private
+
+    def dsu_version
+      "v#{VERSION}"
     end
   end
 end

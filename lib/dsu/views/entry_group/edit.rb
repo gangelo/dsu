@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
+require_relative '../../models/configuration'
 require_relative '../../models/entry_group'
-require_relative '../../support/entry_group_fileable'
 
 module Dsu
   module Views
     module EntryGroup
       class Edit
-        include Support::EntryGroupFileable
-
         def initialize(entry_group:, options: {})
           raise ArgumentError, 'entry_group is nil' if entry_group.nil?
           raise ArgumentError, 'entry_group is the wrong object type' unless entry_group.is_a?(Models::EntryGroup)
@@ -108,13 +106,13 @@ module Dsu
           # TODO: Make this configurable or accept an option?
           @previous_entry_group ||= (1..7).each do |days|
             t = time.days_ago(days)
-            return Models::EntryGroup.load(time: t) if entry_group_file_exists_for?(time: t)
+            return Models::EntryGroup.find(time: t) if Models::EntryGroup.exist?(time: t)
           end
           nil
         end
 
         def carry_over_entries_to_today?
-          configuration.merge(options)[:carry_over_entries_to_today]
+          Models::Configuration.new.merge(options).carry_over_entries_to_today?
         end
       end
     end
