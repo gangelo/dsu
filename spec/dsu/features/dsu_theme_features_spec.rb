@@ -121,16 +121,31 @@ RSpec.describe 'Dsu theme features', type: :feature do
   end
 
   describe '#use' do
+    context 'when no color theme is specified' do
+      before do
+        color_theme = create(:color_theme)
+        create(:configuration, color_theme: color_theme)
+      end
+
+      let(:args) { %w[theme use] }
+
+      it 'uses the current color theme' do
+        default_theme_name = Dsu::Models::ColorTheme::DEFAULT_THEME_NAME
+        expect { cli }.to output(/Using color theme "#{default_theme_name}"/).to_stdout
+      end
+    end
+
     context 'when the color theme file exists' do
       before do
         color_theme = create(:color_theme, theme_name: theme_name)
         create(:configuration, color_theme: color_theme)
       end
 
+      let(:theme_name) { 'current' }
       let(:args) { ['theme', 'use', theme_name] }
 
       it 'displays a using color theme message to the console' do
-        expect { cli }.to output(/Using color theme "#{theme_name}"/).to_stdout
+        expect { cli }.to output(/Using color theme "current"/).to_stdout
       end
     end
 
@@ -163,6 +178,20 @@ RSpec.describe 'Dsu theme features', type: :feature do
   end
 
   describe '#show' do
+    context 'when no color theme is specified' do
+      before do
+        color_theme = create(:color_theme, theme_name: theme_name)
+        create(:configuration, color_theme: color_theme)
+      end
+
+      let(:theme_name) { 'current' }
+      let(:args) { ['theme', 'show', theme_name] }
+
+      it 'displays the color theme to the console' do
+        expect { cli }.to output(/Viewing color theme: #{theme_name}/).to_stdout
+      end
+    end
+
     context 'when the color theme file exists' do
       before do
         color_theme = create(:color_theme, theme_name: theme_name)
