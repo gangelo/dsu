@@ -9,11 +9,10 @@ RSpec.shared_context 'when dir mock and cleanup is needed' do
 
     FileUtils.mkdir_p(Dsu::Support::Fileable.root_folder)
 
-    migrate_folder = File.join(temp_folder, 'dsu')
-    FileUtils.mkdir_p(migrate_folder)
-    allow(Dsu::Support::Fileable).to receive(:migrate_folder).and_return(migrate_folder)
-    allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(migrate_folder)
-    allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(migrate_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
+    dsu_folder = File.join(temp_folder, 'dsu')
+    FileUtils.mkdir_p(dsu_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_folder).and_return(dsu_folder)
+    allow(Dsu::Support::Fileable).to receive(:migration_version_path).and_return(File.join(dsu_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
 
     FileUtils.mkdir_p(Dsu::Support::Fileable.config_folder)
     FileUtils.mkdir_p(Dsu::Support::Fileable.entries_folder)
