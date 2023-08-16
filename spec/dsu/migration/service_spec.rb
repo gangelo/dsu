@@ -27,6 +27,10 @@ RSpec.describe Dsu::Migration::Service do
       themes_exist = theme_names.all? { |theme_name| File.exist?(Dsu::Support::Fileable.themes_path(theme_name: theme_name)) }
       expect(themes_exist).to be true
     end
+
+    it 'creates an initial entry group' do
+      expect(File.exist?(Dsu::Support::Fileable.entries_path(time: time))).to be true
+    end
   end
 
   let(:options) { {} }
@@ -91,7 +95,7 @@ RSpec.describe Dsu::Migration::Service do
       FileUtils.touch(Dsu::Support::Fileable.themes_path(theme_name: theme_name))
     end
 
-    let(:time) { Time.parse('2019-01-01') }
+    let(:time) { Time.now.localtime }
     let(:theme_name) { 'old_theme'}
     let(:backup_folder) { Dsu::Support::Fileable.backup_folder(version: 0) }
 
