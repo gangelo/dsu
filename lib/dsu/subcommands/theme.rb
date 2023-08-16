@@ -119,7 +119,9 @@ module Dsu
             display_dsu_header
             return unless create(theme_name)
           end
-        else
+        end
+
+        unless Models::ColorTheme.exist?(theme_name: theme_name)
           display_dsu_header
           Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
           return

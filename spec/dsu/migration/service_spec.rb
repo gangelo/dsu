@@ -17,6 +17,16 @@ RSpec.describe Dsu::Migration::Service do
       themes_folder = File.basename(Dsu::Support::Fileable.themes_folder)
       expect(File.exist?(File.join(backup_folder, themes_folder, Dsu::Support::Fileable.theme_file_name(theme_name: theme_name)))).to be true
     end
+
+    it 'creates the new config file' do
+      expect(File.exist?(Dsu::Support::Fileable.config_path)).to be true
+    end
+
+    it 'copies the new theme files' do
+      theme_names = %w[cherry default lemon matrix whiteout]
+      themes_exist = theme_names.all? { |theme_name| File.exist?(Dsu::Support::Fileable.themes_path(theme_name: theme_name)) }
+      expect(themes_exist).to be true
+    end
   end
 
   let(:options) { {} }
