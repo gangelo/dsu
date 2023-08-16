@@ -48,10 +48,6 @@ RSpec.describe 'Dsu info features', type: :feature do
       expect(cli_output).to include "Themes folder: #{fileable.themes_folder}"
     end
 
-    it 'displays the migrate folder' do
-      expect(cli_output).to include "Migrate folder: #{fileable.migrate_folder}"
-    end
-
     it 'displays the gem folder' do
       expect(cli_output).to include "Gem folder: #{fileable.gem_dir}"
     end

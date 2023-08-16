@@ -100,7 +100,6 @@ module Dsu
                       Gem folder: #{Support::Fileable.gem_dir}
                      Temp folder: #{Support::Fileable.temp_folder}
 
-                  Migrate folder: #{Support::Fileable.migrate_folder}
         Migration version folder: #{Support::Fileable.migration_version_folder}
              Migration file path: #{Support::Fileable.migration_version_path}
       INFO

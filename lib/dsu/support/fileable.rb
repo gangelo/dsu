@@ -54,10 +54,6 @@ module Dsu
 
       # Migration
 
-      def migrate_folder
-        File.join(gem_dir, 'lib/migrate')
-      end
-
       def migration_version_folder
         File.join(dsu_folder)
       end
