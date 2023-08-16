@@ -299,15 +299,5 @@ RSpec.describe Dsu::Models::EntryGroup do
         it_behaves_like 'an error is raised'
       end
     end
-
-    describe '.each_h' do
-      before do
-        entries
-      end
-
-      context 'when there are entry group files' do
-        it 'yields each entry group as a Hash'
-      end
-    end
   end
 end

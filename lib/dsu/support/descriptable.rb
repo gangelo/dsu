@@ -3,9 +3,11 @@
 module Dsu
   module Support
     module Descriptable
+      DESCRIPTION_MAX_COUNT = 25
+
       class << self
-        def included(mod)
-          mod.extend(ClassMethods)
+        def included(base)
+          base.extend(ClassMethods)
         end
       end
 
@@ -16,7 +18,7 @@ module Dsu
       end
 
       module ClassMethods
-        def short_description(string:, count: 25, elipsis: '...')
+        def short_description(string:, count: DESCRIPTION_MAX_COUNT, elipsis: '...')
           return elipsis unless string.is_a?(String)
 
           elipsis_length = elipsis.length
@@ -27,7 +29,7 @@ module Dsu
           tokens = string.split
           string = ''
 
-          return "#{tokens.first[0..(count - elipsis_length)]}#{elipsis}" if tokens.count == 1
+          return "#{tokens.first[0...(count - elipsis_length)]}#{elipsis}" if tokens.count == 1
 
           tokens.each do |token|
             break if string.length + token.length + elipsis_length > count
