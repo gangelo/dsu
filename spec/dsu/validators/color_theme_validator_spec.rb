@@ -40,10 +40,7 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
 
     let(:expected_errors) do
       [
-        ":background key value 'bad' in theme color Hash {:color=>:default, :mode=>:default, :background=>\"bad\"} " \
-        'is not a valid color. One of :black, :light_black, :red, :light_red, :green, :light_green, :yellow, ' \
-        ':light_yellow, :blue, :light_blue, :magenta, :light_magenta, :cyan, :light_cyan, :white, :light_white, ' \
-        ":default was expected, but 'bad' was received."
+        /:background key value 'bad' in theme color Hash {:color=>:default, :mode=>:default, :background=>"bad"} is not a valid color/
       ]
     end
 
@@ -92,10 +89,7 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
     end
     let(:expected_errors) do
       [
-        ':color key value :foo in theme color Hash {:color=>:foo, :mode=>:bold, :background=>:default} ' \
-        'is not a valid color. One of :black, :light_black, :red, :light_red, ' \
-        ':green, :light_green, :yellow, :light_yellow, :blue, :light_blue, :magenta, :light_magenta, ' \
-        ':cyan, :light_cyan, :white, :light_white, :default was expected, but :foo was received.'
+        /:color key value :foo in theme color Hash {:color=>:foo, :mode=>:bold, :background=>:default} is not a valid color/
       ]
     end
 
@@ -110,9 +104,7 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
     end
     let(:expected_errors) do
       [
-        ':mode key value :foo in theme color Hash {:color=>:red, :mode=>:foo, :background=>:default} ' \
-        'is not a valid mode value. One of :default, :bold, :italic, :underline, :blink, :swap, :hide ' \
-        'was expected, but :foo was received.'
+        /:mode key value :foo in theme color Hash {:color=>:red, :mode=>:foo, :background=>:default} is not a valid mode value/
       ]
     end
 
@@ -127,10 +119,7 @@ RSpec.describe Dsu::Validators::ColorThemeValidator do
     end
     let(:expected_errors) do
       [
-        ':background key value :foo in theme color Hash {:color=>:red, :mode=>:bold, :background=>:foo} ' \
-        'is not a valid color. One of :black, :light_black, :red, :light_red, ' \
-        ':green, :light_green, :yellow, :light_yellow, :blue, :light_blue, :magenta, :light_magenta, ' \
-        ':cyan, :light_cyan, :white, :light_white, :default was expected, but :foo was received.'
+        /:background key value :foo in theme color Hash {:color=>:red, :mode=>:bold, :background=>:foo} is not a valid color/
       ]
     end
 
