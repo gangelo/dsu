@@ -1,10 +1,10 @@
 ## [2.0.2] 2023-08-17
 
-Bumps activemodel from 7.0.5 to 7.0.7.
-Update colorize requirement from ~> 0.8.1 to >= 0.8.1, < 1.2.0
-Bump rubocop-rspec from 2.22.0 to 2.23.2
-Bump rubocop-performance from 1.18.0 to 1.19.0
-Bump rubocop from 1.52.0 to 1.56.0
+- Bumps activemodel from 7.0.5 to 7.0.7.
+- Update colorize requirement from ~> 0.8.1 to >= 0.8.1, < 1.2.0
+- Bump rubocop-rspec from 2.22.0 to 2.23.2
+- Bump rubocop-performance from 1.18.0 to 1.19.0
+- Bump rubocop from 1.52.0 to 1.56.0
 
 Changes
 
