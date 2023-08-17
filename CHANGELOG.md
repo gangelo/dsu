@@ -6,6 +6,10 @@ Bump rubocop-rspec from 2.22.0 to 2.23.2
 Bump rubocop-performance from 1.18.0 to 1.19.0
 Bump rubocop from 1.52.0 to 1.56.0
 
+Changes
+
+- Fix rubocop violations
+
 ## [2.0.1] 2023-08-16
 
 Changes

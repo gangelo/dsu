@@ -38,7 +38,7 @@ RSpec.describe Dsu::Models::MigrationVersion do
     end
 
     context 'when the migration version less than the current version' do
-      subject(:migration_version) { build(:migration_version, version: 1 - Dsu::Migration::VERSION ) }
+      subject(:migration_version) { build(:migration_version, version: 1 - Dsu::Migration::VERSION) }
 
       it 'returns false' do
         expect(migration_version.current_migration?).to be(false)
@@ -46,7 +46,7 @@ RSpec.describe Dsu::Models::MigrationVersion do
     end
 
     context 'when the migration version greater than the current version' do
-      subject(:migration_version) { build(:migration_version, version: 1 + Dsu::Migration::VERSION ) }
+      subject(:migration_version) { build(:migration_version, version: 1 + Dsu::Migration::VERSION) }
 
       it 'returns false' do
         expect(migration_version.current_migration?).to be(false)
