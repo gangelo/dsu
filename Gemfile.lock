@@ -91,7 +91,7 @@ GEM
       rubocop-capybara (~> 2.17)
       rubocop-factory_bot (~> 2.22)
     ruby-progressbar (1.13.0)
-    simplecov (0.21.2)
+    simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
@@ -105,6 +105,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-linux
 
 DEPENDENCIES
   dotenv (~> 2.8, >= 2.8.1)
@@ -118,7 +119,7 @@ DEPENDENCIES
   rubocop (~> 1.50, >= 1.50.2)
   rubocop-performance (~> 1.19)
   rubocop-rspec (~> 2.23)
-  simplecov (~> 0.21.2)
+  simplecov (~> 0.22.0)
 
 BUNDLED WITH
    2.3.22
