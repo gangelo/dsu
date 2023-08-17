@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    dsu (2.0.1)
+    dsu (2.0.2)
       activemodel (~> 7.0, >= 7.0.4.3)
       activesupport (~> 7.0, >= 7.0.4)
-      colorize (~> 0.8.1)
+      colorize (>= 0.8.1, < 1.2.0)
       os (~> 1.1, >= 1.1.4)
       thor (~> 1.2, >= 1.2.1)
       thor_nested_subcommand (~> 1.0)
@@ -83,10 +83,10 @@ GEM
       rubocop (~> 1.41)
     rubocop-factory_bot (2.23.1)
       rubocop (~> 1.33)
-    rubocop-performance (1.18.0)
+    rubocop-performance (1.19.0)
       rubocop (>= 1.7.0, < 2.0)
       rubocop-ast (>= 0.4.0)
-    rubocop-rspec (2.22.0)
+    rubocop-rspec (2.23.2)
       rubocop (~> 1.33)
       rubocop-capybara (~> 2.17)
       rubocop-factory_bot (~> 2.22)
@@ -116,8 +116,8 @@ DEPENDENCIES
   reek (~> 6.1, >= 6.1.1)
   rspec (~> 3.0)
   rubocop (~> 1.50, >= 1.50.2)
-  rubocop-performance (~> 1.17, >= 1.17.1)
-  rubocop-rspec (~> 2.20)
+  rubocop-performance (~> 1.19)
+  rubocop-rspec (~> 2.23)
   simplecov (~> 0.21.2)
 
 BUNDLED WITH

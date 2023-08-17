@@ -96,7 +96,7 @@ RSpec.describe Dsu::Migration::Service do
     end
 
     let(:time) { Time.now.localtime }
-    let(:theme_name) { 'old_theme'}
+    let(:theme_name) { 'old_theme' }
     let(:backup_folder) { Dsu::Support::Fileable.backup_folder(version: 0) }
 
     context 'when the migration file exists' do
