@@ -1,3 +1,8 @@
+## [2.0.3] 2023-08-17
+
+- Bump activesupport from 7.0.5 to 7.0.7
+- Bump simplecov from 0.21.2 to 0.22.0
+
 ## [2.0.2] 2023-08-17
 
 - Bumps activemodel from 7.0.5 to 7.0.7.
