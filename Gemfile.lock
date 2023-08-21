@@ -104,13 +104,14 @@ GEM
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
     thor (1.2.2)
-    thor_nested_subcommand (1.0.0)
+    thor_nested_subcommand (1.0.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-linux
 
 DEPENDENCIES
   dotenv (~> 2.8, >= 2.8.1)
