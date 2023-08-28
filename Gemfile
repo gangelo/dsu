@@ -13,7 +13,7 @@ gem 'rubocop-performance', '~> 1.19'
 gem 'rubocop-rspec', '~> 2.23'
 
 gem 'factory_bot', '~> 6.2', '>= 6.2.1'
-gem 'ffaker', '~> 2.21'
+gem 'ffaker', '~> 2.22'
 gem 'pry-byebug', '~> 3.9'
 gem 'reek', '~> 6.1', '>= 6.1.1'
 gem 'simplecov', '~> 0.22.0'
