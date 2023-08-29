@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    dsu (2.0.3)
+    dsu (2.0.4)
       activemodel (~> 7.0, >= 7.0.4.3)
       activesupport (~> 7.0, >= 7.0.4)
       colorize (>= 0.8.1, < 1.2.0)
@@ -12,9 +12,9 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (7.0.7)
-      activesupport (= 7.0.7)
-    activesupport (7.0.7)
+    activemodel (7.0.7.2)
+      activesupport (= 7.0.7.2)
+    activesupport (7.0.7.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -30,7 +30,7 @@ GEM
     dotenv (2.8.1)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
-    ffaker (2.21.0)
+    ffaker (2.22.0)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     json (2.6.3)
@@ -71,7 +71,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
-    rubocop (1.56.0)
+    rubocop (1.56.1)
       base64 (~> 0.1.1)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -104,13 +104,14 @@ GEM
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
     thor (1.2.2)
-    thor_nested_subcommand (1.0.0)
+    thor_nested_subcommand (1.0.1)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.4.2)
 
 PLATFORMS
   x86_64-darwin-19
+  x86_64-darwin-21
 
 DEPENDENCIES
   dotenv (~> 2.8, >= 2.8.1)

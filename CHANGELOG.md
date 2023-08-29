@@ -1,3 +1,7 @@
+## [2.0.4] 2023-08-28
+
+- Update ruby gems.
+
 ## [2.0.3] 2023-08-17
 
 - Bump activesupport from 7.0.5 to 7.0.7

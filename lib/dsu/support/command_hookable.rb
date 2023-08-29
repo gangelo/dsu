@@ -33,8 +33,9 @@ module Dsu
         private
 
         def suspend_header?(args, _options)
-          return unless args.count > 1
-          return true if args[0] == 'theme' && %w[use delete].include?(args[1])
+          return false unless args.count > 1
+
+          true if args[0] == 'theme' && %w[use delete].include?(args[1])
         end
 
         def display_dsu_footer
