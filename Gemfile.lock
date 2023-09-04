@@ -28,7 +28,7 @@ GEM
     diff-lcs (1.5.0)
     docile (1.4.0)
     dotenv (2.8.1)
-    factory_bot (6.2.1)
+    factory_bot (6.3.0)
       activesupport (>= 5.0.0)
     ffaker (2.22.0)
     i18n (1.14.1)
@@ -112,11 +112,12 @@ GEM
 PLATFORMS
   x86_64-darwin-19
   x86_64-darwin-21
+  x86_64-linux
 
 DEPENDENCIES
   dotenv (~> 2.8, >= 2.8.1)
   dsu!
-  factory_bot (~> 6.2, >= 6.2.1)
+  factory_bot (~> 6.3)
   ffaker (~> 2.21)
   pry-byebug (~> 3.9)
   rake (~> 13.0)
