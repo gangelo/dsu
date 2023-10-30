@@ -12,7 +12,7 @@ gem 'rubocop', '~> 1.50', '>= 1.50.2'
 gem 'rubocop-performance', '~> 1.19'
 gem 'rubocop-rspec', '~> 2.23'
 
-gem 'factory_bot', '~> 6.2', '>= 6.2.1'
+gem 'factory_bot', '~> 6.3'
 gem 'ffaker', '~> 2.21'
 gem 'pry-byebug', '~> 3.9'
 gem 'reek', '~> 6.1', '>= 6.1.1'

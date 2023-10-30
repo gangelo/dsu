@@ -1,3 +1,7 @@
+## [2.0.6] 2023-10-30
+
+- Update ruby gems.
+
 ## [2.0.5] 2023-10-30
 
 - Update ruby gems.
