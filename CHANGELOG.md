@@ -1,3 +1,8 @@
+## [2.0.7] 2023-11-24
+
+- Update ruby gems.
+- Remove stale/unnecessary code.
+
 ## [2.0.6] 2023-10-30
 
 - Update ruby gems.
