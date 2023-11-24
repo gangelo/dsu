@@ -10,7 +10,7 @@ module TimeHelpers
   def to_yyyymmdd_string(time)
     raise ArgumentError, "time is not a Time object: \"#{time}\"" unless time.is_a?(Time)
 
-    time.strftime('%Y-%m-%d')
+    time.strftime('%Y-%m-%d %Z')
   end
 
   def to_yyyymmdd_string_array(time_array)

@@ -23,7 +23,7 @@ RSpec.describe 'Dsu add features', type: :feature do
   context "when 'dsu add DESCRIPTION' is called" do
     let(:args) { ['add', 'Added description'] }
     let(:expected_output) do
-      /\(Today\) #{today_yyyymmdd_string} EDT.*1\..*Added description/m
+      /\(Today\) #{today_yyyymmdd_string}.*1\..*Added description/m
     end
 
     it 'displays the description that was added' do
