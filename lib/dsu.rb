@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/hash/indifferent_access'
-require 'active_support/core_ext/numeric/time'
 require 'active_support/core_ext/object/blank'
 require 'thor'
 require 'time'
@@ -11,7 +10,6 @@ Dir.glob("#{__dir__}/core/**/*.rb").each do |file|
 end
 
 Array.include(WrapAndJoin)
-DateAndTime::Calculations.include(NotToday)
 Hash.include(ColorThemeColors)
 Hash.include(ColorThemeMode)
 
