@@ -77,7 +77,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
         let(:command_option) { '02/01/2023' }
 
         it 'returns a Time object' do
-          expect(to_yyyymmdd_string(time)).to eq('2023-02-01')
+          expect(to_yyyymmdd_string(time)).to eq('2023-02-01 EST')
         end
       end
 
@@ -85,7 +85,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
         let(:command_option) { '2/1/2023' }
 
         it 'returns a Time object' do
-          expect(to_yyyymmdd_string(time)).to eq('2023-02-01')
+          expect(to_yyyymmdd_string(time)).to eq('2023-02-01 EST')
         end
       end
 
@@ -93,7 +93,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
         let(:command_option) { '2/1' }
 
         it 'returns a Time object' do
-          expect(to_yyyymmdd_string(time)).to eq('2023-02-01')
+          expect(to_yyyymmdd_string(time)).to eq('2023-02-01 EST')
         end
       end
     end
