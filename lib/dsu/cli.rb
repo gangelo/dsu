@@ -40,8 +40,7 @@ module Dsu
       view_entry_group(time: time)
     end
 
-    desc 'list, -l SUBCOMMAND',
-      'Displays DSU entries for the given SUBCOMMAND'
+    desc I18n.t('cli.commands.list.desc'), I18n.t('cli.commands.list.usage')
     subcommand :list, Subcommands::List
 
     desc 'config, -c SUBCOMMAND',
