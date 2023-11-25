@@ -2,16 +2,14 @@ en:
   cli:
     commands:
       add:
-        desc: 'add, -a [OPTIONS] DESCRIPTION'
-        usage: 'Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION'
+        desc: add | -a [OPTIONS] DESCRIPTION
+        usage: Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION
         long_desc: |
-          NAME
+          Will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
 
-          $ dsu add, -a [OPTIONS] DESCRIPTION -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
+          $ dsu add [-d DATE|-n|-t|-y] DESCRIPTION
 
-          SYNOPSIS
-
-          $ dsu add, -a [-d DATE|-n|-t|-y] DESCRIPTION
+          $ dsu -a [-d DATE|-n|-t|-y] DESCRIPTION
 
           OPTIONS:
 
@@ -25,18 +23,23 @@ en:
 
           -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
 
-          DESCRIPTION:
+          DESCRIPTION
 
           Must be be between 2 and 256 characters (inclusive) in length.
       list:
-        desc: 'list, -l SUBCOMMAND'
-        usage: 'Displays DSU entries for the given SUBCOMMAND'
+        desc: list, -l SUBCOMMAND
+        usage: Displays DSU entries for the given SUBCOMMAND
     subcommands:
       list:
         today:
-          desc: 'today, n'
-          usage: 'Displays the DSU entries for today'
-          long_desc: Displays the DSU entries for today. This command has no options.
+          desc: today | n
+          usage: Displays the DSU entries for today
+          long_desc: |
+            Displays the DSU entries for today.
+
+            $ dsu list today
+
+            $ dsu list n
   errors:
     migration:
       error: "Error running migrations: %{message}"
