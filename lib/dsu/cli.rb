@@ -57,22 +57,19 @@ module Dsu
       configuration_version = Models::Configuration::VERSION
       entry_group_version = Models::EntryGroup::VERSION
       color_theme_version = Models::ColorTheme::VERSION
-      info = <<~INFO
-                     Dsu version: #{dsu_version}
-           Configuration version: #{configuration_version}
-             Entry group version: #{entry_group_version}
-             Color theme version: #{color_theme_version}
-
-                     Config path: #{Support::Fileable.config_path}
-                     Root folder: #{Support::Fileable.root_folder}
-                  Entries folder: #{Support::Fileable.entries_folder}
-                   Themes folder: #{Support::Fileable.themes_folder}
-                      Gem folder: #{Support::Fileable.gem_dir}
-                     Temp folder: #{Support::Fileable.temp_folder}
-
-        Migration version folder: #{Support::Fileable.migration_version_folder}
-             Migration file path: #{Support::Fileable.migration_version_path}
-      INFO
+      info = I18n.t('cli.commands.info.info',
+        dsu_version: dsu_version,
+        configuration_version: configuration_version,
+        entry_group_version: entry_group_version,
+        color_theme_version: color_theme_version,
+        config_folder: Support::Fileable.config_path,
+        root_folder: Support::Fileable.root_folder,
+        entries_folder: Support::Fileable.entries_folder,
+        themes_folder: Support::Fileable.themes_folder,
+        gem_folder: Support::Fileable.gem_dir,
+        temp_folder: Support::Fileable.temp_folder,
+        migration_version_folder: Support::Fileable.migration_version_folder,
+        migration_file_folder: Support::Fileable.migration_version_path)
       puts apply_theme(info, theme_color: color_theme.body)
     end
 
