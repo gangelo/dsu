@@ -19,12 +19,8 @@ module Dsu
       map %w[t] => :tomorrow
       map %w[y] => :yesterday
 
-      desc 'today, n',
-        'Displays the DSU entries for today'
-      long_desc <<-LONG_DESC
-        Displays the DSU entries for today. This command has no options.
-      LONG_DESC
-      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
+      desc I18n.t('cli.subcommands.list.today.desc'), I18n.t('cli.subcommands.list.today.usage')
+      long_desc I18n.t('cli.subcommands.list.today.long_desc')
       def today
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time])

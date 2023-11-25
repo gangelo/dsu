@@ -28,6 +28,15 @@ en:
           DESCRIPTION:
 
           Must be be between 2 and 256 characters (inclusive) in length.
+      list:
+        desc: 'list, -l SUBCOMMAND'
+        usage: 'Displays DSU entries for the given SUBCOMMAND'
+    subcommands:
+      list:
+        today:
+          desc: 'today, n'
+          usage: 'Displays the DSU entries for today'
+          long_desc: Displays the DSU entries for today. This command has no options.
   errors:
     migration:
       error: "Error running migrations: %{message}"
