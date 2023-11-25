@@ -42,7 +42,7 @@ module Dsu
         <<-OPTION_DESC
           DATE
 
-          This may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit thee year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('01/02/2023'); Time.parse('1/2') # etc.`
+          This may be any date string that can be parsed using `Time.parse`. Consequently, you may use also use '/' as date separators, as well as omit the year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('01/02/2023'); Time.parse('1/2') # etc.`
         OPTION_DESC
       end
 
