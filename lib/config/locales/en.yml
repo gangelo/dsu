@@ -1,4 +1,33 @@
 en:
+  cli:
+    commands:
+      add:
+        desc: 'add, -a [OPTIONS] DESCRIPTION'
+        usage: 'Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION'
+        long_desc: |
+          NAME
+
+          $ dsu add, -a [OPTIONS] DESCRIPTION -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
+
+          SYNOPSIS
+
+          $ dsu add, -a [-d DATE|-n|-t|-y] DESCRIPTION
+
+          OPTIONS:
+
+          -d DATE: Adds a DSU entry having DESCRIPTION to the DATE.
+
+          %{date_option_description}
+
+          -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
+
+          -t: Adds a DSU entry having DESCRIPTION to tomorrow's date (`Time.new.tomorrow`).
+
+          -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
+
+          DESCRIPTION:
+
+          Must be be between 2 and 256 characters (inclusive) in length.
   errors:
     migration:
       error: "Error running migrations: %{message}"
