@@ -1,0 +1,4 @@
+en:
+  errors:
+    migration:
+      error: "Error running migrations: %{message}"
