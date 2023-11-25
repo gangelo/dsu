@@ -26,9 +26,24 @@ en:
           DESCRIPTION
 
           Must be be between 2 and 256 characters (inclusive) in length.
+      config:
+        desc: config|-c SUBCOMMAND
+        usage: Manage configuration file for this gem
+      edit:
+        desc: edit|-e SUBCOMMAND
+        usage: Edit DSU entries for the given SUBCOMMAND
+      info:
+        desc: info|-i
+        usage: Displays information about this DSU release
       list:
-        desc: list, -l SUBCOMMAND
+        desc: list|-l SUBCOMMAND
         usage: Displays DSU entries for the given SUBCOMMAND
+      theme:
+        desc: theme|-t SUBCOMMAND
+        usage: Manage DSU themes
+      version:
+        desc: version|-v
+        usage: Displays the DSU version for this gem
     subcommands:
       list:
         date:

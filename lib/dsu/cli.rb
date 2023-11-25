@@ -43,20 +43,16 @@ module Dsu
     desc I18n.t('cli.commands.list.desc'), I18n.t('cli.commands.list.usage')
     subcommand :list, Subcommands::List
 
-    desc 'config, -c SUBCOMMAND',
-      'Manage configuration file for this gem'
+    desc I18n.t('cli.commands.config.desc'), I18n.t('cli.commands.config.usage')
     subcommand :config, Subcommands::Config
 
-    desc 'edit, -e SUBCOMMAND',
-      'Edit DSU entries for the given SUBCOMMAND'
+    desc I18n.t('cli.commands.edit.desc'), I18n.t('cli.commands.edit.usage')
     subcommand :edit, Subcommands::Edit
 
-    desc 'theme, -t SUBCOMMAND',
-      'Manage DSU themes'
+    desc I18n.t('cli.commands.theme.desc'), I18n.t('cli.commands.theme.usage')
     subcommand :theme, Subcommands::Theme
 
-    desc 'info, -i',
-      'Displays information about this dsu release'
+    desc I18n.t('cli.commands.info.desc'), I18n.t('cli.commands.info.usage')
     def info
       configuration_version = Models::Configuration::VERSION
       entry_group_version = Models::EntryGroup::VERSION
@@ -80,8 +76,7 @@ module Dsu
       puts apply_theme(info, theme_color: color_theme.body)
     end
 
-    desc 'version, -v',
-      'Displays the version for this gem'
+    desc I18n.t('cli.commands.version.desc'), I18n.t('cli.commands.version.usage')
     def version
       puts apply_theme(dsu_version, theme_color: color_theme.body)
     end
