@@ -35,6 +35,23 @@ en:
       info:
         desc: info|-i
         usage: Displays information about this DSU release
+        info: |
+          Dsu Info
+          --------------------------------------------------
+                       Dsu version: %{dsu_version}
+             Configuration version: %{configuration_version}
+               Entry group version: %{entry_group_version}
+               Color theme version: %{color_theme_version}
+
+                     Config folder: %{config_folder}
+                       Root folder: %{root_folder}
+                    Entries folder: %{entries_folder}
+                     Themes folder: %{themes_folder}
+                        Gem folder: %{gem_folder}
+                       Temp folder: %{temp_folder}
+
+          Migration version folder: %{migration_version_folder}
+             Migration file folder: %{migration_file_folder}
       list:
         desc: list|-l SUBCOMMAND
         usage: Displays DSU entries for the given SUBCOMMAND
