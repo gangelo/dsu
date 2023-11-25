@@ -40,6 +40,24 @@ en:
             $ dsu list today
 
             $ dsu list n
+        tomorrow:
+          desc: tomorrow | t
+          usage: Displays the DSU entries for tomorrow
+          long_desc: |
+            Displays the DSU entries for tomorrow.
+
+            $ dsu list tomorrow
+
+            $ dsu list t
+        yesterday:
+          desc: yesterday | y
+          usage: Displays the DSU entries for yesterday
+          long_desc: |
+            Displays the DSU entries for yesterday.
+
+            $ dsu list yesterday
+
+            $ dsu list y
   errors:
     migration:
       error: "Error running migrations: %{message}"
