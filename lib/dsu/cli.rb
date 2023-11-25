@@ -19,33 +19,8 @@ module Dsu
     map %w[v -i] => :info
     map %w[v -v] => :version
 
-    desc 'add, -a [OPTIONS] DESCRIPTION',
-      'Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION'
-    long_desc <<-LONG_DESC
-      NAME
-
-      $ dsu add, -a [OPTIONS] DESCRIPTION -- will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
-
-      SYNOPSIS
-
-      $ dsu add, -a [-d DATE|-n|-t|-y] DESCRIPTION
-
-      OPTIONS:
-
-      -d DATE: Adds a DSU entry having DESCRIPTION to the DATE.
-
-      #{date_option_description}
-
-      -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
-
-      -t: Adds a DSU entry having DESCRIPTION to tomorrow's date (`Time.new.tomorrow`).
-
-      -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
-
-      DESCRIPTION:
-
-      Must be be between 2 and 256 characters (inclusive) in length.
-    LONG_DESC
+    desc I18n.t('cli.commands.add.desc'), I18n.t('cli.commands.add.usage')
+    long_desc I18n.t('cli.commands.add.long_desc', date_option_description: date_option_description)
     option :date, type: :string, aliases: '-d'
     option :tomorrow, type: :boolean, aliases: '-t'
     option :yesterday, type: :boolean, aliases: '-y'
