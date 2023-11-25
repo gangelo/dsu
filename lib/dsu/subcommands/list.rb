@@ -27,24 +27,16 @@ module Dsu
         view_list_for(times: times, options: options)
       end
 
-      desc 'tomorrow, t',
-        'Displays the DSU entries for tomorrow'
-      long_desc <<-LONG_DESC
-        Displays the DSU entries for tomorrow. This command has no options.
-      LONG_DESC
-      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
+      desc I18n.t('cli.subcommands.list.tomorrow.desc'), I18n.t('cli.subcommands.list.tomorrow.usage')
+      long_desc I18n.t('cli.subcommands.list.tomorrow.long_desc')
       def tomorrow
         time = Time.now
         times = sorted_dsu_times_for(times: [time, time.tomorrow])
         view_list_for(times: times, options: options)
       end
 
-      desc 'yesterday, y',
-        'Displays the DSU entries for yesterday'
-      long_desc <<-LONG_DESC
-        Displays the DSU entries for yesterday. This command has no options.
-      LONG_DESC
-      option :include_all, type: :boolean, aliases: '-a', desc: 'Include dates that have no DSU entries'
+      desc I18n.t('cli.subcommands.list.yesterday.desc'), I18n.t('cli.subcommands.list.yesterday.usage')
+      long_desc I18n.t('cli.subcommands.list.yesterday.long_desc')
       def yesterday
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time.yesterday.yesterday])
