@@ -132,6 +132,29 @@ en:
             theme_name:
 
             Default: "default"
+      edit:
+        date:
+          desc: date|d DATE
+          usage: Edits the DSU entries for DATE
+          long_desc: |
+            Edits the DSU entries for DATE.
+
+            %{date_option_description}
+        today:
+          desc: today|n
+          usage: Edits the DSU entries for today
+          long_desc: |
+            Edits the DSU entries for today.
+        tomorrow:
+          desc: tomorrow|t
+          usage: Edits the DSU entries for tomorrow
+          long_desc: |
+            Edits the DSU entries for tomorrow.
+        yesterday:
+          desc: yesterday|y
+          usage: Edits the DSU entries for yesterday
+          long_desc: |
+            Edits the DSU entries for yesterday.
       list:
         date:
           desc: date|d DATE|MNEUMONIC
@@ -227,8 +250,9 @@ en:
     options:
       include_all: Include dates that have no DSU entries
   errors:
+    error: "Error: %{message}"
     migration:
-      error: 'Error running migrations: %{message}'
+      error: "Error running migrations: %{message}"
   messages:
     configuration_file:
       already_exists: Configuration file (%{configuration_file}) already exists.
