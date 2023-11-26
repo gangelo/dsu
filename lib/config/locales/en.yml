@@ -62,6 +62,74 @@ en:
         desc: version|-v
         usage: Displays the DSU version for this gem
     subcommands:
+      config:
+        delete:
+          desc: delete
+          usage: Deletes the configuration file
+          long_desc: |
+            Deletes the configuration file.
+
+            EXAMPLES:
+
+            dsu config delete
+
+            NOTES
+
+            Deleting the dsu configuration file will simply cause dsu to use the default configuration options (`Dsu::Models::Configuration::DEFAULT_CONFIGURATION`).
+        info:
+          desc: info
+          usage: Displays information about this gem configuration
+          long_desc: |
+            Displays information about this gem configuration.
+
+            EXAMPLES:
+
+            $ dsu config info
+        init:
+          desc: init
+          usage: Creates and initializes a .dsu file in your home folder
+          long_desc: |
+            Creates and initializes a .dsu file in your home folder (%{home_folder}) that may be edited.
+
+            EXAMPLES:
+
+            $ dsu config init
+
+            CONFIGURATION FILE ENTRIES
+
+            The following configuration file options are available:
+
+            version:
+
+            The configuration version - DO NOT ALTER THIS VALUE!
+
+            editor:
+
+            The default editor to use when editing entry groups if the EDITOR environment variable on your system is not set. The default is 'nano'. You'll need to change the default editor on Windows systems.
+
+            Default: "nano" on nix sytems.
+
+            entries_display_order:
+
+            The order by which entries will be displayed, "asc" or "desc" (ascending or descending, respectively).
+
+            Default: "desc"
+
+            carry_over_entries_to_today:
+
+            Applicable to the `dsu edit` command. Valid values are true|false. If true, when editing DSU entries for the first time on any given day (e.g. `dsu edit today`), DSU entries from the previous day will be copied into the current editing session. If there are no DSU entries from the previous day, dsu will search backwards up to 7 days to find a DSU date that has entries to copy. If after searching back 7 days, no DSU entries are found, the editor session will simply provide no previous DSU entries.
+
+            Default: false
+
+            include_all:
+
+            Applicable to dsu commands that display DSU date lists (e.g. `dsu list` commands). Valid values are true|false. If true, all DSU dates within the specified range will be displayed, regardless of whether or not a particular date has entries. If false, only DSU dates between the first and last DSU dates that have entries will be displayed.
+
+            Default: false
+
+            theme_name:
+
+            Default: "default"
       list:
         date:
           desc: date|d DATE|MNEUMONIC
@@ -158,4 +226,11 @@ en:
       include_all: Include dates that have no DSU entries
   errors:
     migration:
-      error: "Error running migrations: %{message}"
+      error: 'Error running migrations: %{message}'
+  messages:
+    configuration_file:
+      already_exists: Configuration file (%{configuration_file}) already exists.
+      created: Configuration file (%{configuration_file}) created.
+      deleted: Configuration file (%{configuration_file}) deleted.
+      destination_folder_does_not_exist: Destination folder for configuration file (%{configuration_folder}) does not exist.
+      does_not_exist: Configuration file (%{configuration_file}) does not exist.
