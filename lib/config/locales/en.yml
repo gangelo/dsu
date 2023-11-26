@@ -253,6 +253,9 @@ en:
     error: "Error: %{message}"
     migration:
       error: "Error running migrations: %{message}"
+  headers:
+    entry:
+      could_not_be_added: 'An error was encountered; the entry could not be added:'
   messages:
     configuration_file:
       already_exists: Configuration file (%{configuration_file}) already exists.
