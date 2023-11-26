@@ -18,99 +18,40 @@ module Dsu
         end
       end
 
-      desc 'info', 'Displays information about this gem configuration'
-      long_desc <<-LONG_DESC
-        NAME
-
-        `dsu config info` -- Displays information about this gem configuration.
-
-        SYNOPSIS
-
-        dsu config info
-      LONG_DESC
+      desc I18n.t('cli.subcommands.config.info.desc'), I18n.t('cli.subcommands.config.info.usage')
+      long_desc I18n.t('cli.subcommands.config.info.long_desc')
       def info
         configuration = Models::Configuration.new
         Views::Configuration::Show.new(config: configuration).call
       end
 
-      if ENV['DEV_ENV']
-        desc 'init', 'Creates and initializes a .dsu file in your home folder'
-        long_desc <<-LONG_DESC
-          NAME
-
-          `dsu config init` -- will create and initialize a .dsu file ("#{Dsu::Support::Fileable.root_folder}/.dsu") that you may edit. Otherwise, the default configuration will be used.
-
-          SYNOPSIS
-
-          dsu config init
-
-          CONFIGURATION FILE OPTIONS
-
-          The following configuration file options are available:
-
-          version:
-
-          The configuration version - DO NOT ALTER THIS VALUE!
-
-          editor:
-
-          The default editor to use when editing entry groups if the EDITOR environment variable on your system is not set. The default is 'nano'. You'll need to change the default editor on Windows systems.
-
-          entries_display_order:
-
-          The order by which entries will be displayed, :asc or :desc (ascending or descending, respectively).
-
-          Default: :desc
-
-          entries_file_name:
-
-          The entries file name format. It is recommended that you do not change this. The file name must include `%Y`, `%m` and `%d` `Time` formatting specifiers to make sure the file name is unique and able to be located by `dsu` functions. For example, the default file name is `%Y-%m-%d.json`; however, something like `%m-%d-%Y.json` or `entry-group-%m-%d-%Y.json` would work as well.
-
-          ATTENTION: Please keep in mind that if you change this value `dsu` will not recognize entry files using a different format. You would (at this time), have to manually rename any existing entry file names to the new format.
-
-          Default: '%Y-%m-%d.json'
-
-          entries_folder:
-
-          This is the folder where `dsu` stores entry files. You may change this to anything you want. `dsu` will create this folder for you, as long as your system's write permissions allow this.
-
-          ATTENTION: Please keep in mind that if you change this value `dsu` will not be able to find entry files in any previous folder. You would (at this time), have to manually mode any existing entry files to this new folder.
-
-          Default: "'#{Dsu::Support::Fileable.root_folder}/dsu/entries'"
-        LONG_DESC
+      if Dsu.env.development?
+        desc I18n.t('cli.subcommands.config.init.desc'), I18n.t('cli.subcommands.config.init.usage')
+        long_desc I18n.t('cli.subcommands.config.init.long_desc', home_folder: Dsu::Support::Fileable.root_folder)
         def init
           exit 1 if configuration_errors_or_wanings?
 
           Models::Configuration.default.tap do |configuration|
             configuration.save!
-            messages = ["Configuration file (#{Models::Configuration.config_file}) created."]
+            messages = [I18n.t('messages.configuration_file.created',
+              configuration_file: Models::Configuration.config_file)]
             Views::Shared::Success.new(messages: messages).render
             Views::Configuration::Show.new(config: configuration).render
           end
         end
 
-        desc 'delete', 'Deletes the configuration file'
-        long_desc <<-LONG_DESC
-          NAME
-
-          `dsu config delete` -- Deletes the configuration.
-
-          SYNOPSIS
-
-          dsu config delete
-
-          NOTES
-
-          Deleting the dsu configuration file will simply cause dsu to use the default configuration options (`Dsu::Models::Configuration::DEFAULT_CONFIGURATION`).
-        LONG_DESC
+        desc I18n.t('cli.subcommands.config.delete.desc'), I18n.t('cli.subcommands.config.delete.usage')
+        long_desc I18n.t('cli.subcommands.config.delete.long_desc')
         def delete
           unless Models::Configuration.exist?
-            messages = ["Configuration file (#{Models::Configuration.config_file}) does not exist."]
+            messages = [I18n.t('messages.configuration_file.does_not_exist',
+              configuration_file: Models::Configuration.config_file)]
             Views::Shared::Warning.new(messages: messages).render
             exit 1
           end
           Models::Configuration.delete!
-          messages = ["Configuration file (#{Models::Configuration.config_file}) deleted."]
+          messages = [I18n.t('messages.configuration_file.deleted',
+            configuration_file: Models::Configuration.config_file)]
           Views::Shared::Success.new(messages: messages).render
         end
       end
@@ -119,10 +60,12 @@ module Dsu
 
       def configuration_errors_or_wanings?
         if Models::Configuration.exist?
-          messages = ["Configuration file (#{Models::Configuration.config_file}) already exists"]
+          messages = [I18n.t('messages.configuration_file.already_exists',
+            configuration_file: Models::Configuration.config_file)]
           Views::Shared::Warning.new(messages: messages).render
         elsif !Dir.exist?(Models::Configuration.config_folder)
-          messages = ["Destination folder for configuration file (#{Models::Configuration.config_folder}) does not exist"] # rubocop:disable Layout/LineLength
+          messages = [I18n.t('messages.configuration_file.destination_folder_does_not_exist',
+            configuration_file: Models::Configuration.config_file)]
           Views::Shared::Error.new(messages: messages).render
         else
           configuration = Models::Configuration.default
