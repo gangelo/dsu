@@ -12,49 +12,35 @@ module Dsu
       map %w[t] => :tomorrow
       map %w[y] => :yesterday
 
-      desc 'today, n',
-        'Edits the DSU entries for today.'
-      long_desc <<-LONG_DESC
-       Edits the DSU entries for today.
-      LONG_DESC
+      desc I18n.t('cli.subcommands.edit.date.desc'), I18n.t('cli.subcommands.edit.date.usage')
+      long_desc I18n.t('cli.subcommands.edit.date.long_desc', date_option_description: date_option_description)
+      def date(date)
+        entry_group = Models::EntryGroup.edit(time: Time.parse(date))
+        Views::EntryGroup::Show.new(entry_group: entry_group).render
+      rescue ArgumentError => e
+        puts apply_theme(I18n.t('errors.error', message: e.message), theme_color: color_theme.error)
+        exit 1
+      end
+
+      desc I18n.t('cli.subcommands.edit.today.desc'), I18n.t('cli.subcommands.edit.today.usage')
+      long_desc I18n.t('cli.subcommands.edit.today.long_desc')
       def today
         entry_group = Models::EntryGroup.edit(time: Time.now)
         Views::EntryGroup::Show.new(entry_group: entry_group).render
       end
 
-      desc 'tomorrow, t',
-        'Edits the DSU entries for tomorrow.'
-      long_desc <<-LONG_DESC
-        Edits the DSU entries for tomorrow.
-      LONG_DESC
+      desc I18n.t('cli.subcommands.edit.tomorrow.desc'), I18n.t('cli.subcommands.edit.tomorrow.usage')
+      long_desc I18n.t('cli.subcommands.edit.tomorrow.long_desc')
       def tomorrow
         entry_group = Models::EntryGroup.edit(time: Time.now.tomorrow)
         Views::EntryGroup::Show.new(entry_group: entry_group).render
       end
 
-      desc 'yesterday, y',
-        'Edits the DSU entries for yesterday.'
-      long_desc <<-LONG_DESC
-        Edits the DSU entries for yesterday.
-      LONG_DESC
+      desc I18n.t('cli.subcommands.edit.yesterday.desc'), I18n.t('cli.subcommands.edit.yesterday.usage')
+      long_desc I18n.t('cli.subcommands.edit.yesterday.long_desc')
       def yesterday
         entry_group = Models::EntryGroup.edit(time: Time.now.yesterday)
         Views::EntryGroup::Show.new(entry_group: entry_group).render
-      end
-
-      desc 'date, d DATE',
-        'Edits the DSU entries for DATE.'
-      long_desc <<-LONG_DESC
-        Edits the DSU entries for DATE.
-
-        \x5 #{date_option_description}
-      LONG_DESC
-      def date(date)
-        entry_group = Models::EntryGroup.edit(time: Time.parse(date))
-        Views::EntryGroup::Show.new(entry_group: entry_group).render
-      rescue ArgumentError => e
-        puts apply_theme("Error: #{e.message}", theme_color: color_theme.error)
-        exit 1
       end
     end
   end
