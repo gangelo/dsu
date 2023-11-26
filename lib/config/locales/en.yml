@@ -1,5 +1,6 @@
 en:
   cli:
+    # lib/dsu/cli.rb
     commands:
       add:
         desc: add|-a [OPTIONS] DESCRIPTION
@@ -61,6 +62,7 @@ en:
       version:
         desc: version|-v
         usage: Displays the DSU version for this gem
+    # lib/dsu/subcommands
     subcommands:
       config:
         delete:
