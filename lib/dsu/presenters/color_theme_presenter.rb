@@ -14,11 +14,13 @@ module Dsu
       end
 
       def header
-        apply_theme('Color Themes', theme_color: color_theme.subheader)
+        header = I18n.t('presenters.color_theme_presenter.headers.color_themes')
+        apply_theme(header, theme_color: color_theme.subheader)
       end
 
       def footer
-        apply_theme('* current theme', theme_color: color_theme.footer)
+        header = I18n.t('presenters.color_theme_presenter.headers.current_theme')
+        apply_theme(header, theme_color: color_theme.footer)
       end
 
       def detail

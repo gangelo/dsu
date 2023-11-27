@@ -193,7 +193,7 @@ module Dsu
         end
 
         def entry_files
-          Dir.glob("#{entries_folder}/*")
+          Dir.glob("#{Support::Fileable.entries_folder}/*")
         end
       end
 
