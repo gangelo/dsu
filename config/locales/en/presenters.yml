@@ -1,0 +1,19 @@
+en:
+  presenters:
+    color_theme_presenter:
+      headers:
+        color_themes: Color Themes
+        current_theme: "* current theme"
+    color_theme_show_presenter:
+      headers:
+        number: No.
+        color: Color
+        values: Values
+        viewing_color_theme: "Viewing color theme: %{theme_name}"
+        footer_example: Footer example
+    configuration_presenter:
+      headers:
+        file_contents: "Configuration file contents (%{config_path})"
+    entry_group_presenter:
+      headers:
+        no_entries_available: (no entries available for this day)

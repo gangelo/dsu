@@ -15,8 +15,8 @@ module Dsu
       end
 
       def configuration_header
-        apply_theme("Configuration file contents (#{config_path})",
-          theme_color: color_theme.header)
+        header = I18n.t('presenters.configuration_presenter.headers.file_contents', config_path: config_path)
+        apply_theme(header, theme_color: color_theme.header)
       end
 
       def configuration_details

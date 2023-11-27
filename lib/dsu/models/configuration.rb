@@ -133,6 +133,7 @@ module Dsu
       end
 
       def merge(hash)
+        hash.transform_keys!(&:to_sym)
         replace!(config_hash: to_h.merge(hash))
       end
 

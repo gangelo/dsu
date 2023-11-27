@@ -40,6 +40,10 @@ RSpec.shared_examples "the editor template shows yesterday's entries" do
   let(:expected_editor_template) do
     <<~TEMPLATE
       ################################################################################
+      # Editing DSU Entries for #{entry_group.time_formatted}
+      ################################################################################
+
+      ################################################################################
       # PREVIOUS DSU ENTRIES FROM #{yesterdays_entry_group.time_formatted}
       ################################################################################
 
@@ -107,12 +111,11 @@ RSpec.describe Dsu::Views::EntryGroup::Edit do
 
   context 'when there are entries for today and previous entries' do
     before do
-      yesterdays_entry_group = build(:entry_group, :with_entries, time: yesterday)
-      Dsu::Services::EntryGroupWriterService.new(entry_group: yesterdays_entry_group).call
+      create(:entry_group, :with_entries, time: yesterday)
     end
 
     it 'has entries for yesterday on disk' do
-      expect(Dsu::Models::EntryGroup.exists?(time: yesterday)).to be true
+      expect(Dsu::Models::EntryGroup.exist?(time: yesterday)).to be true
     end
 
     context 'when carry_over_entries_to_today is false' do
@@ -132,18 +135,19 @@ RSpec.describe Dsu::Views::EntryGroup::Edit do
 
   context 'when there are no entries for today and previous entries' do
     before do
-      Dsu::Services::EntryGroupWriterService.new(entry_group: yesterdays_entry_group).call
+      entry_group
+      yesterdays_entry_group
     end
 
     let(:entry_group) { build(:entry_group, time: today) }
-    let(:yesterdays_entry_group) { build(:entry_group, :with_entries, time: yesterday) }
+    let(:yesterdays_entry_group) { create(:entry_group, :with_entries, time: yesterday) }
 
     it 'has no entries for today' do
       expect(entry_group.entries.any?).to be false
     end
 
     it 'has entries for yesterday on disk' do
-      expect(Dsu::Models::EntryGroup.exists?(time: yesterday)).to be true
+      expect(Dsu::Models::EntryGroup.exist?(time: yesterday)).to be true
     end
 
     context 'when carry_over_entries_to_today is false' do

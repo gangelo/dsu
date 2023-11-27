@@ -27,8 +27,8 @@ module Dsu
       end
 
       def no_entries_available
-        colors = color_theme.info
-        apply_theme('(no entries available for this day)', theme_color: colors)
+        header = I18n.t('presenters.entry_group_presenter.headers.no_entries_available')
+        apply_theme(header, theme_color: color_theme.info)
       end
     end
   end

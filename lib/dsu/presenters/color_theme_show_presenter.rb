@@ -10,7 +10,10 @@ module Dsu
       end
 
       def detail
-        puts_detail('No.', 'Color', 'Values', header: true)
+        headers = [I18n.t('presenters.color_theme_show_presenter.headers.number'),
+                   I18n.t('presenters.color_theme_show_presenter.headers.color'),
+                   I18n.t('presenters.color_theme_show_presenter.headers.values')]
+        puts_detail(*headers, header: true)
 
         Models::ColorTheme::DEFAULT_THEME_COLORS.keys.each_with_index do |color_key, index|
           index = formatted_index(index: index)
@@ -24,11 +27,13 @@ module Dsu
       end
 
       def footer
-        apply_theme('Footer example', theme_color: color_theme.footer)
+        header = I18n.t('presenters.color_theme_show_presenter.headers.footer_example')
+        apply_theme(header, theme_color: color_theme.footer)
       end
 
       def header
-        apply_theme("Viewing color theme: #{color_theme.theme_name}", theme_color: color_theme.subheader)
+        header = I18n.t('presenters.color_theme_show_presenter.headers.viewing_color_theme', theme_name: color_theme.theme_name)
+        apply_theme(header, theme_color: color_theme.subheader)
       end
 
       private

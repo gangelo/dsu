@@ -98,7 +98,7 @@ module Dsu
         end
 
         def previous_entry_group?
-          previous_entry_group.entries.present?
+          previous_entry_group&.entries&.present?
         end
 
         def previous_entry_group
