@@ -153,7 +153,8 @@ module Dsu
         theme_path = themes_path(theme_name: theme_name)
         return if File.exist?(theme_path)
 
-        errors.add(:base, "Theme file \"#{theme_path}\" does not exist")
+        i18n_key = 'configuration.errors.theme_file_missing'
+        errors.add(:base, I18n.t(i18n_key, theme_path: theme_path))
       end
     end
   end

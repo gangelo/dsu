@@ -255,11 +255,14 @@ en:
       error: "Error running migrations: %{message}"
   headers:
     entry:
-      could_not_be_added: 'An error was encountered; the entry could not be added:'
+      could_not_be_added: "An error was encountered; the entry could not be added:"
   messages:
     configuration_file:
       already_exists: Configuration file (%{configuration_file}) already exists.
       created: Configuration file (%{configuration_file}) created.
       deleted: Configuration file (%{configuration_file}) deleted.
-      destination_folder_does_not_exist: Destination folder for configuration file (%{configuration_folder}) does not exist.
-      does_not_exist: Configuration file (%{configuration_file}) does not exist.
+      destination_folder_does_not_exist: "Destination folder for configuration file (%{configuration_folder}) does not exist."
+      does_not_exist: "Configuration file (%{configuration_file}) does not exist."
+  configuration:
+    errors:
+      theme_file_missing: "Theme file \"%{theme_path}\" does not exist."
