@@ -1,0 +1,8 @@
+en:
+  activerecord:
+    errors:
+      models:
+        some_model:
+          attributes:
+            some_attribute:
+              some_error: Some error
