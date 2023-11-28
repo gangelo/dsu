@@ -18,16 +18,16 @@ module Dsu
         end
       end
 
-      desc I18n.t('cli.subcommands.config.info.desc'), I18n.t('cli.subcommands.config.info.usage')
-      long_desc I18n.t('cli.subcommands.config.info.long_desc')
+      desc I18n.t('subcommands.config.info.desc'), I18n.t('subcommands.config.info.usage')
+      long_desc I18n.t('subcommands.config.info.long_desc')
       def info
         configuration = Models::Configuration.new
         Views::Configuration::Show.new(config: configuration).call
       end
 
       if Dsu.env.development?
-        desc I18n.t('cli.subcommands.config.init.desc'), I18n.t('cli.subcommands.config.init.usage')
-        long_desc I18n.t('cli.subcommands.config.init.long_desc', home_folder: Dsu::Support::Fileable.root_folder)
+        desc I18n.t('subcommands.config.init.desc'), I18n.t('subcommands.config.init.usage')
+        long_desc I18n.t('subcommands.config.init.long_desc', home_folder: Dsu::Support::Fileable.root_folder)
         def init
           exit 1 if configuration_errors_or_wanings?
 
@@ -40,8 +40,8 @@ module Dsu
           end
         end
 
-        desc I18n.t('cli.subcommands.config.delete.desc'), I18n.t('cli.subcommands.config.delete.usage')
-        long_desc I18n.t('cli.subcommands.config.delete.long_desc')
+        desc I18n.t('subcommands.config.delete.desc'), I18n.t('subcommands.config.delete.usage')
+        long_desc I18n.t('subcommands.config.delete.long_desc')
         def delete
           unless Models::Configuration.exist?
             messages = [I18n.t('messages.configuration_file.does_not_exist',

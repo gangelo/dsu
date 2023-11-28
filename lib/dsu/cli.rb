@@ -19,8 +19,8 @@ module Dsu
     map %w[v -i] => :info
     map %w[v -v] => :version
 
-    desc I18n.t('cli.commands.add.desc'), I18n.t('cli.commands.add.usage')
-    long_desc I18n.t('cli.commands.add.long_desc', date_option_description: date_option_description)
+    desc I18n.t('commands.add.desc'), I18n.t('commands.add.usage')
+    long_desc I18n.t('commands.add.long_desc', date_option_description: date_option_description)
     option :date, type: :string, aliases: '-d'
     option :tomorrow, type: :boolean, aliases: '-t'
     option :yesterday, type: :boolean, aliases: '-y'
@@ -40,24 +40,24 @@ module Dsu
       view_entry_group(time: time)
     end
 
-    desc I18n.t('cli.commands.list.desc'), I18n.t('cli.commands.list.usage')
+    desc I18n.t('commands.list.desc'), I18n.t('commands.list.usage')
     subcommand :list, Subcommands::List
 
-    desc I18n.t('cli.commands.config.desc'), I18n.t('cli.commands.config.usage')
+    desc I18n.t('commands.config.desc'), I18n.t('commands.config.usage')
     subcommand :config, Subcommands::Config
 
-    desc I18n.t('cli.commands.edit.desc'), I18n.t('cli.commands.edit.usage')
+    desc I18n.t('commands.edit.desc'), I18n.t('commands.edit.usage')
     subcommand :edit, Subcommands::Edit
 
-    desc I18n.t('cli.commands.theme.desc'), I18n.t('cli.commands.theme.usage')
+    desc I18n.t('commands.theme.desc'), I18n.t('commands.theme.usage')
     subcommand :theme, Subcommands::Theme
 
-    desc I18n.t('cli.commands.info.desc'), I18n.t('cli.commands.info.usage')
+    desc I18n.t('commands.info.desc'), I18n.t('commands.info.usage')
     def info
       configuration_version = Models::Configuration::VERSION
       entry_group_version = Models::EntryGroup::VERSION
       color_theme_version = Models::ColorTheme::VERSION
-      info = I18n.t('cli.commands.info.info',
+      info = I18n.t('commands.info.info',
         dsu_version: dsu_version,
         configuration_version: configuration_version,
         entry_group_version: entry_group_version,
@@ -73,7 +73,7 @@ module Dsu
       puts apply_theme(info, theme_color: color_theme.body)
     end
 
-    desc I18n.t('cli.commands.version.desc'), I18n.t('cli.commands.version.usage')
+    desc I18n.t('commands.version.desc'), I18n.t('commands.version.usage')
     def version
       puts apply_theme(dsu_version, theme_color: color_theme.body)
     end
