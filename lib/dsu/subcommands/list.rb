@@ -19,32 +19,32 @@ module Dsu
       map %w[t] => :tomorrow
       map %w[y] => :yesterday
 
-      desc I18n.t('cli.subcommands.list.today.desc'), I18n.t('cli.subcommands.list.today.usage')
-      long_desc I18n.t('cli.subcommands.list.today.long_desc')
+      desc I18n.t('subcommands.list.today.desc'), I18n.t('subcommands.list.today.usage')
+      long_desc I18n.t('subcommands.list.today.long_desc')
       def today
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time])
         view_list_for(times: times, options: options)
       end
 
-      desc I18n.t('cli.subcommands.list.tomorrow.desc'), I18n.t('cli.subcommands.list.tomorrow.usage')
-      long_desc I18n.t('cli.subcommands.list.tomorrow.long_desc')
+      desc I18n.t('subcommands.list.tomorrow.desc'), I18n.t('subcommands.list.tomorrow.usage')
+      long_desc I18n.t('subcommands.list.tomorrow.long_desc')
       def tomorrow
         time = Time.now
         times = sorted_dsu_times_for(times: [time, time.tomorrow])
         view_list_for(times: times, options: options)
       end
 
-      desc I18n.t('cli.subcommands.list.yesterday.desc'), I18n.t('cli.subcommands.list.yesterday.usage')
-      long_desc I18n.t('cli.subcommands.list.yesterday.long_desc')
+      desc I18n.t('subcommands.list.yesterday.desc'), I18n.t('subcommands.list.yesterday.usage')
+      long_desc I18n.t('subcommands.list.yesterday.long_desc')
       def yesterday
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time.yesterday.yesterday])
         view_list_for(times: times, options: options)
       end
 
-      desc I18n.t('cli.subcommands.list.date.desc'), I18n.t('cli.subcommands.list.date.usage')
-      long_desc I18n.t('cli.subcommands.list.date.long_desc',
+      desc I18n.t('subcommands.list.date.desc'), I18n.t('subcommands.list.date.usage')
+      long_desc I18n.t('subcommands.list.date.long_desc',
         date_option_description: date_option_description,
         mneumonic_option_description: mneumonic_option_description)
       def date(date_or_mneumonic)
@@ -59,8 +59,8 @@ module Dsu
         Views::Shared::Error.new(messages: e.message).render
       end
 
-      desc I18n.t('cli.subcommands.list.dates.desc'), I18n.t('cli.subcommands.list.dates.usage')
-      long_desc I18n.t('cli.subcommands.list.dates.long_desc',
+      desc I18n.t('subcommands.list.dates.desc'), I18n.t('subcommands.list.dates.usage')
+      long_desc I18n.t('subcommands.list.dates.long_desc',
         date_option_description: date_option_description,
         mneumonic_option_description: mneumonic_option_description)
       option :from, type: :string, required: true, aliases: '-f', banner: 'DATE|MNEMONIC'

@@ -12,8 +12,8 @@ module Dsu
       map %w[t] => :tomorrow
       map %w[y] => :yesterday
 
-      desc I18n.t('cli.subcommands.edit.date.desc'), I18n.t('cli.subcommands.edit.date.usage')
-      long_desc I18n.t('cli.subcommands.edit.date.long_desc', date_option_description: date_option_description)
+      desc I18n.t('subcommands.edit.date.desc'), I18n.t('subcommands.edit.date.usage')
+      long_desc I18n.t('subcommands.edit.date.long_desc', date_option_description: date_option_description)
       def date(date)
         entry_group = Models::EntryGroup.edit(time: Time.parse(date))
         Views::EntryGroup::Show.new(entry_group: entry_group).render
@@ -22,22 +22,22 @@ module Dsu
         exit 1
       end
 
-      desc I18n.t('cli.subcommands.edit.today.desc'), I18n.t('cli.subcommands.edit.today.usage')
-      long_desc I18n.t('cli.subcommands.edit.today.long_desc')
+      desc I18n.t('subcommands.edit.today.desc'), I18n.t('subcommands.edit.today.usage')
+      long_desc I18n.t('subcommands.edit.today.long_desc')
       def today
         entry_group = Models::EntryGroup.edit(time: Time.now)
         Views::EntryGroup::Show.new(entry_group: entry_group).render
       end
 
-      desc I18n.t('cli.subcommands.edit.tomorrow.desc'), I18n.t('cli.subcommands.edit.tomorrow.usage')
-      long_desc I18n.t('cli.subcommands.edit.tomorrow.long_desc')
+      desc I18n.t('subcommands.edit.tomorrow.desc'), I18n.t('subcommands.edit.tomorrow.usage')
+      long_desc I18n.t('subcommands.edit.tomorrow.long_desc')
       def tomorrow
         entry_group = Models::EntryGroup.edit(time: Time.now.tomorrow)
         Views::EntryGroup::Show.new(entry_group: entry_group).render
       end
 
-      desc I18n.t('cli.subcommands.edit.yesterday.desc'), I18n.t('cli.subcommands.edit.yesterday.usage')
-      long_desc I18n.t('cli.subcommands.edit.yesterday.long_desc')
+      desc I18n.t('subcommands.edit.yesterday.desc'), I18n.t('subcommands.edit.yesterday.usage')
+      long_desc I18n.t('subcommands.edit.yesterday.long_desc')
       def yesterday
         entry_group = Models::EntryGroup.edit(time: Time.now.yesterday)
         Views::EntryGroup::Show.new(entry_group: entry_group).render

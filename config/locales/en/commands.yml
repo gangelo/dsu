@@ -1,0 +1,65 @@
+# lib/dsu/cli.rb
+en:
+  commands:
+    add:
+      desc: add|-a [OPTIONS] DESCRIPTION
+      usage: Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION
+      long_desc: |
+        Will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
+
+        $ dsu add [-d DATE|-n|-t|-y] DESCRIPTION
+
+        $ dsu -a [-d DATE|-n|-t|-y] DESCRIPTION
+
+        OPTIONS:
+
+        -d DATE: Adds a DSU entry having DESCRIPTION to the DATE.
+
+        %{date_option_description}
+
+        -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
+
+        -t: Adds a DSU entry having DESCRIPTION to tomorrow's date (`Time.new.tomorrow`).
+
+        -y: Adds a DSU entry having DESCRIPTION to yesterday's date (`Time.new.yesterday`).
+
+        DESCRIPTION
+
+        Must be be between 2 and 256 characters (inclusive) in length.
+    config:
+      desc: config|-c SUBCOMMAND
+      usage: Manage configuration file for this gem
+    edit:
+      desc: edit|-e SUBCOMMAND
+      usage: Edit DSU entries for the given SUBCOMMAND
+    info:
+      desc: info|-i
+      usage: Displays information about this DSU release
+      info: |
+        Dsu Info
+        --------------------------------------------------
+                      Dsu version: %{dsu_version}
+            Configuration version: %{configuration_version}
+              Entry group version: %{entry_group_version}
+              Color theme version: %{color_theme_version}
+
+                    Config folder: %{config_folder}
+                      Root folder: %{root_folder}
+                  Entries folder: %{entries_folder}
+                    Themes folder: %{themes_folder}
+                      Gem folder: %{gem_folder}
+                      Temp folder: %{temp_folder}
+
+        Migration version folder: %{migration_version_folder}
+            Migration file folder: %{migration_file_folder}
+    list:
+      desc: list|-l SUBCOMMAND
+      usage: Displays DSU entries for the given SUBCOMMAND
+    theme:
+      desc: theme|-t SUBCOMMAND
+      usage: Manage DSU themes
+    version:
+      desc: version|-v
+      usage: Displays the DSU version for this gem
+  options:
+    include_all: Include dates that have no DSU entries
