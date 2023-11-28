@@ -40,8 +40,9 @@ module Dsu
         # Renders the edit view to a string so we can write it to a temporary file
         # and edit it. The edits will be used to update the entry group.
         def render_edit_view
-          puts apply_theme("Editing entry group #{formatted_time(time: entry_group.time)}...",
-            theme_color: color_theme.header)
+          message = I18n.t('services.editor_service.messages.editing',
+            formatted_time: formatted_time(time: entry_group.time))
+          puts apply_theme(message, theme_color: color_theme.header)
           # TODO: Call #render_as_string directly below?
           StdoutRedirectorService.call { Views::EntryGroup::Edit.new(entry_group: entry_group).render }
           # Views::EntryGroup::Edit.new(entry_group: entry_group).render_as_string
@@ -63,14 +64,10 @@ module Dsu
 
               process_entry_group!(entry_group_with_edits)
             else
-              puts apply_theme(
-                [
-                  "Failed to open temporary file in editor '#{configuration.editor}'; " \
-                  "the system error returned was: '#{$CHILD_STATUS}'.",
-                  'Either set the EDITOR environment variable ' \
-                  'or set the dsu editor configuration option (`$ dsu config info`).',
-                  'Run `$ dsu help config` for more information.'
-                ], theme_color: color_theme.error
+              message_array = I18n.t('services.editor_service.errors.temp_file_error',
+                editor: configuration.editor,
+                status: $CHILD_STATUS).split("\n")
+              puts apply_theme(message_array, theme_color: color_theme.error
               )
             end
           end
