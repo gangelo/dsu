@@ -45,12 +45,12 @@ en:
 
                     Config folder: %{config_folder}
                       Root folder: %{root_folder}
-                  Entries folder: %{entries_folder}
+                   Entries folder: %{entries_folder}
                     Themes folder: %{themes_folder}
-                      Gem folder: %{gem_folder}
+                       Gem folder: %{gem_folder}
                       Temp folder: %{temp_folder}
 
-        Migration version folder: %{migration_version_folder}
+         Migration version folder: %{migration_version_folder}
             Migration file folder: %{migration_file_folder}
     list:
       desc: list|-l SUBCOMMAND

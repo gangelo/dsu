@@ -184,3 +184,73 @@ en:
           $ dsu list yesterday
 
           $ dsu list y
+    theme:
+      create:
+        desc: create THEME_NAME [OPTIONS]
+        usage: Creates a dsu color theme named THEME_NAME
+        long_desc: |
+          Creates a dsu color theme named THEME_NAME in the %{themes_folder} folder.
+
+          $ dsu create THEME_NAME [-d|--description DESCRIPTION]
+
+          OPTIONS:
+
+          -d|--description DESCRIPTION: Creates the dsu color theme with having DESCRIPTION as the color theme description.
+
+          DESCRIPTION
+
+          Must be be between 2 and 256 characters (inclusive) in length.
+        prompts:
+          create_theme: Create color theme "%{theme_name}"?
+        errors:
+          already_exists: Color theme "%{theme_name}" already exists.
+        messages:
+          created: Created color theme "%{theme_name}".
+          canceled: Canceled.
+      delete:
+        desc: delete THEME_NAME
+        usage: Deletes the existing dsu color theme THEME_NAME
+        long_desc: |
+          Deletes the existing dsu color theme THEME_NAME in the %{themes_folder} folder.
+
+          $ dsu theme delete THEME_NAME
+        prompts:
+          delete_theme: Delete color theme "%{theme_name}"?
+        errors:
+          cannot_delete: Color theme "%{theme_name}" cannot be deleted.
+        messages:
+          canceled: Canceled.
+          deleted: Deleted color theme "%{theme_name}".
+      list:
+        desc: list
+        usage: Lists the available dsu color themes.
+        long_desc: |
+          Lists the available dsu color themes in the %{themes_folder} folder.
+
+          $ dsu theme list
+      use:
+        desc: use [THEME_NAME]
+        usage: Sets the dsu color theme to THEME_NAME
+        long_desc: |
+          Sets the dsu color theme to THEME_NAME.
+
+          $ dsu theme use [THEME_NAME]
+
+          NOTES
+
+          If THEME_NAME is not provided, the default theme will be used.
+
+          If THEME_NAME does not exist, you will be given the option to create a new theme.
+        messages:
+          using_color_theme: Using color theme "%{theme_name}".
+      show:
+        desc: show THEME_NAME
+        usage: Displays the dsu color theme THEME_NAME
+        long_desc: |
+          Displays the dsu color theme THEME_NAME.
+
+          $ dsu theme show THEME_NAME
+      generic:
+        color_theme: "%{theme_name} color theme"
+        errors:
+          does_not_exist: Color theme "%{theme_name}" does not exist.
