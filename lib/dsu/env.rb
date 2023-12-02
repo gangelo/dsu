@@ -12,6 +12,10 @@ module Dsu
           env.fetch('DSU_ENV', nil) == 'development'
         end
 
+        def local?
+          test? || development?
+        end
+
         def production?
           env.fetch('DSU_ENV', 'production') == 'production'
         end

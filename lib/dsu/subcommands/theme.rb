@@ -11,148 +11,119 @@ require_relative 'base_subcommand'
 module Dsu
   module Subcommands
     class Theme < BaseSubcommand
-      map %w[c] => :create if Dsu.env.test?
-      map %w[d] => :delete if Dsu.env.test?
+      map %w[c] => :create if Dsu.env.local?
+      map %w[d] => :delete if Dsu.env.local?
       map %w[l] => :list
       map %w[s] => :show
       map %w[u] => :use
 
-      if Dsu.env.test?
-        desc 'create THEME_NAME [OPTIONS]',
-          'Creates a dsu color theme named THEME_NAME.'
-        long_desc <<-LONG_DESC
-        Create a dsu color theme named THEME_NAME in the #{Support::Fileable.themes_folder} folder.
-
-        SYNOPSIS
-
-        `dsu create THEME_NAME [-d|--description DESCRIPTION]`
-
-        OPTIONS:
-
-        -d|--description DESCRIPTION: Creates the dsu color theme with having DESCRIPTION as the color theme description.
-
-        DESCRIPTION:
-
-        Must be be between 2 and 256 characters (inclusive) in length.
-        LONG_DESC
+      if Dsu.env.local?
+        desc I18n.t('subcommands.theme.create.desc'), I18n.t('subcommands.theme.create.usage')
+        long_desc I18n.t('subcommands.theme.create.long_desc', themes_folder: Support::Fileable.themes_folder)
         option :description, type: :string, aliases: '-d', banner: 'DESCRIPTION'
         option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
         def create(theme_name)
           if Models::ColorTheme.exist?(theme_name: theme_name)
-            Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" already exists.").render
+            message = I18n.t('subcommands.theme.create.errors.already_exists', theme_name: theme_name)
+            Views::Shared::Error.new(messages: message).render
             return false
           end
-          prompt = color_theme.prompt_with_options(prompt: "Create color theme \"#{theme_name}\"?", options: %w[y N])
+          prompt_string = I18n.t('subcommands.theme.create.prompts.create_theme', theme_name: theme_name)
+          prompt = color_theme.prompt_with_options(prompt: prompt_string, options: %w[y N])
           if yes?(prompt, options: options)
             theme_hash = Models::ColorTheme::DEFAULT_THEME.dup
-            theme_hash[:description] = options[:description] || "#{theme_name.capitalize} color theme"
+            theme_hash[:description] = options[:description] || I18n.t('subcommands.theme.generic.color_theme',
+              theme_name: theme_name.capitalize)
             Models::ColorTheme.new(theme_name: theme_name, theme_hash: theme_hash).save!
-            Views::Shared::Info.new(messages: "\nCreated color theme \"#{theme_name}\".").render
+            message = I18n.t('subcommands.theme.create.messages.created', theme_name: theme_name)
+            Views::Shared::Info.new(messages: "\n#{message}").render
             true
           else
-            Views::Shared::Info.new(messages: "\nCanceled.").render
+            message = I18n.t('subcommands.theme.create.messages.canceled')
+            Views::Shared::Info.new(messages: "\n#{message}").render
             false
           end
         end
 
-        desc 'delete THEME_NAME',
-          'Deletes the existing dsu color theme THEME_NAME.'
-        long_desc <<-LONG_DESC
-        NAME
-
-        `dsu delete [THEME_NAME]` -- will delete the dsu color theme named THEME_NAME located in the #{Support::Fileable.themes_folder} folder.
-        LONG_DESC
+        desc I18n.t('subcommands.theme.delete.desc'), I18n.t('subcommands.theme.delete.usage')
+        long_desc I18n.t('subcommands.theme.delete.long_desc', themes_folder: Support::Fileable.themes_folder)
         option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-        def delete(theme_name)
+        def delete(theme_name) # rubocop:disable Metrics/MethodLength
           display_dsu_header
 
           if theme_name == Models::ColorTheme::DEFAULT_THEME_NAME
-            display_dsu_header
-            Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" cannot be deleted.").render
+            message = I18n.t('subcommands.theme.delete.errors.cannot_delete', theme_name: theme_name)
+            Views::Shared::Error.new(messages: message).render
             return
           end
 
           unless Models::ColorTheme.exist?(theme_name: theme_name)
-            Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
+            message = I18n.t('subcommands.theme.generic.errors.does_not_exist', theme_name: theme_name)
+            Views::Shared::Error.new(messages: message).render
             return
           end
 
-          prompt = color_theme.prompt_with_options(prompt: "Delete color theme \"#{theme_name}\"?",
-            options: %w[y N])
-          if yes?(prompt, options: options)
+          prompt_string = I18n.t('subcommands.theme.delete.prompts.delete_theme', theme_name: theme_name)
+          prompt = color_theme.prompt_with_options(prompt: prompt_string, options: %w[y N])
+          message = if yes?(prompt, options: options)
             Models::ColorTheme.delete!(theme_name: theme_name)
-            Views::Shared::Info.new(messages: "\nDeleted color theme \"#{theme_name}\".").render
+            change_theme
+            I18n.t('subcommands.theme.delete.messages.deleted', theme_name: theme_name)
           else
-            Views::Shared::Info.new(messages: "\nCanceled.").render
+            I18n.t('subcommands.theme.delete.messages.canceled')
           end
+          Views::Shared::Info.new(messages: "\n#{message}").render
         end
       end
 
-      desc 'list',
-        'Lists the available dsu color themes.'
-      long_desc <<-LONG_DESC
-      NAME
-
-      `dsu list` -- lists the available dsu color themes located in the #{Support::Fileable.themes_folder} folder.
-      LONG_DESC
+      desc I18n.t('subcommands.theme.list.desc'), I18n.t('subcommands.theme.list.usage')
+      long_desc I18n.t('subcommands.theme.list.long_desc', themes_folder: Support::Fileable.themes_folder)
       def list
         Views::ColorTheme::Index.new.render
       end
 
-      desc 'use THEME_NAME',
-        'Sets THEME_NAME as the current DSU color theme.'
-      long_desc <<-LONG_DESC
-      NAME
-
-      `dsu theme use [THEME_NAME]` -- sets the dsu color theme to THEME_NAME.
-
-      SYNOPSIS
-
-      If THEME_NAME is not provided, the default theme will be used.
-      If THEME_NAME does not exist, you will be given the option to create a new theme.
-
-      LONG_DESC
+      desc I18n.t('subcommands.theme.use.desc'), I18n.t('subcommands.theme.use.usage')
+      long_desc I18n.t('subcommands.theme.use.long_desc')
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def use(theme_name = Models::ColorTheme::DEFAULT_THEME_NAME)
-        if Dsu.env.test? && !Models::ColorTheme.exist?(theme_name: theme_name)
-          display_dsu_header
-          return unless create(theme_name)
-        end
+        display_dsu_header
+
+        return if Dsu.env.local? && !Models::ColorTheme.exist?(theme_name: theme_name) && !create(theme_name)
 
         unless Models::ColorTheme.exist?(theme_name: theme_name)
-          display_dsu_header
-          Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
+          message = I18n.t('subcommands.theme.generic.errors.does_not_exist', theme_name: theme_name)
+          Views::Shared::Error.new(messages: message).render
           return
         end
 
-        configuration.theme_name = theme_name
-        configuration.save!
+        change_theme theme_name: theme_name
         # We need to display the header after the theme is updated so that it is displayed in the
         # correct theme color.
-        display_dsu_header
-        Views::Shared::Info.new(messages: "Using color theme \"#{theme_name}\".").render
+        message = I18n.t('subcommands.theme.use.messages.using_color_theme', theme_name: theme_name)
+        Views::Shared::Info.new(messages: message).render
       end
 
-      desc 'show THEME_NAME',
-        'Displays the dsu color theme.'
-      long_desc <<-LONG_DESC
-      NAME
-
-      `dsu show THEME_NAME` -- displays the dsu color theme for THEME_NAME.
-      LONG_DESC
+      desc I18n.t('subcommands.theme.show.desc'), I18n.t('subcommands.theme.show.usage')
+      long_desc I18n.t('subcommands.theme.show.long_desc')
       def show(theme_name = configuration.theme_name)
         if Dsu::Models::ColorTheme.exist?(theme_name: theme_name)
           Views::ColorTheme::Show.new(theme_name: theme_name).render
           return
         end
 
-        Views::Shared::Error.new(messages: "Color theme \"#{theme_name}\" does not exist.").render
+        message = I18n.t('subcommands.theme.generic.errors.does_not_exist', theme_name: theme_name)
+        Views::Shared::Error.new(messages: message).render
       end
 
       private
 
       def display_dsu_header
         self.class.display_dsu_header
+      end
+
+      def change_theme(theme_name: Models::ColorTheme::DEFAULT_THEME_NAME)
+        configuration.theme_name = theme_name
+        configuration.save!
       end
     end
   end
