@@ -34,12 +34,12 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport', '>= 7.0.8', '< 7.2.0'
-  spec.add_dependency 'activemodel', '~> 7.0', '>= 7.0.4.3'
-  spec.add_dependency 'colorize', '>= 0.8.1', '< 1.2.0'
-  spec.add_dependency 'os', '~> 1.1', '>= 1.1.4'
-  spec.add_dependency 'thor', '~> 1.2', '>= 1.2.1'
-  spec.add_dependency 'thor_nested_subcommand', '~> 1.0'
+  spec.add_dependency 'activesupport', '>= 7.0.8', '< 8.0'
+  spec.add_dependency 'activemodel', '>= 7.0.8', '< 8.0'
+  spec.add_dependency 'colorize', '>= 0.8.1', '< 1.0'
+  spec.add_dependency 'os', '>= 1.1', '< 2.0'
+  spec.add_dependency 'thor', '>= 1.2', '< 2.0'
+  spec.add_dependency 'thor_nested_subcommand', '>= 1.0', '< 2.0'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 
