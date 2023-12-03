@@ -17,8 +17,8 @@ module Dsu
           to_time = dsu_to_time_for(to_option: to_option, from_time: from_time)
 
           errors = []
-          errors << "Option -f, [--from=DATE|MNEMONIC] value is invalid [\"#{from_option}\"]" if from_time.nil?
-          errors << "Option -t, [--to=DATE|MNEMONIC] value is invalid [\"#{to_option}\"]" if to_time.nil?
+          errors << I18n.t('errors.from_option_invalid', from_option: from_option) if from_time.nil?
+          errors << I18n.t('errors.to_option_invalid', to_option: to_option) if to_time.nil?
           return [[], errors] if errors.any?
 
           min_time, max_time = [from_time, to_time].sort

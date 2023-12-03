@@ -1,9 +1,11 @@
 en:
   configuration:
     errors:
-      theme_file_missing: "Theme file \"%{theme_path}\" does not exist."
+      theme_file_missing: Theme file "%{theme_path}" does not exist.
   errors:
     error: "Error: %{message}"
+    from_option_invalid: Option -f, [--from=DATE|MNEMONIC] value is invalid ["%{from_option}"]
+    to_option_invalid: Option -t, [--to=DATE|MNEMONIC] value is invalid ["%{to_option}"]
     migration:
       error: "Error running migrations: %{message}"
   headers:
