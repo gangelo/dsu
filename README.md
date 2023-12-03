@@ -269,6 +269,8 @@ This is the default editor to use when editing entry groups if the EDITOR enviro
 
 Default: `nano` (you'll need to change the default editor on Windows systems)
 
+NOTE: [Visual Studio Code](https://code.visualstudio.com/docs/editor/command-line), users, use `"code --wait"` (or `"code -w"`, short form) to make sure the vscode editor waits for the edited file to be saved and closed before returning control to the dsu process.
+
 ##### entries_display_order
 Valid values are 'asc' and 'desc', and will sort listed DSU entries in ascending or descending order respectfully, by day.
 
