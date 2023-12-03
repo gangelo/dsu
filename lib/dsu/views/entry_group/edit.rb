@@ -6,6 +6,7 @@ require_relative '../../models/entry_group'
 module Dsu
   module Views
     module EntryGroup
+      # TODO: I18n this class.
       class Edit
         def initialize(entry_group:, options: {})
           raise ArgumentError, 'entry_group is nil' if entry_group.nil?

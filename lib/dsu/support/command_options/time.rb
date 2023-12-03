@@ -67,6 +67,7 @@ module Dsu
 
         def valid_time!(time_parts:)
           time_string = time_string_for(time_parts: time_parts)
+          # TODO: I18n.
           Date.strptime(time_string, '%Y/%m/%d').to_time
         end
 

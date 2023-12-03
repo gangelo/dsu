@@ -11,6 +11,7 @@ require_relative '../shared/warning'
 module Dsu
   module Views
     module ColorTheme
+      # TODO: I18n this class.
       class Show
         include Support::ColorThemable
 

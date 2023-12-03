@@ -21,6 +21,7 @@ module Dsu
             @options = options || {}
           end
 
+          # TODO: I18n.
           def render
             entry_group_times.sort!
             time_range = "#{formatted_time(time: times.first)} " \

@@ -10,6 +10,7 @@ module Dsu
           raise ArgumentError, 'model is nil' if model.nil?
           raise ArgumentError, "model is the wrong object type: \"#{model}\"" unless model.is_a?(ActiveModel::Model)
 
+          # TODO: I18n.
           header = options[:header] || 'The following ERRORS were encountered; changes could not be saved:'
           super(messages: model.errors.full_messages, header: header, options: options)
 
