@@ -6,6 +6,8 @@
 [![Report Issues](https://img.shields.io/badge/report-issues-red.svg)](https://github.com/gangelo/dsu/issues)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](#license)
 
+<img align="center" src="https://i.imgur.com/ff79twF.gif" alt="dsu" />
+
 ## About
 `dsu` is a simple, but powerful little gem I wrote for myself to help me manage my Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows me to create, read, update, and delete (CRUD) DSU entries on a daily basis. During my DSU, I'm then able to list, recall and share my DSU activities with my team. DSU entries are grouped by day and are viewed in simple text format from the command line, in a myriad of ways, to meet my personal needs. When viewing DSU entries for a particular day, `dsu` will automatically display the previous day's activities as well, using the typical "what I did yesterday", "What I'm doing today" DSU paradigm. If the DSU date I am trying to view falls on a weekend or Monday, `dsu` will automatically display back to and including the weekend and previous Friday (inclusive), so that I can share what I did over the weekend (if anything) and "last" Friday.
 
