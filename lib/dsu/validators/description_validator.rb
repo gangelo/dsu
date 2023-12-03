@@ -28,8 +28,10 @@ module Dsu
         return if description.length.between?(2, 256)
 
         if description.length < 2
+          # TODO: I18n.
           record.errors.add(:description, "is too short: \"#{record.short_description}\" (minimum is 2 characters).")
         elsif description.length > 256
+          # TODO: I18n.
           record.errors.add(:description, "is too long: \"#{record.short_description}\" (maximum is 256 characters).")
         end
       end

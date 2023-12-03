@@ -46,6 +46,7 @@ module Dsu
 
         non_unique_descriptions = descriptions.select { |description| descriptions.count(description) > 1 }.uniq
         non_unique_descriptions.each do |non_unique_description|
+          # TODO: I18n.
           record.errors.add(:entries,
             "array contains duplicate entry: \"#{short_description(non_unique_description)}\".",
             type: Support::FieldErrors::FIELD_DUPLICATE_ERROR)

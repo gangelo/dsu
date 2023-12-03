@@ -4,6 +4,7 @@ module Dsu
   module Support
     module CommandOptions
       module TimeMneumonics
+        # TODO: I18n.
         TODAY = %w[n today].freeze
         TOMORROW = %w[t tomorrow].freeze
         YESERDAY = %w[y yesterday].freeze

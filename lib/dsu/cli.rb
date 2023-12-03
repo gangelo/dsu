@@ -11,6 +11,7 @@ require_relative 'subcommands/theme'
 module Dsu
   # The `dsu` command.
   class CLI < BaseCLI
+    # TODO: I18n these mappings.
     map %w[a -a] => :add
     map %w[c -c] => :config
     map %w[e -e] => :edit
@@ -21,6 +22,7 @@ module Dsu
 
     desc I18n.t('commands.add.desc'), I18n.t('commands.add.usage')
     long_desc I18n.t('commands.add.long_desc', date_option_description: date_option_description)
+    # TODO: I18n these option aliases.
     option :date, type: :string, aliases: '-d'
     option :tomorrow, type: :boolean, aliases: '-t'
     option :yesterday, type: :boolean, aliases: '-y'

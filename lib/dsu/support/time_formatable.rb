@@ -10,6 +10,7 @@ module Dsu
     module TimeFormatable
       module_function
 
+      # TODO: I18n.
       def formatted_time(time:)
         time = time.localtime if time.utc?
 
@@ -28,10 +29,12 @@ module Dsu
         time.strftime("%A, (#{today_yesterday_or_tomorrow}) %Y-%m-%d #{time_zone}")
       end
 
+      # TODO: I18n.
       def mm_dd(time:, separator: '/')
         time.strftime("%m#{separator}%d")
       end
 
+      # TODO: I18n.
       def mm_dd_yyyy(time:, separator: '/')
         time.strftime("%m#{separator}%d#{separator}%Y")
       end
@@ -40,6 +43,7 @@ module Dsu
         time.zone
       end
 
+      # TODO: I18n.
       def yyyy_mm_dd(time:, separator: '-')
         time.strftime("%Y#{separator}%m#{separator}%d")
       end
