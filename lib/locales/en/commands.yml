@@ -1,15 +1,38 @@
 # lib/dsu/cli.rb
+#
+# NOTE:
+#
+# Commands should have the following layout:
+#
+# en:
+#   commands:
+#     my_command:
+#       key_mappings: thor key mappings
+#       desc:         thor command description
+#       usage:        thor command usage
+#       long_desc:    thor long description
+#
+# Place key_mappings: at the top of the command entries:
+#
+# en:
+#   commands:
+#     my_command:
+#       key_mappings: m # Single mapping
+#       key_mappings:   # Array of mappings
+#         - 'm'
+#         - '-m'
 en:
   commands:
     add:
-      desc: add|-a [OPTIONS] DESCRIPTION
+      key_mappings: a
+      desc: add|a [OPTIONS] DESCRIPTION
       usage: Adds a DSU entry having DESCRIPTION to the date associated with the given OPTION
       long_desc: |
         Will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
 
         $ dsu add [-d DATE|-n|-t|-y] DESCRIPTION
 
-        $ dsu -a [-d DATE|-n|-t|-y] DESCRIPTION
+        $ dsu a [-d DATE|-n|-t|-y] DESCRIPTION
 
         OPTIONS:
 
@@ -27,16 +50,19 @@ en:
 
         Must be be between 2 and 256 characters (inclusive) in length.
     config:
-      desc: config|-c SUBCOMMAND
+      key_mappings: c
+      desc: config|c SUBCOMMAND
       usage: Manage configuration file for this gem
     delete:
       desc: delete|-d SUBCOMMAND
       usage: Delete DSU entries for the given SUBCOMMAND
     edit:
-      desc: edit|-e SUBCOMMAND
+      desc: edit|e SUBCOMMAND
       usage: Edit DSU entries for the given SUBCOMMAND
+      key_mappings: e
     info:
-      desc: info|-i
+      key_mappings: i
+      desc: info|i
       usage: Displays information about this DSU release
       info: |
         Dsu Info
@@ -56,13 +82,18 @@ en:
          Migration version folder: %{migration_version_folder}
             Migration file folder: %{migration_file_folder}
     list:
-      desc: list|-l SUBCOMMAND
+      key_mappings: l
+      desc: list|l SUBCOMMAND
       usage: Displays DSU entries for the given SUBCOMMAND
     theme:
-      desc: theme|-t SUBCOMMAND
+      key_mappings: t
+      desc: theme|t SUBCOMMAND
       usage: Manage DSU themes
     version:
-      desc: version|-v
+      key_mappings:
+        - v
+        - '-v'
+      desc: version|v|-v
       usage: Displays the DSU version for this gem
   options:
     include_all: Include dates that have no DSU entries
