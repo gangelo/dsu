@@ -13,14 +13,16 @@ module Dsu
   # The `dsu` command.
   class CLI < BaseCLI
     # TODO: I18n these mappings.
-    map %w[a -a] => :add
-    map %w[c -c] => :config
-    map %w[d -d] => :delete
-    map %w[e -e] => :edit
-    map %w[l -l] => :list
-    map %w[t -t] => :theme
-    map %w[i -i] => :info
-    map %w[v -v] => :version
+    map I18n.t('commands.add.key_mappings') => :add
+    map I18n.t('commands.config.key_mappings') => :config
+    # map %w[d -d] => :delete
+    map I18n.t('commands.delete.key_mappings') => :delete
+    map I18n.t('commands.edit.key_mappings') => :edit
+    map I18n.t('commands.help.key_mappings') => :help
+    map I18n.t('commands.info.key_mappings') => :info
+    map I18n.t('commands.list.key_mappings') => :list
+    map I18n.t('commands.theme.key_mappings') => :theme
+    map I18n.t('commands.version.key_mappings') => :version
 
     desc I18n.t('commands.add.desc'), I18n.t('commands.add.usage')
     long_desc I18n.t('commands.add.long_desc', date_option_description: date_option_description)
