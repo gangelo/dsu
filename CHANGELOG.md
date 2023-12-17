@@ -12,6 +12,7 @@ Miscellaneous
 
 - Update ruby gems.
 - Updated README.md to reflect new `dsu delete` command.
+- Fix rubocop violations.
 
 ## [2.0.8] 2023-12-02
 

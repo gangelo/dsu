@@ -32,7 +32,8 @@ module Dsu
       end
 
       def header
-        header = I18n.t('presenters.color_theme_show_presenter.headers.viewing_color_theme', theme_name: color_theme.theme_name)
+        header = I18n.t('presenters.color_theme_show_presenter.headers.viewing_color_theme',
+          theme_name: color_theme.theme_name)
         apply_theme(header, theme_color: color_theme.subheader)
       end
 
