@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../services/entry_group/counter_service'
 require_relative '../support/command_options/dsu_times'
 require_relative '../support/command_options/time_mneumonic'
 require_relative '../support/time_formatable'
@@ -77,8 +78,10 @@ module Dsu
         # NOTE: special sort here, unlike the other commands where rules for
         # displaying DSU entries are applied; this is more of a list command.
         times = times_sort(times: times, entries_display_order: options[:entries_display_order])
-        view_entry_groups(times: times, options: options) do |total_entry_groups, _total_entry_groups_not_shown|
-          Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options) if total_entry_groups.zero?
+        view_entry_groups(times: times, options: options) do |_total_entry_groups, _total_entry_groups_not_shown|
+          if Services::EntryGroup::CounterService.new(times: times).call.zero?
+            Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options).render
+          end
         end
       rescue ArgumentError => e
         Views::Shared::Error.new(messages: e.message).render
