@@ -36,69 +36,87 @@ After installation (`gem install dsu`), the first thing you may want to do is ru
 ```shell
 #=>
 Commands:
-  dsu add|-a [OPTIONS] DESCRIPTION  # Adds a DSU entry...
-  dsu config|-c SUBCOMMAND          # Manage configuration...
-  dsu delete|-d SUBCOMMAND          # Delete DSU entries...
-  dsu edit|-e SUBCOMMAND            # Edit DSU entries...
-  dsu help [COMMAND]                # Describe available...
-  dsu info|-i                       # Displays information...
-  dsu list|-l SUBCOMMAND            # Displays DSU entries...
-  dsu theme|-t SUBCOMMAND           # Manage DSU themes...
-  dsu version|-v                    # Displays this gem version
+  dsu add|a [OPTIONS] DESCRIPTION  # Adds a DSU entry...
+  dsu config|c SUBCOMMAND          # Manage configuration...
+  dsu delete|d SUBCOMMAND          # Delete DSU entries...
+  dsu edit|e SUBCOMMAND            # Edit DSU entries...
+  dsu help [COMMAND]               # Describe available...
+  dsu info|i                       # Displays information...
+  dsu list|l SUBCOMMAND            # Displays DSU entries...
+  dsu theme|t SUBCOMMAND           # Manage DSU themes...
+  dsu version|-v|v                 # Displays this gem version
 
 Options:
   [--debug], [--no-debug]
 ```
 
-The next thing you may want to do is `add` some DSU activities (entries) for a particular day:
+# Using `dsu`
+The folowing section outlines how to use the `dsu` gem.
 
 ## Adding DSU Entries
-`dsu add [OPTIONS] DESCRIPTION`
+The next thing you may want to do is `add` some DSU activities (entries) for a particular day:
 
-Adding DSU entry using this command will _add_ the DSU entry for the given day (or date, `-d`), and also _display_ the given day's (or date's, `-d`) DSU entries, as well as the DSU entries for the previous day relative to the given day or date (`-d`). *NOTE: You cannot add duplicate entry group entries; that is, the entry DESCRIPTION needs to be unique within an entry group.*
+`dsu add [OPTIONS] DESCRIPTION`
+`dsu a [OPTIONS] DESCRIPTION`
+
+Adding DSU entry using this command will _add_ the DSU entry for the given day or date, and then _display_ the DSU entries for that day or date.
+
+**NOTE:** You cannot add duplicate entries for the same day; that is, entry DESCRIPTIONS need to be unique within an entry group for the given day.
 
 ### Today
-If you need to add a DSU entry to the current day (today), you can use the `-n`|`--today` option. Today (`-n`) is the default; therefore, the `-n` flag is optional when adding DSU entries for the current day:
+If you need to add a DSU entry for the current day (today), you can use the `-n`|`--today` option. Today (`-n`) is the default; therefore, the `-n` flag is optional if you want to add a DSU entry for the _current day_ (today). For example, the below commands will both accomplish the same thing:
 
-`$ dsu add -n|-today "Pair with John on ticket IN-12345"`
+`$ dsu add [-n|--today] "Pair with John on ticket IN-12345"`
+`$ dsu a "Pair with John on ticket IN-12345"`
 
 ### Yesterday
-If for some reason you need to add a DSU entry for yesterday, you can use the `-y`| `--yesterday` option:
+If for some reason you need to add a DSU entry for yesterday, you can use the `-y`| `--yesterday` option. Both of the below commands accomplish the same thing:
 
-`$ dsu add -y|--yesterday "Pick up ticket IN-12345"`
+`$ dsu add --yesterday "Pick up ticket IN-12345"`
+`$ dsu a -y "Pick up ticket IN-12345"`
 
 ### Tomorrow
 If you need to add a DSU entry for tomorrow, you can use the `-t`|`--tomorrow` option:
 
-`$ dsu add -t|--tomorrow "Pick up ticket IN-12345"`
+`$ dsu add --tomorrow "Pick up ticket IN-12345"`
+`$ dsu a -t "Pick up ticket IN-12345"`
 
 ### Miscellaneous Date
 
-Both of the below examples will accomplish the same thing, assuming the current year is 2023; the current year is assumed if omitted:
+Both of the below examples will accomplish the same thing, assuming the current year is 2023; the current year is assumed when omitted:
 
-`$ dsu add -d "12/31/2023" "Attend company New Years Coffee Meet & Greet"`
-`$ dsu add -d "12/31" "Attend company New Years Coffee Meet & Greet"`
+**NOTE:** When **omitting year**, dates must be entered in `MM/DD` format.
+**NOTE:** When **including year**, dates must be entered in `YYYY/MM/DD` format.
+
+`$ dsu add --date 2023/12/31 "Attend New Years Coffee Meet & Greet"`
+`$ dsu a -d 12/31 "Attend New Years Coffee Meet & Greet"`
 
 See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
 
 ## Displaying DSU Entries
-You can display DSU entries for a particular day or date (`date`) using any of the following commands. When displaying DSU entries for a particular day or date (`date`), `dsu` will display the given day or date's (`date`) DSU entries, as well as the DSU entries for the _previous_ day, relative to the given day or date. If the date or day you are trying to view falls on a weekend or Monday, `dsu` will display back to, and including the weekend and previous Friday inclusive; this is so that you can share what you did over the weekend (if anything) and the previous Friday at your DSU:
+You can display DSU entries for a particular day or date using any of the following commands. When displaying DSU entries for a particular day or date, `dsu` will display the DSU entries for the given day or date, as well as the DSU entries for the _previous_ day, relative to the given day or date. If the given day or date falls on a weekend or Monday, `dsu` will display any entries for the preceeding weekend _and_ Friday; this is so that you can share any activities that occurred over the weekend (if anything) as well as any activities for the previous Friday:
 
-- `$ dsu list today|n`
+- `$ dsu list today`
+- `$ dsu l n` # Equivalent to the above, only using shortcuts
 - `$ dsu list tomorrow|t`
+- `$ dsu l t` # Equivalent to the above, only using shortcuts
 - `$ dsu list yesterday|y`
+- `$ dsu l y` # Equivalent to the above, only using shortcuts
 - `$ dsu list date|d DATE|MNEMONIC`
+- `$ dsu l d DATE|MNEMONIC` # Equivalent to the above, only using shortcuts
 - `$ dsu list dates|dd OPTIONS`
+- `$ dsu l dd OPTIONS` # Equivalent to the above, only using shortcuts
 
 See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
 See the [Mnemonics](#mnemonics) section for more information on acceptable MNEMONIC rules and formats used by `dsu`.
 
-IMPORTANT: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
+**IMPORTANT:** In some cases the behavior _relative date mnemonics_ (RDMs, see the [Mnemonics](#mnemonics) section for more information about RDMs) have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
 
 ### Examples
 The following displays the entries for "Today", where `Time.now == '2023-05-06 08:54:57.6861 -0400'`
 
 `$ dsu list today`
+`$ dsu l t`
 ```shell
 #=>
 Saturday, (Today) 2023-05-06
@@ -109,47 +127,54 @@ Friday, (Yesterday) 2023-05-05
   2. Attend new hire meet & greet
 ```
 
-`$ dsu list date 5/6/2023`
-`$ dsu list date 5/6`
+`$ dsu list date 5/7/2023`
+`$ dsu list d 2023/7/5`
+`$ dsu l d 7/5` # When omitting YYYY, MM/DD is assumed
 
 ```shell
 #=>
-Saturday, (Today) 2023-05-06
+Wednesday, (Today) 2023-07-05
   1. Blocked for locally failing test IN-12345
 
-Friday, (Yesterday) 2023-05-05
+Tuesday, (Yesterday) 2023-07-04
   1. Pick up ticket IN-12345
   2. Attend new hire meet & greet
 ```
+**NOTE:** If `DATE` (`date`|`d`) falls on a weekend or Monday, `dsu` will display any entries for the preceeding weekend _and_ Friday.
 
 #### Listing Date Ranges
 For more information, see the [Mnemonics](#mnemonics) section for more information on acceptable MNEMONIC rules and formats used by `dsu`.
 
-Output omitted for brevity...
+**NOTE:** Output omitted for brevity...
 
-Display the DSU entries for the last 3 days.
+##### Display the DSU entries for the last 3 days
+`$ dsu list dates --from yesterday --to -2`
+`$ dsu l dd -f y -t -2`
 
-`dsu list dates --from yesterday --to -2`
+##### Display the DSU entries for 1/1 to 1/4 for the current year
+`$ dsu list dates --from 1/1 --to +3`
+`$ dsu l dd -f 1/1 -t +3`
 
-Display the DSU entries for 1/1 to 1/4.
+##### Display the DSU entries for 1/2 to 1/5
+`$ dsu list dates --from 1/5 --to -3`
+`$ dsu l dd -f 1/5 -t -3`
 
-`dsu list dates --from 1/1 --to +3`
+##### Display the DSU entries for the last week
+`$ dsu list dates --from today --to -6`
+`$ dsu l dd -f n -t -6`
 
-Display the DSU entries for 1/2 to 1/5.
+##### Display the DSU entries back 1 week from yesterday's date
+`$ dsu list dates --from -7 --to +6`
+`$ dsu l dd -f -7 -t +6`
 
-`dsu list dates --from 1/5 --to -3`
+**NOTE:** **The above example is silly,** but it illustrates the fact that you can use relative mnemonics for both `--from` and `--to` options. While you *can* use relative mnemonics for both the `--from` and `--to` options, there is usually a more intuitive way.
 
-Display the DSU entries for the last week.
+For example:
 
-`dsu list dates --from today --to -7`
+This can be accomplished MUCH easier by using the `yesterday` mnemonic. This will display the DSU entries back 1 week from yesterday's date.
 
-Display the DSU entries back 1 week from yesterday's date. *This example is silly,* but it illustrates the fact that you can use relative mnemonics for both `--from` and `--to` options. While you *can* use relative mnemonics for both `--from` and `--to` options, there is always a more intuitive way.
-
-`dsu list dates --from -7 --to +6`
-
-The above can be accomplished MUCH easier by using the `yesterday` mnemonic. This will display the DSU entries back 1 week from yesterday's date.
-
-`dsu list dates --from yesterday --to -6`
+`$ dsu list dates --from yesterday --to -6`
+`$ dsu l dd -f y -t -6`
 
 ## Editing DSU Entries
 
@@ -157,14 +182,18 @@ You can edit DSU entry groups by date. `dsu` will allow you to edit a DSU entry 
 
 If no entries exist for the DSU date, the editor will open and allow you to add entries for that date. If you have the `:carry_over_entries_to_today` configuration option setting set to `true`, entries from the last DSU date will be copied into the editor for your convenience.
 
-*NOTE: duplicate entries are not allowed; that is, the entry DESCRIPTION need to be unique within an entry group. Non-unique entries will not be added to the entry group. The same holds true for entries whose DESCRIPTION that do not pass validation (between 2 and 256 characters (inclusive) in length).*
+**NOTE:** duplicate entries are not allowed; that is, the entry DESCRIPTION must be unique within an entry group. Non-unique entries will not be added to the entry group. The same holds true for entries whose DESCRIPTION that do not pass validation (between 2 and 256 characters (inclusive) in length).
 
-NOTE: See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-configuration-file)" section to configure `dsu` to use the editor of your choice and other configuration options to make editing more convenient.
+**NOTE:** See the "[Customizing the `dsu` Configuration File](#customizing-the-dsu-configuration-file)" section to configure `dsu` to use the editor of your choice and other configuration options to make editing more convenient.
 
-- `$ dsu edit today|n`
-- `$ dsu edit tomorrow|t`
-- `$ dsu edit yesterday|y`
-- `$ dsu edit date|d DATE`
+- `$ dsu edit today`
+- `$ dsu e n` # Equivalent to the above, only using shortcuts
+- `$ dsu edit tomorrow`
+- `$ dsu e t` # Equivalent to the above, only using shortcuts
+- `$ dsu edit yesterday`
+- `$ dsu e y` # Equivalent to the above, only using shortcuts
+- `$ dsu edit date DATE`
+- `$ dsu e d DATE` # Equivalent to the above, only using shortcuts
 
 ### Examples
 
@@ -248,39 +277,49 @@ from: Interative planning meeting 11:00AM.
       Interative planning meeting 11:00AM.
 ```
 ## Deleting DSU Entry Groups
-You can delete DSU groups, which will delete all the entries associated with a particular day or date range. When deleting DSU entries for a particular day (`date`, `today`, `tomorrow`, `yesterday`), or date range (`dates`), `dsu` will delete the the entries associated with that day or date range:
+You can delete DSU entry groups; this will delete *all* the entries for the particular day or date range. When deleting DSU entries for a particular day (`date`, `today`, `tomorrow`, `yesterday`), or date range (`dates`), `dsu` will delete the entry group(s) and *all* the associated entries for that day or date range:
 
-- `$ dsu delete today|n`
-- `$ dsu delete tomorrow|t`
-- `$ dsu delete yesterday|y`
-- `$ dsu delete date|d DATE|MNEMONIC`
-- `$ dsu delete dates|dd OPTIONS`
+- `$ dsu delete today`
+- `$ dsu d n` # Equivalent to the above, only using shortcuts
+- `$ dsu delete tomorrow`
+- `$ dsu d t` # Equivalent to the above, only using shortcuts
+- `$ dsu delete yesterday`
+- `$ dsu d y` # Equivalent to the above, only using shortcuts
+- `$ dsu delete date DATE|MNEMONIC`
+- `$ dsu d d DATE|MNEMONIC` # Equivalent to the above, only using shortcuts
+- `$ dsu delete dates OPTIONS`
+- `$ dsu d dd OPTIONS` # Equivalent to the above, only using shortcuts
 
-NOTE: Before any `dsu` command is executed to delete an entry group, `dsu` will prompt you to confirm your action; you can continue ('y') or cancel ('N').
+**NOTE:** Before any of the above `dsu` commands are executed, `dsu` will prompt you to confirm the delete; you can continue ('y') or cancel ('N').
 
 See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
 See the [Mnemonics](#mnemonics) section for more information on acceptable MNEMONIC rules and formats used by `dsu`.
 
-IMPORTANT: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu delete help date` and `dsu delete help dates`.
+**IMPORTANT:** In some cases the behavior that _relative date mnemonics_ (RDMs, see the [Mnemonics](#mnemonics) section for more information about RDMs) have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu delete help date` and `dsu delete help dates`.
 
 ### Examples
-The following deletes the entry group and all entries for today's date, yesterday's date, and tomorrow's date respectfully.
+The following example deletes the entry group and *all* entries for today's date.
 
 `$ dsu delete today`
+`$ dsu d n`
 ```shell
 #=>
 Are you sure you want to delete all the entries for 2023-12-17 (1 entry groups)? [y/N]> y
 Deleted 1 entry group(s).
 ```
+The following example deletes the entry group and *all* entries for yesterday's date.
 
 `$ dsu delete yesterday`
+`$ dsu d y`
 ```shell
 #=>
 Are you sure you want to delete all the entries for 2023-12-16 (1 entry groups)? [y/N]> y
 Deleted 1 entry group(s).
 ```
+The following example deletes the entry group and *all* entries for tomorrow's date.
 
 `$ dsu delete tomorrow`
+`$ dsu d t`
 ```shell
 #=>
 Are you sure you want to delete all the entries for 2023-12-18 (1 entry groups)? [y/N]> y
@@ -290,6 +329,7 @@ Deleted 1 entry group(s).
 The following deletes the entry group and all entries for 12/17 of the current year.
 
 `$ dsu delete date 12/17`
+`$ dsu d d 12/17`
 ```shell
 #=>
 Are you sure you want to delete all the entries for 2023-12-17 (0 entry groups)? [y/N]> y
@@ -299,14 +339,16 @@ Deleted 1 entry group(s)
 The following deletes the entry group and all entries for the past week, starting from today (12/17/2023).
 
 `$ dsu delete dates --from today --to -6`
+`$ dsu d dd -f n -t -6`
 ```shell
 #=>
 Are you sure you want to delete all the entries for 2023-12-11 thru 2023-12-17 (7 entry groups)? [y/N]> y
 Deleted 7 entry group(s).
 ```
 ## Customizing the `dsu` Configuration File
+To customize the `dsu` configuration file, you may follow the instructions outlined here. It is only recommended that you customize the `dsu` configuration file *only* if you are working with an official release (`n.n.n.n`).
 
-It is **not** recommended that you get too attached to the `dsu` configuration options when this gem is in pre-release (e.g. `n.n.n.alpha.n`, `n.n.n.beta.n`, etc.). This is because changes to the configuration file options could change; however, if you're curious, ambitious, or just like living on the edge, have at it. However, just keep in mind that things could change. With an official release (`n.n.n.n`), edit all you want. Regardless, if you *do* want to customize the `dsu` configuration file, you may do the following:
+**NOTE:** It is **not** recommended that you get too attached to the `dsu` configuration options when this gem is in **pre-release** (e.g. `n.n.n.alpha.n`, `n.n.n.beta.n`, etc.). This is because changes to the configuration file options, of course, could change. With an official release (`n.n.n.n`), edit all you want!
 
 ### Customizing the `dsu` Configuration File
 
@@ -375,18 +417,9 @@ A *mnemonic* may be any of the following: `n|today|t|tomorrow|y|yesterday|+n|-n`
 
 Where `n`, `t`, `y` are aliases for `today`, `tomorrow`, and `yesterday`, respectively.
 
-Where `+n`, `-n` are relative date mnemonics (RDNs). Generally speaking, RDNs are relative to the current date. For example, a RDN of `+1` would be equal to `Time.now + 1.day` (or tomorrow), and a RDN of `-1` would be equal to `Time.now - 1.day` (or yesterday).
+Where `+n`, `-n` are relative date mnemonics (RDMs). Generally speaking, RDMs are relative to the current date. For example, a RDM of `+1` would be equal to `Time.now + 1.day` (or tomorrow), and a RDM of `-1` would be equal to `Time.now - 1.day` (or yesterday).
 
-NOTE: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
-
-
-## Installation
-
-    $ gem install dsu
-
-## Usage
-
-TODO: Write usage instructions here (see the [Quick Start](#quick-start) for now)
+NOTE: In some cases the behavior RDMs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
 
 ## Development
 
