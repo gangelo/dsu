@@ -127,10 +127,10 @@ en:
 
       Where n, t, y are aliases for today, tomorrow, and yesterday, respectively.
 
-      Where +n, -n are relative date mnemonics (RDNs). Generally speaking,
-      RDNs are relative to the current date. For example, a RDN of +1 would be
-      equal to `Time.now + 1.day` (tomorrow), and a RDN of -1 would be equal to
+      Where +n, -n are relative date mnemonics (RDMs). Generally speaking,
+      RDMs are relative to the current date. For example, a RDM of +1 would be
+      equal to `Time.now + 1.day` (tomorrow), and a RDM of -1 would be equal to
       `Time.now - 1.day` (yesterday).
 
-      In some cases the behavior RDNs have on some commands are context dependent;
+      In some cases the behavior RDMs have on some commands are context dependent;
       in such cases the behavior will be noted.
