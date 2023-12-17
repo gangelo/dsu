@@ -69,6 +69,98 @@ en:
           theme_name:
 
           Default: "default"
+    delete:
+      date:
+        desc: date|d DATE|MNEUMONIC
+        usage: Deletes the DSU entries for the given DATE or MNEUMONIC
+        long_desc: |
+          Deletes the DSU entries for the given DATE or MNEUMONIC.
+
+          %{date_option_description}
+
+          %{mneumonic_option_description}
+      dates:
+        desc: dates|dd OPTIONS
+        usage: Deletes the DSU entries for the OPTIONS provided
+        long_desc: |
+          Deletes the DSU entries for the given OPTIONS.
+
+          $ dsu dates OPTIONS
+
+          $ dsu dd OPTIONS
+
+          OPTIONS:
+
+          -f|--from DATE|MNEMONIC: The DATE or MNEUMONIC that represents the start of the range of DSU dates to delete. If a relative mneumonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the current date (e.g. `<MNEUMONIC>.to_i.days.from_now(Time.now)`).
+
+          -t|--to DATE|MNEMONIC: The DATE or MNEUMONIC that represents the end of the range of DSU dates to delete. If a relative mneumonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the date that resulting from the `--from` option date calculation.
+
+          %{date_option_description}
+
+          %{mneumonic_option_description}
+
+          EXAMPLES:
+
+          NOTE: All examples can substitute their respective short form options (e.g. `-f`, `-t`, etc. for `--from`, `--to`, etc.).
+
+          The below will delete the DSU entries for the range of dates from 1/1 to 1/4 for the current year:
+
+          $ dsu delete dates --from 1/1 --to +3
+
+          This will delete the DSU entries for the range of dates from 1/2 to 1/5 for the year 2022:
+
+          $ dsu delete dates --from 1/5/2022 --to -3
+
+          This (assuming "today" is 1/10) will delete the DSU entries for the last week 1/10 to 1/3 of the current year:
+
+          $ dsu delete dates --from today --to -7
+
+          This (assuming "today" is 5/23) will delete the DSU entries for the last week 5/16 to 5/22.
+          This example simply illustrates the fact that you can use relative mneumonics for
+          both `--from` and `--to` options; this doesn't mean you should do so...
+
+          While you can use relative mneumonics for both `--from` and `--to` options,
+          there is always a more intuitive way. The below example basically deletes one week of DSU entries back 1 week from yesterday's date:
+
+          $ dsu delete dates --from -7 --to +6
+
+          The above can be accomplished MUCH easier by simply using the `yesterday` mneumonic...
+
+          This (assuming "today" is 5/23) will delete the DSU entries back 1 week from yesterday's date 5/16 to 5/22:
+
+          $ dsu delete dates --from yesterday --to -6
+      today:
+        desc: today|n
+        usage: Deletes the DSU entries for today
+        long_desc: |
+          Deletes the DSU entries for today.
+
+          $ dsu delete today
+
+          $ dsu delete n
+      tomorrow:
+        desc: tomorrow|t
+        usage: Deletes the DSU entries for tomorrow
+        long_desc: |
+          Deletes the DSU entries for tomorrow.
+
+          $ dsu delete tomorrow
+
+          $ dsu delete t
+      yesterday:
+        desc: yesterday|y
+        usage: Deletes the DSU entries for yesterday
+        long_desc: |
+          Deletes the DSU entries for yesterday.
+
+          $ dsu delete yesterday
+
+          $ dsu delete y
+      messages:
+        deleted: Deleted %{count} entry group(s).
+        canceled: Canceled.
+      prompts:
+        are_you_sure: Are you sure you want to delete all the entries for %{dates} (%{count} entry groups)?
     edit:
       date:
         desc: date|d DATE

@@ -44,6 +44,15 @@ module Dsu
       end
 
       # TODO: I18n.
+      def yyyy_mm_dd_or_through_for(times:)
+        return yyyy_mm_dd(time: times[0]) if times.one?
+
+        times = [yyyy_mm_dd(time: times.min), yyyy_mm_dd(time: times.max)]
+
+        I18n.t('information.dates.through', from: times[0], to: times[1])
+      end
+
+      # TODO: I18n.
       def yyyy_mm_dd(time:, separator: '-')
         time.strftime("%Y#{separator}%m#{separator}%d")
       end
