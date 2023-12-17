@@ -2,5 +2,5 @@
 
 module Dsu
   VERSION_REGEX = /\A\d+\.\d+\.\d+(\.alpha\.\d+)?\z/
-  VERSION = '2.1.1'
+  VERSION = '2.1.2'
 end
