@@ -54,6 +54,7 @@ en:
       desc: config|c SUBCOMMAND
       usage: Manage configuration file for this gem
     delete:
+      key_mappings: c
       desc: delete|-d SUBCOMMAND
       usage: Delete DSU entries for the given SUBCOMMAND
     edit:
