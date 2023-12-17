@@ -46,8 +46,8 @@ RSpec.describe 'Dsu delete features', type: :feature do
     end
   end
 
-  context "when 'dsu delete date DATE|MNEUMONIC' is used" do
-    context 'with no DATE | MNEUMONIC argument' do
+  context "when 'dsu delete date DATE|MNEMONIC' is used" do
+    context 'with no DATE | MNEMONIC argument' do
       let(:args) { %w[delete date] }
       let(:expected_output) do
         'ERROR: "rspec delete date" was called with no arguments'
@@ -73,7 +73,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
       it_behaves_like 'the entry groups are deleted', 1
     end
 
-    context 'with a mneumonic' do
+    context 'with a mnemonic' do
       context "with '+n'" do
         let(:args) do
           [
@@ -83,7 +83,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
             '--prompts', 'any:true'
           ]
         end
-        # + 1.day to reflect our +1 mneumonic
+        # + 1.day to reflect our +1 mnemonic
         let(:time) { Time.now + 1.day }
         let(:times) { [time, time.yesterday] }
 
@@ -99,7 +99,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
             '--prompts', 'any:true'
           ]
         end
-        # - 1.day to reflect our -1 mneumonic
+        # - 1.day to reflect our -1 mnemonic
         let(:time) { Time.now - 1.day }
         let(:times) { [time.yesterday, time] }
 
@@ -246,7 +246,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
       it_behaves_like 'the entry groups are deleted', 2
     end
 
-    context "when 'dsu delete dates -f MNEUMONIC -t TO_DATE' is used" do
+    context "when 'dsu delete dates -f MNEMONIC -t TO_DATE' is used" do
       let(:args) do
         [
           'delete',
@@ -261,7 +261,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
       it_behaves_like 'the entry groups are deleted', 2
     end
 
-    context "when 'dsu delete dates -f FROM_DATE -t MNEUMONIC' is used" do
+    context "when 'dsu delete dates -f FROM_DATE -t MNEMONIC' is used" do
       let(:args) do
         [
           'delete',
@@ -276,8 +276,8 @@ RSpec.describe 'Dsu delete features', type: :feature do
       it_behaves_like 'the entry groups are deleted', 2
     end
 
-    context "when 'dsu delete dates -f MNEUMONIC -t MNEUMONIC' is used" do
-      context "when '-f MNEUMONIC_STRING -t MNEUMONIC_STRING'" do
+    context "when 'dsu delete dates -f MNEMONIC -t MNEMONIC' is used" do
+      context "when '-f MNEMONIC_STRING -t MNEMONIC_STRING'" do
         let(:args) do
           [
             'delete',
@@ -292,7 +292,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
         it_behaves_like 'the entry groups are deleted', 2
       end
 
-      context "when '-f MNEUMONIC_NUM -t MNEUMONIC_STRING'" do
+      context "when '-f MNEMONIC_NUM -t MNEMONIC_STRING'" do
         let(:args) do
           [
             'delete',
@@ -307,7 +307,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
         it_behaves_like 'the entry groups are deleted', 2
       end
 
-      context "when '-f MNEUMONIC_STRING -t MNEUMONIC_NUM'" do
+      context "when '-f MNEMONIC_STRING -t MNEMONIC_NUM'" do
         let(:args) do
           [
             'delete',

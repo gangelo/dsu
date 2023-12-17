@@ -3,7 +3,7 @@
 require_relative '../services/entry_group/counter_service'
 require_relative '../services/entry_group/deleter_service'
 require_relative '../support/command_options/dsu_times'
-require_relative '../support/command_options/time_mneumonic'
+require_relative '../support/command_options/time_mnemonic'
 require_relative '../support/time_formatable'
 require_relative '../views/entry_group/shared/no_entries_to_display'
 require_relative '../views/shared/error'
@@ -12,7 +12,7 @@ require_relative 'base_subcommand'
 module Dsu
   module Subcommands
     class Delete < BaseSubcommand
-      include Support::CommandOptions::TimeMneumonic
+      include Support::CommandOptions::TimeMnemonic
       include Support::TimeFormatable
 
       map %w[d] => :date
@@ -45,13 +45,13 @@ module Dsu
       desc I18n.t('subcommands.delete.date.desc'), I18n.t('subcommands.delete.date.usage')
       long_desc I18n.t('subcommands.delete.date.long_desc',
         date_option_description: date_option_description,
-        mneumonic_option_description: mneumonic_option_description)
+        mnemonic_option_description: mnemonic_option_description)
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def date(date_or_mneumonic)
-        time = if time_mneumonic?(date_or_mneumonic)
-          time_from_mneumonic(command_option: date_or_mneumonic)
+      def date(date_or_mnemonic)
+        time = if time_mnemonic?(date_or_mnemonic)
+          time_from_mnemonic(command_option: date_or_mnemonic)
         else
-          Time.parse(date_or_mneumonic)
+          Time.parse(date_or_mnemonic)
         end
         delete_entry_groups_if times: [time], options: options
       rescue ArgumentError => e
@@ -61,7 +61,7 @@ module Dsu
       desc I18n.t('subcommands.delete.dates.desc'), I18n.t('subcommands.delete.dates.usage')
       long_desc I18n.t('subcommands.delete.dates.long_desc',
         date_option_description: date_option_description,
-        mneumonic_option_description: mneumonic_option_description)
+        mnemonic_option_description: mnemonic_option_description)
       option :from, type: :string, required: true, aliases: '-f', banner: 'DATE|MNEMONIC'
       option :to, type: :string, required: true, aliases: '-t', banner: 'DATE|MNEMONIC'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'

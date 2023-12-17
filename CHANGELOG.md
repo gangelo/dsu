@@ -112,11 +112,11 @@ See previous alpha releases for changes.
 
 Changes
 
-- For convenience, the `dsu list date` command now takes a MNEUMONIC in addition to a DATE. See `dsu list help date` for more information.
+- For convenience, the `dsu list date` command now takes a MNEMONIC in addition to a DATE. See `dsu list help date` for more information.
 
 Bug fixes
 
-- Fix a bug that did not display `dsu list dates SUBCOMMAND` date list properly when the `--from` option was a date mneumonic and the `--to` optoin was a relative time mneumonic (e.g. `dsu list dates -f today -t +1`). In this case, DSU dates `Time.now` and `Time.now.tomorrow` should be displayed; instead, the bug would consider the `--to` option as relative to `Time.now`, so only 1 DSU date (`Time.now` would be returned).
+- Fix a bug that did not display `dsu list dates SUBCOMMAND` date list properly when the `--from` option was a date mnemonic and the `--to` optoin was a relative time mnemonic (e.g. `dsu list dates -f today -t +1`). In this case, DSU dates `Time.now` and `Time.now.tomorrow` should be displayed; instead, the bug would consider the `--to` option as relative to `Time.now`, so only 1 DSU date (`Time.now` would be returned).
 
 ## [1.1.0.alpha.1] 2023-05-23
 

@@ -45,8 +45,8 @@ RSpec.describe 'Dsu list features', type: :feature do
     end
   end
 
-  context "when 'dsu list date DATE|MNEUMONIC' is used" do
-    context 'with no DATE | MNEUMONIC argument' do
+  context "when 'dsu list date DATE|MNEMONIC' is used" do
+    context 'with no DATE | MNEMONIC argument' do
       let(:args) { %w[list date] }
       let(:expected_output) do
         'ERROR: "rspec list date" was called with no arguments'
@@ -65,10 +65,10 @@ RSpec.describe 'Dsu list features', type: :feature do
       it_behaves_like 'the entry group is listed'
     end
 
-    context 'with a mneumonic' do
+    context 'with a mnemonic' do
       context "with '+n'" do
         let(:args) { %w[list date +1] }
-        # + 1.day to reflect our +1 mneumonic
+        # + 1.day to reflect our +1 mnemonic
         let(:time) { Time.now + 1.day }
         let(:times) { [time, time.yesterday] }
 
@@ -77,7 +77,7 @@ RSpec.describe 'Dsu list features', type: :feature do
 
       context "with '-n'" do
         let(:args) { %w[list date -1] }
-        # - 1.day to reflect our -1 mneumonic
+        # - 1.day to reflect our -1 mnemonic
         let(:time) { Time.now - 1.day }
         let(:times) { [time.yesterday, time] }
 
@@ -202,7 +202,7 @@ RSpec.describe 'Dsu list features', type: :feature do
       it_behaves_like 'the entry group is listed'
     end
 
-    context "when 'dsu list dates -f MNEUMONIC -t TO_DATE' is used" do
+    context "when 'dsu list dates -f MNEMONIC -t TO_DATE' is used" do
       let(:args) do
         [
           'list',
@@ -216,7 +216,7 @@ RSpec.describe 'Dsu list features', type: :feature do
       it_behaves_like 'the entry group is listed'
     end
 
-    context "when 'dsu list dates -f FROM_DATE -t MNEUMONIC' is used" do
+    context "when 'dsu list dates -f FROM_DATE -t MNEMONIC' is used" do
       let(:args) do
         [
           'list',
@@ -230,8 +230,8 @@ RSpec.describe 'Dsu list features', type: :feature do
       it_behaves_like 'the entry group is listed'
     end
 
-    context "when 'dsu list dates -f MNEUMONIC -t MNEUMONIC' is used" do
-      context "when '-f MNEUMONIC_STRING -t MNEUMONIC_STRING'" do
+    context "when 'dsu list dates -f MNEMONIC -t MNEMONIC' is used" do
+      context "when '-f MNEMONIC_STRING -t MNEMONIC_STRING'" do
         let(:args) do
           [
             'list',
@@ -245,7 +245,7 @@ RSpec.describe 'Dsu list features', type: :feature do
         it_behaves_like 'the entry group is listed'
       end
 
-      context "when '-f MNEUMONIC_NUM -t MNEUMONIC_STRING'" do
+      context "when '-f MNEMONIC_NUM -t MNEMONIC_STRING'" do
         let(:args) do
           [
             'list',
@@ -259,7 +259,7 @@ RSpec.describe 'Dsu list features', type: :feature do
         it_behaves_like 'the entry group is listed'
       end
 
-      context "when '-f MNEUMONIC_STRING -t MNEUMONIC_NUM'" do
+      context "when '-f MNEMONIC_STRING -t MNEMONIC_NUM'" do
         let(:args) do
           [
             'list',
