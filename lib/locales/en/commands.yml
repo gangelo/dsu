@@ -96,7 +96,21 @@ en:
         - '-v'
       desc: version|v|-v
       usage: Displays the DSU version for this gem
+  # Should these options go under their respective commands
+  # (e.g. commands.options.date.name, commands.options.today.aliases, etc.)?
   options:
+    date:
+      aliases: -d
+      name: 'date'
+    today:
+      aliases: -n
+      name: 'today'
+    tomorrow:
+      aliases: -t
+      name: 'tomorrow'
+    yesterday:
+      aliases: -y
+      name: 'yesterday'
     include_all: Include dates that have no DSU entries
     date_option_description: |
       DATE
