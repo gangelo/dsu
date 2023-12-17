@@ -21,14 +21,15 @@ After installation (`gem install dsu`), the first thing you may want to do is ru
 ```shell
 #=>
 Commands:
-  dsu add, -a [OPTIONS] DESCRIPTION  # Adds a DSU entry...
-  dsu config, -c SUBCOMMAND          # Manage configuration...
-  dsu edit, -e SUBCOMMAND            # Edit DSU entries...
-  dsu help [COMMAND]                 # Describe available...
-  dsu info, -i                       # Displays information...
-  dsu list, -l SUBCOMMAND            # Displays DSU entries...
-  dsu theme, -t SUBCOMMAND           # Manage DSU themes...
-  dsu version, -v                    # Displays this gem version
+  dsu add|-a [OPTIONS] DESCRIPTION  # Adds a DSU entry...
+  dsu config|-c SUBCOMMAND          # Manage configuration...
+  dsu delete|-d SUBCOMMAND          # Delete DSU entries...
+  dsu edit|-e SUBCOMMAND            # Edit DSU entries...
+  dsu help [COMMAND]                # Describe available...
+  dsu info|-i                       # Displays information...
+  dsu list|-l SUBCOMMAND            # Displays DSU entries...
+  dsu theme|-t SUBCOMMAND           # Manage DSU themes...
+  dsu version|-v                    # Displays this gem version
 
 Options:
   [--debug], [--no-debug]
@@ -71,11 +72,11 @@ You can display DSU entries for a particular day or date (`date`) using any of t
 - `$ dsu list today|n`
 - `$ dsu list tomorrow|t`
 - `$ dsu list yesterday|y`
-- `$ dsu list date|d DATE|MNEUMONIC`
+- `$ dsu list date|d DATE|MNEMONIC`
 - `$ dsu list dates|dd OPTIONS`
 
 See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
-See the [Mneumonics](#mneumonics) section for more information on acceptable MNEUMONIC rules and formats used by `dsu`.
+See the [Mnemonics](#mnemonics) section for more information on acceptable MNEMONIC rules and formats used by `dsu`.
 
 IMPORTANT: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
 
@@ -107,7 +108,7 @@ Friday, (Yesterday) 2023-05-05
 ```
 
 #### Listing Date Ranges
-For more information, see the [Mneumonics](#mneumonics) section for more information on acceptable MNEUMONIC rules and formats used by `dsu`.
+For more information, see the [Mnemonics](#mnemonics) section for more information on acceptable MNEMONIC rules and formats used by `dsu`.
 
 Output omitted for brevity...
 
@@ -127,11 +128,11 @@ Display the DSU entries for the last week.
 
 `dsu list dates --from today --to -7`
 
-Display the DSU entries back 1 week from yesterday's date. *This example is silly,* but it illustrates the fact that you can use relative mneumonics for both `--from` and `--to` options. While you *can* use relative mneumonics for both `--from` and `--to` options, there is always a more intuitive way.
+Display the DSU entries back 1 week from yesterday's date. *This example is silly,* but it illustrates the fact that you can use relative mnemonics for both `--from` and `--to` options. While you *can* use relative mnemonics for both `--from` and `--to` options, there is always a more intuitive way.
 
 `dsu list dates --from -7 --to +6`
 
-The above can be accomplished MUCH easier by using the `yesterday` mneumonic. This will display the DSU entries back 1 week from yesterday's date.
+The above can be accomplished MUCH easier by using the `yesterday` mnemonic. This will display the DSU entries back 1 week from yesterday's date.
 
 `dsu list dates --from yesterday --to -6`
 
@@ -231,7 +232,63 @@ from: Interative planning meeting 11:00AM.
       Pair with Chad on ticket 31211.
       Interative planning meeting 11:00AM.
 ```
+## Deleting DSU Entry Groups
+You can delete DSU groups, which will delete all the entries associated with a particular day or date range. When deleting DSU entries for a particular day (`date`, `today`, `tomorrow`, `yesterday`), or date range (`dates`), `dsu` will delete the the entries associated with that day or date range:
 
+- `$ dsu delete today|n`
+- `$ dsu delete tomorrow|t`
+- `$ dsu delete yesterday|y`
+- `$ dsu delete date|d DATE|MNEMONIC`
+- `$ dsu delete dates|dd OPTIONS`
+
+NOTE: Before any `dsu` command is executed to delete an entry group, `dsu` will prompt you to confirm your action; you can continue ('y') or cancel ('N').
+
+See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
+See the [Mnemonics](#mnemonics) section for more information on acceptable MNEMONIC rules and formats used by `dsu`.
+
+IMPORTANT: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu delete help date` and `dsu delete help dates`.
+
+### Examples
+The following deletes the entry group and all entries for today's date, yesterday's date, and tomorrow's date respectfully.
+
+`$ dsu delete today`
+```shell
+#=>
+Are you sure you want to delete all the entries for 2023-12-17 (1 entry groups)? [y/N]> y
+Deleted 1 entry group(s).
+```
+
+`$ dsu delete yesterday`
+```shell
+#=>
+Are you sure you want to delete all the entries for 2023-12-16 (1 entry groups)? [y/N]> y
+Deleted 1 entry group(s).
+```
+
+`$ dsu delete tomorrow`
+```shell
+#=>
+Are you sure you want to delete all the entries for 2023-12-18 (1 entry groups)? [y/N]> y
+Deleted 1 entry group(s).
+```
+
+The following deletes the entry group and all entries for 12/17 of the current year.
+
+`$ dsu delete date 12/17`
+```shell
+#=>
+Are you sure you want to delete all the entries for 2023-12-17 (0 entry groups)? [y/N]> y
+Deleted 1 entry group(s)
+```
+
+The following deletes the entry group and all entries for the past week, starting from today (12/17/2023).
+
+`$ dsu delete dates --from today --to -6`
+```shell
+#=>
+Are you sure you want to delete all the entries for 2023-12-11 thru 2023-12-17 (7 entry groups)? [y/N]> y
+Deleted 7 entry group(s).
+```
 ## Customizing the `dsu` Configuration File
 
 It is **not** recommended that you get too attached to the `dsu` configuration options when this gem is in pre-release (e.g. `n.n.n.alpha.n`, `n.n.n.beta.n`, etc.). This is because changes to the configuration file options could change; however, if you're curious, ambitious, or just like living on the edge, have at it. However, just keep in mind that things could change. With an official release (`n.n.n.n`), edit all you want. Regardless, if you *do* want to customize the `dsu` configuration file, you may do the following:
@@ -295,15 +352,15 @@ These notes apply to anywhere DATE is used...
 
 DATE may be any date string that can be parsed using `Time.parse`. Consequently, you may omit the year if the date you want to display is the current year (e.g. <month>/<day>, or 1/31). For example: `require 'time'; Time.parse('2023/01/02'); Time.parse('1/2/2023'); Time.parse('1/2') # etc.`
 
-## Mneumonics
+## Mnemonics
 
-These notes apply to anywhere MNEUMONIC is used...
+These notes apply to anywhere MNEMONIC is used...
 
-A *mneumonic* may be any of the following: `n|today|t|tomorrow|y|yesterday|+n|-n`.
+A *mnemonic* may be any of the following: `n|today|t|tomorrow|y|yesterday|+n|-n`.
 
 Where `n`, `t`, `y` are aliases for `today`, `tomorrow`, and `yesterday`, respectively.
 
-Where `+n`, `-n` are relative date mneumonics (RDNs). Generally speaking, RDNs are relative to the current date. For example, a RDN of `+1` would be equal to `Time.now + 1.day` (or tomorrow), and a RDN of `-1` would be equal to `Time.now - 1.day` (or yesterday).
+Where `+n`, `-n` are relative date mnemonics (RDNs). Generally speaking, RDNs are relative to the current date. For example, a RDN of `+1` would be equal to `Time.now + 1.day` (or tomorrow), and a RDN of `-1` would be equal to `Time.now - 1.day` (or yesterday).
 
 NOTE: In some cases the behavior RDNs have on some commands are context dependent; in such cases the behavior will be noted in the help appropriate to the command, for example see the following `dsu` command help: `dsu list help date` and `dsu list help dates`.
 
