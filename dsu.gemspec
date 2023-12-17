@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary      = 'dsu (Agile Daily Stand Up/DSU) mini-manager.'
   spec.description  = <<-DESC
-    dsu is a small, but powerful gem that helps manage your Agile DSU (Daily Stand Up) participation. How? by providing a simple command-line interface (CLI) which allows you to create, read, update, and delete (CRUD) your DSU entries (activities). During your DSU, you can use dsu's CLI to list and share what you did "yesterday" and what you plan on doing "Today" with your team. DSU entries are grouped by day and can be viewed in simple text format from the command-line. When displaying DSU entries for a particular day, dsu will also display DSU entries for the previous day. If the day you are trying to display falls on a weekend or Monday, dsu will automatically search back to include the weekend and previous Friday dates and display the entries; this is so that you can share what you did over the weekend (if anything) and the previous Friday with your team. When searching for "Yesterday's" DSU entries, dsu will automatically search back a maximimum of 7 days to find DSU entries to share. This could be helpful if, for example, if you are sharing what you plan to do today (Wednesday), but were sick yesterday (Tuesday); dsu in this case will display the last DSU entries it can find searching backwards a maximum of 7 days. dsu does a LOT more and is perfect for command-line junkies and those who LOVE simplicity. Give it a try and a star if you like it!
+    Get ready to jazz and snazz up your daily stand-ups with dsu, the agile developer's new best friend! This handy command-line gem is all about making your Daily Stand-Up (DSU) participation smooth, fun, and super efficient. Effortlessly create, update, and organize your DSU entries, turning the task of tracking and sharing your daily activities into a breeze. With its intuitive interface and smart date management, dsu ensures you’re always ready to inform your team about your recent progress and upcoming plans. Perfect for command-line tool enthusiasts, dsu brings a dash of simplicity and fun, fun, fun to your daily agile routine!
   DESC
   spec.homepage = 'https://github.com/gangelo/dsu'
   spec.license = 'MIT'
@@ -53,6 +53,8 @@ Gem::Specification.new do |spec|
 
     Dsu now has a delete command! Try it out by running `dsu delete help`.
 
-    Try a dsu theme by running `dsu theme list` and then `dsu theme use THEME_NAME` where THEME_NAME is the name of the theme you want to try :)
+    Try a dsu theme by running `dsu theme list` and then `dsu theme use THEME_NAME` where THEME_NAME is the name of the theme you want to try.
+
+    :)
   POST_INSTALL
 end
