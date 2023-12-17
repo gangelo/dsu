@@ -36,7 +36,7 @@ module ColorThemeMode
   end
 
   def light!
-    light_color = "light_#{self[:color].to_s.gsub('light_', '')}".to_sym
+    light_color = :"light_#{self[:color].to_s.gsub('light_', '')}"
     dup.merge({ color: light_color })
   end
 end

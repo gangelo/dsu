@@ -88,11 +88,11 @@ module Dsu
           self.class.class_eval do
             attr_reader attr
             attr_writer attr
-            private "#{attr}="
+            private :"#{attr}="
           end
           attr_value = theme_hash[attr]
           attr_value = attr_value.merge_default_colors if default_theme_color_keys.include?(attr)
-          send("#{attr}=", attr_value)
+          send(:"#{attr}=", attr_value)
         end
       end
 

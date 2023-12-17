@@ -67,8 +67,7 @@ module Dsu
               message_array = I18n.t('services.editor_service.errors.temp_file_error',
                 editor: configuration.editor,
                 status: $CHILD_STATUS).split("\n")
-              puts apply_theme(message_array, theme_color: color_theme.error
-              )
+              puts apply_theme(message_array, theme_color: color_theme.error)
             end
           end
         end
