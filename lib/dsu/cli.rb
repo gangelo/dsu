@@ -24,10 +24,10 @@ module Dsu
 
     desc I18n.t('commands.add.desc'), I18n.t('commands.add.usage')
     long_desc I18n.t('commands.add.long_desc', date_option_description: date_option_description)
-    option I18n.t('options.date.name'), type: :string, aliases: I18n.t('options.date.aliases')
-    option I18n.t('options.tomorrow.name'), type: :boolean, aliases: I18n.t('options.tomorrow.aliases')
-    option I18n.t('options.yesterday.name'), type: :boolean, aliases: I18n.t('options.yesterday.aliases')
-    option I18n.t('options.today.name'), type: :boolean, default: true, aliases: I18n.t('options.today.aliases')
+    option I18n.t('options.date.name'), aliases: I18n.t('options.date.aliases'), type: :string
+    option I18n.t('options.tomorrow.name'), aliases: I18n.t('options.tomorrow.aliases'), type: :boolean
+    option I18n.t('options.yesterday.name'), aliases: I18n.t('options.yesterday.aliases'), type: :boolean
+    option I18n.t('options.today.name'), aliases: I18n.t('options.today.aliases'), type: :boolean, default: true
     def add(description)
       time = if options[I18n.t('options.date.name')].present?
         Time.parse(options[I18n.t('options.date.name')])
