@@ -4,6 +4,7 @@ require 'fileutils'
 require 'time'
 require_relative 'base_cli'
 require_relative 'subcommands/config'
+require_relative 'subcommands/delete'
 require_relative 'subcommands/edit'
 require_relative 'subcommands/list'
 require_relative 'subcommands/theme'
@@ -14,10 +15,11 @@ module Dsu
     # TODO: I18n these mappings.
     map %w[a -a] => :add
     map %w[c -c] => :config
+    map %w[d -d] => :delete
     map %w[e -e] => :edit
     map %w[l -l] => :list
     map %w[t -t] => :theme
-    map %w[v -i] => :info
+    map %w[i -i] => :info
     map %w[v -v] => :version
 
     desc I18n.t('commands.add.desc'), I18n.t('commands.add.usage')
@@ -47,6 +49,9 @@ module Dsu
 
     desc I18n.t('commands.config.desc'), I18n.t('commands.config.usage')
     subcommand :config, Subcommands::Config
+
+    desc I18n.t('commands.delete.desc'), I18n.t('commands.delete.usage')
+    subcommand :delete, Subcommands::Delete
 
     desc I18n.t('commands.edit.desc'), I18n.t('commands.edit.usage')
     subcommand :edit, Subcommands::Edit

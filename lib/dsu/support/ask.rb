@@ -23,7 +23,7 @@ module Dsu
       def auto_prompt(prompt, options)
         prompt = Utils.strip_escapes(prompt)
         @auto_prompt ||= begin
-          value = options.dig('prompts', prompt)
+          value = options.dig('prompts', prompt) || options.dig('prompts', 'any')
           value = (value == 'true' unless value.nil?)
           value
         end

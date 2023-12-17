@@ -18,3 +18,6 @@ en:
       deleted: Configuration file (%{configuration_file}) deleted.
       destination_folder_does_not_exist: "Destination folder for configuration file (%{configuration_folder}) does not exist."
       does_not_exist: "Configuration file (%{configuration_file}) does not exist."
+  information:
+    dates:
+      through: "%{from} thru %{to}"
