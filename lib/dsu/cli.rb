@@ -12,10 +12,8 @@ require_relative 'subcommands/theme'
 module Dsu
   # The `dsu` command.
   class CLI < BaseCLI
-    # TODO: I18n these mappings.
     map I18n.t('commands.add.key_mappings') => :add
     map I18n.t('commands.config.key_mappings') => :config
-    # map %w[d -d] => :delete
     map I18n.t('commands.delete.key_mappings') => :delete
     map I18n.t('commands.edit.key_mappings') => :edit
     map I18n.t('commands.help.key_mappings') => :help
