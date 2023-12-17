@@ -7,6 +7,10 @@ Changes
 - Various code refactors.
 - Massive updates to README.md.
 
+Bug fixes
+
+- Fix bug that did not apply the current theme to `dsu help add` help.
+
 ## [2.1.1] 2023-12-17
 
 Bug fixes
