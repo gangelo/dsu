@@ -4,6 +4,7 @@ Changes
 
 - WIP, continued I18n integration. See [2.1.0] for more information.
 - Removed shortcut mappings for all commands (see `dsu help`) to remove dash ("-") preceeding command shortcuts. For example, `dsu -a` (i.e. shortcut for `dsu add`) is now `dsu a`, `dsu -c` (i.e. shortcut for `dsu config`) is now `dsu c`, etc. This was done to avoid confusion as this format is typically used for options, not shortcut commands. The only exception is `dsu version` which will accept shortcuts `dsu v` and `dsu -v`, as `-v` is generally used to display version information.
+- Various code refactors.
 
 ## [2.1.1] 2023-12-17
 
