@@ -6,7 +6,7 @@ require 'i18n'
 require 'thor'
 require 'time'
 
-I18n.load_path += Dir["#{File.expand_path('config/locales/**/*')}/*.yml"]
+I18n.load_path += Dir[File.join(__dir__, 'locales/**/*', '*.yml')]
 # I18n.default_locale = :en # (note that `en` is already the default!)
 
 Dir.glob("#{__dir__}/core/**/*.rb").each do |file|
