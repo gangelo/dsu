@@ -1,3 +1,18 @@
+## [2.1.0] 2023-12-16
+
+Enhancements
+
+- Added `dsu delete` command to incorporate color themes. See `dsu help delete` for more information.
+
+Bug fixes
+
+- Fix bug that failed to show "(nothing to display for <day>, <date> <local time designator> through <day>, <date> <local time designator>)" for `dsu list dates` command when no entries existed for the entry groups associated with the given dates.
+
+Miscellaneous
+
+- Update ruby gems.
+- Updated README.md to reflect new `dsu delete` command.
+
 ## [2.0.8] 2023-12-02
 
 - Update ruby gems.
