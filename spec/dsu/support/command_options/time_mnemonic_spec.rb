@@ -2,41 +2,41 @@
 
 RSpec.shared_examples 'the correct time is returned' do
   it 'returns the expected time' do
-    expect(to_yyyymmdd_string(time_from_mneumonic)).to eq(to_yyyymmdd_string(expected_time))
+    expect(to_yyyymmdd_string(time_from_mnemonic)).to eq(to_yyyymmdd_string(expected_time))
   end
 end
 
 # rubocop:disable RSpec/NestedGroups
-RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
-  subject(:time_from_mneumonic) do
-    described_class.time_from_mneumonic!(command_option: command_option, relative_time: relative_time)
+RSpec.describe Dsu::Support::CommandOptions::TimeMnemonic do
+  subject(:time_from_mnemonic) do
+    described_class.time_from_mnemonic!(command_option: command_option, relative_time: relative_time)
   end
 
   before do
     allow(Time).to receive(:now).and_call_original
   end
 
-  describe '#time_from_mneumonic' do
-    subject(:time_from_mneumonic) do
-      described_class.time_from_mneumonic(command_option: command_option, relative_time: relative_time)
+  describe '#time_from_mnemonic' do
+    subject(:time_from_mnemonic) do
+      described_class.time_from_mnemonic(command_option: command_option, relative_time: relative_time)
     end
 
     context 'when an argument is invalid' do
-      let(:command_option) { 'not a mneumonic' }
+      let(:command_option) { 'not a mnemonic' }
       let(:relative_time) { :not_a_time }
 
       it 'returns nil' do
-        expect(time_from_mneumonic).to be_nil
+        expect(time_from_mnemonic).to be_nil
       end
     end
   end
 
-  describe '#time_from_mneumonic!' do
+  describe '#time_from_mnemonic!' do
     context 'when the command_option argument is invalid' do
       context 'when a valid date string' do
         let(:command_option) { '5/1/2023' }
         let(:relative_time) { nil }
-        let(:expected_error) { /command_option is an invalid mneumonic/ }
+        let(:expected_error) { /command_option is an invalid mnemonic/ }
 
         it_behaves_like 'an error is raised'
       end
@@ -65,10 +65,10 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'an error is raised'
       end
 
-      context 'when an invalid mneumonic' do
-        let(:command_option) { 'not a mneumonic' }
+      context 'when an invalid mnemonic' do
+        let(:command_option) { 'not a mnemonic' }
         let(:relative_time) { nil }
-        let(:expected_error) { /command_option is an invalid mneumonic/ }
+        let(:expected_error) { /command_option is an invalid mnemonic/ }
 
         it_behaves_like 'an error is raised'
       end
@@ -108,7 +108,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'the correct time is returned'
       end
 
-      context 'when a positive (+), relative time mneumonic' do
+      context 'when a positive (+), relative time mnemonic' do
         let(:command_option) { '+1' }
         let(:relative_time) { nil }
         let(:expected_time) { Time.now.tomorrow }
@@ -116,7 +116,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'the correct time is returned'
       end
 
-      context 'when a negative (-), relative time mneumonic' do
+      context 'when a negative (-), relative time mnemonic' do
         let(:command_option) { '-1' }
         let(:relative_time) { nil }
         let(:expected_time) { Time.now.yesterday }
@@ -142,7 +142,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'the correct time is returned'
       end
 
-      context "when a (positive, +n) relative time mneumonic and 'Time.now' respectfully" do
+      context "when a (positive, +n) relative time mnemonic and 'Time.now' respectfully" do
         let(:command_option) { '+7' }
         let(:relative_time) { Time.now }
         let(:expected_time) { 7.days.from_now }
@@ -150,7 +150,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'the correct time is returned'
       end
 
-      context "when a (negative, -n) relative time mneumonic and 'Time.now' respectfully" do
+      context "when a (negative, -n) relative time mnemonic and 'Time.now' respectfully" do
         let(:command_option) { '-7' }
         let(:relative_time) { Time.now }
         let(:expected_time) { -7.days.from_now }
@@ -158,7 +158,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         it_behaves_like 'the correct time is returned'
       end
 
-      context 'when command_option is a time mneumonic' do
+      context 'when command_option is a time mnemonic' do
         context "when 'today' and 'Time.now.tomorrow' respectfully" do
           let(:command_option) { 'today' }
           let(:relative_time) { Time.now.tomorrow }
@@ -208,7 +208,7 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMneumonic do
         end
       end
 
-      context 'when command_option and relative_time are both time relative mneumonics' do
+      context 'when command_option and relative_time are both time relative mnemonics' do
         context "when '+1' and 'Time.now.tomorrow' respectfully" do
           let(:command_option) { '+1' }
           let(:relative_time) { Time.now.tomorrow }

@@ -51,7 +51,7 @@ RSpec.describe Dsu::Support::CommandOptions::DsuTimes do
     end
 
     context 'when the arguments are valid' do
-      context 'when from_option and to_option are both time mneumonics' do
+      context 'when from_option and to_option are both time mnemonics' do
         context "when 'today' and 'tomorrow' respectively" do
           let(:from_option) { 'today' }
           let(:to_option) { 'tomorrow' }
@@ -93,7 +93,7 @@ RSpec.describe Dsu::Support::CommandOptions::DsuTimes do
         end
       end
 
-      context 'when from_option and to_option are relative time mneumonics' do
+      context 'when from_option and to_option are relative time mnemonics' do
         context "when '-2' and '-2' respectively" do
           let(:from_option) { '-1' }
           let(:to_option) { '-2' }
@@ -108,7 +108,7 @@ RSpec.describe Dsu::Support::CommandOptions::DsuTimes do
         end
       end
 
-      context 'when from_option is a time mneumonic and to_option is a relative time mneumonic' do
+      context 'when from_option is a time mnemonic and to_option is a relative time mnemonic' do
         context "when 'today' and 'tomorrow' respectively" do
           let(:from_option) { 'today' }
           let(:to_option) { '+2' }
@@ -120,7 +120,7 @@ RSpec.describe Dsu::Support::CommandOptions::DsuTimes do
         end
       end
 
-      context 'when from_option is a relative time mneumonic and to_option is a time mneumonic' do
+      context 'when from_option is a relative time mnemonic and to_option is a time mnemonic' do
         context "when 'today' and 'tomorrow' respectively" do
           let(:from_option) { '+2' }
           let(:to_option) { 'yesterday' }

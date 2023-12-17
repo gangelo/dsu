@@ -42,8 +42,8 @@ module Dsu
         I18n.t('options.date_option_description')
       end
 
-      def mneumonic_option_description
-        I18n.t('options.mneumonic_option_description')
+      def mnemonic_option_description
+        I18n.t('options.mnemonic_option_description')
       end
     end
 

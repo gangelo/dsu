@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Support::CommandOptions::TimeMneumonics do
+RSpec.describe Dsu::Support::CommandOptions::TimeMnemonics do
   describe 'constants' do
     it 'defines TODAY' do
       expect(described_class::TODAY).to match_array(%w[n today])

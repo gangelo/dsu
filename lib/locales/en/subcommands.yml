@@ -71,14 +71,14 @@ en:
           Default: "default"
     delete:
       date:
-        desc: date|d DATE|MNEUMONIC
-        usage: Deletes the DSU entries for the given DATE or MNEUMONIC
+        desc: date|d DATE|MNEMONIC
+        usage: Deletes the DSU entries for the given DATE or MNEMONIC
         long_desc: |
-          Deletes the DSU entries for the given DATE or MNEUMONIC.
+          Deletes the DSU entries for the given DATE or MNEMONIC.
 
           %{date_option_description}
 
-          %{mneumonic_option_description}
+          %{mnemonic_option_description}
       dates:
         desc: dates|dd OPTIONS
         usage: Deletes the DSU entries for the OPTIONS provided
@@ -91,13 +91,13 @@ en:
 
           OPTIONS:
 
-          -f|--from DATE|MNEMONIC: The DATE or MNEUMONIC that represents the start of the range of DSU dates to delete. If a relative mneumonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the current date (e.g. `<MNEUMONIC>.to_i.days.from_now(Time.now)`).
+          -f|--from DATE|MNEMONIC: The DATE or MNEMONIC that represents the start of the range of DSU dates to delete. If a relative mnemonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the current date (e.g. `<MNEMONIC>.to_i.days.from_now(Time.now)`).
 
-          -t|--to DATE|MNEMONIC: The DATE or MNEUMONIC that represents the end of the range of DSU dates to delete. If a relative mneumonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the date that resulting from the `--from` option date calculation.
+          -t|--to DATE|MNEMONIC: The DATE or MNEMONIC that represents the end of the range of DSU dates to delete. If a relative mnemonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the date that resulting from the `--from` option date calculation.
 
           %{date_option_description}
 
-          %{mneumonic_option_description}
+          %{mnemonic_option_description}
 
           EXAMPLES:
 
@@ -116,15 +116,15 @@ en:
           $ dsu delete dates --from today --to -7
 
           This (assuming "today" is 5/23) will delete the DSU entries for the last week 5/16 to 5/22.
-          This example simply illustrates the fact that you can use relative mneumonics for
+          This example simply illustrates the fact that you can use relative mnemonics for
           both `--from` and `--to` options; this doesn't mean you should do so...
 
-          While you can use relative mneumonics for both `--from` and `--to` options,
+          While you can use relative mnemonics for both `--from` and `--to` options,
           there is always a more intuitive way. The below example basically deletes one week of DSU entries back 1 week from yesterday's date:
 
           $ dsu delete dates --from -7 --to +6
 
-          The above can be accomplished MUCH easier by simply using the `yesterday` mneumonic...
+          The above can be accomplished MUCH easier by simply using the `yesterday` mnemonic...
 
           This (assuming "today" is 5/23) will delete the DSU entries back 1 week from yesterday's date 5/16 to 5/22:
 
@@ -186,14 +186,14 @@ en:
           Edits the DSU entries for yesterday.
     list:
       date:
-        desc: date|d DATE|MNEUMONIC
-        usage: Displays the DSU entries for the given DATE or MNEUMONIC
+        desc: date|d DATE|MNEMONIC
+        usage: Displays the DSU entries for the given DATE or MNEMONIC
         long_desc: |
-          Displays the DSU entries for the given DATE or MNEUMONIC.
+          Displays the DSU entries for the given DATE or MNEMONIC.
 
           %{date_option_description}
 
-          %{mneumonic_option_description}
+          %{mnemonic_option_description}
       dates:
         desc: dates|dd OPTIONS
         usage: Displays the DSU entries for the OPTIONS provided
@@ -208,13 +208,13 @@ en:
 
           -a|--include-all true|false: If true, all DSU dates within the specified range will be displayed. If false, DSU dates between the first and last DSU dates that have NO entries will NOT be displayed.. The default is taken from the dsu configuration setting :include_all, see `dsu config info`.
 
-          -f|--from DATE|MNEMONIC: The DATE or MNEUMONIC that represents the start of the range of DSU dates to display. If a relative mneumonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the current date (e.g. `<MNEUMONIC>.to_i.days.from_now(Time.now)`).
+          -f|--from DATE|MNEMONIC: The DATE or MNEMONIC that represents the start of the range of DSU dates to display. If a relative mnemonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the current date (e.g. `<MNEMONIC>.to_i.days.from_now(Time.now)`).
 
-          -t|--to DATE|MNEMONIC: The DATE or MNEUMONIC that represents the end of the range of DSU dates to display. If a relative mneumonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the date that resulting from the `--from` option date calculation.
+          -t|--to DATE|MNEMONIC: The DATE or MNEMONIC that represents the end of the range of DSU dates to display. If a relative mnemonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the date that resulting from the `--from` option date calculation.
 
           %{date_option_description}
 
-          %{mneumonic_option_description}
+          %{mnemonic_option_description}
 
           EXAMPLES:
 
@@ -235,16 +235,16 @@ en:
           $ dsu list dates --from today --to -7
 
           This (assuming "today" is 5/23) will display the DSU entries for the last week 5/16 to 5/22.
-          This example simply illustrates the fact that you can use relative mneumonics for
+          This example simply illustrates the fact that you can use relative mnemonics for
           both `--from` and `--to` options; this doesn't mean you should do so...
 
-          While you can use relative mneumonics for both `--from` and `--to` options,
+          While you can use relative mnemonics for both `--from` and `--to` options,
           there is always a more intuitive way. The below example basically lists one week
           of DSU entries back 1 week from yesterday's date:
 
           $ dsu list dates --from -7 --to +6
 
-          The above can be accomplished MUCH easier by simply using the `yesterday` mneumonic...
+          The above can be accomplished MUCH easier by simply using the `yesterday` mnemonic...
 
           This (assuming "today" is 5/23) will display the DSU entries back 1 week from yesterday's date 5/16 to 5/22:
 
