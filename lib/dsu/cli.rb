@@ -24,19 +24,18 @@ module Dsu
 
     desc I18n.t('commands.add.desc'), I18n.t('commands.add.usage')
     long_desc I18n.t('commands.add.long_desc', date_option_description: date_option_description)
-    # TODO: I18n these option aliases.
-    option :date, type: :string, aliases: '-d'
-    option :tomorrow, type: :boolean, aliases: '-t'
-    option :yesterday, type: :boolean, aliases: '-y'
-    option :today, type: :boolean, aliases: '-n', default: true
+    option I18n.t('options.date.name'), type: :string, aliases: I18n.t('options.date.aliases')
+    option I18n.t('options.tomorrow.name'), type: :boolean, aliases: I18n.t('options.tomorrow.aliases')
+    option I18n.t('options.yesterday.name'), type: :boolean, aliases: I18n.t('options.yesterday.aliases')
+    option I18n.t('options.today.name'), type: :boolean, default: true, aliases: I18n.t('options.today.aliases')
     def add(description)
-      time = if options[:date].present?
-        Time.parse(options[:date])
-      elsif options[:tomorrow].present?
+      time = if options[I18n.t('options.date.name')].present?
+        Time.parse(options[I18n.t('options.date.name')])
+      elsif options[I18n.t('options.tomorrow.name')].present?
         Time.now.tomorrow
-      elsif options[:yesterday].present?
+      elsif options[I18n.t('options.yesterday.name')].present?
         Time.now.yesterday
-      elsif options[:today].present?
+      elsif options[I18n.t('options.today.name')].present?
         Time.now
       end
       entry = Models::Entry.new(description: description)
