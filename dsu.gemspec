@@ -51,6 +51,8 @@ Gem::Specification.new do |spec|
     View the dsu README.md here: https://github.com/gangelo/dsu
     View the dsu CHANGELOG.md: https://github.com/gangelo/dsu/blob/main/CHANGELOG.md
 
+    Dsu now has a delete command! Try it out by running `dsu delete help`.
+
     Try a dsu theme by running `dsu theme list` and then `dsu theme use THEME_NAME` where THEME_NAME is the name of the theme you want to try :)
   POST_INSTALL
 end

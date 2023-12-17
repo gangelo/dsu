@@ -1,3 +1,10 @@
+## [2.1.1] 2023-12-17
+
+Bug fixes
+
+- Fix bug that did not included I18n locale files in yanked version 2.1.0.
+
+
 ## [2.1.0] 2023-12-16
 
 Enhancements
