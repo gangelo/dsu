@@ -23,7 +23,7 @@ module Dsu
 
           # TODO: I18n.
           def render
-            entry_group_times.sort!
+            times.sort!
             time_range = "#{formatted_time(time: times.first)} " \
                          "through #{formatted_time(time: times.last)}"
             message = "(nothing to display for #{time_range})"
@@ -31,6 +31,8 @@ module Dsu
           end
 
           private
+
+          attr_reader :times, :options
 
           def color_theme
             @color_theme ||= Models::ColorTheme.current_or_default
