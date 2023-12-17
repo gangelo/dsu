@@ -1,4 +1,4 @@
-# `dsu`
+# `dsu`- Streamline Your Daily Stand-Up Meeting Participation!
 
 [![GitHub version](http://badge.fury.io/gh/gangelo%2Fdsu.svg)](https://badge.fury.io/gh/gangelo%2Fdsu)
 [![Gem Version](https://badge.fury.io/rb/dsu.svg)](https://badge.fury.io/rb/dsu)
@@ -8,10 +8,25 @@
 
 <img align="center" src="https://i.imgur.com/ff79twF.gif" alt="dsu" />
 
-## About
-`dsu` is a simple, but powerful little gem I wrote for myself to help me manage my Agile DSU (Daily Stand Up) participation. How? by providing a simple command line interface (CLI) which allows me to create, read, update, and delete (CRUD) DSU entries on a daily basis. During my DSU, I'm then able to list, recall and share my DSU activities with my team. DSU entries are grouped by day and are viewed in simple text format from the command line, in a myriad of ways, to meet my personal needs. When viewing DSU entries for a particular day, `dsu` will automatically display the previous day's activities as well, using the typical "what I did yesterday", "What I'm doing today" DSU paradigm. If the DSU date I am trying to view falls on a weekend or Monday, `dsu` will automatically display back to and including the weekend and previous Friday (inclusive), so that I can share what I did over the weekend (if anything) and "last" Friday.
+## Simplify Your Agile Routine
+`dsu` is a sleek and powerful gem that transforms the way you participate in Agile Daily Stand-Ups (DSU). It's designed for developers who love simplicity and efficiency. With `dsu`, you get a user-friendly command-line interface to quickly manage your daily stand-up activities.
 
-You may want to install it and give it a try. If you happen to find `dsu` helpful, give it a star and tell a friend `:)`
+## Why dsu?
+- **Organize Your Tasks:** Easily add, view, update, or delete your DSU entries.
+- **Be Prepared:** Instantly list out your activities for "Yesterday" and plans for "Today" during stand-ups.
+- **Smart Handling of Dates:** `dsu` intelligently includes your weekend and previous Friday activities when necessesary, so you're always ready to share comprehensive updates.
+- **CLI Lovers Rejoice:** If you're a fan of simple command-line tools, `dsu` is a perfect fit.
+
+### Getting Started Is Easy
+Just run `gem install dsu` from your terminal, and you're on your way to more organized and efficient stand-ups. Check out the help section with `$ dsu help` for quick guidance.
+
+## Engage with `dsu`
+Found `dsu` helpful? Star it on GitHub and spread the word! Your feedback and contributions are welcome to make `dsu` even better.
+
+## Quick Install
+```shell
+gem install dsu
+```
 
 ## Help
 
