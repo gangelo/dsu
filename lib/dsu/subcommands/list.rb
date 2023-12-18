@@ -66,7 +66,8 @@ module Dsu
         mnemonic_option_description: mnemonic_option_description)
       option :from, type: :string, required: true, aliases: '-f', banner: 'DATE|MNEMONIC'
       option :to, type: :string, required: true, aliases: '-t', banner: 'DATE|MNEMONIC'
-      option :include_all, default: false, type: :boolean, aliases: '-a', desc: I18n.t('options.include_all')
+      option :include_all, default: nil, type: :boolean, aliases: '-a',
+        desc: I18n.t('options.include_all')
       def dates
         options = configuration.to_h.merge(self.options).with_indifferent_access
         times, errors = Support::CommandOptions::DsuTimes.dsu_times_for(from_option: options[:from], to_option: options[:to]) # rubocop:disable Layout/LineLength
