@@ -1,3 +1,9 @@
+## [2.1.3] 2023-12-17
+
+Bug fixes
+
+- Fix bug that did not recognize the `include_all` configuration option when using the `dsu list dates` command. The `include_all` configuration option is now recognized and used properly when using the `dsu list dates` command. See `dsu help list dates` for more information.
+
 ## [2.1.2] 2023-12-17
 
 Changes
