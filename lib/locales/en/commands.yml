@@ -49,6 +49,10 @@ en:
         DESCRIPTION
 
         Must be be between 2 and 256 characters (inclusive) in length.
+    browse:
+      key_mappings: b
+      desc: browse|b SUBCOMMAND
+      usage: Browse DSU entries by the given SUBCOMMAND
     config:
       key_mappings: c
       desc: config|c SUBCOMMAND
@@ -115,11 +119,18 @@ en:
     date_option_description: |
       DATE
 
-      This may be any date string that can be parsed using `Time.parse`.
-      Consequently, you may use also use '/' as date separators,
+      In the format of: [d]d-|/[m]m-|/[-|/yyyy].
+
+      This may be any date string that can be parsed using ruby's `Time.parse`.
+      Consequently, you may use use '-' or '/' as date separators,
       as well as omit the year if the date you want to display is the
-      current year (e.g. <month>/<day>, or 1/31). For example: `require 'time';
-      Time.parse('01/02/2023'); Time.parse('1/2') # etc.`
+      current year (e.g. <month>/<day>, or 1/31). Leading zeroes are optional.
+      For example: `require 'time'; Time.parse('1/2') # etc.`
+
+      IMPORTANT: If you include the year as part of your date string, the format of
+      the date must be <day>/<month>/<year>, where <day> and <month> may include optional
+      leading zeroes, and <year> must be in the format of yyyy. For example
+      `require 'time'; Time.parse('31/1/2023') # etc.`
     mnemonic_option_description: |
       MNEMONIC
 

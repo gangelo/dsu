@@ -23,16 +23,21 @@ module Dsu
 
           # TODO: I18n.
           def render
-            times.sort!
-            time_range = "#{formatted_time(time: times.first)} " \
-                         "through #{formatted_time(time: times.last)}"
-            message = "(nothing to display for #{time_range})"
             puts apply_theme(message, theme_color: color_theme.info)
           end
 
           private
 
           attr_reader :times, :options
+
+          def message
+            "(nothing to display for #{time_range})"
+          end
+
+          def time_range
+            "#{formatted_time(time: times.min)} " \
+              "through #{formatted_time(time: times.max)}"
+          end
 
           def color_theme
             @color_theme ||= Models::ColorTheme.current_or_default

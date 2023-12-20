@@ -155,6 +155,18 @@ module Dsu
           superclass.exist?(file_path: entries_path_for(time: time))
         end
 
+        def entry_group_times(between: nil, options: {})
+          entry_files.filter_map do |file_path|
+            entry_file_name = File.basename(file_path)
+            next unless entry_file_name.match?(ENTRIES_FILE_NAME_REGEX)
+
+            time = File.basename(entry_file_name, '.*')
+            next if between && !Time.parse(time).between?(between.min, between.max)
+
+            time
+          end.sort
+        end
+
         def find(time:)
           file_path = entries_path_for(time: time)
           entry_group_hash = read!(file_path: file_path)

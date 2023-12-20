@@ -39,6 +39,14 @@ module Dsu
         time.strftime("%m#{separator}%d#{separator}%Y")
       end
 
+      def dd_mm_yyyy(time:, separator: '/')
+        time.strftime("%d#{separator}%m#{separator}%Y")
+      end
+
+      def yyyy_mm_dd(time:, separator: '/')
+        time.strftime("%Y#{separator}%m#{separator}%d")
+      end
+
       def timezone_for(time:)
         time.zone
       end

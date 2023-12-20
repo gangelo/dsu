@@ -1,6 +1,43 @@
 # lib/dsu/subcommands
 en:
   subcommands:
+    browse:
+      date:
+        # desc: date|d DATE|MNEMONIC
+        # usage: Browse DSU entries starting with the given DATE or MNEMONIC
+        # long_desc: |
+        #   Browse DSU entries starting with the given DATE or MNEMONIC.
+
+        #   %{date_option_description}
+
+        #   %{mnemonic_option_description}
+      week:
+        desc: week|w
+        usage: Browse DSU entries for the current week
+        long_desc: |
+          Browse DSU entries for the current week.
+
+          $ dsu browse w
+
+          $ dsu browse w
+      month:
+        desc: month|m
+        usage: Browse DSU entries for the current month
+        long_desc: |
+          Browse DSU entries for the current month.
+
+          $ dsu browse month
+
+          $ dsu browse m
+      year:
+        desc: year|y
+        usage: Browse DSU entries for the current year
+        long_desc: |
+          Browse DSU entries for the current year.
+
+          $ dsu browse year
+
+          $ dsu browse y
     config:
       delete:
         desc: delete
