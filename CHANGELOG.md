@@ -1,3 +1,13 @@
+## [2.1.4] 2023-12-19
+
+Changes
+
+- Minor code refactors.
+
+Bug fixes
+
+- Fix bug in relative date mnemonic (RDMs) regex matcher that incorrectly matched dates whose separater happened to be a "-" (e.g. 2023-12-31). The old regex (/[+-]\d+/) incorrectly interpreted this as an RDM. This bug would cause the `dsu list dates` command (for example) to create erroneous, relative dates.
+
 ## [2.1.3] 2023-12-17
 
 Bug fixes

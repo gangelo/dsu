@@ -10,12 +10,12 @@ RSpec.describe Dsu::Support::CommandOptions::TimeMnemonics do
       expect(described_class::TOMORROW).to match_array(%w[t tomorrow])
     end
 
-    it 'defines YESERDAY' do
-      expect(described_class::YESERDAY).to match_array(%w[y yesterday])
+    it 'defines YESTERDAY' do
+      expect(described_class::YESTERDAY).to match_array(%w[y yesterday])
     end
 
     it 'defines RELATIVE_REGEX' do
-      expect(described_class::RELATIVE_REGEX).to eq(/[+-]\d+/)
+      expect(described_class::RELATIVE_REGEX).to eq(/\A[+-]\d+\z/)
     end
   end
 end

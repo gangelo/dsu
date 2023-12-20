@@ -7,9 +7,9 @@ module Dsu
         # TODO: I18n.
         TODAY = %w[n today].freeze
         TOMORROW = %w[t tomorrow].freeze
-        YESERDAY = %w[y yesterday].freeze
+        YESTERDAY = %w[y yesterday].freeze
 
-        RELATIVE_REGEX = /[+-]\d+/
+        RELATIVE_REGEX = /\A[+-]\d+\z/
       end
     end
   end

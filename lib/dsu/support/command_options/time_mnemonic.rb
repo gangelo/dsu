@@ -85,7 +85,7 @@ module Dsu
         end
 
         def yesterday_mnemonic?(mnemonic)
-          YESERDAY.include?(mnemonic)
+          YESTERDAY.include?(mnemonic)
         end
 
         def validate_argument!(command_option:, command_option_name:)
