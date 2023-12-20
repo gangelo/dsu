@@ -3,6 +3,7 @@
 require 'fileutils'
 require 'time'
 require_relative 'base_cli'
+require_relative 'subcommands/browse'
 require_relative 'subcommands/config'
 require_relative 'subcommands/delete'
 require_relative 'subcommands/edit'
@@ -13,6 +14,7 @@ module Dsu
   # The `dsu` command.
   class CLI < BaseCLI
     map I18n.t('commands.add.key_mappings') => :add
+    map I18n.t('commands.browse.key_mappings') => :browse
     map I18n.t('commands.config.key_mappings') => :config
     map I18n.t('commands.delete.key_mappings') => :delete
     map I18n.t('commands.edit.key_mappings') => :edit
@@ -42,6 +44,9 @@ module Dsu
       CommandServices::AddEntryService.new(entry: entry, time: time).call
       view_entry_group(time: time)
     end
+
+    desc I18n.t('commands.browse.desc'), I18n.t('commands.browse.usage')
+    subcommand :browse, Subcommands::Browse
 
     desc I18n.t('commands.list.desc'), I18n.t('commands.list.usage')
     subcommand :list, Subcommands::List

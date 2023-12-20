@@ -1,3 +1,11 @@
+## [2.2.0] 2023-??-??
+
+TODO: Change above date to release date.
+
+Enhancements
+
+- Added `dsu browse` command to interactively page through DSU entries.
+
 ## [2.1.4] 2023-12-19
 
 Changes
@@ -32,7 +40,6 @@ Bug fixes
 Bug fixes
 
 - Fix bug that did not included I18n locale files in yanked version 2.1.0.
-
 
 ## [2.1.0] 2023-12-16
 
@@ -215,6 +222,7 @@ Changes
 - `dsu config info` now displays the default configuration being used if no configuration file is being used.
 
 Bug fixes
+
 - Fix bug that fails to load/use configuration file options when a config file exists.
 
 ## [0.1.0.alpha.1] 2023-05-06

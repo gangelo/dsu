@@ -30,6 +30,13 @@ module Dsu
           puts
         end
 
+        def display_dsu_footer
+          puts apply_theme('_' * 35, theme_color: color_theme.dsu_footer)
+          # TODO: I18n.
+          footer = apply_theme("Theme: #{color_theme.theme_name}", theme_color: color_theme.dsu_footer)
+          puts footer
+        end
+
         private
 
         def suspend_header?(args, _options)
@@ -37,13 +44,6 @@ module Dsu
 
           # TODO: I18n?
           true if args[0] == 'theme' && %w[use delete].include?(args[1])
-        end
-
-        def display_dsu_footer
-          puts apply_theme('_' * 35, theme_color: color_theme.dsu_footer)
-          # TODO: I18n.
-          footer = apply_theme("Theme: #{color_theme.theme_name}", theme_color: color_theme.dsu_footer)
-          puts footer
         end
 
         def display_errors_if(stderror_string)
