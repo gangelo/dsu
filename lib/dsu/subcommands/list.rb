@@ -79,7 +79,7 @@ module Dsu
         # NOTE: special sort here, unlike the other commands where rules for
         # displaying DSU entries are applied; this is more of a list command.
         times = times_sort(times: times, entries_display_order: options[:entries_display_order])
-        view_entry_groups(times: times, options: options) do |_total_entry_groups, _total_entry_groups_not_shown|
+        view_entry_groups(times: times, options: options) do
           if Services::EntryGroup::CounterService.new(times: times).call.zero?
             Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options).render
           end
