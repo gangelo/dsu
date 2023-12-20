@@ -67,16 +67,15 @@ module Dsu
           Time.parse entry_group_data.keys[0]
         end
 
-        # NOTE: special sort here, unlike the other commands where rules for
-        # displaying DSU entries are applied; this is more of a list command.
+        if times.empty? || (options.fetch(:include_all, false) && no_entries_for?(times: times, options: options))
+          display_no_entries_to_display_message time: time, options: options
+          return
+        end
+
         times = times_sort(times: times, entries_display_order: options[:entries_display_order])
         output = Services::StdoutRedirectorService.call do
           self.class.display_dsu_header
-          view_entry_groups(times: times, options: options) do |_total_entry_groups, _total_entry_groups_not_shown|
-            if Services::EntryGroup::CounterService.new(times: times).call.zero?
-              Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options).render
-            end
-          end
+          view_entry_groups(times: times, options: options)
           self.class.display_dsu_footer
         end
         output_with_pager output
@@ -101,6 +100,22 @@ module Dsu
         message = "Operating system pager command (#{pager_command}) not found. Falling back to direct output."
         Views::Shared::Error.new(messages: message).render
         puts string
+      end
+
+      def no_entries_for?(times:, options:)
+        Services::EntryGroup::CounterService.new(times: times, options: options).call.zero?
+      end
+
+      def display_no_entries_to_display_message(time:, options:)
+        if options[:week]
+          Views::EntryGroup::Shared::NoEntriesToDisplayForWeekOf.new(time: time, options: options).render
+        elsif options[:month]
+          Views::EntryGroup::Shared::NoEntriesToDisplayForMonthOf.new(time: time, options: options).render
+        elsif options[:year]
+          Views::EntryGroup::Shared::NoEntriesToDisplayForYearOf.new(time: time, options: options).render
+        else
+          raise NotImplementedError, 'TODO: Unhandled option (expected :week, :month, or :year)'
+        end
       end
     end
   end
