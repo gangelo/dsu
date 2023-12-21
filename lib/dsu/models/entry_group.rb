@@ -155,7 +155,7 @@ module Dsu
           superclass.exist?(file_path: entries_path_for(time: time))
         end
 
-        def entry_group_times(between: nil, options: {})
+        def entry_group_times(between: nil)
           entry_files.filter_map do |file_path|
             entry_file_name = File.basename(file_path)
             next unless entry_file_name.match?(ENTRIES_FILE_NAME_REGEX)
@@ -164,7 +164,7 @@ module Dsu
             next if between && !Time.parse(time).between?(between.min, between.max)
 
             time
-          end.sort
+          end
         end
 
         def find(time:)

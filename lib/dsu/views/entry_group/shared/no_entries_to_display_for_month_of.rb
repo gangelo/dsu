@@ -7,7 +7,6 @@ module Dsu
     module EntryGroup
       module Shared
         class NoEntriesToDisplayForMonthOf < NoEntriesToDisplay
-
           def initialize(time:, options: {})
             super(times: [time.beginning_of_month, time.end_of_month], options: options)
 

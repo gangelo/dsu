@@ -45,34 +45,31 @@ module Dsu
       desc I18n.t('subcommands.browse.week.desc'), I18n.t('subcommands.browse.week.usage')
       long_desc I18n.t('subcommands.browse.week.long_desc')
       def week
-        show_entry_group time: Time.now, options: options.merge({ week: true })
+        show_entry_group time: Time.now, options: options.merge({ browse: :week })
       end
 
       desc I18n.t('subcommands.browse.month.desc'), I18n.t('subcommands.browse.month.usage')
       long_desc I18n.t('subcommands.browse.month.long_desc')
       def month
-        show_entry_group time: Time.now, options: options.merge({ month: true })
+        show_entry_group time: Time.now, options: options.merge({ browse: :month })
       end
 
       desc I18n.t('subcommands.browse.year.desc'), I18n.t('subcommands.browse.year.usage')
       long_desc I18n.t('subcommands.browse.year.long_desc')
       def year
-        show_entry_group time: Time.now, options: options.merge({ year: true })
+        show_entry_group time: Time.now, options: options.merge({ browse: :year })
       end
 
       private
 
       def show_entry_group(time:, options:)
-        times = browse_service(time: time, options: options).call.filter_map do |entry_group_data|
-          Time.parse entry_group_data.keys[0]
-        end
-
+        options = configuration.to_h.merge(options).with_indifferent_access
+        times = browse_service(time: time, options: options).call
         if times.empty? || (options.fetch(:include_all, false) && no_entries_for?(times: times, options: options))
           display_no_entries_to_display_message time: time, options: options
           return
         end
 
-        times = times_sort(times: times, entries_display_order: options[:entries_display_order])
         output = Services::StdoutRedirectorService.call do
           self.class.display_dsu_header
           view_entry_groups(times: times, options: options)
