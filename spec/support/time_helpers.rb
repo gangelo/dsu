@@ -23,4 +23,25 @@ module TimeHelpers
     range = (time.beginning_of_week.to_i..time.end_of_week.to_i)
     range.step(24.hours).map { |time_step| Time.at(time_step) }
   end
+
+  def times_for_month_of(time)
+    range = (time.beginning_of_month.to_i..time.end_of_month.to_i)
+    range.step(24.hours).map { |time_step| Time.at(time_step) }
+  end
+
+  def times_for_year_of(time)
+    range = (time.beginning_of_year.to_i..time.end_of_year.to_i)
+    range.step(24.hours).map { |time_step| Time.at(time_step) }
+  end
+
+  def times_one_for_every_month_of(time)
+    time = time.end_of_year.beginning_of_month
+    12.times.each_with_object([]) do |month_index, times|
+      times << time.months_ago(month_index).beginning_of_month
+    end.sort
+  end
+
+  def time_strings_for(times)
+    times.map { |time| time.to_date.to_s }
+  end
 end
