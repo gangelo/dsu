@@ -3,7 +3,7 @@
 RSpec.describe Dsu::Services::EntryGroup::BrowseService do
   subject(:service) { described_class.new(time: time, options: options) }
 
-  let(:time) { Time.now }
+  let(:time) { Time.now.localtime }
   let(:options) { { browse: :week } }
 
   describe '#initialize' do
@@ -22,6 +22,9 @@ RSpec.describe Dsu::Services::EntryGroup::BrowseService do
     end
   end
 
+  # NOTE: Using eq to match arrays of times because the times returned
+  # are always assumed to be sorted, determined by the options[:entries_display_order]
+  # option.
   describe '#call' do
     context 'when option :include_all is true' do
       before do
@@ -30,8 +33,8 @@ RSpec.describe Dsu::Services::EntryGroup::BrowseService do
 
       context 'when there are no entry groups with entries' do
         it 'returns an array of times that have no entry groups' do
-          expected_times = times_for_week_of(time)
-          expect(service.call).to match_array(expected_times)
+          expected_times = time_strings_for times_for_week_of(time).sort
+          expect(time_strings_for(service.call)).to eq(expected_times)
         end
       end
 
@@ -42,8 +45,8 @@ RSpec.describe Dsu::Services::EntryGroup::BrowseService do
         end
 
         it 'returns an array of times that have no entry groups and times that have entry groups' do
-          expected_times = times_for_week_of(time)
-          expect(service.call).to match_array(expected_times)
+          expected_times = time_strings_for times_for_week_of(time).sort
+          expect(time_strings_for(service.call)).to eq(expected_times)
         end
       end
     end
@@ -68,11 +71,8 @@ RSpec.describe Dsu::Services::EntryGroup::BrowseService do
         end
 
         it 'returns an array of times that only have entry groups' do
-          expected_times = [
-            entry_groups[0].time.beginning_of_day,
-            entry_groups[1].time.beginning_of_day
-          ]
-          expect(service.call).to match_array(expected_times)
+          expected_times = time_strings_for entry_groups.map(&:time).sort
+          expect(time_strings_for(service.call)).to eq(expected_times)
         end
       end
     end
@@ -90,11 +90,8 @@ RSpec.describe Dsu::Services::EntryGroup::BrowseService do
       end
 
       it 'returns the entry group times in ascending order' do
-        expected_times = [
-          entry_groups[0].time.beginning_of_day,
-          entry_groups[1].time.beginning_of_day
-        ]
-        expect(service.call).to match_array(expected_times)
+        expected_times = time_strings_for entry_groups.map(&:time).minmax
+        expect(time_strings_for(service.call)).to eq(expected_times)
       end
     end
 
@@ -111,11 +108,42 @@ RSpec.describe Dsu::Services::EntryGroup::BrowseService do
       end
 
       it 'returns the entry group times in descending order' do
-        expected_times = [
-          entry_groups[1].time.beginning_of_day,
-          entry_groups[0].time.beginning_of_day
-        ]
-        expect(service.call).to match_array(expected_times)
+        expected_times = time_strings_for entry_groups.map(&:time).minmax.reverse
+        expect(time_strings_for(service.call)).to eq(expected_times)
+      end
+    end
+
+    context 'when option :browse is :month' do
+      before do
+        options.merge!({ browse: :month, include_all: false })
+      end
+
+      let(:entry_groups) do
+        times_for_month_of(time).map do |time|
+          create(:entry_group, :with_entries, time: time)
+        end
+      end
+
+      it 'returns the entry group times for the month' do
+        expected_times = time_strings_for entry_groups.map(&:time).sort
+        expect(time_strings_for(service.call)).to eq(expected_times)
+      end
+    end
+
+    context 'when option :browse is :year' do
+      before do
+        options.merge!({ browse: :year, include_all: false })
+      end
+
+      let(:entry_groups) do
+        times_one_for_every_month_of(time).map do |time|
+          create(:entry_group, :with_entries, time: time)
+        end
+      end
+
+      it 'returns the entry group times for the year' do
+        expected_times = time_strings_for entry_groups.map(&:time).sort
+        expect(time_strings_for(service.call)).to eq(expected_times)
       end
     end
   end
