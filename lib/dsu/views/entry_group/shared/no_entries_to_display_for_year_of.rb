@@ -7,7 +7,6 @@ module Dsu
     module EntryGroup
       module Shared
         class NoEntriesToDisplayForYearOf < NoEntriesToDisplay
-
           def initialize(time:, options: {})
             super(times: [time.beginning_of_year, time.end_of_year], options: options)
 

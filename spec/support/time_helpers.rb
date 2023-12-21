@@ -18,4 +18,9 @@ module TimeHelpers
 
     time_array.map { |time| to_yyyymmdd_string(time) }
   end
+
+  def times_for_week_of(time)
+    range = (time.beginning_of_week.to_i..time.end_of_week.to_i)
+    range.step(24.hours).map { |time_step| Time.at(time_step) }
+  end
 end
