@@ -23,10 +23,9 @@ module Dsu
         # in ascending order. If the sort is descending, then in order to
         # properly reverse the times array, it needs to first be sorted in
         # ascending order before being reversed.
-        times.sort!
-        times.reverse! if entries_display_order == :desc
+        return times.sort if entries_display_order == :asc
 
-        times
+        times.sort_by { |time| -time.to_i }
       end
 
       def times_for(times:)

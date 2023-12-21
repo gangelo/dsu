@@ -2,40 +2,43 @@
 
 require_relative '../../models/entry_group'
 require_relative '../../support/time_formatable'
+require_relative '../../support/times_sortable'
 
 module Dsu
   module Services
     module EntryGroup
-      # This service is responsible for returning an array of hashes
-      # that represent entry groups (represented by entry group time)
-      # and entry group entry counts. (e.g. [ { "2023-01-31" => 3 }, ... ])
-      # This array of hashes can be used as part of the greater functionality
-      # of browsing through entry groups using "next" and "previous" commands.
+      # This service is responsible for returning an array of
+      # sorted entry group dates.
       class BrowseService
         include Support::TimeFormatable
+        include Support::TimesSortable
 
         def initialize(time:, options: {})
           raise ArgumentError, 'Argument time is nil' if time.nil?
+          raise ArgumentError, 'Argument options is nil' if options.nil?
 
           @time = time
           @options = options
         end
 
         def call
-          return [] if times.empty?
+          return [] if entry_group_times.empty?
 
-          (min_time.to_i..max_time.to_i).step(24.hours).each_with_object([]) do |time_step, entry_group_times|
-            time = Time.at(time_step)
-            entry_count = entry_group_count(time)
-            next unless include_all? || entry_count.positive?
-
-            entry_group_times << { yyyy_mm_dd(time: time) => entry_count }
-          end
+          times_sort(times: entry_group_times, entries_display_order: entries_display_order)
         end
 
         private
 
         attr_reader :time, :options
+
+        def entry_group_times
+          @entry_group_times ||= (min_time.to_i..max_time.to_i).step(24.hours).each_with_object([]) do |time_step, times|
+            time = Time.at(time_step)
+            next unless include_all? || entry_group_count(time).positive?
+
+            times << time
+          end
+        end
 
         def entry_group_count(time)
           entry_group = Models::EntryGroup.find_or_initialize(time: time)
@@ -62,24 +65,32 @@ module Dsu
           end
         end
 
-        def times
-          @times ||= Models::EntryGroup.entry_group_times(between: [min_time, max_time], options: options)
+        def entries_display_order
+          options[:entries_display_order] || default_entries_display_order
         end
 
-        def include_all?
-          options[:include_all] || false
+        def default_entries_display_order
+          :asc
         end
 
         def week?
-          options.fetch(:week, false)
+          options.fetch(:browse, default_browse) == :week
         end
 
         def month?
-          options.fetch(:month, false)
+          options[:browse] == :month
         end
 
         def year?
-          options.fetch(:year, false)
+          options[:browse] == :year
+        end
+
+        def default_browse
+          :week
+        end
+
+        def include_all?
+          options.fetch(:include_all, false)
         end
       end
     end
