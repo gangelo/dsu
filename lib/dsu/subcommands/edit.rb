@@ -7,6 +7,7 @@ require_relative '../views/entry_group/show'
 module Dsu
   module Subcommands
     class Edit < BaseSubcommand
+      # TODO: I18n.
       map %w[d] => :date
       map %w[n] => :today
       map %w[t] => :tomorrow

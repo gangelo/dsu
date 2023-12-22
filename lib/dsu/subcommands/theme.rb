@@ -11,6 +11,7 @@ require_relative 'base_subcommand'
 module Dsu
   module Subcommands
     class Theme < BaseSubcommand
+      # TODO: I18n.
       map %w[c] => :create if Dsu.env.local?
       map %w[d] => :delete if Dsu.env.local?
       map %w[l] => :list

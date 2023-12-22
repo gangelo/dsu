@@ -8,7 +8,9 @@ module Dsu
   module Services
     module EntryGroup
       # This service is responsible for returning an array of
-      # sorted entry group dates.
+      # sorted entry group dates as Time objects. The Time objects
+      # returned, and the sort order are determined by the options
+      # passed in.
       class BrowseService
         include Support::TimeFormatable
         include Support::TimesSortable
@@ -32,7 +34,7 @@ module Dsu
         attr_reader :time, :options
 
         def entry_group_times
-          @entry_group_times ||= (min_time.to_i..max_time.to_i).step(24.hours).each_with_object([]) do |time_step, times|
+          @entry_group_times ||= (min_time.to_i..max_time.to_i).step(1.day).each_with_object([]) do |time_step, times|
             time = Time.at(time_step)
             next unless include_all? || entry_group_count(time).positive?
 
