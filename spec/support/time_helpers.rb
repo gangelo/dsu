@@ -3,14 +3,18 @@
 # This module provides methods to help with Time
 # objects
 module TimeHelpers
+  def freeze_time_at(time_string:)
+    allow(Time).to receive(:now).and_return(Time.parse(time_string).in_time_zone)
+  end
+
   def today_yyyymmdd_string
-    to_yyyymmdd_string(Time.now.localtime)
+    to_yyyymmdd_string(Time.now.in_time_zone)
   end
 
   def to_yyyymmdd_string(time)
     raise ArgumentError, "time is not a Time object: \"#{time}\"" unless time.is_a?(Time)
 
-    time.strftime('%Y-%m-%d %Z')
+    time.in_time_zone.strftime('%Y-%m-%d %Z')
   end
 
   def to_yyyymmdd_string_array(time_array)

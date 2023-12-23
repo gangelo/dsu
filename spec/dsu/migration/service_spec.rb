@@ -95,7 +95,7 @@ RSpec.describe Dsu::Migration::Service do
       FileUtils.touch(Dsu::Support::Fileable.themes_path(theme_name: theme_name))
     end
 
-    let(:time) { Time.now.localtime }
+    let(:time) { Time.now.in_time_zone }
     let(:theme_name) { 'old_theme' }
     let(:backup_folder) { Dsu::Support::Fileable.backup_folder(version: 0) }
 
