@@ -1,0 +1,79 @@
+{
+  "version": 20230613121411,
+  "description": "Theme for Light backgrounds",
+  "help": {
+    "color": "default",
+    "mode": "default",
+    "background": "default"
+  },
+  "dsu_header": {
+    "color": "white",
+    "mode": "bold",
+    "background": "black"
+  },
+  "dsu_footer": {
+    "color": "default",
+    "mode": "default",
+    "background": "default"
+  },
+  "header": {
+    "color": "default",
+    "mode": "bold",
+    "background": "default"
+  },
+  "subheader": {
+    "color": "default",
+    "mode": "underline",
+    "background": "default"
+  },
+  "body": {
+    "color": "default",
+    "mode": "default",
+    "background": "default"
+  },
+  "footer": {
+    "color": "light_default",
+    "mode": "default",
+    "background": "default"
+  },
+  "date": {
+    "color": "default",
+    "mode": "bold",
+    "background": "default"
+  },
+  "index": {
+    "color": "light_default",
+    "mode": "italic",
+    "background": "default"
+  },
+  "info": {
+    "color": "white",
+    "mode": "bold",
+    "background": "blue"
+  },
+  "success": {
+    "color": "white",
+    "mode": "bold",
+    "background": "green"
+  },
+  "warning": {
+    "color": "default",
+    "mode": "bold",
+    "background": "yellow"
+  },
+  "error": {
+    "color": "light_yellow",
+    "mode": "default",
+    "background": "red"
+  },
+  "prompt": {
+    "color": "default",
+    "mode": "bold",
+    "background": "default"
+  },
+  "prompt_options": {
+    "color": "default",
+    "mode": "bold",
+    "background": "default"
+  }
+}

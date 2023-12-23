@@ -6,8 +6,6 @@ en:
     error: "Error: %{message}"
     from_option_invalid: Option -f, [--from=DATE|MNEMONIC] value is invalid ["%{from_option}"]
     to_option_invalid: Option -t, [--to=DATE|MNEMONIC] value is invalid ["%{to_option}"]
-    migration:
-      error: "Error running migrations: %{message}"
   headers:
     entry:
       could_not_be_added: "An error was encountered; the entry could not be added:"
@@ -21,3 +19,8 @@ en:
   information:
     dates:
       through: "%{from} thru %{to}"
+  migrations:
+    error:
+      failed: "Error running migrations: %{message}"
+    information:
+      theme_copied: Theme copied from %{from} to %{to}.

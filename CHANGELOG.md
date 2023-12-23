@@ -1,10 +1,14 @@
-## [2.2.0] 2023-??-??
-
-TODO: Change above date to release date.
+## [2.2.0.rc.1] 2023-12-23
 
 Enhancements
 
 - Added `dsu browse` command to interactively page through DSU entries.
+- Added "light" theme for terminals with light backgrounds, see `dsu theme list` or `dsu theme show light` for more information.
+
+Changes
+
+- Refactors to use activesupport Time#in_time_zone, including tests.
+- Various code refactors to support the aforementioned change.
 
 ## [2.1.4] 2023-12-19
 
