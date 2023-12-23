@@ -3,7 +3,7 @@
 RSpec.describe Dsu::Services::EntryGroup::DeleterService do
   subject(:service) { described_class.new(times: times) }
 
-  let(:time_now) { Time.now.localtime }
+  let(:time_now) { Time.now.in_time_zone }
   let(:times) { [] }
 
   describe '#initialize' do

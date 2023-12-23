@@ -27,7 +27,7 @@ RSpec.describe 'Dsu list features', type: :feature do
 
   before do
     [-3, -2, -1, 0, 1, 2, 3].each do |index|
-      time = Time.now.localtime + index.days
+      time = Time.now.in_time_zone + index.days
       create(:entry_group, :with_entries, time: time)
     end
   end
@@ -57,7 +57,7 @@ RSpec.describe 'Dsu list features', type: :feature do
 
     context 'with a date' do
       let(:args) { ['list', 'date', Dsu::Support::TimeFormatable.yyyy_mm_dd(time: time, separator: '/')] }
-      let(:time) { Time.now.localtime }
+      let(:time) { Time.now.in_time_zone }
       let(:times) do
         [time, time.yesterday]
       end

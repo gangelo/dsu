@@ -28,7 +28,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
 
   before do
     [-3, -2, -1, 0, 1, 2, 3].each do |index|
-      time = Time.now.localtime + index.days
+      time = Time.now.in_time_zone + index.days
       create(:entry_group, :with_entries, time: time)
     end
   end
@@ -65,7 +65,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
           '--prompts', 'any:true'
         ]
       end
-      let(:time) { Time.now.localtime }
+      let(:time) { Time.now.in_time_zone }
       let(:times) do
         [time, time.yesterday]
       end

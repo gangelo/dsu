@@ -47,6 +47,12 @@ RSpec.configure do |config|
     Time.zone = 'Eastern Time (US & Canada)'
   end
 
+  config.around do |example|
+    Time.use_zone(Time.zone) do
+      example.run
+    end
+  end
+
   config.include ColorThemeHelpers
   config.include StdxxxHelpers
   config.include TimeHelpers
