@@ -58,7 +58,7 @@ module Dsu
       end
 
       def output_with_pager(output:, options:)
-        if options[:pager] == :no_pager
+        if options[:pager] == false
           puts output
           return
         end
