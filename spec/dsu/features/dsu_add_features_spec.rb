@@ -24,7 +24,7 @@ RSpec.describe 'Dsu add features', type: :feature do
 
   context "when 'dsu add DESCRIPTION' is called" do
     before do
-      allow(Time).to receive(:now).and_return(Time.parse('2023-06-16'))
+      freeze_time_at(time_string: '2023-06-16')
     end
 
     let(:args) { ['add', entry_description] }
@@ -75,7 +75,7 @@ RSpec.describe 'Dsu add features', type: :feature do
     before do
       with_entries
 
-      allow(Time).to receive(:now).and_return(Time.parse('2023-06-16'))
+      freeze_time_at(time_string: '2023-06-16')
     end
 
     let(:args) { ['add', '--tomorrow', entry_description] }
@@ -104,7 +104,7 @@ RSpec.describe 'Dsu add features', type: :feature do
     before do
       with_entries
 
-      allow(Time).to receive(:now).and_return(Time.parse('2023-06-16'))
+      freeze_time_at(time_string: '2023-06-16')
     end
 
     let(:args) { ['add', '--yesterday', entry_description] }
@@ -133,7 +133,7 @@ RSpec.describe 'Dsu add features', type: :feature do
     before do
       with_entries
 
-      allow(Time).to receive(:now).and_return(Time.parse('2023-06-16'))
+      freeze_time_at(time_string: '2023-06-16')
     end
 
     let(:args) { ['add', '--today', entry_description] }
