@@ -1,3 +1,7 @@
+## [2.2.0] 2023-12-23
+
+Stable release.
+
 ## [2.2.0.rc.2] 2023-12-23
 
 Enhancements
