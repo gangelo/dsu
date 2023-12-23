@@ -1,0 +1,79 @@
+{
+  "version": 20230613121411,
+  "description": "Christmas theme ho ho ho!",
+  "help": {
+    "color": "red",
+    "mode": "default",
+    "background": "default"
+  },
+  "dsu_header": {
+    "color": "white",
+    "mode": "bold",
+    "background": "red"
+  },
+  "dsu_footer": {
+    "color": "red",
+    "mode": "default",
+    "background": "default"
+  },
+  "header": {
+    "color": "light_green",
+    "mode": "bold",
+    "background": "red"
+  },
+  "subheader": {
+    "color": "red",
+    "mode": "underline",
+    "background": "default"
+  },
+  "body": {
+    "color": "red",
+    "mode": "italic",
+    "background": "default"
+  },
+  "footer": {
+    "color": "red",
+    "mode": "italic",
+    "background": "default"
+  },
+  "date": {
+    "color": "white",
+    "mode": "bold",
+    "background": "green"
+  },
+  "index": {
+    "color": "white",
+    "mode": "bold",
+    "background": "red"
+  },
+  "info": {
+    "color": "white",
+    "mode": "bold",
+    "background": "light_red"
+  },
+  "success": {
+    "color": "white",
+    "mode": "bold",
+    "background": "green"
+  },
+  "warning": {
+    "color": "default",
+    "mode": "bold",
+    "background": "yellow"
+  },
+  "error": {
+    "color": "light_yellow",
+    "mode": "default",
+    "background": "red"
+  },
+  "prompt": {
+    "color": "white",
+    "mode": "bold",
+    "background": "green"
+  },
+  "prompt_options": {
+    "color": "red",
+    "mode": "bold",
+    "background": "default"
+  }
+}

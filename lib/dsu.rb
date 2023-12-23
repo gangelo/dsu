@@ -35,9 +35,10 @@ unless Dsu.env.test? || Dsu.env.development?
   end
   # TODO: Hack. Integrate this into the migration service
   # so that this runs only if the migration version changes.
-  theme_file = 'light.json'
-  destination_theme_file_path = File.join(Dsu::Support::Fileable.themes_folder, theme_file)
-  unless File.exist?(destination_theme_file_path)
+  %w[light.json christmas.json].each do |theme_file|
+    destination_theme_file_path = File.join(Dsu::Support::Fileable.themes_folder, theme_file)
+    next if File.exist?(destination_theme_file_path)
+
     source_theme_file_path = File.join(Dsu::Support::Fileable.seed_data_folder, 'themes', theme_file)
     FileUtils.cp(source_theme_file_path, destination_theme_file_path)
     puts I18n.t('migrations.information.theme_copied', from: source_theme_file_path, to: destination_theme_file_path)
