@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 RSpec.describe 'Dsu add features', type: :feature do
-  subject(:cli) { Dsu::CLI.start(args) }
+  subject(:cli) do
+    strip_escapes(Dsu::Services::StdoutRedirectorService.call { Dsu::CLI.start(args) })
+  end
 
   let(:args) { %w[add] }
   let(:with_entries) do
@@ -16,18 +18,28 @@ RSpec.describe 'Dsu add features', type: :feature do
     let(:args) { %w[help add] }
 
     it 'displays help' do
-      expect { cli }.to output(/Usage:.*rspec add/m).to_stdout
+      expect(cli).to include('add|a [OPTIONS] DESCRIPTION')
     end
   end
 
   context "when 'dsu add DESCRIPTION' is called" do
-    let(:args) { ['add', 'Added description'] }
-    let(:expected_output) do
-      /\(Today\) #{today_yyyymmdd_string}.*1\..*Added description/m
+    before do
+      allow(Time).to receive(:now).and_return(Time.parse('2023-06-16'))
+    end
+
+    let(:args) { ['add', entry_description] }
+    let(:entry_date) { Time.now }
+    let(:entry_description) { 'Added description' }
+    let(:expected_date) do
+      Dsu::Support::TimeFormatable.formatted_time(time: entry_date)
+    end
+
+    it 'displays the entry group date' do
+      expect(cli).to include(expected_date)
     end
 
     it 'displays the description that was added' do
-      expect { cli }.to output(expected_output).to_stdout
+      expect(cli).to include(entry_description)
     end
   end
 
@@ -39,12 +51,23 @@ RSpec.describe 'Dsu add features', type: :feature do
     let(:args) { ['add', '--date', entry_date, entry_description] }
     let(:entry_date) { '2023-06-16' }
     let(:entry_description) { 'This is a test' }
-    let(:expected_output) do
-      /\b+3\..+#{entry_description}/m
+    let(:expected_date) do
+      Dsu::Support::TimeFormatable.formatted_time(time: Time.parse(entry_date))
+    end
+
+    it 'displays the entry group date' do
+      expect(cli).to include(expected_date)
+    end
+
+    it 'displays the entries already existing in the group' do
+      expected_entry_descriptions = ['20230616 description 0', '20230616 description 1']
+      expected_entry_descriptions.each do |entry_description|
+        expect(cli).to include(entry_description)
+      end
     end
 
     it 'displays the description that was added' do
-      expect { cli }.to output(expected_output).to_stdout
+      expect(cli).to include(entry_description)
     end
   end
 
@@ -60,12 +83,20 @@ RSpec.describe 'Dsu add features', type: :feature do
     let(:expected_date) do
       Dsu::Support::TimeFormatable.formatted_time(time: Time.now.tomorrow)
     end
-    let(:expected_output) do
-      /.+#{expected_date}.+3\..+#{entry_description}/m
+
+    it 'displays the entry group date' do
+      expect(cli).to include(expected_date)
+    end
+
+    it 'displays the entries already existing in the group' do
+      expected_entry_descriptions = ['20230617 description 0', '20230617 description 1']
+      expected_entry_descriptions.each do |entry_description|
+        expect(cli).to include(entry_description)
+      end
     end
 
     it 'displays the description that was added' do
-      expect { cli }.to output(expected_output).to_stdout
+      expect(cli).to include(entry_description)
     end
   end
 
@@ -81,12 +112,20 @@ RSpec.describe 'Dsu add features', type: :feature do
     let(:expected_date) do
       Dsu::Support::TimeFormatable.formatted_time(time: Time.now.yesterday)
     end
-    let(:expected_output) do
-      /.+#{expected_date}.+3\..+#{entry_description}/m
+
+    it 'displays the entry group date' do
+      expect(cli).to include(expected_date)
+    end
+
+    it 'displays the entries already existing in the group' do
+      expected_entry_descriptions = ['20230615 description 0', '20230615 description 1']
+      expected_entry_descriptions.each do |entry_description|
+        expect(cli).to include(entry_description)
+      end
     end
 
     it 'displays the description that was added' do
-      expect { cli }.to output(expected_output).to_stdout
+      expect(cli).to include(entry_description)
     end
   end
 
@@ -102,12 +141,20 @@ RSpec.describe 'Dsu add features', type: :feature do
     let(:expected_date) do
       Dsu::Support::TimeFormatable.formatted_time(time: Time.now)
     end
-    let(:expected_output) do
-      /.+#{expected_date}.+3\..+#{entry_description}/m
+
+    it 'displays the entry group date' do
+      expect(cli).to include(expected_date)
+    end
+
+    it 'displays the entries already existing in the group' do
+      expected_entry_descriptions = ['20230616 description 0', '20230616 description 1']
+      expected_entry_descriptions.each do |entry_description|
+        expect(cli).to include(entry_description)
+      end
     end
 
     it 'displays the description that was added' do
-      expect { cli }.to output(expected_output).to_stdout
+      expect(cli).to include(entry_description)
     end
   end
 end
