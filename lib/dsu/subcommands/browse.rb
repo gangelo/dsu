@@ -23,6 +23,7 @@ module Dsu
       map %w[m] => :month
       map %w[y] => :year
 
+      class_option :pager, default: true, type: :boolean, hide: true, aliases: '-p'
       class_option :include_all, default: nil, type: :boolean, aliases: '-a',
         desc: I18n.t('options.include_all')
 

@@ -4,7 +4,7 @@
 # objects
 module TimeHelpers
   def freeze_time_at(time_string:)
-    allow(Time).to receive(:now).and_return(Time.parse(time_string).in_time_zone)
+    allow(Time).to receive(:now).and_return(Time.parse(time_string))
   end
 
   def today_yyyymmdd_string
