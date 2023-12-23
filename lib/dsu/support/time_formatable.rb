@@ -12,7 +12,7 @@ module Dsu
 
       # TODO: I18n.
       def formatted_time(time:)
-        time = time.in_time_zone if time.utc?
+        time = time.in_time_zone
 
         today_yesterday_or_tomorrow = if time.today?
           'Today'
