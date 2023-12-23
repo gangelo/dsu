@@ -3,7 +3,7 @@
 # TODO: Add additional specs for the other methods in this module.
 RSpec.describe Dsu::Support::TimeFormatable do
   describe '.mm_dd_yyyy' do
-    let(:time) { Time.parse('2/1/2023').localtime }
+    let(:time) { Time.parse('2/1/2023').in_time_zone }
     let(:separator) { '/' }
     let(:expected_formatted_time) do
       "01#{separator}02#{separator}2023"

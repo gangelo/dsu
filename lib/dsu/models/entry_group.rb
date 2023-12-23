@@ -200,7 +200,7 @@ module Dsu
       private
 
       def ensure_local_time(time)
-        time.nil? ? Time.now : time.dup.localtime
+        time.nil? ? Time.now : time.dup.in_time_zone
       end
     end
   end

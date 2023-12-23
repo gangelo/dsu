@@ -31,7 +31,7 @@ RSpec.describe Dsu::Models::EntryGroup do
         let(:time) { Time.now.utc }
 
         it 'converts it to localtime' do
-          expect(entry_group.time).to eq time.localtime
+          expect(entry_group.time).to eq time.in_time_zone
         end
       end
 

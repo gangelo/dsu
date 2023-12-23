@@ -10,7 +10,7 @@ module Dsu
       end
 
       def time_equal_compare_string_for(time:)
-        time = time.localtime if time.utc?
+        time = time.in_time_zone if time.utc?
 
         time.strftime(TIME_COMPARABLE_FORMAT_SPECIFIER)
       end
