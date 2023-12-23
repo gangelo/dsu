@@ -53,6 +53,7 @@ Gem::Specification.new do |spec|
 
     Dsu now has a browse command! Try it out by running `dsu browse help`.
 
+    Dsu now has a festive "christmas" theme! Try it out by running `dsu theme use christmas`.
     Dsu now has a "light" theme for light background terminals! Try it out by running `dsu theme use light`.
 
     Dsu now has a delete command! Try it out by running `dsu delete help`.

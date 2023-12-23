@@ -1,3 +1,13 @@
+## [2.2.0.rc.2] 2023-12-23
+
+Enhancements
+
+- Added "christmas" theme, see `dsu theme list` or `dsu theme show christmas` for more information.
+
+Changes
+
+- Refactors Dsu::VERSION_REGEX to include rc releases (e.g. 2.2.0.rc.1, 2.2.0.rc.2, etc.).
+
 ## [2.2.0.rc.1] 2023-12-23
 
 Enhancements
