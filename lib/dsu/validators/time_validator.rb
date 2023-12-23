@@ -18,7 +18,7 @@ module Dsu
           return
         end
 
-        record.errors.add(:time, 'is not in localtime format.') if time.utc?
+        record.errors.add(:time, 'is not in localtime format.') unless time == time.in_time_zone
       end
     end
   end
