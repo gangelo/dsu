@@ -44,6 +44,7 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     FactoryBot.find_definitions
+    Time.zone = 'Eastern Time (US & Canada)'
   end
 
   config.include ColorThemeHelpers
