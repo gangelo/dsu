@@ -37,6 +37,7 @@ After installation (`gem install dsu`), the first thing you may want to do is ru
 #=>
 Commands:
   dsu add|a [OPTIONS] DESCRIPTION  # Adds a DSU entry...
+  dsu browse|b SUBCOMMAND          # Browse DSU entries...
   dsu config|c SUBCOMMAND          # Manage configuration...
   dsu delete|d SUBCOMMAND          # Delete DSU entries...
   dsu edit|e SUBCOMMAND            # Edit DSU entries...
@@ -175,6 +176,18 @@ This can be accomplished MUCH easier by using the `yesterday` mnemonic. This wil
 
 `$ dsu list dates --from yesterday --to -6`
 `$ dsu l dd -f y -t -6`
+
+## Browsing DSU Entries
+You can browse DSU entries for the current week, month and year using any of the following commands. `dsu browse` somewhat similar to `dsu list` with added `week`, `month` and `year` convenience SUBCOMMANDs. `dsu browse` also pipes the output to the terminal, so you can conveniently scroll through the listed entries using your keyboard or mouse:
+
+**NOTE:** Keyboard and/or mouse behavior while browsing (scrolling), is operating system dependent; `dsu browse` pipes its output to the terminal using `less` on nix systems, and `more` on Windows systems.
+
+- `$ dsu browse week`
+- `$ dsu b w` # Equivalent to the above, only using shortcuts
+- `$ dsu browse month`
+- `$ dsu b m` # Equivalent to the above, only using shortcuts
+- `$ dsu browse year`
+- `$ dsu b y` # Equivalent to the above, only using shortcuts
 
 ## Editing DSU Entries
 
