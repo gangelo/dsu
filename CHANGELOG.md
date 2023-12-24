@@ -1,3 +1,13 @@
+## [2.2.2] 2023-12-23
+
+Changes
+
+- README.md updates.
+
+Bug fix
+
+- Fix `dsu config` shortcut command mapping bug that caused `dsu c` to display `dsu delete` command help instead of `dsu config` command help.
+
 ## [2.2.1] 2023-12-23
 
 Changes
