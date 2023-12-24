@@ -136,7 +136,9 @@ Friday, (Yesterday) 2023-05-05
 ```
 
 `$ dsu list date 5/7/2023`
+
 `$ dsu list d 2023/7/5`
+
 `$ dsu l d 7/5` # When omitting YYYY, MM/DD is assumed
 
 ```shell
@@ -157,22 +159,27 @@ For more information, see the [Mnemonics](#mnemonics) section for more informati
 
 ##### Display the DSU entries for the last 3 days
 `$ dsu list dates --from yesterday --to -2`
+
 `$ dsu l dd -f y -t -2`
 
 ##### Display the DSU entries for 1/1 to 1/4 for the current year
 `$ dsu list dates --from 1/1 --to +3`
+
 `$ dsu l dd -f 1/1 -t +3`
 
 ##### Display the DSU entries for 1/2 to 1/5
 `$ dsu list dates --from 1/5 --to -3`
+
 `$ dsu l dd -f 1/5 -t -3`
 
 ##### Display the DSU entries for the last week
 `$ dsu list dates --from today --to -6`
+
 `$ dsu l dd -f n -t -6`
 
 ##### Display the DSU entries back 1 week from yesterday's date
 `$ dsu list dates --from -7 --to +6`
+
 `$ dsu l dd -f -7 -t +6`
 
 **NOTE:** **The above example is silly,** but it illustrates the fact that you can use relative mnemonics for both `--from` and `--to` options. While you *can* use relative mnemonics for both the `--from` and `--to` options, there is usually a more intuitive way.
@@ -182,6 +189,7 @@ For example:
 This can be accomplished MUCH easier by using the `yesterday` mnemonic. This will display the DSU entries back 1 week from yesterday's date.
 
 `$ dsu list dates --from yesterday --to -6`
+
 `$ dsu l dd -f y -t -6`
 
 ## Browsing DSU Entries
@@ -220,6 +228,7 @@ If no entries exist for the DSU date, the editor will open and allow you to add 
 The following will edit your DSU entry group entries for "Today", where `Time.now == '2023-05-09 12:13:45.8273 -0400'`. Simply follow the directions in the editor file, then save and close your editor to apply the changes:
 
 `$ dsu edit today`
+
 `$ dsu e n`
 
 ```shell
@@ -321,6 +330,7 @@ See the [Mnemonics](#mnemonics) section for more information on acceptable MNEMO
 The following example deletes the entry group and *all* entries for today's date.
 
 `$ dsu delete today`
+
 `$ dsu d n`
 ```shell
 #=>
@@ -330,6 +340,7 @@ Deleted 1 entry group(s).
 The following example deletes the entry group and *all* entries for yesterday's date.
 
 `$ dsu delete yesterday`
+
 `$ dsu d y`
 ```shell
 #=>
@@ -339,6 +350,7 @@ Deleted 1 entry group(s).
 The following example deletes the entry group and *all* entries for tomorrow's date.
 
 `$ dsu delete tomorrow`
+
 `$ dsu d t`
 ```shell
 #=>
@@ -349,6 +361,7 @@ Deleted 1 entry group(s).
 The following deletes the entry group and all entries for 12/17 of the current year.
 
 `$ dsu delete date 12/17`
+
 `$ dsu d d 12/17`
 ```shell
 #=>
@@ -359,6 +372,7 @@ Deleted 1 entry group(s)
 The following deletes the entry group and all entries for the past week, starting from today (12/17/2023).
 
 `$ dsu delete dates --from today --to -6`
+
 `$ dsu d dd -f n -t -6`
 ```shell
 #=>
