@@ -70,18 +70,21 @@ Adding DSU entry using this command will _add_ the DSU entry for the given day o
 If you need to add a DSU entry for the current day (today), you can use the `-n`|`--today` option. Today (`-n`) is the default; therefore, the `-n` flag is optional if you want to add a DSU entry for the _current day_ (today). For example, the below commands will both accomplish the same thing:
 
 `$ dsu add [-n|--today] "Pair with John on ticket IN-12345"`
+
 `$ dsu a "Pair with John on ticket IN-12345"`
 
 ### Yesterday
 If for some reason you need to add a DSU entry for yesterday, you can use the `-y`| `--yesterday` option. Both of the below commands accomplish the same thing:
 
 `$ dsu add --yesterday "Pick up ticket IN-12345"`
+
 `$ dsu a -y "Pick up ticket IN-12345"`
 
 ### Tomorrow
 If you need to add a DSU entry for tomorrow, you can use the `-t`|`--tomorrow` option:
 
 `$ dsu add --tomorrow "Pick up ticket IN-12345"`
+
 `$ dsu a -t "Pick up ticket IN-12345"`
 
 ### Miscellaneous Date
@@ -92,6 +95,7 @@ Both of the below examples will accomplish the same thing, assuming the current 
 **NOTE:** When **including year**, dates must be entered in `YYYY/MM/DD` format.
 
 `$ dsu add --date 2023/12/31 "Attend New Years Coffee Meet & Greet"`
+
 `$ dsu a -d 12/31 "Attend New Years Coffee Meet & Greet"`
 
 See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
