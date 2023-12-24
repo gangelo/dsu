@@ -34,10 +34,6 @@ RSpec.describe 'Dsu browse features', type: :feature do
     end
 
     context "with 'week'" do
-      before do
-        entry_groups
-      end
-
       let(:args) { %w[browse week --pager false] }
       let(:time_string) { '2023-01-01' }
       let(:entry_groups) do
@@ -59,10 +55,6 @@ RSpec.describe 'Dsu browse features', type: :feature do
     end
 
     context "with 'month'" do
-      before do
-        entry_groups
-      end
-
       let(:args) { %w[browse month --pager false] }
       let(:time_string) { '2023-01-01' }
       let(:entry_groups) do
@@ -84,10 +76,6 @@ RSpec.describe 'Dsu browse features', type: :feature do
     end
 
     context "with 'year'" do
-      before do
-        entry_groups
-      end
-
       let(:args) { %w[browse year --pager false] }
       let(:time_string) { '2023-01-01' }
       let(:entry_groups) do
