@@ -23,7 +23,11 @@ module Dsu
 
           # TODO: I18n.
           def render
-            puts apply_theme(message, theme_color: color_theme.info)
+            puts render_as_string
+          end
+
+          def render_as_string
+            apply_theme(message, theme_color: color_theme.info)
           end
 
           private
