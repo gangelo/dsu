@@ -1,3 +1,10 @@
+## [2.2.1] 2023-12-23
+
+Changes
+
+- Add specs for `dsu browse` command.
+- Code refactors, nothing discernable to the end user.
+
 ## [2.2.0] 2023-12-23
 
 Stable release.
