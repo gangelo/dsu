@@ -123,6 +123,7 @@ See the [Mnemonics](#mnemonics) section for more information on acceptable MNEMO
 The following displays the entries for "Today", where `Time.now == '2023-05-06 08:54:57.6861 -0400'`
 
 `$ dsu list today`
+
 `$ dsu l t`
 ```shell
 #=>
