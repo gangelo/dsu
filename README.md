@@ -58,8 +58,9 @@ The folowing section outlines how to use the `dsu` gem.
 ## Adding DSU Entries
 The next thing you may want to do is `add` some DSU activities (entries) for a particular day:
 
-`dsu add [OPTIONS] DESCRIPTION`
-`dsu a [OPTIONS] DESCRIPTION`
+`$ dsu add [OPTIONS] DESCRIPTION`
+
+`$ dsu a [OPTIONS] DESCRIPTION`
 
 Adding DSU entry using this command will _add_ the DSU entry for the given day or date, and then _display_ the DSU entries for that day or date.
 
