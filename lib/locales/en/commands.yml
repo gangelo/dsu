@@ -65,6 +65,10 @@ en:
       desc: edit|e SUBCOMMAND
       usage: Edit DSU entries for the given SUBCOMMAND
       key_mappings: e
+    export:
+      key_mappings: x
+      desc: export|x SUBCOMMAND
+      usage: Export DSU entries for the given SUBCOMMAND
     info:
       key_mappings: i
       desc: info|i

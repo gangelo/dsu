@@ -91,7 +91,7 @@ module Dsu
           message = I18n.t('subcommands.delete.messages.deleted', count: deleted_count)
           Views::Shared::Success.new(messages: message).render
         else
-          message = I18n.t('subcommands.delete.messages.canceled')
+          message = I18n.t('subcommands.delete.messages.cancelled')
           Views::Shared::Info.new(messages: message).render
         end
       end

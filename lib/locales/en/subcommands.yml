@@ -118,9 +118,9 @@ en:
         long_desc: |
           Deletes the DSU entries for the given OPTIONS.
 
-          $ dsu dates OPTIONS
+          $ dsu delete dates OPTIONS
 
-          $ dsu dd OPTIONS
+          $ dsu d dd OPTIONS
 
           OPTIONS:
 
@@ -191,7 +191,7 @@ en:
           $ dsu delete y
       messages:
         deleted: Deleted %{count} entry group(s).
-        canceled: Canceled.
+        cancelled: Cancelled.
       prompts:
         are_you_sure: Are you sure you want to delete all the entries for %{dates} (%{count} entry groups)?
     edit:
@@ -217,6 +217,76 @@ en:
         usage: Edits the DSU entries for yesterday
         long_desc: |
           Edits the DSU entries for yesterday.
+    export:
+      dates:
+        desc: dates|dd OPTIONS
+        usage: Exports the DSU entries for the OPTIONS provided
+        long_desc: |
+          Exports the DSU entries for the given OPTIONS.
+
+          $ dsu export dates OPTIONS
+
+          $ dsu x dd OPTIONS
+
+          OPTIONS:
+
+          -f|--from DATE|MNEMONIC: The DATE or MNEMONIC that represents the start of the range of DSU dates to export. If a relative mnemonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the current date (e.g. `<MNEMONIC>.to_i.days.from_now(Time.now)`).
+
+          -t|--to DATE|MNEMONIC: The DATE or MNEMONIC that represents the end of the range of DSU dates to export. If a relative mnemonic is used (+/-n, e.g +1, -1, etc.), the date calculated will be relative to the date that resulting from the `--from` option date calculation.
+
+          %{date_option_description}
+
+          %{mnemonic_option_description}
+
+          EXAMPLES:
+
+          NOTE: All examples can substitute their respective short form options (e.g. `-f`, `-t`, etc. for `--from`, `--to`, etc.).
+
+          The below will export the DSU entries for the range of dates from 1/1 to 1/4 for the current year:
+
+          $ dsu export dates --from 1/1 --to +3
+
+          This will export the DSU entries for the range of dates from 1/2 to 1/5 for the year 2022:
+
+          $ dsu x dd --from 1/5/2022 --to -3
+
+          This (assuming "today" is 1/10) will export the DSU entries for the last week 1/10 to 1/3 of the current year:
+
+          $ dsu export dates --from today --to -7
+
+          This (assuming "today" is 5/23) will export the DSU entries for the last week 5/16 to 5/22.
+          This example simply illustrates the fact that you can use relative mnemonics for
+          both `--from` and `--to` options; this doesn't mean you should do so...
+
+          While you can use relative mnemonics for both `--from` and `--to` options,
+          there is always a more intuitive way. The below example basically exports one week of DSU entries back 1 week from yesterday's date:
+
+          $ dsu export dates --from -7 --to +6
+
+          The above can be accomplished MUCH easier by simply using the `yesterday` mnemonic...
+
+          This (assuming "today" is 5/23) will delete the DSU entries back 1 week from yesterday's date 5/16 to 5/22:
+
+          $ dsu x dd --from yesterday --to -6
+      all:
+        desc: all|a
+        usage: Exports all DSU entries
+        long_desc: |
+          Exports all DSU entries.
+
+          $ dsu export all
+
+          $ dsu x a
+      messages:
+        exported: Export successful.
+        exported_to: Entry groups exported to %{file_path}.
+        cancelled: Cancelled.
+      prompts:
+        export_all_confirm: Export all the entries (%{count} entry groups)?
+        export_dates_confirm: Export all the entries for %{from} thru %{to} (%{count} entry groups)?
+        options:
+          - y
+          - N
     list:
       date:
         desc: date|d DATE|MNEMONIC
@@ -233,9 +303,9 @@ en:
         long_desc: |
           Displays the DSU entries for the given OPTIONS.
 
-          $ dsu dates OPTIONS
+          $ dsu list dates OPTIONS
 
-          $ dsu dd OPTIONS
+          $ dsu l dd OPTIONS
 
           OPTIONS:
 
@@ -331,7 +401,7 @@ en:
           already_exists: Color theme "%{theme_name}" already exists.
         messages:
           created: Created color theme "%{theme_name}".
-          canceled: Canceled.
+          cancelled: Cancelled.
       delete:
         desc: delete THEME_NAME
         usage: Deletes the existing dsu color theme THEME_NAME
@@ -344,7 +414,7 @@ en:
         errors:
           cannot_delete: Color theme "%{theme_name}" cannot be deleted.
         messages:
-          canceled: Canceled.
+          cancelled: Cancelled.
           deleted: Deleted color theme "%{theme_name}".
       list:
         desc: list

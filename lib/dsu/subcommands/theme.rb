@@ -40,7 +40,7 @@ module Dsu
             Views::Shared::Info.new(messages: "\n#{message}").render
             true
           else
-            message = I18n.t('subcommands.theme.create.messages.canceled')
+            message = I18n.t('subcommands.theme.create.messages.cancelled')
             Views::Shared::Info.new(messages: "\n#{message}").render
             false
           end
@@ -71,7 +71,7 @@ module Dsu
             change_theme
             I18n.t('subcommands.theme.delete.messages.deleted', theme_name: theme_name)
           else
-            I18n.t('subcommands.theme.delete.messages.canceled')
+            I18n.t('subcommands.theme.delete.messages.cancelled')
           end
           Views::Shared::Info.new(messages: "\n#{message}").render
         end

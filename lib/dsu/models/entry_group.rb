@@ -120,9 +120,7 @@ module Dsu
             next unless entry_file_name.match?(ENTRIES_FILE_NAME_REGEX)
 
             entry_date = File.basename(entry_file_name, '.*')
-            file_path = entries_path_for(time: Time.parse(entry_date))
-            entry_group_hash = read!(file_path: file_path)
-            Services::EntryGroup::HydratorService.new(entry_group_hash: entry_group_hash).call
+            find time: Time.parse(entry_date)
           end
         end
 
@@ -164,6 +162,12 @@ module Dsu
             next if between && !Time.parse(time).between?(between.min, between.max)
 
             time
+          end
+        end
+
+        def entry_groups(between:)
+          entry_group_times(between: between).filter_map do |time|
+            Models::EntryGroup.find(time: Time.parse(time))
           end
         end
 
