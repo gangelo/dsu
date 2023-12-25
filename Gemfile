@@ -9,7 +9,7 @@ gem 'dotenv', '~> 2.8', '>= 2.8.1'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.0'
 gem 'rubocop', '~> 1.50', '>= 1.50.2'
-gem 'rubocop-performance', '~> 1.19'
+gem 'rubocop-performance', '~> 1.20'
 gem 'rubocop-rspec', '~> 2.23'
 
 gem 'factory_bot', '~> 6.3'
