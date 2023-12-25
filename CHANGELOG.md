@@ -1,3 +1,14 @@
+## [2.3.0] 2023-12-25
+
+Enhancements
+
+- Added `dsu export` command to export all DSU entries or DSU entries between two given dates. Entries are written to a comma-delimited csv file located in your OS temp folder. For more information see `dsu help export` or the README.md file.
+
+Changes
+
+- Updated README.md to reflect new `dsu export` command.
+- Fix misspelling of "cancelable" to "cancellable" in the codebase.
+
 ## [2.2.2] 2023-12-23
 
 Changes

@@ -6,10 +6,12 @@ module Dsu
   module Support
     module ColorThemable
       def prompt_with_options(prompt:, options:)
+        # HACK: This module needs to be refactored to be more generic.
+        target_color_theme = defined?(color_theme) ? color_theme : self
         options = "[#{options.join('/')}]"
-        "#{apply_theme(prompt, theme_color: self.prompt)} " \
-          "#{apply_theme(options, theme_color: prompt_options)}" \
-          "#{apply_theme('>', theme_color: self.prompt)}"
+        "#{apply_theme(prompt, theme_color: target_color_theme.prompt)} " \
+          "#{apply_theme(options, theme_color: target_color_theme.prompt_options)}" \
+          "#{apply_theme('>', theme_color: target_color_theme.prompt)}"
       end
 
       module_function

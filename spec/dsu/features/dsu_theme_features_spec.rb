@@ -24,8 +24,8 @@ RSpec.describe 'Dsu theme features', type: :feature do
       context 'when the user does not want to create the color theme' do
         let(:args) { ['theme', 'create', theme_name, '--prompts', "#{create_color_theme_prompt}:false"] }
 
-        it 'displays a canceled message to the console' do
-          expect { cli }.to output(/Canceled/).to_stdout
+        it 'displays a cancelled message to the console' do
+          expect { cli }.to output(/Cancelled/).to_stdout
         end
 
         it_behaves_like 'the color theme does not exist'
@@ -85,8 +85,8 @@ RSpec.describe 'Dsu theme features', type: :feature do
       context 'when the user does not want to delete the color theme' do
         let(:args) { ['theme', 'delete', theme_name, '--prompts', "#{delete_color_theme_prompt}:false"] }
 
-        it 'displays a canceled message to the console' do
-          expect { cli }.to output(/Canceled/).to_stdout
+        it 'displays a cancelled message to the console' do
+          expect { cli }.to output(/Cancelled/).to_stdout
         end
 
         it_behaves_like 'the color theme exists'
@@ -158,8 +158,8 @@ RSpec.describe 'Dsu theme features', type: :feature do
 
         let(:args) { ['theme', 'use', theme_name, '--prompts', "#{create_color_theme_prompt}:false"] }
 
-        it 'displays a canceled message to the console' do
-          expect { cli }.to output(/Canceled/).to_stdout
+        it 'displays a cancelled message to the console' do
+          expect { cli }.to output(/Cancelled/).to_stdout
         end
 
         it_behaves_like 'the color theme does not exist'

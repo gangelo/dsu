@@ -1,8 +1,8 @@
 # `dsu`- Streamline Your Daily Stand-Up Meeting Participation!
 
 [![Ruby](https://github.com/gangelo/dsu/actions/workflows/ruby.yml/badge.svg)](https://github.com/gangelo/dsu/actions/workflows/ruby.yml)
-[![GitHub version](http://badge.fury.io/gh/gangelo%2Fdsu.svg?refresh=1)](https://badge.fury.io/gh/gangelo%2Fdsu)
-[![Gem Version](https://badge.fury.io/rb/dsu.svg?refresh=1)](https://badge.fury.io/rb/dsu)
+[![GitHub version](http://badge.fury.io/gh/gangelo%2Fdsu.svg?refresh=2)](https://badge.fury.io/gh/gangelo%2Fdsu)
+[![Gem Version](https://badge.fury.io/rb/dsu.svg?refresh=2)](https://badge.fury.io/rb/dsu)
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/dsu/)
 [![Report Issues](https://img.shields.io/badge/report-issues-red.svg)](https://github.com/gangelo/dsu/issues)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](#license)
@@ -42,6 +42,7 @@ Commands:
   dsu config|c SUBCOMMAND          # Manage configuration...
   dsu delete|d SUBCOMMAND          # Delete DSU entries...
   dsu edit|e SUBCOMMAND            # Edit DSU entries...
+  dsu export|x SUBCOMMAND          # Export DSU entries...
   dsu help [COMMAND]               # Describe available...
   dsu info|i                       # Displays information...
   dsu list|l SUBCOMMAND            # Displays DSU entries...
@@ -105,13 +106,13 @@ You can display DSU entries for a particular day or date using any of the follow
 
 - `$ dsu list today`
 - `$ dsu l n` # Equivalent to the above, only using shortcuts
-- `$ dsu list tomorrow|t`
+- `$ dsu list tomorrow`
 - `$ dsu l t` # Equivalent to the above, only using shortcuts
-- `$ dsu list yesterday|y`
+- `$ dsu list yesterday`
 - `$ dsu l y` # Equivalent to the above, only using shortcuts
-- `$ dsu list date|d DATE|MNEMONIC`
+- `$ dsu list date DATE|MNEMONIC`
 - `$ dsu l d DATE|MNEMONIC` # Equivalent to the above, only using shortcuts
-- `$ dsu list dates|dd OPTIONS`
+- `$ dsu list dates OPTIONS`
 - `$ dsu l dd OPTIONS` # Equivalent to the above, only using shortcuts
 
 See the [Dates](#dates) section for more information on acceptable DATE formats used by `dsu`.
@@ -272,12 +273,14 @@ from: Interative planning meeting 11:00AM.
 
 #### Add an Entry
 
-Simply type a new entry on a separate line. *Note: any entry that starts with a `#` in the first character position will be ignored.*
+Simply type a new entry on a separate line.
 
 For example...
 ```
 Add me to this entry group.
 ```
+
+**NOTE:** Any entry that starts with a `#` in the first character position will be ignored.*
 
 #### Delete an Entry
 
@@ -285,7 +288,7 @@ Simply delete the entry.
 
 For example...
 ```
-# Delete this this entry from the editor file
+# Delete this entry from the editor file
 from: Interative planning meeting 11:00AM.
   to: <deleted>
 ```
@@ -379,6 +382,37 @@ The following deletes the entry group and all entries for the past week, startin
 Are you sure you want to delete all the entries for 2023-12-11 thru 2023-12-17 (7 entry groups)? [y/N]> y
 Deleted 7 entry group(s).
 ```
+
+## Exporting DSU Entries
+
+Some ingenious soul may want to write a utility at some point, so `dsu` provides the means to export its data into a `csv` file for convenience. Of course, if you feel so inclined, you may also use the `dsu` entry group `json` files directly. The `dsu` entry group `json` files can be located by running the `dsu info` command, and locating the "Entries folder" value.
+
+If you want to use a `csv` file, you can export `dsu` entries to a `csv` file by using any of the following commands:
+
+- `$ dsu export all`
+- `$ dsu x a` # Equivalent to the above, only using shortcuts
+- `$ dsu export dates OPTIONS`
+- `$ dsu x dd OPTIONS` # Equivalent to the above, only using shortcuts
+
+**NOTE:** Each `export` command will prompt you to confirm the export. If confirmed, `dsu` will write a `csv` file to your operating systems temp folder, in the following format: `"dsu-<timestamp>-<from date>-thru-<to date>.csv"`:
+
+Where:
+- <timestamp> = '%Y%m%d%H%M%S'
+- <from date> = the date of the earliest entry group exported (if `export all`) or the earliest date of the entry group dates to be exported (if `export dates`).
+- <to date> = the date of the most resent entry group exported (if `export all`) or the most recent date of the entry group dates to be exported (if `export dates`).
+-
+### For example
+
+The following command, when run on December 25, 2023, at 20:15:46...
+
+`$ dsu export dates -f 1/1/1999 -t 12/23/2023`
+
+...will export `dsu` entries for all Entry Groups that fall between the dates of January 1st, 1999 through December 23rd 2023 in the time zone it was executed, and write them to the following file:
+
+`/var/folders/yv/5n77gtzn7z33ytwgr9mlbbrhf5rws6/T/dsu-20231225201546-1999-01-01-thru-2023-12-23.csv`
+
+For more information, see `dsu` help (`$ dsu export` or `dsu help export`) for more information.
+
 ## Customizing the `dsu` Configuration File
 To customize the `dsu` configuration file, you may follow the instructions outlined here. It is only recommended that you customize the `dsu` configuration file *only* if you are working with an official release (`n.n.n.n`).
 
