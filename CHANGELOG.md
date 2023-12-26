@@ -1,3 +1,9 @@
+## [2.3.1] 2023-12-25
+
+Changes
+
+- Update gemspec spec.post_install_message to reflect new `dsu export` command.
+
 ## [2.3.0] 2023-12-25
 
 Enhancements

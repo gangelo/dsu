@@ -51,6 +51,7 @@ Gem::Specification.new do |spec|
     View the dsu README.md here: https://github.com/gangelo/dsu
     View the dsu CHANGELOG.md: https://github.com/gangelo/dsu/blob/main/CHANGELOG.md
 
+    Dsu now has a export command! Try it out by running `dsu export help`.
     Dsu now has a browse command! Try it out by running `dsu browse help`.
 
     Dsu now has a festive "christmas" theme! Try it out by running `dsu theme use christmas`.
