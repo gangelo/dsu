@@ -8,6 +8,7 @@ Changes
 
 - Updated README.md to reflect new `dsu export` command.
 - Fix misspelling of "cancelable" to "cancellable" in the codebase.
+- Update ruby gems.
 
 ## [2.2.2] 2023-12-23
 
