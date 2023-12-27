@@ -2,8 +2,8 @@
 name: Feature request
 about: Suggest an idea for dsu
 title: I think it would be cool if dsu could...
-labels: ''
-assignees: ''
+labels: 'feature-request'
+assignees: 'gangelo'
 
 ---
 
