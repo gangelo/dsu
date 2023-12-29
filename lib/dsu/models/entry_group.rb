@@ -191,13 +191,19 @@ module Dsu
         end
 
         def write(file_data:, file_path:)
-          delete(file_path: file_path) and return true if file_data[:entries].empty?
+          if file_data[:entries].empty?
+            superclass.delete(file_path: file_path)
+            return true
+          end
 
           super
         end
 
         def write!(file_data:, file_path:)
-          delete!(file_path: file_path) and return if file_data[:entries].empty?
+          if file_data[:entries].empty?
+            superclass.delete!(file_path: file_path)
+            return
+          end
 
           super
         end
