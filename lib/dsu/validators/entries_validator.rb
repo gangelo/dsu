@@ -6,6 +6,7 @@ require_relative '../support/field_errors'
 # https://guides.rubyonrails.org/active_record_validations.html#validates-with
 module Dsu
   module Validators
+    # TODO: I18n.
     class EntriesValidator < ActiveModel::Validator
       include Support::FieldErrors
 
