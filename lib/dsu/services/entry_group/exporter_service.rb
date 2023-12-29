@@ -11,7 +11,7 @@ module Dsu
         include Support::Fileable
 
         def initialize(entry_groups:, options: {})
-          raise ArgumentError, 'Argument entry_groups is nil' if entry_groups.nil?
+          raise ArgumentError, 'Argument entry_groups is blank' if entry_groups.blank?
 
           @entry_groups = entry_groups
           @options = options
