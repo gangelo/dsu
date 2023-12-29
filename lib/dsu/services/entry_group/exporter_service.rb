@@ -12,7 +12,9 @@ module Dsu
 
         def initialize(entry_groups:, options: {})
           raise ArgumentError, 'Argument entry_groups is blank' if entry_groups.blank?
-          raise ArgumentError, 'Argument entry_groups are not all valid' unless entry_groups.all(&:valid?)
+          raise ArgumentError, 'Argument entry_groups are not all valid' unless entry_groups.all?(&:valid?)
+
+          validate_entry_group_entries_present! entry_groups
 
           @entry_groups = entry_groups
           @options = options
@@ -64,6 +66,14 @@ module Dsu
 
         def timestamp
           @timestamp ||= Time.now.in_time_zone.strftime('%Y%m%d%H%M%S')
+        end
+
+        def validate_entry_group_entries_present!(entry_groups)
+          entry_groups.each do |entry_group|
+            next if entry_group.entries.present?
+
+            raise ArgumentError, "Argument entry_groups entry group for #{entry_group.time_yyyy_mm_dd} has no entries"
+          end
         end
       end
     end
