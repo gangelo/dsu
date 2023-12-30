@@ -31,7 +31,7 @@ module Dsu
         end
 
         def display_export_prompt
-          yes?(prompt_with_options(prompt: export_prompt, options: export_prompt_options))
+          yes?(prompt_with_options(prompt: export_prompt, options: export_prompt_options), options: options)
         end
 
         private
