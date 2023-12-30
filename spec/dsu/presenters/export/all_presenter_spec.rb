@@ -10,7 +10,7 @@ RSpec.describe Dsu::Presenters::Export::AllPresenter do
   let(:options) { {} }
 
   describe '#render' do
-    context 'when response is falsey' do
+    context 'when the response is falsey' do
       let(:response) { false }
 
       it 'displays the cancelled message' do
@@ -49,6 +49,26 @@ RSpec.describe Dsu::Presenters::Export::AllPresenter do
     it 'displays the display_export_prompt' do
       export_prompt = I18n.t('subcommands.export.prompts.export_all_confirm', count: entry_groups.count)
       expect(presenter).to include(export_prompt)
+    end
+  end
+
+  describe '#nothing_to_export?' do
+    subject(:presenter) { described_class.new(options: options).nothing_to_export? }
+
+    context 'when there is nothing to export' do
+      it 'returns true' do
+        expect(presenter).to be true
+      end
+    end
+
+    context 'when there is something to export' do
+      before do
+        create(:entry_group, :with_entries)
+      end
+
+      it 'returns false' do
+        expect(presenter).to be false
+      end
     end
   end
 end

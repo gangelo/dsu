@@ -60,4 +60,24 @@ RSpec.describe Dsu::Presenters::Export::DatesPresenter do
       expect(presenter).to include(export_prompt)
     end
   end
+
+  describe '#nothing_to_export?' do
+    subject(:presenter) { described_class.new(from: from, to: to, options: options).nothing_to_export? }
+
+    context 'when there is nothing to export' do
+      it 'returns true' do
+        expect(presenter).to be true
+      end
+    end
+
+    context 'when there is something to export' do
+      before do
+        create(:entry_group, :with_entries, time: from)
+      end
+
+      it 'returns false' do
+        expect(presenter).to be false
+      end
+    end
+  end
 end
