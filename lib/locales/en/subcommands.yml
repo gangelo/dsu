@@ -280,6 +280,7 @@ en:
       messages:
         exported: Export successful.
         exported_to: Entry groups exported to %{file_path}.
+        nothing_to_export: No entry groups to export.
         cancelled: Cancelled.
       prompts:
         export_all_confirm: Export all the entries (%{count} entry groups)?

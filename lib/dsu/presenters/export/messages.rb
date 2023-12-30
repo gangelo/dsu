@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 
-require_relative '../../models/entry_group'
-require_relative '../base_presenter_ex'
-
 module Dsu
   module Presenters
     module Export
       module Messages
         def display_export_prompt
           raise NotImplementedError
+        end
+
+        def display_nothing_to_export_message
+          puts apply_theme(I18n.t('subcommands.export.messages.nothing_to_export'), theme_color: color_theme.info)
         end
 
         private

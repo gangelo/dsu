@@ -5,6 +5,7 @@ require_relative '../../services/entry_group/exporter_service'
 require_relative '../../support/ask'
 require_relative '../base_presenter_ex'
 require_relative 'messages'
+require_relative 'nothing_to_export'
 require_relative 'service_callable'
 
 module Dsu
@@ -12,6 +13,7 @@ module Dsu
     module Export
       class AllPresenter < BasePresenterEx
         include Messages
+        include NothingToExport
         include ServiceCallable
         include Support::Ask
 

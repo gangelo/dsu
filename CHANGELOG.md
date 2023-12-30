@@ -1,3 +1,10 @@
+## [2.x.x] 2023-nn-nn
+
+Changes
+
+- Display a "Nothing to export" message if no entries are found, rather than prompting the user "export 0 entry groups" when using the `dsu export` command.
+- Add specs for Export::AllPresenter and Export::DatesPresenter
+
 ## [2.3.1] 2023-12-25
 
 Changes

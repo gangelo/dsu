@@ -14,6 +14,8 @@ module Dsu
       end
 
       def render
+        return presenter.display_nothing_to_export_message if presenter.nothing_to_export?
+
         response = presenter.display_export_prompt
         presenter.render response: response
       end
