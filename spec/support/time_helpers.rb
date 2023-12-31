@@ -3,6 +3,10 @@
 # This module provides methods to help with Time
 # objects
 module TimeHelpers
+  def current_year
+    Time.now.in_time_zone.year
+  end
+
   def freeze_time_at(time_string:)
     allow(Time).to receive(:now).and_return(Time.parse(time_string))
   end

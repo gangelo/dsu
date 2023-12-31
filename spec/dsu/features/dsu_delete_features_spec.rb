@@ -236,8 +236,8 @@ RSpec.describe 'Dsu delete features', type: :feature do
         [
           'delete',
           'dates',
-          '-f', Dsu::Support::TimeFormatable.mm_dd(time: times.min),
-          '-t', Dsu::Support::TimeFormatable.mm_dd(time: times.max),
+          '-f', Dsu::Support::TimeFormatable.mm_dd_yyyy(time: times.min),
+          '-t', Dsu::Support::TimeFormatable.mm_dd_yyyy(time: times.max),
           '--prompts', 'any:true'
         ]
       end
@@ -266,7 +266,7 @@ RSpec.describe 'Dsu delete features', type: :feature do
         [
           'delete',
           'dates',
-          '-f', Dsu::Support::TimeFormatable.mm_dd(time: Time.now.yesterday),
+          '-f', Dsu::Support::TimeFormatable.mm_dd_yyyy(time: Time.now.yesterday),
           '-t', 'today',
           '--prompts', 'any:true'
         ]

@@ -14,6 +14,9 @@ module Dsu
       include Support::Descriptable
       include Support::Presentable
 
+      MIN_DESCRIPTION_LENGTH = 2
+      MAX_DESCRIPTION_LENGTH = 256
+
       validates_with Validators::DescriptionValidator
 
       attr_reader :description, :options

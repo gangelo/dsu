@@ -27,3 +27,5 @@ todo.txt
 /spec/.tmp
 
 migration_version.yml
+
+.DS_Store

@@ -54,6 +54,9 @@ module Dsu
         description: 'Default theme.'
       }.merge(DEFAULT_THEME_COLORS).freeze
 
+      MIN_DESCRIPTION_LENGTH = 2
+      MAX_DESCRIPTION_LENGTH = 256
+
       # TODO: Validate other attrs.
       validates_with Validators::DescriptionValidator
       validates_with Validators::ColorThemeValidator
