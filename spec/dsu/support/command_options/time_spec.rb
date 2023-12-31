@@ -93,7 +93,7 @@ RSpec.describe Dsu::Support::CommandOptions::Time do
         let(:command_option) { '2/1' }
 
         it 'returns a Time object' do
-          expect(to_yyyymmdd_string(time)).to eq('2023-02-01 EST')
+          expect(to_yyyymmdd_string(time)).to eq("#{current_year}-02-01 EST")
         end
       end
     end

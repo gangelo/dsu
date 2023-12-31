@@ -8,6 +8,7 @@ require_relative 'subcommands/config'
 require_relative 'subcommands/delete'
 require_relative 'subcommands/edit'
 require_relative 'subcommands/export'
+require_relative 'subcommands/import'
 require_relative 'subcommands/list'
 require_relative 'subcommands/theme'
 
@@ -21,6 +22,7 @@ module Dsu
     map I18n.t('commands.edit.key_mappings') => :edit
     map I18n.t('commands.export.key_mappings') => :export
     map I18n.t('commands.help.key_mappings') => :help
+    map I18n.t('commands.import.key_mappings') => :import
     map I18n.t('commands.info.key_mappings') => :info
     map I18n.t('commands.list.key_mappings') => :list
     map I18n.t('commands.theme.key_mappings') => :theme
@@ -67,6 +69,9 @@ module Dsu
 
     desc I18n.t('commands.theme.desc'), I18n.t('commands.theme.usage')
     subcommand :theme, Subcommands::Theme
+
+    desc I18n.t('commands.import.desc'), I18n.t('commands.import.usage')
+    subcommand :import, Subcommands::Import
 
     desc I18n.t('commands.info.desc'), I18n.t('commands.info.usage')
     def info

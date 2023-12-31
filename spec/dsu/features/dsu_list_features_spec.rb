@@ -193,8 +193,8 @@ RSpec.describe 'Dsu list features', type: :feature do
         [
           'list',
           'dates',
-          '-f', Dsu::Support::TimeFormatable.mm_dd(time: times.min),
-          '-t', Dsu::Support::TimeFormatable.mm_dd(time: times.max)
+          '-f', Dsu::Support::TimeFormatable.mm_dd_yyyy(time: times.min),
+          '-t', Dsu::Support::TimeFormatable.mm_dd_yyyy(time: times.max)
         ]
       end
       let(:times) { [Time.now.yesterday, Time.now] }
@@ -221,7 +221,7 @@ RSpec.describe 'Dsu list features', type: :feature do
         [
           'list',
           'dates',
-          '-f', Dsu::Support::TimeFormatable.mm_dd(time: Time.now.yesterday),
+          '-f', Dsu::Support::TimeFormatable.mm_dd_yyyy(time: Time.now.yesterday),
           '-t', 'today'
         ]
       end
@@ -284,8 +284,8 @@ def view_entry_groups(times)
 end
 
 def dsu_times_for(times)
-  from = Dsu::Support::TimeFormatable.mm_dd(time: times.min)
-  to = Dsu::Support::TimeFormatable.mm_dd(time: times.max)
+  from = Dsu::Support::TimeFormatable.mm_dd_yyyy(time: times.min)
+  to = Dsu::Support::TimeFormatable.mm_dd_yyyy(time: times.max)
   times, errors = Dsu::Support::CommandOptions::DsuTimes.dsu_times_for(from_option: from, to_option: to)
   raise errors.join("\n") if errors.any?
 

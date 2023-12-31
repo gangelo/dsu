@@ -21,7 +21,7 @@ module Dsu
           errors << I18n.t('errors.to_option_invalid', to_option: to_option) if to_time.nil?
           return [[], errors] if errors.any?
 
-          min_time, max_time = [from_time, to_time].sort
+          min_time, max_time = [from_time, to_time].minmax
           [(min_time.to_date..max_time.to_date).map(&:to_time), []]
         end
 

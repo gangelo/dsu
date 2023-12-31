@@ -69,6 +69,10 @@ en:
       key_mappings: x
       desc: export|x SUBCOMMAND
       usage: Export DSU entries for the given SUBCOMMAND
+    import:
+      key_mappings: m
+      desc: import|m SUBCOMMAND
+      usage: Imports DSU entries for the given SUBCOMMAND
     info:
       key_mappings: i
       desc: info|i
