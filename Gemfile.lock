@@ -37,7 +37,7 @@ GEM
     dotenv (2.8.1)
     drb (2.2.0)
       ruby2_keywords
-    factory_bot (6.4.2)
+    factory_bot (6.4.5)
       activesupport (>= 5.0.0)
     ffaker (2.23.0)
     i18n (1.14.1)
@@ -127,7 +127,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv (~> 2.8, >= 2.8.1)
   dsu!
-  factory_bot (~> 6.3)
+  factory_bot (~> 6.4)
   ffaker (~> 2.21)
   pry-byebug (~> 3.9)
   rake (~> 13.0)
