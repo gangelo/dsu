@@ -4,6 +4,10 @@ Enhancements
 
 - Add `dsu import` command to import DSU entries from a comma-delimited csv file. See `dsu help import` for more information.
 
+Changes
+
+- Update ruby gems.
+
 ## [2.3.2] 2023-12-30
 
 Changes
