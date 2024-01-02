@@ -51,27 +51,24 @@ Gem::Specification.new do |spec|
     View the dsu README.md here: https://github.com/gangelo/dsu
     View the dsu CHANGELOG.md: https://github.com/gangelo/dsu/blob/main/CHANGELOG.md
 
+    Dsu now has a import command! Try it out by running `dsu import help`.
     Dsu now has a export command! Try it out by running `dsu export help`.
     Dsu now has a browse command! Try it out by running `dsu browse help`.
-
-    Dsu now has a festive "christmas" theme! Try it out by running `dsu theme use christmas`.
     Dsu now has a "light" theme for light background terminals! Try it out by running `dsu theme use light`.
-
     Dsu now has a delete command! Try it out by running `dsu delete help`.
 
     Try a dsu theme by running `dsu theme list` and then `dsu theme use THEME_NAME` where THEME_NAME is the name of the theme you want to try.
 
     :)
 
-    Merry CHRISTmas, New Years and Happy holidays from dsu!
-         *
-        /*\\
-       */*|\\*
-      /*/|\\*\\
-     */**|\\*\\*
-    *//*|*\\*\\*\\
-        |||
-        |||
-        |||
+    Happy New Year 2024 from dsu!
+
+     *        *        *
+     *     *  .     *  .     *
+    *  *      *   *      *   *
+     *     *     *     *     *
+        *        *        *
+
+    May your year be filled with sparks of joy and innovation!
   POST_INSTALL
 end
