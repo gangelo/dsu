@@ -23,12 +23,7 @@ module Dsu
           puts apply_theme(I18n.t('subcommands.import.messages.cancelled'), theme_color: color_theme.info)
         end
 
-        def display_import_success_message
-          puts apply_theme(I18n.t('subcommands.import.messages.import_success'),
-            theme_color: color_theme.success)
-        end
-
-        def display_import_error_message(import_results)
+        def display_import_messages(import_results)
           import_results.each_pair do |entry_group_date, errors|
             if errors.empty?
               puts apply_theme(I18n.t('subcommands.import.messages.import_success',
