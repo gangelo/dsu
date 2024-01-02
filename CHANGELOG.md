@@ -1,8 +1,9 @@
-## [2.4.0] 2023-nn-nn
+## [2.4.0] 2024-01-01
 
 Enhancements
 
 - Add `dsu import` command to import DSU entries from a comma-delimited csv file. See `dsu help import` for more information.
+- Update README.md to reflect new `dsu import` command.
 
 Changes
 

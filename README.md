@@ -44,6 +44,7 @@ Commands:
   dsu edit|e SUBCOMMAND            # Edit DSU entries...
   dsu export|x SUBCOMMAND          # Export DSU entries...
   dsu help [COMMAND]               # Describe available...
+  dsu import|m SUBCOMMAND          # Imports DSU entries...
   dsu info|i                       # Displays information...
   dsu list|l SUBCOMMAND            # Displays DSU entries...
   dsu theme|t SUBCOMMAND           # Manage DSU themes...
@@ -412,6 +413,43 @@ The following command, when run on December 25, 2023, at 20:15:46...
 `/var/folders/yv/5n77gtzn7z33ytwgr9mlbbrhf5rws6/T/dsu-20231225201546-1999-01-01-thru-2023-12-23.csv`
 
 For more information, see `dsu` help (`$ dsu export` or `dsu help export`) for more information.
+
+## Importing DSU Entries
+
+`dsu` provides a means to import entry group entry data from a previously exported `csv` file (see [Exporting DSU Entries](#exporting-dsu-entries)).
+
+If you want to import a previously expoeted `csv` file, you can import `dsu` entries from a `csv` file by using any of the following commands:
+
+- `$ dsu import all`
+- `$ dsu m a` # Equivalent to the above, only using shortcuts
+- `$ dsu import dates OPTIONS`
+- `$ dsu m dd OPTIONS` # Equivalent to the above, only using shortcuts
+
+**NOTE:** Each `import` command will prompt you to confirm the import. If confirmed, `dsu` will import the entry group entry data from the `csv` file into `dsu`.
+
+### For example
+
+### Importing all entries from a `csv` file
+You can import _all_ entry group entries from a `csv` file.
+
+The following command will import all the `dsu` entries from the given `csv` file, and merge the imported entries with any existing entry group entries you may have:
+
+`$ dsu import all -i ~/Downloads/dsu-20231225201546-2023-01-01-thru-2024-01-01.csv`
+
+The following command will import all the `dsu` entries from the given `csv` file, and **_overwrite_** all entry groups entries with the same entry group date using the `dsu export all` shortcut command:
+
+`$ dsu m a -m false -i ~/Downloads/dsu-20231225201546-2023-01-01-thru-2024-01-01.csv`
+
+### Importing specific entries from a `csv` file
+You can import _specific_ entry group entries from a `csv` file for a date range.
+
+The following command will import the `dsu` entries from the given `csv` file for the given date range, and merge the imported entries with any existing entry group entries you may have:
+
+`$ dsu import dates --from 1/1/2023 --to 12/31/2023 -i ~/Downloads/dsu-20231225201546-2023-01-01-thru-2024-01-01.csv`
+
+The following command will import the `dsu` entries from the given `csv` file for the given date range, and **_overwrite_** all entry groups entries with the same entry group date using the `dsu import dates` shortcut command:
+
+`$ dsu m dd -m false -f 1/1/2023 -t 12/31/2023 -i ~/Downloads/dsu-20231225201546-2023-01-01-thru-2024-01-01.csv`
 
 ## Customizing the `dsu` Configuration File
 To customize the `dsu` configuration file, you may follow the instructions outlined here. It is only recommended that you customize the `dsu` configuration file *only* if you are working with an official release (`n.n.n.n`).
