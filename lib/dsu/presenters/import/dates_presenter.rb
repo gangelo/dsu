@@ -28,13 +28,7 @@ module Dsu
         def render(response:)
           return display_cancelled_message unless response
 
-          importer_service_call.tap do |import_results|
-            if import_results.values.all?(&:empty?)
-              display_import_success_message
-            else
-              display_import_error_message import_results
-            end
-          end
+          display_import_messages importer_service_call
         end
 
         def display_import_prompt
