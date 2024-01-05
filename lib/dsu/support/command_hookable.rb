@@ -26,15 +26,13 @@ module Dsu
         end
 
         def display_dsu_header
-          puts apply_theme("Dsu v#{Dsu::VERSION}", theme_color: color_theme.dsu_header)
-          puts
         end
 
         def display_dsu_footer
           puts apply_theme('_' * 35, theme_color: color_theme.dsu_footer)
           # TODO: I18n.
-          footer = apply_theme("Theme: #{color_theme.theme_name}", theme_color: color_theme.dsu_footer)
-          puts footer
+          puts apply_theme("dsu | Version: #{Dsu::VERSION} | Theme: #{color_theme.theme_name}",
+            theme_color: color_theme.dsu_footer)
         end
 
         private
