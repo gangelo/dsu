@@ -1,3 +1,10 @@
+## [2.4.1] 2024-01-05
+
+Changes
+
+- Move gem version to footer.
+- Update ruby gems.
+
 ## [2.4.0] 2024-01-01
 
 Enhancements
