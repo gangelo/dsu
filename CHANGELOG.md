@@ -1,3 +1,9 @@
+## [2.4.2] 2024-01-06
+
+Changes
+
+- Correct gemspec to allow ruby ['>= 3.0.1', '< 4.0'].
+
 ## [2.4.1] 2024-01-05
 
 Changes

@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   DESC
   spec.homepage = 'https://github.com/gangelo/dsu'
   spec.license = 'MIT'
-  spec.required_ruby_version = '>= 3.0.1'
+  spec.required_ruby_version = ['>= 3.0.1', '< 4.0']
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
