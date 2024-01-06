@@ -1,8 +1,8 @@
 # `dsu`
 
 [![Ruby](https://github.com/gangelo/dsu/actions/workflows/ruby.yml/badge.svg)](https://github.com/gangelo/dsu/actions/workflows/ruby.yml)
-[![GitHub version](http://badge.fury.io/gh/gangelo%2Fdsu.svg?refresh=6)](https://badge.fury.io/gh/gangelo%2Fdsu)
-[![Gem Version](https://badge.fury.io/rb/dsu.svg?refresh=6)](https://badge.fury.io/rb/dsu)
+[![GitHub version](http://badge.fury.io/gh/gangelo%2Fdsu.svg?refresh=7)](https://badge.fury.io/gh/gangelo%2Fdsu)
+[![Gem Version](https://badge.fury.io/rb/dsu.svg?refresh=7)](https://badge.fury.io/rb/dsu)
 [![Documentation](http://img.shields.io/badge/docs-rdoc.info-blue.svg)](http://www.rubydoc.info/gems/dsu/)
 [![Report Issues](https://img.shields.io/badge/report-issues-red.svg)](https://github.com/gangelo/dsu/issues)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](#license)
@@ -25,6 +25,10 @@ gem install dsu
 TODO
 
 # Supported ruby versions
-TODO
+`dsu` _should_ work with any ruby version `['>= 3.0.1', '< 4.0']`; however, `dsu` is currently tested against the following ruby versions:
+- 3.0.1
+- 3.0.6
+- 3.1.4
+- 3.2.2
 
-Copyright (c) 2023-2024 Erik Gene Angelo. See [LICENSE](https://github.com/gangelo/dsu/LICENSE.txt) for details.
+Copyright (c) 2023-2024 Erik Gene Angelo. See [LICENSE](https://github.com/gangelo/dsu/blob/main/LICENSE.txt) for details.
