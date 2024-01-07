@@ -12,6 +12,9 @@
 - `dsu` uses _no_ network connections whatsoever.
 - `dsu` stores all of its data _locally_, in .json files.
 - `dsu` is a simple (but powerful) command-line tool for users who _love_ to work within the terminal.
+- `dsu` versioning follows the [semantic versioning standard](https://semver.org/) (MAJOR.MINOR.PATCH).
+  - See the [CHANGELOG.md](https://github.com/gangelo/dsu/blob/main/CHANGELOG.md) before upgrading to a MAJOR `dsu` version.
+  - See the [Exporting DSU entries](https://github.com/gangelo/dsu/wiki/Exporting-DSU-entries) wiki on how to export (backup) your data.
 
 # Installation
 ```shell
