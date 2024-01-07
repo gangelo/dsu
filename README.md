@@ -22,7 +22,7 @@ gem install dsu
 [https://github.com/gangelo/dsu/wiki](https://github.com/gangelo/dsu/wiki)
 
 # Examples
-TODO
+The [dsu wiki](https://github.com/gangelo/dsu/wiki) is repleat with practical examples on how to use `dsu`.
 
 # Supported ruby versions
 `dsu` _should_ work with any ruby version `['>= 3.0.1', '< 4.0']`; however, `dsu` is currently tested against the following ruby versions:
