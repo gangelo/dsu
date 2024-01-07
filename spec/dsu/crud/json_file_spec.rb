@@ -34,7 +34,7 @@ RSpec.describe Dsu::Crud::JsonFile do
     File.write(temp_file, JSON.pretty_generate(file_hash))
   end
 
-  describe '#exist?' do
+  describe '#file_exist?' do
     context 'when the file exists' do
       before do
         with_existing_file_path
@@ -45,7 +45,7 @@ RSpec.describe Dsu::Crud::JsonFile do
       end
 
       it 'returns true' do
-        expect(json_file.exist?).to be(true)
+        expect(json_file.file_exist?).to be(true)
       end
     end
 
@@ -55,7 +55,7 @@ RSpec.describe Dsu::Crud::JsonFile do
       end
 
       it 'returns false' do
-        expect(json_file.exist?).to be(false)
+        expect(json_file.file_exist?).to be(false)
       end
     end
   end
@@ -76,7 +76,7 @@ RSpec.describe Dsu::Crud::JsonFile do
 
       it 'delete the file' do
         json_file.delete
-        expect(json_file.exist?).to be(false)
+        expect(json_file.file_exist?).to be(false)
       end
     end
 
@@ -107,7 +107,7 @@ RSpec.describe Dsu::Crud::JsonFile do
 
       it 'delete the file' do
         json_file.delete
-        expect(json_file.exist?).to be(false)
+        expect(json_file.file_exist?).to be(false)
       end
     end
   end

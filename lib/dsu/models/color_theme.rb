@@ -160,7 +160,7 @@ module Dsu
         end
 
         def exist?(theme_name:)
-          superclass.exist?(file_path: themes_path_for(theme_name: theme_name))
+          superclass.file_exist?(file_path: themes_path_for(theme_name: theme_name))
         end
 
         def find(theme_name:)
