@@ -63,6 +63,8 @@ module Dsu
 
       attr_reader :options
 
+      alias exist? file_exist?
+
       def initialize(options: {})
         super(config_path)
 

@@ -2,7 +2,6 @@
 
 require 'active_model'
 require 'json'
-require_relative 'raw_json_file'
 
 module Dsu
   module Crud
@@ -23,12 +22,12 @@ module Dsu
         self.class.delete!(file_path: file_path)
       end
 
-      def exist?
-        self.class.exist?(file_path: file_path)
+      def file_exist?
+        self.class.file_exist?(file_path: file_path)
       end
 
       def persisted?
-        exist?
+        file_exist?
       end
 
       # Override this method to reload data from the file
@@ -67,16 +66,20 @@ module Dsu
       alias save! write!
 
       class << self
-        def exist?(file_path:)
-          RawJsonFile.exist?(file_path: file_path)
+        def file_exist?(file_path:)
+          File.exist?(file_path)
         end
 
         def delete(file_path:)
-          RawJsonFile.delete(file_path: file_path)
+          return false unless file_exist?(file_path: file_path)
+
+          File.delete(file_path)
+
+          true
         end
 
         def delete!(file_path:)
-          RawJsonFile.delete!(file_path: file_path)
+          raise file_does_not_exist_message(file_path: file_path) unless delete(file_path: file_path)
         end
 
         def parse(json)
@@ -86,54 +89,65 @@ module Dsu
         end
 
         def read(file_path:)
-          hash = parse(RawJsonFile.read(file_path: file_path))
+          json = File.read(file_path) if file_exist?(file_path: file_path)
+          hash = parse(json)
           return yield hash if hash && block_given?
 
           hash
         end
 
         def read!(file_path:)
-          hash = parse(RawJsonFile.read!(file_path: file_path))
+          raise file_does_not_exist_message(file_path: file_path) unless file_exist?(file_path: file_path)
+
+          hash = read(file_path: file_path)
           return yield hash if hash && block_given?
 
           hash
         end
 
         def write(file_data:, file_path:)
-          Crud::RawJsonFile.write(file_data: file_data, file_path: file_path)
+          raise ArgumentError, 'file_data is nil' if file_data.nil?
+          raise ArgumentError, "file_data is the wrong object type:\"#{file_data}\"" unless file_data.is_a?(Hash)
+
+          file_data = JSON.pretty_generate(file_data)
+          File.write(file_path, file_data)
         end
 
         def write!(file_data:, file_path:)
           write(file_data: file_data, file_path: file_path)
         end
+
+        def file_does_not_exist_message(file_path:)
+          "File \"#{file_path}\" does not exist"
+        end
       end
 
       private
 
+      attr_writer :file_path, :version
+
       def read
-        hash = self.class.parse(RawJsonFile.read(file_path: file_path))
+        hash = self.class.read(file_path: file_path)
         return yield hash if block_given?
 
         hash
       end
 
       def read!
-        hash = self.class.parse(RawJsonFile.read!(file_path: file_path))
+        hash = self.class.read!(file_path: file_path)
         return yield hash if hash && block_given?
 
         hash
       end
 
       def read_version
-        return 0 unless exist?
+        return 0 unless file_exist?
 
         hash = read
         return 0 if hash.nil?
 
         hash.fetch(:version, 0).to_i
       end
-
-      attr_writer :file_path, :version
     end
   end
 end

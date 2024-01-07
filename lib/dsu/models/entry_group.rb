@@ -150,7 +150,7 @@ module Dsu
         end
 
         def exist?(time:)
-          superclass.exist?(file_path: entries_path_for(time: time))
+          superclass.file_exist?(file_path: entries_path_for(time: time))
         end
 
         def entry_group_times(between: nil)

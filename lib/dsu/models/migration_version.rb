@@ -13,6 +13,8 @@ module Dsu
 
       attr_reader :options
 
+      alias exist? file_exist?
+
       def initialize(version: nil, options: {})
         super(migration_version_path)
 
