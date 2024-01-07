@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../env'
 require_relative '../support/color_themable'
 require_relative 'base_presenter'
 
@@ -28,7 +29,11 @@ module Dsu
       private
 
       def config_path
-        @config_path ||= config.file_path
+        @config_path ||= if Dsu.env.screen_shot_mode?
+          "/Users/#{Dsu.env.screen_shot_username}/.dsu"
+        else
+          config.file_path
+        end
       end
 
       def formatted_config_entry_with_index(config_entry, index:, theme_color:)

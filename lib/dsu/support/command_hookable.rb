@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative '../env'
 require_relative '../models/color_theme'
 require_relative '../services/stderr_redirector_service'
 require_relative '../views/shared/error'
@@ -26,6 +27,10 @@ module Dsu
         end
 
         def display_dsu_header
+          if Dsu.env.screen_shot_mode?
+            puts apply_theme('Running screen shot mode!', theme_color: color_theme.warning)
+            puts "#{Dsu.env.screen_shot_prompt} dsu #{ARGV.join(' ')}"
+          end
         end
 
         def display_dsu_footer
