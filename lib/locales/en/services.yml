@@ -4,7 +4,7 @@ en:
       errors:
         temp_file_error: |
           Failed to open temporary file in editor '%{editor}'; the system error returned was: '%{status}'.
-          Either set the EDITOR environment variable or set the dsu editor configuration option (`$ dsu config info`).
-          Run `$ dsu help config` for more information.
+          Check your EDITOR environment variable and the dsu editor configuration option (run `dsu config info`).
+          Run `dsu help config` for more information.
       messages:
         editing: "Editing entry group %{formatted_time}..."
