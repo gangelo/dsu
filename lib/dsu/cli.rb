@@ -3,6 +3,7 @@
 require 'fileutils'
 require 'time'
 require_relative 'base_cli'
+require_relative 'presenters/entry_group/list/date_presenter'
 require_relative 'subcommands/browse'
 require_relative 'subcommands/config'
 require_relative 'subcommands/delete'
@@ -11,6 +12,8 @@ require_relative 'subcommands/export'
 require_relative 'subcommands/import'
 require_relative 'subcommands/list'
 require_relative 'subcommands/theme'
+require_relative 'views/entry_group/list'
+
 
 module Dsu
   # The `dsu` command.
@@ -46,7 +49,9 @@ module Dsu
       end
       entry = Models::Entry.new(description: description)
       CommandServices::AddEntryService.new(entry: entry, time: time).call
-      view_entry_group(time: time)
+      presenter = Presenters::EntryGroup::List::DatePresenter.new(times: [time], options: options)
+      # TODO: Refactor View::EntryGroup::Show to accept a presenter and use it here
+      Views::EntryGroup::List.new(presenter: presenter).render
     end
 
     desc I18n.t('commands.browse.desc'), I18n.t('commands.browse.usage')
