@@ -1,3 +1,13 @@
+## [2.4.3] 2024-01-07
+
+Changes
+
+- Code refactors, nothing discernable to the end user.
+
+Bug fixes
+
+- Fixed bug that failed to display the correct editor if the editor session failed to open. For example, if the editor session failed to open and the EDITOR environment variable was used, the editor in the configuration file would be displayed instead of the EDITOR environment variable value.
+
 ## [2.4.2] 2024-01-06
 
 Changes
