@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
+require_relative '../presenters/entry_group/list/date_presenter'
+require_relative '../presenters/entry_group/list/dates_presenter'
 require_relative '../services/entry_group/counter_service'
 require_relative '../support/command_options/dsu_times'
 require_relative '../support/command_options/time_mnemonic'
 require_relative '../support/time_formatable'
+require_relative '../views/entry_group/list'
 require_relative '../views/entry_group/shared/no_entries_to_display'
 require_relative '../views/shared/error'
 require_relative 'base_subcommand'
@@ -25,7 +28,8 @@ module Dsu
       def today
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time])
-        view_list_for(times: times, options: options)
+        presenter = Presenters::EntryGroup::List::DatePresenter.new(times: times, options: options)
+        Views::EntryGroup::List.new(presenter: presenter).render
       end
 
       desc I18n.t('subcommands.list.tomorrow.desc'), I18n.t('subcommands.list.tomorrow.usage')
@@ -33,7 +37,8 @@ module Dsu
       def tomorrow
         time = Time.now
         times = sorted_dsu_times_for(times: [time, time.tomorrow])
-        view_list_for(times: times, options: options)
+        presenter = Presenters::EntryGroup::List::DatePresenter.new(times: times, options: options)
+        Views::EntryGroup::List.new(presenter: presenter).render
       end
 
       desc I18n.t('subcommands.list.yesterday.desc'), I18n.t('subcommands.list.yesterday.usage')
@@ -41,7 +46,8 @@ module Dsu
       def yesterday
         time = Time.now
         times = sorted_dsu_times_for(times: [time.yesterday, time.yesterday.yesterday])
-        view_list_for(times: times, options: options)
+        presenter = Presenters::EntryGroup::List::DatePresenter.new(times: times, options: options)
+        Views::EntryGroup::List.new(presenter: presenter).render
       end
 
       desc I18n.t('subcommands.list.date.desc'), I18n.t('subcommands.list.date.usage')
@@ -55,7 +61,8 @@ module Dsu
           Time.parse(date_or_mnemonic)
         end
         times = sorted_dsu_times_for(times: [time, time.yesterday])
-        view_list_for(times: times, options: options)
+        presenter = Presenters::EntryGroup::List::DatePresenter.new(times: times, options: options)
+        Views::EntryGroup::List.new(presenter: presenter).render
       rescue ArgumentError => e
         Views::Shared::Error.new(messages: e.message).render
       end
@@ -79,11 +86,8 @@ module Dsu
         # NOTE: special sort here, unlike the other commands where rules for
         # displaying DSU entries are applied; this is more of a list command.
         times = times_sort(times: times, entries_display_order: options[:entries_display_order])
-        view_entry_groups(times: times, options: options) do
-          if Services::EntryGroup::CounterService.new(times: times).call.zero?
-            Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options).render
-          end
-        end
+        presenter = Presenters::EntryGroup::List::DatesPresenter.new(times: times, options: options)
+        Views::EntryGroup::List.new(presenter: presenter).render
       rescue ArgumentError => e
         Views::Shared::Error.new(messages: e.message).render
       end
