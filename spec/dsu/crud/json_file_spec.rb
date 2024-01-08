@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-def json_to_hash_for(file_path)
-  JSON.parse(Dsu::Crud::RawJsonFile.read!(file_path: file_path), symbolize_names: true)
+def json_file_hash_for(file_path)
+  Dsu::Crud::JsonFile.read!(file_path: file_path)
 end
 
 RSpec.describe Dsu::Crud::JsonFile do
@@ -127,7 +127,7 @@ RSpec.describe Dsu::Crud::JsonFile do
 
       it 'writes the file as json' do
         json_file.write!
-        actual_hash = json_to_hash_for(file_path)
+        actual_hash = json_file_hash_for(file_path)
         expect(actual_hash).to eq(file_data)
       end
     end
@@ -135,7 +135,7 @@ RSpec.describe Dsu::Crud::JsonFile do
     context 'when the file already exists' do
       it 'writes the file as json' do
         json_file.write!
-        actual_hash = json_to_hash_for(file_path)
+        actual_hash = json_file_hash_for(file_path)
         expect(actual_hash).to eq(file_data)
       end
     end
@@ -164,7 +164,7 @@ RSpec.describe Dsu::Crud::JsonFile do
 
       it 'writes the file as json' do
         json_file.write
-        actual_hash = json_to_hash_for(file_path)
+        actual_hash = json_file_hash_for(file_path)
         expect(actual_hash).to eq(file_data)
       end
     end
