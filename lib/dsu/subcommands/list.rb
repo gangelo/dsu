@@ -7,7 +7,6 @@ require_relative '../support/command_options/dsu_times'
 require_relative '../support/command_options/time_mnemonic'
 require_relative '../support/time_formatable'
 require_relative '../views/entry_group/list'
-require_relative '../views/entry_group/shared/no_entries_to_display'
 require_relative '../views/shared/error'
 require_relative 'base_subcommand'
 
