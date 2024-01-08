@@ -51,24 +51,27 @@ Gem::Specification.new do |spec|
     View the dsu README.md here: https://github.com/gangelo/dsu
     View the dsu CHANGELOG.md: https://github.com/gangelo/dsu/blob/main/CHANGELOG.md
 
-    Dsu now has a import command! Try it out by running `dsu import help`.
-    Dsu now has a export command! Try it out by running `dsu export help`.
-    Dsu now has a browse command! Try it out by running `dsu browse help`.
-    Dsu now has a "light" theme for light background terminals! Try it out by running `dsu theme use light`.
-    Dsu now has a delete command! Try it out by running `dsu delete help`.
+                *
+               ***
+              *****
+            *********
+      ***********************
+        *****************
+          *************
+         ******* *******
+        *****       *****
+       ***             ***
+      *                   *
 
-    Try a dsu theme by running `dsu theme list` and then `dsu theme use THEME_NAME` where THEME_NAME is the name of the theme you want to try.
+    Using dsu? dsu is made available free of charge. Please consider giving dsu a STAR on GitHub as well as sharing dsu with your fellow developers on social media.
 
-    :)
+    Knowing that dsu is being used and appreciated is a great motivator to continue developing and improving dsu.
 
-    Happy New Year 2024 from dsu!
+    Star it on github: https://github.com/gangelo/dsu
+    Share on social media: https://rubygems.org/gems/dsu
 
-     *        *        *
-     *     *  .     *  .     *
-    *  *      *   *      *   *
-     *     *     *     *     *
-        *        *        *
+    Thank you!
 
-    May your year be filled with sparks of joy and innovation!
+    <3 Gene
   POST_INSTALL
 end
