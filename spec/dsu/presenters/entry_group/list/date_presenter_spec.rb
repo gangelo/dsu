@@ -38,9 +38,7 @@ RSpec.describe Dsu::Presenters::EntryGroup::List::DatePresenter do
           expect(presenter.nothing_to_list?).to be(false)
         end
 
-        it 'displays nothing' do
-          expect(presenter_display_nothing_to_list_message).to be_blank
-        end
+        it_behaves_like 'the presenter raises an error'
       end
 
       context 'when there is an entry group for the date' do
@@ -52,9 +50,7 @@ RSpec.describe Dsu::Presenters::EntryGroup::List::DatePresenter do
           expect(presenter.nothing_to_list?).to be(false)
         end
 
-        it 'displays nothing' do
-          expect(presenter_display_nothing_to_list_message).to be_blank
-        end
+        it_behaves_like 'the presenter raises an error'
       end
     end
 

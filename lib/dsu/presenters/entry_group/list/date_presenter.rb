@@ -34,11 +34,9 @@ module Dsu
           end
 
           def display_nothing_to_list_message
-            return if times_min_max_are_same?
-
-            raise 'display_nothing_to_list_message called when there are entries to display' if entry_groups.any?
-
-            Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options).render
+            # This presenter will ALWAYS have something to list (display) since the first
+            # and last (if different) entry groups will always be displayed.
+            raise 'display_nothing_to_list_message called when there are entries to display'
           end
 
           private
@@ -63,10 +61,6 @@ module Dsu
 
           def times_min_max
             @times_min_max ||= times.minmax
-          end
-
-          def times_min_max_are_same?
-            times_min_max[0] == times_min_max[1]
           end
 
           def configuration
