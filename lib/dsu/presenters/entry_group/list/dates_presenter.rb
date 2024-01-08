@@ -13,7 +13,6 @@ module Dsu
         class DatesPresenter < BasePresenterEx
           include Messages
           include NothingToList
-          include Support::EntryGroupViewable
 
           def initialize(times:, options: {})
             raise ArgumentError, 'times must be an Array' unless times.is_a?(Array)
