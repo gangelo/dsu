@@ -14,7 +14,6 @@ require_relative 'subcommands/list'
 require_relative 'subcommands/theme'
 require_relative 'views/entry_group/list'
 
-
 module Dsu
   # The `dsu` command.
   class CLI < BaseCLI

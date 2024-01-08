@@ -10,7 +10,6 @@ require_relative 'services/stdout_redirector_service'
 require_relative 'support/color_themable'
 require_relative 'support/command_help_colorizeable'
 require_relative 'support/command_hookable'
-require_relative 'support/entry_group_viewable'
 require_relative 'support/times_sortable'
 require_relative 'version'
 require_relative 'views/entry_group/show'
@@ -20,7 +19,6 @@ module Dsu
     include Support::ColorThemable
     include Support::CommandHelpColorizable
     include Support::CommandHookable
-    include Support::EntryGroupViewable
     include Support::TimesSortable
 
     class_option :debug, type: :boolean, default: false

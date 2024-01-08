@@ -280,7 +280,8 @@ def view_entry_groups(times)
   config_hash = configuration.to_h
   times = dsu_times_for(times)
   times = Dsu::Support::TimesSortable.times_sort(times: times, entries_display_order: config_hash[:entries_display_order])
-  Dsu::Support::EntryGroupViewable.view_entry_groups(times: times, options: config_hash)
+  presenter = Dsu::Presenters::EntryGroup::List::DatesPresenter.new(times: times, options: config_hash)
+  Dsu::Views::EntryGroup::List.new(presenter: presenter).render
 end
 
 def dsu_times_for(times)
