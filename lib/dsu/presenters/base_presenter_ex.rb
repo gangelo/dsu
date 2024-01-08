@@ -10,7 +10,7 @@ module Dsu
       include Support::ColorThemable
 
       def initialize(options: {})
-        @options = options || {}
+        @options = options&.dup || {}
         @color_theme = Models::ColorTheme.find(theme_name: theme_name)
       end
 
