@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require_relative '../models/configuration'
+require_relative '../presenters/entry_group/list/dates_presenter'
 require_relative '../services/entry_group/browse_service'
 require_relative '../services/entry_group/counter_service'
+require_relative '../views/entry_group/list'
 
 module Dsu
   module Support
@@ -23,7 +25,8 @@ module Dsu
           header = browse_header_for(time: time, options: options)
           Views::Shared::Info.new(messages: header).render
           puts
-          view_entry_groups(times: times, options: options)
+          presenter = Presenters::EntryGroup::List::DatesPresenter.new(times: times, options: options)
+          Views::EntryGroup::List.new(presenter: presenter).render
           self.class.display_dsu_footer
         end
         output_with_pager output: output, options: options
