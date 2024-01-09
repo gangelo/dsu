@@ -27,6 +27,8 @@ gem install dsu
 # Examples
 The [dsu wiki](https://github.com/gangelo/dsu/wiki) is repleat with practical examples on how to use `dsu`.
 
+It you're interested in how _I personally_ use `dsu` every day, I blog about it [here](https://genemangelojr.blogspot.com/2024/01/the-dsu-ruby-gem-workflow-how-to-use-it.html).
+
 # Supported ruby versions
 `dsu` _should_ work with any ruby version `['>= 3.0.1', '< 4.0']`; however, `dsu` is currently tested against the following ruby versions:
 - 3.0.1
