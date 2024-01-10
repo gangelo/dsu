@@ -72,8 +72,8 @@ Gem::Specification.new do |spec|
 
     Knowing that dsu is being used and appreciated is a great motivator to continue developing and improving dsu.
 
-    Star it on github: https://github.com/gangelo/dsu
-    Share on social media: https://rubygems.org/gems/dsu
+    >>> Star it on github: https://github.com/gangelo/dsu
+    >>> Share on social media: https://rubygems.org/gems/dsu
 
     Thank you!
 
