@@ -36,7 +36,11 @@ module Dsu
           puts presenter.formatted_time
 
           entry_group.validate!
-          puts presenter.no_entries_available and return if entry_group.entries.empty?
+          if entry_group.entries.empty?
+            puts presenter.no_entries_available
+
+            return
+          end
 
           entry_group.entries.each_with_index do |entry, index|
             entry_presenter = entry.presenter
