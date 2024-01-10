@@ -33,6 +33,8 @@ module Dsu
           end
 
           def display_nothing_to_list_message
+            raise 'display_nothing_to_list_message called when there are entries to display' unless nothing_to_list?
+
             Views::EntryGroup::Shared::NoEntriesToDisplay.new(times: times, options: options).render
           end
 
