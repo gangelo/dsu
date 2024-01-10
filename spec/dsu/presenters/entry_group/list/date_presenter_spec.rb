@@ -2,9 +2,7 @@
 
 RSpec.describe Dsu::Presenters::EntryGroup::List::DatePresenter do
   subject(:presenter) do
-    strip_escapes(Dsu::Services::StdoutRedirectorService.call do
-      described_class.new(times: times, options: options).render
-    end)
+    described_class.new(times: times, options: options)
   end
 
   shared_examples 'the presenter raises an error' do
@@ -20,6 +18,57 @@ RSpec.describe Dsu::Presenters::EntryGroup::List::DatePresenter do
   let(:time) { Time.now.in_time_zone }
   let(:times) { [time] }
   let(:options) { {} }
+
+  describe '#initialize' do
+    context 'when arguments are valid' do
+      it_behaves_like 'no error is raised'
+    end
+
+    context 'when argument :times is not an Array' do
+      let(:times) { :bad }
+      let(:expected_error) { 'times must be an Array' }
+
+      it_behaves_like 'an error is raised'
+    end
+
+    context 'when argument :options is not a Hash' do
+      let(:options) { :bad }
+      let(:expected_error) { 'options must be a Hash' }
+
+      it_behaves_like 'an error is raised'
+    end
+  end
+
+  describe '#render' do
+    subject(:presenter) do
+      strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+        described_class.new(times: times, options: options).render
+      end)
+    end
+
+    context 'when there is nothing to list' do
+      it "renders the 'no entries available for this day' message" do
+        expect(presenter).to include('no entries available for this day')
+      end
+    end
+
+    context 'when there is something to list' do
+      let!(:entry_groups) do
+        [
+          create(:entry_group, :with_entries, time: times.min),
+          create(:entry_group, :with_entries, time: times.max)
+        ]
+      end
+      let(:times) { [time, time.yesterday] }
+
+      it 'renders the entry groups' do
+        expected_output = entry_groups.map do |entry_group|
+          entry_group.entries.map(&:description)
+        end.flatten
+        expect(presenter).to include(*expected_output)
+      end
+    end
+  end
 
   describe '#display_nothing_to_list_message' do
     subject(:presenter) do
