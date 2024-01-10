@@ -11,7 +11,12 @@ Gem::Specification.new do |spec|
 
   spec.summary      = 'dsu (Agile Daily Stand Up/DSU) mini-manager.'
   spec.description  = <<-DESC
-    Get ready to jazz and snazz up your daily stand-ups with dsu, the agile developer's new best friend! This handy command-line gem is all about making your Daily Stand-Up (DSU) participation smooth, fun, and super efficient. Effortlessly create, update, and organize your DSU entries, turning the task of tracking and sharing your daily activities into a breeze. With its intuitive interface and smart date management, dsu ensures you’re always ready to inform your team about your recent progress and upcoming plans. Perfect for command-line tool enthusiasts, dsu brings a dash of simplicity and fun, fun, fun to your daily agile routine!
+    dsu is ruby gem that enables anyone practicing Agile methodology to record, keep track of, and manage their daily standup (DSU) activities.
+
+    * dsu uses no network connections whatsoever.
+    * dsu stores all of its data locally, in .json files.
+    * dsu is a simple (but powerful) command-line tool for users who love to work within the terminal.
+    * dsu versioning follows the semantic versioning standard (MAJOR.MINOR.PATCH).
   DESC
   spec.homepage = 'https://github.com/gangelo/dsu'
   spec.license = 'MIT'
@@ -53,15 +58,15 @@ Gem::Specification.new do |spec|
 
                 *
                ***
-              *****
+             *******
             *********
-      ***********************
+     ***********************
         *****************
           *************
          ******* *******
         *****       *****
        ***             ***
-      *                   *
+      **                 **
 
     Using dsu? dsu is made available free of charge. Please consider giving dsu a STAR on GitHub as well as sharing dsu with your fellow developers on social media.
 
