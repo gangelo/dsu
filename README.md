@@ -22,7 +22,7 @@ gem install dsu
 ```
 
 # Documentation
-[https://github.com/gangelo/dsu/wiki](https://github.com/gangelo/dsu/wiki)
+The [dsu wiki](https://github.com/gangelo/dsu/wiki) is currently the gold standard for `dsu` documentation.
 
 # Examples
 * The [dsu wiki](https://github.com/gangelo/dsu/wiki) is repleat with practical examples on how to use `dsu`.
