@@ -1,5 +1,5 @@
 ---
-name: Feature request
+name: dsu feature request
 about: Suggest an idea for dsu
 title: I think it would be cool if dsu could...
 labels: 'feature-request'
