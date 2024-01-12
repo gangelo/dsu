@@ -1,7 +1,7 @@
 ---
 name: dsu feature request
 about: Suggest an idea for dsu
-title: I think it would be cool if dsu could...
+title: "[ENHANCEMENT] dsu"
 labels: 'feature-request'
 assignees: 'gangelo'
 
