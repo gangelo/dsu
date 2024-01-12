@@ -1,7 +1,7 @@
 ---
 name: dsu bug report
 about: Create a report to help us improve dsu
-title: "[BUG] dsu"
+title: "[BUG] dsu version x.x.x"
 labels: 'bug'
 assignees: 'gangelo'
 
