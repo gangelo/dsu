@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+#require_relative '../models/project'
+
 module Dsu
   module Support
     module Fileable
@@ -26,7 +28,7 @@ module Dsu
       # Entries
 
       def entries_folder
-        File.join(dsu_folder, 'entries')
+        File.join(projects_path, 'entries')
       end
 
       def entries_file_name(time:, file_name_format: nil)
@@ -86,6 +88,34 @@ module Dsu
 
       def seed_data_folder
         File.join(gem_dir, 'lib/seed_data')
+      end
+
+      # Project
+
+      def project_folder
+        dsu_folder
+      end
+
+      def project_file_name
+        '.project'
+      end
+
+      def project_path
+        File.join(project_folder, project_file_name)
+      end
+
+      # Project folder
+
+      def projects_folder
+        File.join(dsu_folder, 'projects')
+      end
+
+      def projects_path
+        File.join(projects_folder, Models::Project.current_project)
+      end
+
+      def project_path_for(project_name:)
+        File.join(projects_folder, project_name)
       end
 
       extend self # rubocop:disable Style/ModuleFunction
