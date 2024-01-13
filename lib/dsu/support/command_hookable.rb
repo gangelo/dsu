@@ -2,6 +2,7 @@
 
 require_relative '../env'
 require_relative '../models/color_theme'
+require_relative '../models/project'
 require_relative '../services/stderr_redirector_service'
 require_relative '../views/shared/error'
 require_relative 'color_themable'
@@ -34,13 +35,17 @@ module Dsu
         end
 
         def display_dsu_footer
-          puts apply_theme('_' * 35, theme_color: color_theme.dsu_footer)
+          puts apply_theme('_' * 50, theme_color: color_theme.dsu_footer)
           # TODO: I18n.
-          puts apply_theme("dsu | Version: #{Dsu::VERSION} | Theme: #{color_theme.theme_name}",
+          puts apply_theme("dsu v#{Dsu::VERSION} | Project: #{project} | Theme: #{color_theme.theme_name}",
             theme_color: color_theme.dsu_footer)
         end
 
         private
+
+        def project
+          Models::Project.current_project
+        end
 
         def suspend_header?(args, _options)
           return false unless args.count > 1
