@@ -1,4 +1,10 @@
 en:
+  models:
+    project:
+      errors:
+        already_exists: "Project '%{project_name}' already exists."
+        create_failed: "Project '%{project_name}' could not be created."
+        does_not_exist: "Project '%{project_name}' does not exist."
   activerecord:
     errors:
       models:
