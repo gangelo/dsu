@@ -12,11 +12,10 @@ RSpec.shared_context 'when dir mock and cleanup is needed' do
     FileUtils.mkdir_p(dsu_folder)
     allow(Dsu::Support::Fileable).to receive_messages(migration_version_folder: dsu_folder, migration_version_path: File.join(dsu_folder, Dsu::Support::Fileable::MIGRATION_VERSION_FILE_NAME))
 
-    fixture_path = File.join('spec', 'fixtures', 'files', '.project')
+    fixture_path = File.join('spec', 'fixtures', 'files', 'project.json')
     FileUtils.cp(fixture_path, Dsu::Support::Fileable.project_path)
 
     FileUtils.mkdir_p(Dsu::Support::Fileable.projects_folder)
-
     FileUtils.mkdir_p(Dsu::Support::Fileable.config_folder)
     FileUtils.mkdir_p(Dsu::Support::Fileable.entries_folder)
     FileUtils.mkdir_p(Dsu::Support::Fileable.themes_folder)

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_model'
 require 'fileutils'
 
 require_relative '../crud/json_file'
@@ -8,8 +7,8 @@ require_relative '../migration/version'
 require_relative '../models/entry_group'
 require_relative '../support/fileable'
 require_relative '../support/presentable'
+require_relative '../validators/description_validator'
 require_relative '../validators/version_validator'
-require_relative 'entry'
 
 module Dsu
   module Models
@@ -20,42 +19,46 @@ module Dsu
 
       VERSION = Migration::VERSION
 
-      attr_reader :project_name, :options
+      attr_reader :project_name, :project_path, :description, :version, :options
 
-      # validates_with Validators::EntryGroupsValidator
+      validates_with Validators::DescriptionValidator
       validates_with Validators::VersionValidator
 
-      def initialize(project_name: nil, version: nil, options: {})
-        unless project_name.is_a?(String) || project_name.nil?
-          raise ArgumentError, 'project_name is the wrong object type'
-        end
+      def initialize(project_name:, description:, version: nil, options: {})
+        raise ArgumentError, 'project_name is blank' if project_name.blank?
+        raise ArgumentError, 'project_name is not a String' unless project_name.is_a?(String)
+        raise ArgumentError, 'description is blank' if description.blank?
+        raise ArgumentError, 'description is not a String' unless description.is_a?(String)
         raise ArgumentError, 'version is the wrong object type' unless version.is_a?(Integer) || version.nil?
 
-        FileUtils.mkdir_p(build_project_path(project_name: project_name))
-
-        super(build_project_path(project_name: project_name))
-
-        @version = version || VERSION
-        @options = options || {}
+        self.project_name = project_name
+        self.description = description
+        self.version = version || VERSION
+        self.options = options || {}
       end
 
       # Override == and hash so that we can compare Entry Group objects.
       def ==(other)
-        false unless other.is_a?(Project) && version == other.version
+        other.is_a?(Project) &&
+          project_name == other.project_name &&
+          description == other.description &&
+          version == other.version
       end
       alias eql? ==
 
       # def clone
-      #   self.class.new(project_name: project_name, version: version)
+      #   self.class.new(project_name: project_name, description: description, version: version, options: options)
       # end
 
       def create
-        self.class.create(project_name: project_name)
+        self.class.create(project_name: project_name, description: description)
       end
+      alias save create
 
       def create!
-        self.class.create!(project_name: project_name)
+        self.class.create!(project_name: project_name, description: description)
       end
+      alias save! create!
 
       # def delete
       #   self.class.delete(project_name: project_name)
@@ -68,37 +71,45 @@ module Dsu
       def exist?
         self.class.exist?(project_name: project_name)
       end
+      alias persisted? exist?
 
       def hash
-        [project_name, version].map(&:hash).hash
+        [project_name, description, version].map(&:hash).hash
       end
 
       def to_h
         {
           version: version,
-          project_name: project_name
+          project_name: project_name,
+          description: description,
+          project_path: project_path
         }
       end
 
       class << self
         delegate :project_path_for, to: Support::Fileable
-        def create(project_name:)
-          FileUtils.mkdir_p(project_path_for(project_name: project_name)).any?
+
+        def create(project_name:, description:)
+          project_path_for(project_name: project_name).tap do |project_path|
+            FileUtils.mkdir_p(project_path)
+            file_data = { version: VERSION, project_name: project_name, description: description }
+            Crud::JsonFile.write(file_data: file_data, file_path: project_file_path_for(project_path: project_path))
+          end
         end
 
-        def create!(project_name:)
+        def create!(project_name:, description:)
           if exist?(project_name: project_name)
             raise I18n.t('models.project.errors.already_exists', project_name: project_name)
           end
-          unless create(project_name: project_name)
-            raise I18n.t('models.project.errors.create_failed', project_name: project_name)
-          end
+
+          create(project_name: project_name, description: description)
         end
 
         def current_project
           project_path = Support::Fileable.project_path
           Crud::JsonFile.read!(file_path: project_path).fetch(:project).tap do |project_name|
-            create!(project_name: project_name) unless exist?(project_name: project_name)
+            description = "#{project_name.capitalize} project}"
+            create!(project_name: project_name, description: description) unless exist?(project_name: project_name)
           end
         end
 
@@ -134,6 +145,7 @@ module Dsu
         def exist?(project_name:)
           File.exist?(project_path_for(project_name: project_name))
         end
+        alias persisted? exist?
 
         # def entry_groups(between:)
         #   entry_group_times(between: between).filter_map do |time|
@@ -186,6 +198,21 @@ module Dsu
         #   project_path = File.join(project_path_for(project_name: project_name))
         #   Dir.glob("#{Support::Fileable.entries_folder}/*")
         # end
+
+        private
+
+        def project_file_path_for(project_path:)
+          File.join(project_path, Support::Fileable.project_file_name)
+        end
+      end
+
+      private
+
+      attr_writer :description, :project_path, :options, :version
+
+      def project_name=(value)
+        @project_name = value
+        @project_path = project_path_for(project_name: @project_name)
       end
     end
   end

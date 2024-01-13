@@ -21,6 +21,7 @@ RSpec.describe Dsu::Models::Configuration do
           carry_over_entries_to_today
           include_all
           theme_name
+          default_project
         ]
       end
 
@@ -31,6 +32,10 @@ RSpec.describe Dsu::Models::Configuration do
   end
 
   describe 'validations' do
+    context 'when the configuration is valid' do
+      it_behaves_like 'the validation passes'
+    end
+
     it 'validates #version attribute with the VersionValidator' do
       expect(described_class).to validate_with_validator(Dsu::Validators::VersionValidator)
     end
@@ -105,6 +110,22 @@ RSpec.describe Dsu::Models::Configuration do
 
         it_behaves_like 'the validation fails'
       end
+
+      context 'when true' do
+        let(:config_hash) do
+          { carry_over_entries_to_today: true }
+        end
+
+        it 'returns true' do
+          expect(config.carry_over_entries_to_today?).to be true
+        end
+      end
+
+      context 'when false' do
+        it 'returns false' do
+          expect(config.carry_over_entries_to_today?).to be false
+        end
+      end
     end
 
     describe '#include_all' do
@@ -135,7 +156,7 @@ RSpec.describe Dsu::Models::Configuration do
       end
     end
 
-    describe '#theme' do
+    describe '#theme_name' do
       context 'when not present?' do
         let(:config_hash) do
           described_class::DEFAULT_CONFIGURATION.merge(theme_name: nil)
@@ -163,22 +184,35 @@ RSpec.describe Dsu::Models::Configuration do
         it_behaves_like 'the validation fails'
       end
     end
-  end
 
-  describe '#carry_over_entries_to_today?' do
-    context 'when carry_over_entries_to_today is true' do
-      let(:config_hash) do
-        { carry_over_entries_to_today: true }
+    describe '#default_project' do
+      context 'when not present?' do
+        before do
+          config.default_project = nil
+        end
+
+        let(:expected_errors) do
+          [
+            "Default project can't be blank",
+            /Default project ".+" does not exist/
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
       end
 
-      it 'returns true' do
-        expect(config.carry_over_entries_to_today?).to be true
-      end
-    end
+      context 'when the default project path does not exist' do
+        before do
+          config.default_project = 'xyz'
+        end
 
-    context 'when carry_over_entries_to_today is false' do
-      it 'returns false' do
-        expect(config.carry_over_entries_to_today?).to be false
+        let(:expected_errors) do
+          [
+            /Default project ".+" does not exist/
+          ]
+        end
+
+        it_behaves_like 'the validation fails'
       end
     end
   end
