@@ -178,8 +178,6 @@ module Dsu
         #   super
         # end
 
-        private
-
         # def project_path_for(project_name:)
         #   Support::Fileable.project_path_for(project_name: project_name)
         # end
