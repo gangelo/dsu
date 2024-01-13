@@ -7,6 +7,9 @@ FactoryBot.define do
     transient do
       config_hash { nil }
       color_theme { nil }
+
+      # A project object to act as our configuraiotn default_project.
+      default_project { nil }
     end
 
     initialize_with { Dsu::Models::Configuration.new(options: options) }
@@ -15,8 +18,14 @@ FactoryBot.define do
       if evaluator.color_theme
         evaluator.color_theme.save! unless evaluator.color_theme.persisted?
         configuration.theme_name = evaluator.color_theme.theme_name
-        configuration.save!
       end
+
+      if evaluator.default_project
+        evaluator.default_project.save! unless evaluator.default_project.persisted?
+        configuration.default_project = evaluator.default_project.project_name
+      end
+
+      configuration.save! if evaluator.color_theme || evaluator.default_project
     end
 
     after(:build) do |configuration, evaluator|

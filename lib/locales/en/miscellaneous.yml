@@ -2,10 +2,12 @@ en:
   configuration:
     errors:
       theme_file_missing: Theme file "%{theme_path}" does not exist.
+      project_path_missing: Default project "%{project_path}" does not exist.
   errors:
     error: "Error: %{message}"
     from_option_invalid: Option -f, [--from=DATE|MNEMONIC] value is invalid ["%{from_option}"]
     to_option_invalid: Option -t, [--to=DATE|MNEMONIC] value is invalid ["%{to_option}"]
+    project_name_invalid: Project name "%{project_name}" is invalid.
   headers:
     entry:
       could_not_be_added: "An error was encountered; the entry could not be added:"

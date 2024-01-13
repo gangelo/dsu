@@ -95,7 +95,7 @@ module Dsu
       end
 
       def project_file_name
-        '.project'
+        'project.json'
       end
 
       def project_path
@@ -113,6 +113,8 @@ module Dsu
       end
 
       def project_path_for(project_name:)
+        raise I18n.t('errors.project_name_invalid', project_name: '{{blank}}') if project_name.blank?
+
         File.join(projects_folder, project_name)
       end
 

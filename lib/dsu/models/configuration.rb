@@ -42,7 +42,9 @@ module Dsu
         # The currently selected color theme. Should be equal to
         # Models::ColorTheme::DEFAULT_THEME_NAME or the name of a custom
         # theme (with the same file name) that resides in the themes_folder.
-        theme_name: 'default'
+        theme_name: 'default',
+        # The default project to use.
+        default_project: 'default'
       }.freeze
 
       validates_with Validators::VersionValidator
@@ -53,13 +55,16 @@ module Dsu
       validates :include_all, inclusion: { in: [true, false], message: 'must be true or false' }
       validates :theme_name, presence: true
       validate :validate_theme_file
+      validates :default_project, presence: true
+      validate :validate_default_project
 
       attr_accessor :version,
         :editor,
         :entries_display_order,
         :carry_over_entries_to_today,
         :include_all,
-        :theme_name
+        :theme_name,
+        :default_project
 
       attr_reader :options
 
@@ -114,7 +119,8 @@ module Dsu
           entries_display_order: entries_display_order,
           carry_over_entries_to_today: carry_over_entries_to_today,
           include_all: include_all,
-          theme_name: theme_name
+          theme_name: theme_name,
+          default_project: default_project
         }
       end
 
@@ -150,6 +156,7 @@ module Dsu
           DEFAULT_CONFIGURATION[:carry_over_entries_to_today])
         @include_all = config_hash.fetch(:include_all, DEFAULT_CONFIGURATION[:include_all])
         @theme_name = config_hash.fetch(:theme_name, DEFAULT_CONFIGURATION[:theme_name])
+        @default_project = config_hash.fetch(:default_project, DEFAULT_CONFIGURATION[:default_project])
       end
 
       def validate_theme_file
@@ -158,6 +165,14 @@ module Dsu
 
         i18n_key = 'configuration.errors.theme_file_missing'
         errors.add(:base, I18n.t(i18n_key, theme_path: theme_path))
+      end
+
+      def validate_default_project
+        project_path = File.join(projects_folder, default_project.presence || '{{blank}}')
+        return if Dir.exist?(project_path)
+
+        i18n_key = 'configuration.errors.project_path_missing'
+        errors.add(:base, I18n.t(i18n_key, project_path: project_path))
       end
     end
   end
