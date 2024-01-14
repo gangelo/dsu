@@ -472,6 +472,100 @@ en:
           $ dsu list yesterday
 
           $ dsu list y
+    project:
+      create:
+        desc: create|c OPTIONS
+        usage: Creates a DSU project using the given OPTIONS
+        long_desc: |
+          Creates a DSU project using the given OPTIONS.
+
+          dsu project create OPTIONS
+
+          dsu p c OPTIONS
+
+          OPTIONS:
+
+          -n|--name PROJECT_NAME: The name of the project to create. PROJECT_NAME must be between 2 and 12 characters (inclusive) in length.
+
+          -d|--description DESCRIPTION: Optional. The description of the project. DESCRIPTION must be between 2 and 256 characters (inclusive) in length. If DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
+
+          EXAMPLES:
+
+          $ dsu project create -n "My project" -d "My project description"
+
+          $ dsu p c -n "My project"
+      delete:
+        desc: delete|d OPTIONS
+        usage: Permanently deletes the DSU project indicated by the given OPTIONS
+        long_desc: |
+          Permanently deletes the DSU project indicated by the given OPTIONS.
+
+          dsu project delete OPTIONS
+
+          dsu p d OPTIONS
+
+          OPTIONS:
+
+          -n|--name PROJECT_NAME: The name of the project to delete.
+
+          EXAMPLES:
+
+          $ dsu project delete -n "My project"
+
+          $ dsu p d -n "My project"
+      list:
+        desc: list|l
+        usage: Lists all the DSU projects
+        long_desc: |
+          Lists all the DSU projects.
+
+          dsu project list
+
+          dsu p l
+
+          EXAMPLES:
+
+          $ dsu project list
+
+          $ dsu p l
+      show:
+        desc: show|s OPTIONS
+        usage: Shows the DSU project indicated by the given OPTIONS
+        long_desc: |
+          Show the DSU project indicated by the given OPTIONS.
+
+          dsu project show OPTIONS
+
+          dsu p s OPTIONS
+
+          OPTIONS:
+
+          -n|--name PROJECT_NAME: The name of the project to show.
+
+          EXAMPLES:
+
+          $ dsu project show -n "My project"
+
+          $ dsu p s -n "My project"
+      use:
+        desc: use|u OPTIONS
+        usage: Selects the DSU project to use, based on the given OPTIONS
+        long_desc: |
+          Selects the DSU project to use, based on the given OPTIONS.
+
+          dsu project use OPTIONS
+
+          dsu p u OPTIONS
+
+          OPTIONS:
+
+          -n|--name PROJECT_NAME: Opeional. The name of the project to use. If PRONECT_NAME is not provided, the default project will be used.s
+
+          EXAMPLES:
+
+          $ dsu project use -n "My project"
+
+          $ dsu p u -n "My project"
     theme:
       create:
         desc: create THEME_NAME [OPTIONS]

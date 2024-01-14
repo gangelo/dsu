@@ -98,6 +98,10 @@ en:
       key_mappings: l
       desc: list|l SUBCOMMAND
       usage: Displays DSU entries for the given SUBCOMMAND
+    project:
+      key_mappings: p
+      desc: project|p SUBCOMMAND
+      usage: Manage DSU projects for the given SUBCOMMAND
     theme:
       key_mappings: t
       desc: theme|t SUBCOMMAND

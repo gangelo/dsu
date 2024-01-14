@@ -26,7 +26,7 @@ module Dsu
       # Entries
 
       def entries_folder
-        File.join(projects_path, 'entries')
+        File.join(projects_folder, 'entries')
       end
 
       def entries_file_name(time:, file_name_format: nil)
@@ -88,34 +88,39 @@ module Dsu
         File.join(gem_dir, 'lib/seed_data')
       end
 
-      # Project
+      # Projects
 
-      def project_folder
-        dsu_folder
-      end
-
-      def project_file_name
-        'project.json'
-      end
-
-      def project_path
-        File.join(project_folder, project_file_name)
-      end
-
-      # Project folder
-
+      # Returns the folder where all the projects are stored.
       def projects_folder
         File.join(dsu_folder, 'projects')
       end
 
-      def projects_path
-        File.join(projects_folder, Models::Project.current_project)
+      # Current project
+
+      # Contains the name of the file that contains the current
+      # dsu project currently being used.
+      def current_project_file_name
+        'current_project.json'
       end
 
-      def project_path_for(project_name:)
+      # The complete path to the current project file.
+      def current_project_file
+        File.join(dsu_folder, current_project_file_name)
+      end
+
+      # Project helpers
+
+      # Returns the path of the project with the given name.
+      def project_folder_for(project_name:)
         raise I18n.t('errors.project_name_invalid', project_name: '{{blank}}') if project_name.blank?
 
         File.join(projects_folder, project_name)
+      end
+
+      def project_file_for(project_name:)
+        project_folder = project_folder_for(project_name: project_name)
+
+        File.join(project_folder, 'project.json')
       end
 
       extend self # rubocop:disable Style/ModuleFunction

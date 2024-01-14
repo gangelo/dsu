@@ -4,6 +4,7 @@ en:
       errors:
         already_exists: "Project '%{project_name}' already exists."
         does_not_exist: "Project '%{project_name}' does not exist."
+        project_file_not_exist: "Project file '%{project_file}' does not exist."
   activerecord:
     errors:
       models:

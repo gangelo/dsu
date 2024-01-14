@@ -75,6 +75,24 @@ RSpec.describe Dsu::Models::Project do
     end
   end
 
+  describe 'validations' do
+    it 'validates #description attribute with the DescriptionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::DescriptionValidator)
+    end
+
+    it 'validates #description attribute with the ProjectNameValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::ProjectNameValidator)
+    end
+
+    it 'validates #version attribute with the VersionValidator' do
+      expect(described_class).to validate_with_validator(Dsu::Validators::VersionValidator)
+    end
+
+    context 'when project_name is less than or greater than the min/max length'
+
+    context 'when description is less than or greater than the min/max length'
+  end
+
   describe '#==' do
     context 'when the projects are equal' do
       it 'returns true' do
@@ -205,13 +223,18 @@ RSpec.describe Dsu::Models::Project do
       {
         version: project.version,
         project_name: project.project_name,
-        description: project.description,
-        project_path: project.project_path
+        description: project.description
       }
     end
 
     it 'returns a Hash representation of the project' do
       expect(project.to_h).to eq(expected_hash)
     end
+  end
+
+  describe '#update' do
+  end
+
+  describe '#update!' do
   end
 end
