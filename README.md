@@ -35,4 +35,4 @@ The [dsu wiki](https://github.com/gangelo/dsu/wiki) is currently the gold standa
 - 3.1.4
 - 3.2.2
 
-Copyright (c) 2023-2024 Erik Gene Angelo. See [LICENSE](https://github.com/gangelo/dsu/blob/main/LICENSE.txt) for details.
+Copyright (c) 2023-2024 Gene Angelo. See [LICENSE](https://github.com/gangelo/dsu/blob/main/LICENSE.txt) for details.
