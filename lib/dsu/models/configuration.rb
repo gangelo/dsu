@@ -168,11 +168,11 @@ module Dsu
       end
 
       def validate_default_project
-        project_path = File.join(projects_folder, default_project.presence || '{{blank}}')
-        return if Dir.exist?(project_path)
+        default_project_folder = File.join(projects_folder, default_project.presence || '{{blank}}')
+        return if Dir.exist?(default_project_folder)
 
         i18n_key = 'configuration.errors.project_path_missing'
-        errors.add(:base, I18n.t(i18n_key, project_path: project_path))
+        errors.add(:base, I18n.t(i18n_key, project_folder: default_project_folder))
       end
     end
   end

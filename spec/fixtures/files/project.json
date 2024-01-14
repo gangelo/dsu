@@ -1,4 +1,5 @@
 {
   "version": 20230613121411,
-  "project": "default"
+  "project_name": "default",
+  "description": "Default description"
 }

@@ -2,7 +2,7 @@ en:
   configuration:
     errors:
       theme_file_missing: Theme file "%{theme_path}" does not exist.
-      project_path_missing: Default project "%{project_path}" does not exist.
+      project_path_missing: Default project "%{project_folder}" does not exist.
   errors:
     error: "Error: %{message}"
     from_option_invalid: Option -f, [--from=DATE|MNEMONIC] value is invalid ["%{from_option}"]

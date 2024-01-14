@@ -11,6 +11,7 @@ require_relative 'subcommands/edit'
 require_relative 'subcommands/export'
 require_relative 'subcommands/import'
 require_relative 'subcommands/list'
+require_relative 'subcommands/project'
 require_relative 'subcommands/theme'
 require_relative 'views/entry_group/list'
 
@@ -27,6 +28,7 @@ module Dsu
     map I18n.t('commands.import.key_mappings') => :import
     map I18n.t('commands.info.key_mappings') => :info
     map I18n.t('commands.list.key_mappings') => :list
+    map I18n.t('commands.project.key_mappings') => :project
     map I18n.t('commands.theme.key_mappings') => :theme
     map I18n.t('commands.version.key_mappings') => :version
 
@@ -58,6 +60,9 @@ module Dsu
 
     desc I18n.t('commands.list.desc'), I18n.t('commands.list.usage')
     subcommand :list, Subcommands::List
+
+    desc I18n.t('commands.project.desc'), I18n.t('commands.project.usage')
+    subcommand :project, Subcommands::Project
 
     desc I18n.t('commands.config.desc'), I18n.t('commands.config.usage')
     subcommand :config, Subcommands::Config
