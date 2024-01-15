@@ -7,7 +7,7 @@
 [![Report Issues](https://img.shields.io/badge/report-issues-red.svg)](https://github.com/gangelo/dsu/issues)
 [![License](http://img.shields.io/badge/license-MIT-yellowgreen.svg)](#license)
 
-`dsu` is a [ruby gem](https://rubygems.org/gems/dsu) that enables anyone practicing [Agile methodology](https://www.agilealliance.org/agile101/) to record, keep track of and manage their [daily standup (DSU)](https://www.agilealliance.org/glossary/daily-meeting/) activities.
+`dsu` is a [ruby gem](https://rubygems.org/gems/dsu) that enables anyone practicing the [Agile methodology](https://www.agilealliance.org/agile101/) to record, keep track of and manage their [daily standup (DSU)](https://www.agilealliance.org/glossary/daily-meeting/) activities.
 
 - `dsu` uses _no_ network connections whatsoever.
 - `dsu` stores all of its data _locally_, in .json files.
