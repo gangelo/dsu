@@ -2,7 +2,6 @@
 
 require 'fileutils'
 
-# require_relative '../support/presentable'
 require_relative '../crud/json_file'
 require_relative '../migration/version'
 require_relative '../models/entry_group'
@@ -35,13 +34,10 @@ module Dsu
 
       def initialize(project_name:, description: nil, version: nil, options: {})
         raise ArgumentError, 'project_name is blank' if project_name.blank?
-        raise ArgumentError, 'project_name is not a String' unless project_name.is_a?(String)
-        raise ArgumentError, 'description is blank' if description.blank?
-        raise ArgumentError, 'description is not a String' unless description.is_a?(String)
         raise ArgumentError, 'version is the wrong object type' unless version.is_a?(Integer) || version.nil?
 
         self.project_name = project_name
-        self.description = description || "#{project_name.capitalize} project"
+        self.description = description
         self.version = version || VERSION
         self.options = options || {}
       end
@@ -271,7 +267,16 @@ module Dsu
 
       private
 
-      attr_writer :description, :current_project_file, :options, :version
+      attr_writer :current_project_file, :options, :version
+
+      def description=(value)
+        description = if value.blank?
+          "#{project_name.capitalize} project"
+        else
+          value
+        end
+        @description = description
+      end
 
       def project_name=(value)
         @project_name = begin

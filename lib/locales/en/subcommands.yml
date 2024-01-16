@@ -494,6 +494,15 @@ en:
           $ dsu project create -n "My project" -d "My project description"
 
           $ dsu p c -n "My project"
+        messages:
+          created: Created project "%{project_name}".
+          cancelled: Cancelled.
+          already_exists: Project "%{project_name}" already exists.
+        prompts:
+          create_confirm: Create project "%{project_name}"?
+          create_options:
+            - y
+            - N
       delete:
         desc: delete|d OPTIONS
         usage: Permanently deletes the DSU project indicated by the given OPTIONS
