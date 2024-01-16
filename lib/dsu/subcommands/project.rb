@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../views/import'
+require_relative '../presenters/project/create_presenter'
+require_relative '../views/project/create'
 require_relative '../views/shared/error'
 require_relative 'base_subcommand'
 
@@ -20,8 +21,11 @@ module Dsu
       option :description, type: :string, required: false, aliases: '-d', banner: 'DESCRIPTION'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def create
-        # Views::Import.new(presenter: all_presenter(import_file_path: options[:import_file],
-        #  options: options)).render
+        project_name = options[:project_name]
+        description = options[:description]
+        presenter = Presenters::Project::CreatePresenter.new(project_name: project_name,
+          description: description, options: options)
+        Views::Project::Create.new(presenter: presenter, options: options).render
       end
 
       desc I18n.t('subcommands.project.delete.desc'), I18n.t('subcommands.project.delete.usage')
