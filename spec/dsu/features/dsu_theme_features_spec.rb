@@ -217,11 +217,11 @@ RSpec.describe 'Dsu theme features', type: :feature do
 end
 
 def create_color_theme_prompt
-  "Create color theme \"#{theme_name}\"? [y/N]>"
+  "Create color theme \"#{theme_name}\"? [y,N]>"
 end
 
 def delete_color_theme_prompt
-  "Delete color theme \"#{theme_name}\"? [y/N]>"
+  "Delete color theme \"#{theme_name}\"? [y,N]>"
 end
 
 def color_theme_regex_for(theme_names:, default_theme_name: Dsu::Models::ColorTheme::DEFAULT_THEME_NAME)

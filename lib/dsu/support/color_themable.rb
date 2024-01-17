@@ -8,7 +8,7 @@ module Dsu
       def prompt_with_options(prompt:, options:)
         # HACK: This module needs to be refactored to be more generic.
         target_color_theme = defined?(color_theme) ? color_theme : self
-        options = "[#{options.join('/')}]"
+        options = "[#{options.join(',')}]"
         "#{apply_theme(prompt, theme_color: target_color_theme.prompt)} " \
           "#{apply_theme(options, theme_color: target_color_theme.prompt_options)}" \
           "#{apply_theme('>', theme_color: target_color_theme.prompt)}"

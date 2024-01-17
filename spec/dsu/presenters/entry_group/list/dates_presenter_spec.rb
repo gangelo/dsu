@@ -81,7 +81,7 @@ RSpec.describe Dsu::Presenters::EntryGroup::List::DatesPresenter do
         end
 
         it 'does not render the entry groups that are not presisted' do
-          expect(presenter).not_to include(*entry_groups[1].entries.map(&:description))
+          expect(presenter).to_not include(*entry_groups[1].entries.map(&:description))
         end
       end
 

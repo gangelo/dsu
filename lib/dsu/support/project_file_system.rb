@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require 'fileutils'
+require 'pathname'
 require_relative '../crud/json_file'
 require_relative '../migration/version'
+require_relative '../models/configuration'
 require_relative 'fileable'
 
 module Dsu
@@ -26,8 +28,14 @@ module Dsu
       module ClassMethods
         include Fileable
 
-        def current_project
-          Crud::JsonFile.read!(file_path: current_project_file).fetch(:project)
+        # Returns the currently selected (used) project name
+        # from dsu/current_project.json
+        def current_project_name
+          Crud::JsonFile.read!(file_path: current_project_file).fetch(:project_name)
+        end
+
+        def default_project_name
+          Models::Configuration.new.default_project
         end
 
         def initialize_project(project_name:)
@@ -37,7 +45,7 @@ module Dsu
           unless current_project_file_exist?
             file_data = {
               version: Dsu::Migration::VERSION,
-              project_name: 'default'
+              project_name: default_project_name
             }
             Crud::JsonFile.write!(file_data: file_data, file_path: current_project_file)
           end
@@ -74,6 +82,20 @@ module Dsu
         # Does dsu/projects/<project_name> folder exist?
         def project_folder_exist?(project_name:)
           Dir.exist?(project_folder_for(project_name: project_name))
+        end
+
+        def project_metadata
+          Pathname.new(projects_folder).children
+            .select(&:directory?)
+            .map(&:basename)
+            .map(&:to_s).each_with_index.with_object([]) do |(project_name, index), array|
+            array << {
+              project_number: index + 1,
+              project_name: project_name,
+              current_project: project_name == current_project_name,
+              default_projet: project_name == default_project_name
+            }
+          end
         end
       end
     end

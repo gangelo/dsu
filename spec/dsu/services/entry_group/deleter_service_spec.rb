@@ -16,7 +16,7 @@ RSpec.describe Dsu::Services::EntryGroup::DeleterService do
 
     context 'when the arguments are valid' do
       it 'does not raise an error' do
-        expect { service }.not_to raise_error
+        expect { service }.to_not raise_error
       end
     end
   end

@@ -10,7 +10,7 @@ RSpec.describe Dsu::Services::EntryGroup::EditorService do
   describe '#initialize' do
     context 'when the arguments are valid' do
       it 'does not raise an error' do
-        expect { entry_group_editor_service }.not_to raise_error
+        expect { entry_group_editor_service }.to_not raise_error
       end
     end
 

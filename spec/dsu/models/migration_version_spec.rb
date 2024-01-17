@@ -7,7 +7,7 @@ RSpec.describe Dsu::Models::MigrationVersion do
 
     context 'when the migration version file does not exist' do
       specify 'the migration version file does not exists' do
-        expect(migration_version).not_to exist
+        expect(migration_version).to_not exist
       end
 
       it 'has a version of 0' do

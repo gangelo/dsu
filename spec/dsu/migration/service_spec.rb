@@ -120,7 +120,7 @@ RSpec.describe Dsu::Migration::Service do
       specify 'the migration version file does not exist' do
         migration_version = build(:migration_version)
         migration_version.delete
-        expect(migration_version).not_to exist
+        expect(migration_version).to_not exist
       end
 
       it_behaves_like 'the migration is successful'

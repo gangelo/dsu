@@ -44,7 +44,7 @@ module Dsu
         private
 
         def project
-          Models::Project.current_project
+          Models::Project.current_project_name
         end
 
         def suspend_header?(args, _options)

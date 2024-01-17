@@ -21,6 +21,8 @@ en:
   information:
     dates:
       through: "%{from} thru %{to}"
+    input:
+      try_again: "Please try again. Valid options are [%{options}]."
   migrations:
     error:
       failed: "Error running migrations: %{message}"

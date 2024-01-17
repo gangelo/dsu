@@ -22,10 +22,10 @@ module Dsu
           return display_project_already_exists if presenter.project_already_exists?
 
           response = display_project_create_prompt
-          if presenter.render response: response
+          if presenter.respond response: response
             display_project_created_message
           else
-            display_cancelled_message
+            display_project_cancelled_message
           end
         rescue StandardError => e
           puts apply_theme(e.message, theme_color: color_theme.error)
@@ -39,17 +39,24 @@ module Dsu
           presenter.project.project_name
         end
 
-        def display_cancelled_message
-          message = I18n.t('subcommands.project.create.messages.cancelled', project_name: project_name)
+        def display_project_cancelled_message
+          message = I18n.t('subcommands.project.messages.cancelled', project_name: project_name)
           puts apply_theme(message, theme_color: color_theme.info)
         end
 
         def display_project_create_prompt
-          yes?(prompt_with_options(prompt: create_prompt, options: create_prompt_options), options: options)
+          response = ask_while(prompt_with_options(prompt: create_prompt,
+            options: create_prompt_options), options: options) do |input|
+            message = I18n.t('information.input.try_again', options: create_prompt_options.join(','))
+            puts apply_theme(message, theme_color: color_theme.info) unless create_prompt_options.include?(input)
+            create_prompt_options.include?(input)
+          end
+          response == create_prompt_options.first
         end
 
         def display_project_created_message
-          puts apply_theme(I18n.t('subcommands.project.create.messages.created', project_name: project_name), theme_color: color_theme.info)
+          message = I18n.t('subcommands.project.create.messages.created', project_name: project_name)
+          puts apply_theme(message, theme_color: color_theme.success)
         end
 
         def display_project_errors
