@@ -14,7 +14,7 @@ end
 # methods need to be called on the subject).
 shared_examples 'no error is raised' do
   it 'does not raise an error' do
-    expect { subject }.not_to raise_error
+    expect { subject }.to_not raise_error
   end
 end
 

@@ -57,7 +57,7 @@ RSpec.describe Dsu::CommandServices::AddEntryService do
         # If the entry was added, the entry group file would have been created.
         # Checking the existance of the entry group file is a good way to ensure
         # that the entry was not added.
-        expect(Dsu::Models::EntryGroup.exist?(time: time)).not_to be true
+        expect(Dsu::Models::EntryGroup.exist?(time: time)).to_not be true
       end
     end
 

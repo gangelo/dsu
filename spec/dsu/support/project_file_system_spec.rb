@@ -15,14 +15,14 @@ RSpec.describe Dsu::Support::ProjectFileSystem do
 
   let(:project_name) { 'Test' }
 
-  describe '.current_project' do
+  describe '.current_project_name' do
     context 'when the current project file exists' do
       before do
         project_file_system.class.initialize_project(project_name: project_name)
       end
 
       it 'returns the current project' do
-        expect(project_file_system.class.current_project).to eq('default')
+        expect(project_file_system.class.current_project_name).to eq('default')
       end
     end
 
@@ -113,5 +113,13 @@ RSpec.describe Dsu::Support::ProjectFileSystem do
         expect(project_file_system.project_initialized?).to be true
       end
     end
+  end
+
+  describe '.project_metadata' do
+    it 'does something'
+  end
+
+  describe '.default_project_name' do
+    it 'does something'
   end
 end

@@ -15,7 +15,7 @@ module Dsu
           @project = Models::Project.new(project_name: project_name, description: description, options: options)
         end
 
-        def render(response:)
+        def respond(response:)
           return false unless response
 
           project.create!

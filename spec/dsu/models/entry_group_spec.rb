@@ -76,7 +76,7 @@ RSpec.describe Dsu::Models::EntryGroup do
     let(:entries) { build_list(:entry, 2) }
 
     it 'returns a new object' do
-      expect(cloned_entry_group).not_to equal entry_group
+      expect(cloned_entry_group).to_not equal entry_group
     end
 
     it 'returns the entries in the same orded' do
@@ -244,7 +244,7 @@ RSpec.describe Dsu::Models::EntryGroup do
         end
 
         it 'does NOT raise an error' do
-          expect { described_class.delete(time: time) }.not_to raise_error
+          expect { described_class.delete(time: time) }.to_not raise_error
         end
       end
     end

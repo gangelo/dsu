@@ -1,13 +1,20 @@
 # frozen_string_literal: true
 
+require 'io/console'
 require 'thor'
 
 module Dsu
   module Support
     module Ask
-      def ask(prompt)
-        options = {}
-        Thor::LineEditor.readline(prompt, options)
+      def ask_while(prompt, options: {})
+        loop do
+          print prompt
+          char = $stdin.getch
+          puts char
+          return char if yield(char)
+
+          char
+        end
       end
 
       def yes?(prompt, options: {})

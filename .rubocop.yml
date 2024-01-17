@@ -190,3 +190,9 @@ Style/StringMethods:
 # Checks for use of parentheses around ternary conditions.
 Style/TernaryParentheses:
   EnforcedStyle: require_parentheses_when_complex
+
+RSpec/NotToNot:
+  EnforcedStyle: to_not
+  SupportedStyles:
+    - to_not
+    - not_to

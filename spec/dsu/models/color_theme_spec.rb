@@ -133,7 +133,7 @@ RSpec.describe Dsu::Models::ColorTheme do
       context 'when the themes are different' do
         it 'returns a different hash' do
           different_color_theme = described_class.new(theme_name: 'Different', theme_hash: theme_hash)
-          expect(different_color_theme.hash).not_to eq described_class.default.hash
+          expect(different_color_theme.hash).to_not eq described_class.default.hash
         end
       end
     end

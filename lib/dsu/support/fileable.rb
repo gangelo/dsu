@@ -26,7 +26,8 @@ module Dsu
       # Entries
 
       def entries_folder
-        File.join(projects_folder, 'entries')
+        project_folder = project_folder_for(project_name: Models::Project.current_project_name)
+        File.join(project_folder, 'entries')
       end
 
       def entries_file_name(time:, file_name_format: nil)
@@ -116,12 +117,14 @@ module Dsu
 
         File.join(projects_folder, project_name)
       end
+      alias project_folder project_folder_for
 
       def project_file_for(project_name:)
         project_folder = project_folder_for(project_name: project_name)
 
         File.join(project_folder, 'project.json')
       end
+      alias project_file project_file_for
 
       extend self # rubocop:disable Style/ModuleFunction
     end

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require_relative '../presenters/project/create_presenter'
+require_relative '../presenters/project/use_presenter'
 require_relative '../views/project/create'
+require_relative '../views/project/use'
 require_relative '../views/shared/error'
 require_relative 'base_subcommand'
 
@@ -29,7 +31,7 @@ module Dsu
       end
 
       desc I18n.t('subcommands.project.delete.desc'), I18n.t('subcommands.project.delete.usage')
-      long_desc I18n.t('subcommands.liet.delete.long_desc')
+      long_desc I18n.t('subcommands.project.delete.long_desc')
       option :project_name, type: :string, required: true, aliases: '-n', banner: 'PROJECT_NAME'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def delete
@@ -38,7 +40,7 @@ module Dsu
       end
 
       desc I18n.t('subcommands.project.list.desc'), I18n.t('subcommands.project.list.usage')
-      long_desc I18n.t('subcommands.liet.list.long_desc')
+      long_desc I18n.t('subcommands.project.list.long_desc')
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def list
         # Views::Import.new(presenter: all_presenter(import_file_path: options[:import_file],
@@ -46,7 +48,7 @@ module Dsu
       end
 
       desc I18n.t('subcommands.project.show.desc'), I18n.t('subcommands.project.show.usage')
-      long_desc I18n.t('subcommands.liet.show.long_desc')
+      long_desc I18n.t('subcommands.project.show.long_desc')
       option :project_name, type: :string, required: true, aliases: '-n', banner: 'PROJECT_NAME'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def show
@@ -55,12 +57,13 @@ module Dsu
       end
 
       desc I18n.t('subcommands.project.use.desc'), I18n.t('subcommands.project.use.usage')
-      long_desc I18n.t('subcommands.liet.use.long_desc')
-      option :project_name, type: :string, required: true, aliases: '-n', banner: 'PROJECT_NAME'
+      long_desc I18n.t('subcommands.project.use.long_desc')
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def use
-        # Views::Import.new(presenter: all_presenter(import_file_path: options[:import_file],
-        #  options: options)).render
+      def use(project_name_or_number = nil)
+        options = configuration.to_h.merge(self.options).with_indifferent_access
+        presenter = Presenters::Project::UsePresenter.new(project_name_or_number: project_name_or_number,
+          options: options)
+        Views::Project::Use.new(presenter: presenter, options: options).render
       end
     end
   end

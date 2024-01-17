@@ -287,7 +287,7 @@ en:
         export_dates_confirm: Export all the entries for %{from} thru %{to} (%{count} entry groups)?
         options:
           - y
-          - N
+          - n
     import:
       dates:
         desc: dates|dd OPTIONS
@@ -379,7 +379,7 @@ en:
         import_dates_confirm: Import all the entry groups for %{from} thru %{to} (%{count} entry groups)?
         options:
           - y
-          - N
+          - n
     list:
       date:
         desc: date|d DATE|MNEMONIC
@@ -496,13 +496,16 @@ en:
           $ dsu p c -n "My project"
         messages:
           created: Created project "%{project_name}".
-          cancelled: Cancelled.
           already_exists: Project "%{project_name}" already exists.
         prompts:
           create_confirm: Create project "%{project_name}"?
           create_options:
             - y
-            - N
+            - n
+          use_confirm: Use project "%{project_name}"?
+          use_options:
+            - y
+            - n
       delete:
         desc: delete|d OPTIONS
         usage: Permanently deletes the DSU project indicated by the given OPTIONS
@@ -557,24 +560,45 @@ en:
 
           $ dsu p s -n "My project"
       use:
-        desc: use|u OPTIONS
-        usage: Selects the DSU project to use, based on the given OPTIONS
+        desc: use|u [PROJECT_NAME|PROJECT_NUMBER]
+        usage: Selects the DSU project to use, based on the given PROJECT_NAME or PROJECT_NUMBER
         long_desc: |
-          Selects the DSU project to use, based on the given OPTIONS.
+          Selects the DSU project to use, based on the given PROJECT_NAME or PROJECT_NUMBER.
 
-          dsu project use OPTIONS
+          dsu project use [PROJECT_NAME|PROJECT_NUMBER]
 
-          dsu p u OPTIONS
+          dsu p u [PROJECT_NAME|PROJECT_NUMBER]
 
-          OPTIONS:
+          NOTES
 
-          -n|--name PROJECT_NAME: Opeional. The name of the project to use. If PRONECT_NAME is not provided, the default project will be used.s
+          PROJECT_NAME|PROJECT_NUMBER are optional. The project name or project number of the project to use. If PRONECT_NAME is not provided, the default project will be used. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
 
           EXAMPLES:
 
-          $ dsu project use -n "My project"
+          These will use the default project.
+          $ dsu project use
 
-          $ dsu p u -n "My project"
+          $ dsu p u
+
+          These will use the project named "My project".
+          $ dsu project use "My project"
+
+          $ dsu p u "My project"
+
+          These will use the 2nd project in the list of projects.
+          $ dsu project use 2
+
+          $ dsu p u 2
+        messages:
+          using_project: Now using project "%{project_name}".
+        prompts:
+          use_confirm: "Use project %{project_name}: \"%{description}\"?"
+          use_options:
+            - y
+            - n
+      messages:
+        cancelled: Cancelled.
+        does_not_exist: Project "%{project_name}" does not exist.
     theme:
       create:
         desc: create THEME_NAME [OPTIONS]
