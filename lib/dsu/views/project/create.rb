@@ -36,7 +36,7 @@ module Dsu
         attr_reader :presenter, :color_theme, :options
 
         def project_name
-          presenter.project.project_name
+          presenter.project_name
         end
 
         def display_project_cancelled_message
@@ -60,9 +60,8 @@ module Dsu
         end
 
         def display_project_errors
-          presenter.project.errors.full_messages.each do |error|
-            puts apply_theme(error, theme_color: color_theme.error)
-          end
+          errors = presenter.project_errors.join("\n")
+          puts apply_theme(errors, theme_color: color_theme.error)
         end
 
         def display_project_already_exists

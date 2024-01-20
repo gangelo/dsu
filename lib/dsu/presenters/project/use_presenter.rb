@@ -7,6 +7,8 @@ module Dsu
   module Presenters
     module Project
       class UsePresenter < BasePresenterEx
+        attr_writer :project_name_or_number
+
         def initialize(project_name_or_number:, options: {})
           super(options: options)
 
@@ -16,53 +18,74 @@ module Dsu
         def respond(response:)
           return false unless response
 
-          project.use!
+          project.use! if project&.present?
         end
 
-        def project
-          @project ||= if project_name?
-            Dsu::Models::Project.find(project_name: project_name)
-          elsif project_number?
-            Dsu::Models::Project.find_by_number(project_number: project_number)
-          elsif project_default?
-            Dsu::Models::Project.default_project
-          end
+        def project_name_or_number
+          return project_name if use_by_project_name?
+          return project_number if use_by_project_number?
+
+          Models::Project.default_project_name
+        end
+
+        def project_description
+          return unless project&.present?
+
+          project.description
         end
 
         def project_does_not_exist?
-          !project.exist?
+          !project&.exist?
         end
 
-        def project_errors?
-          project.invalid?
+        def project_errors
+          return [] unless project_errors?
+
+          project.errors.full_messages
+        end
+
+        def use_by_project_name?
+          !use_by_project_number? && !use_by_project_default?
+        end
+
+        def use_by_project_number?
+          /\A\d+\z/.match?(@project_name_or_number.to_s)
+        end
+
+        def use_by_project_default?
+          @project_name_or_number.blank?
         end
 
         private
 
-        attr_reader :options, :project_name_or_number
+        attr_reader :options
 
-        def project_name?
-          !(project_number? || project_default?)
+        def project
+          return @project if defined?(@project)
+
+          @project = if use_by_project_name? && Dsu::Models::Project.project_initialized?(project_name: project_name)
+            Dsu::Models::Project.find(project_name: project_name)
+          elsif use_by_project_number?
+            Dsu::Models::Project.find_by_number(project_number: project_number)
+          elsif use_by_project_default?
+            Dsu::Models::Project.default_project
+          end
         end
 
-        def project_number?
-          project_name_or_number =~ /\A\d+\z/
-        end
-
-        def project_default?
-          project_name_or_number.blank?
+        def project_errors?
+          project&.invalid?
         end
 
         def project_name
-          return unless project_name?
+          return unless use_by_project_name?
 
-          project_name_or_number
+          @project_name_or_number
         end
 
         def project_number
-          return -1 unless project_number?
+          return -1 unless use_by_project_number?
 
-          project_name_or_number.to_i
+          @project_name_or_number.to_i
         end
       end
     end
