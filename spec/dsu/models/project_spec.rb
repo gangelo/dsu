@@ -333,11 +333,11 @@ RSpec.describe Dsu::Models::Project do
     end
   end
 
-  describe '#update' do
-  end
+  # describe '#update' do
+  # end
 
-  describe '#update!' do
-  end
+  # describe '#update!' do
+  # end
 
   describe 'class methods' do
     describe '.all' do

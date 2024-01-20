@@ -6,7 +6,7 @@ require 'thor'
 module Dsu
   module Support
     module Ask
-      def ask_while(prompt, options: {})
+      def ask_while(prompt, options: {}) # rubocop:disable Lint/UnusedMethodArgument
         loop do
           print prompt
           char = $stdin.getch

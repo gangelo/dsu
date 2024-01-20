@@ -115,11 +115,11 @@ RSpec.describe Dsu::Support::ProjectFileSystem do
     end
   end
 
-  describe '.project_metadata' do
-    it 'does something'
-  end
+  # describe '.project_metadata' do
+  #   it 'does something'
+  # end
 
-  describe '.default_project_name' do
-    it 'does something'
-  end
+  # describe '.default_project_name' do
+  #   it 'does something'
+  # end
 end
