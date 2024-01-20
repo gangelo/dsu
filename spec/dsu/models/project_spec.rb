@@ -11,7 +11,7 @@ RSpec.describe Dsu::Models::Project do
     end
   end
 
-  shared_examples 'the default project is the default project' do
+  shared_examples 'the default project is the default project' do # rubocop:disable RSpec/MultipleMemoizedHelpers
     let(:default_project_name) { Dsu::Models::Configuration.new.default_project }
     let(:expected_default_project) { described_class.default_project }
 
