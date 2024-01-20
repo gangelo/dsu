@@ -21,6 +21,10 @@ FactoryBot.define do
       make_default_project { false }
     end
 
+    trait :blank_description do
+      description { '' }
+    end
+
     trait :current_project do
       make_current_project { true }
     end

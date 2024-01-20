@@ -7,7 +7,7 @@ module Dsu
   module Presenters
     module Project
       class CreatePresenter < BasePresenterEx
-        attr_reader :project
+        delegate :project_name, to: :project
 
         def initialize(project_name:, description:, options: {})
           super(options: options)
@@ -29,9 +29,15 @@ module Dsu
           project.invalid?
         end
 
+        def project_errors
+          return [] unless project_errors?
+
+          project.errors.full_messages
+        end
+
         private
 
-        attr_reader :options
+        attr_reader :project, :options
       end
     end
   end

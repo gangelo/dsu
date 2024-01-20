@@ -25,6 +25,10 @@ module Dsu
         self.class.project_initialized?(project_name: project_name)
       end
 
+      def project_number
+        self.class.project_number_for(project_name: project_name)
+      end
+
       module ClassMethods
         include Fileable
 
@@ -96,6 +100,12 @@ module Dsu
               default_projet: project_name == default_project_name
             }
           end
+        end
+
+        def project_number_for(project_name:)
+          project_metadata.find do |metadata|
+            metadata[:project_name] == project_name
+          end&.[](:project_number) || -1
         end
       end
     end

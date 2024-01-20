@@ -281,6 +281,22 @@ RSpec.describe Dsu::Models::Project do
     end
   end
 
+  describe '#description' do
+    context 'when the description is blank' do
+      it "returns '<project name> project' capitalized" do
+        project = create(:project, :blank_description, project_name: 'Test')
+        expect(project.description).to eq('Test project')
+      end
+    end
+
+    context 'when the description is provided' do
+      it 'returns the description provided' do
+        project = create(:project, project_name: 'Test', description: 'Awesome test project')
+        expect(project.description).to eq('Awesome test project')
+      end
+    end
+  end
+
   describe '#hash' do
     it 'returns an Integer' do
       expect(project.hash).to be_a(Integer)
@@ -406,6 +422,32 @@ RSpec.describe Dsu::Models::Project do
         let(:expected_error) { /Project file .* does not exist/ }
 
         it_behaves_like 'an error is raised'
+      end
+    end
+
+    describe '.find_by_number' do
+      context 'when the project is found' do
+        it_behaves_like 'the default project is the default project'
+
+        it do
+          expect(described_class.all.count).to eq(1)
+        end
+
+        it 'returns the project' do
+          expect(described_class.find_by_number(project_number: 1)).to_not be_nil
+        end
+      end
+
+      context 'when the project is not found' do
+        it_behaves_like 'the default project is the default project'
+
+        it do
+          expect(described_class.all.count).to eq(1)
+        end
+
+        it 'returns the project' do
+          expect(described_class.find_by_number(project_number: 99)).to be_nil
+        end
       end
     end
   end

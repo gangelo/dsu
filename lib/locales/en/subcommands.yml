@@ -599,6 +599,7 @@ en:
       messages:
         cancelled: Cancelled.
         does_not_exist: Project "%{project_name}" does not exist.
+        number_does_not_exist: A project for number %{project_number} does not exist.
     theme:
       create:
         desc: create THEME_NAME [OPTIONS]
