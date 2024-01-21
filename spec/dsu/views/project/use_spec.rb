@@ -30,7 +30,7 @@ RSpec.describe Dsu::Views::Project::Use do
         build(:use_presenter, :with_project_name, project_name_or_number: project_name, options: options)
       end
 
-      context "when user the confirmation is 'y'" do
+      context "when the user confirmation is 'y'" do
         let(:response) { 'y' }
 
         it_behaves_like 'the project is not the current project'
@@ -95,7 +95,7 @@ RSpec.describe Dsu::Views::Project::Use do
         build(:use_presenter, :without_project_name, options: options)
       end
 
-      context "when user the confirmation is 'y'" do
+      context "when the user confirmation is 'y'" do
         let(:response) { 'y' }
 
         it_behaves_like 'the project is the current project'
@@ -143,7 +143,7 @@ RSpec.describe Dsu::Views::Project::Use do
       end
     end
 
-    context 'when an error is raised that is not captured' do
+    context 'when an error is raised that is not rescued' do
       before do
         allow(presenter).to receive(:project_does_not_exist?).and_raise(StandardError, expected_error)
       end
