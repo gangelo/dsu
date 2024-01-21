@@ -29,6 +29,7 @@ module Dsu
           end
         rescue StandardError => e
           puts apply_theme(e.message, theme_color: color_theme.error)
+          puts apply_theme(e.backtrace_locations.join("\n"), theme_color: color_theme.error) if Dsu.env.local?
         end
 
         private

@@ -1,9 +1,13 @@
-# rubocop:disable RSpec/MultipleMemoizedHelpers
 # frozen_string_literal: true
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Dsu::Views::Project::Create do
   subject(:create_view) do
     described_class.new(presenter: presenter, options: options)
+  end
+
+  before do
+    allow($stdin).to receive(:getch).and_return(response)
   end
 
   let(:presenter) do
@@ -23,6 +27,53 @@ RSpec.describe Dsu::Views::Project::Create do
   end
 
   describe '#render' do
+    context 'when the project already exists' do
+      let(:presenter) do
+        build(:create_presenter, :with_project, project_name: project_name, description: description, options: options)
+      end
+      let(:expected_error) do
+        "Project \"#{project_name}\" already exists."
+      end
+
+      it 'displays the error' do
+        expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+          create_view.render
+        end.chomp)).to include(expected_error)
+      end
+    end
+
+    context 'when the project does not exist' do
+      context "when the user confirmation is 'y'" do
+        let(:response) { 'y' }
+
+        it 'displays the project created message' do
+          expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+            create_view.render
+          end.chomp)).to include("Created project \"#{project_name}\".")
+        end
+
+        it 'creates the project' do
+          create_view.render
+          expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(true)
+        end
+      end
+
+      context "when the user confirmation is 'n'" do
+        let(:response) { 'n' }
+
+        it 'displays the cancelled message' do
+          expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+            create_view.render
+          end.chomp)).to include('Cancelled.')
+        end
+
+        it 'does not create the project' do
+          create_view.render
+          expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(false)
+        end
+      end
+    end
+
     context 'when the project has errors' do
       before do
         allow(presenter).to receive_messages(project_errors?: true,
@@ -46,19 +97,17 @@ RSpec.describe Dsu::Views::Project::Create do
       end
     end
 
-    context 'when the project already exists' do
-      # before do
-      #   allow(presenter).to receive_messages(project_already_exists?: true)
-      # end
+    context 'when an error is raised that is not rescued' do
+      before do
+        allow(presenter).to receive(:project_errors?).and_raise(StandardError, expected_error)
+      end
 
       let(:presenter) do
-        build(:create_presenter, :with_project, project_name: project_name, description: description, options: options)
+        build(:create_presenter, project_name: project_name, description: description, options: options)
       end
-      let(:expected_error) do
-        "Project \"#{project_name}\" already exists."
-      end
+      let(:expected_error) { 'Test error' }
 
-      it 'displays the error' do
+      it 'rescues and displays the error' do
         expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
           create_view.render
         end.chomp)).to include(expected_error)
@@ -66,5 +115,4 @@ RSpec.describe Dsu::Views::Project::Create do
     end
   end
 end
-
 # rubocop:enable RSpec/MultipleMemoizedHelpers
