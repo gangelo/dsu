@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :project, class: 'Dsu::Models::Project' do
     project_name { 'default' }
-    description { 'Project description' }
+    description { nil }
     options { {} }
     version { Dsu::Migration::VERSION }
 

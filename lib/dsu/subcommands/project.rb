@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../presenters/project/create_presenter'
+require_relative '../presenters/project/list_presenter'
 require_relative '../presenters/project/use_presenter'
 require_relative '../views/project/create'
 require_relative '../views/project/use'
@@ -43,8 +44,9 @@ module Dsu
       long_desc I18n.t('subcommands.project.list.long_desc')
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def list
-        # Views::Import.new(presenter: all_presenter(import_file_path: options[:import_file],
-        #  options: options)).render
+        options = configuration.to_h.merge(self.options).with_indifferent_access
+        presenter = Presenters::Project::ListPresenter.new(options: options)
+        Views::Project::List.new(presenter: presenter, options: options).render
       end
 
       desc I18n.t('subcommands.project.show.desc'), I18n.t('subcommands.project.show.usage')
