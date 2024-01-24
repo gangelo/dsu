@@ -89,10 +89,7 @@ module Dsu
         end
 
         def project_metadata
-          Pathname.new(projects_folder).children
-            .select(&:directory?)
-            .map(&:basename)
-            .map(&:to_s).each_with_index.with_object([]) do |(project_name, index), array|
+          project_folder_names.each_with_index.with_object([]) do |(project_name, index), array|
             array << {
               project_number: index + 1,
               project_name: project_name,
@@ -106,6 +103,17 @@ module Dsu
           project_metadata.find do |metadata|
             metadata[:project_name] == project_name
           end&.[](:project_number) || -1
+        end
+
+        private
+
+        def project_folder_names
+          Pathname.new(projects_folder)
+            .children
+            .select(&:directory?)
+            .map(&:basename)
+            .map(&:to_s)
+            .sort { |a, b| a.casecmp(b) }
         end
       end
     end
