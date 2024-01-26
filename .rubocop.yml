@@ -196,3 +196,9 @@ RSpec/NotToNot:
   SupportedStyles:
     - to_not
     - not_to
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 6

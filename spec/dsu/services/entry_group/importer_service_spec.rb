@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Dsu::Services::EntryGroup::ImporterService do
   subject(:service) { described_class.new(import_entry_groups: import_entry_groups, options: options) }
 
@@ -190,4 +189,3 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
     end
   end
 end
-# rubocop:enable RSpec/MultipleMemoizedHelpers

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Dsu::Views::Project::Create do
   subject(:create_view) do
     described_class.new(presenter: presenter, options: options)
@@ -115,4 +114,3 @@ RSpec.describe Dsu::Views::Project::Create do
     end
   end
 end
-# rubocop:enable RSpec/MultipleMemoizedHelpers

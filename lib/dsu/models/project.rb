@@ -53,6 +53,10 @@ module Dsu
       end
       alias eql? ==
 
+      def can_delete?
+        self.class.can_delete?(project_name: project_name)
+      end
+
       def create
         self.class.create(project_name: project_name, description: description)
       end
@@ -74,16 +78,16 @@ module Dsu
       end
 
       def default_project?
-        project_name == self.class.default_project_name
+        self.class.default_project?(project_name: project_name)
       end
 
-      # def delete
-      #   self.class.delete(project_name: project_name)
-      # end
+      def delete
+        self.class.delete(project_name: project_name)
+      end
 
-      # def delete!
-      #   self.class.delete!(time: time)
-      # end
+      def delete!
+        self.class.delete!(project_name: project_name)
+      end
 
       def hash
         [project_name, description, version].map(&:hash).hash
@@ -132,6 +136,21 @@ module Dsu
         #   project_metadata.any?
         # end
 
+        def can_delete?(project_name:)
+          exist?(project_name: project_name) &&
+            # Cannot delete the last project.
+            count > 1 &&
+            # Do not allow the project to be deleted if it
+            # is currently the default project.
+            # The user needs to change to another default
+            # project before they can delete this project.
+            !default_project?(project_name: project_name)
+        end
+
+        def count
+          project_metadata.count
+        end
+
         def create(project_name:, description: nil, options: {})
           Models::Project.new(project_name: project_name, description: description, options: options).tap do |project|
             project.validate!
@@ -166,17 +185,32 @@ module Dsu
           find(project_name: default_project_name)
         end
 
-        # def delete(project_name:)
-        #   # TODO: read all entry groups and delete them
-        #   # TODO: delete the project folder
-        #   # superclass.delete(file_path: project_folder_for(project_name: project_name))
-        # end
+        def default_project?(project_name:)
+          project_name == default_project_name
+        end
 
-        # def delete!(project_name:)
-        #   # TODO: read all entry groups and delete them
-        #   # TODO: delete the project folder
-        #   # superclass.delete!(file_path: project_folder_for(project_name: project_name))
-        # end
+        def delete(project_name:)
+          return false unless can_delete?(project_name: project_name)
+
+          project_folder = project_folder_for(project_name: project_name)
+          FileUtils.rm_rf(project_folder)
+
+          true
+        end
+
+        def delete!(project_name:)
+          unless exist?(project_name: project_name)
+            raise I18n.t('models.project.errors.does_not_exist', project_name: project_name)
+          end
+
+          raise I18n.t('models.project.errors.delete_only_project', project_name: project_name) unless count > 1
+
+          if default_project?(project_name: project_name)
+            raise I18n.t('models.project.errors.delete_default_project', project_name: project_name)
+          end
+
+          delete(project_name: project_name)
+        end
 
         def find(project_name:)
           unless project_folder_exist?(project_name: project_name)
