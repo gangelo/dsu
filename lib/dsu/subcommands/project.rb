@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../presenters/project/create_presenter'
+require_relative '../presenters/project/delete_presenter'
 require_relative '../presenters/project/list_presenter'
 require_relative '../presenters/project/use_presenter'
 require_relative '../views/project/create'
@@ -33,11 +34,12 @@ module Dsu
 
       desc I18n.t('subcommands.project.delete.desc'), I18n.t('subcommands.project.delete.usage')
       long_desc I18n.t('subcommands.project.delete.long_desc')
-      option :project_name, type: :string, required: true, aliases: '-n', banner: 'PROJECT_NAME'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def delete
-        # Views::Import.new(presenter: all_presenter(import_file_path: options[:import_file],
-        #  options: options)).render
+      def delete(project_name_or_number = nil)
+        options = configuration.to_h.merge(self.options).with_indifferent_access
+        presenter = Presenters::Project::DeletePresenter.new(project_name_or_number: project_name_or_number,
+          options: options)
+        Views::Project::Delete.new(presenter: presenter, options: options).render
       end
 
       desc I18n.t('subcommands.project.list.desc'), I18n.t('subcommands.project.list.usage')

@@ -140,7 +140,7 @@ RSpec.describe Dsu::Crud::JsonFile do
       end
     end
 
-    context 'when the validation fails' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+    context 'when the validation fails' do
       subject(:json_file_write) { json_file.write! }
 
       let(:file_data) { nil }

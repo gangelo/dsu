@@ -5,33 +5,11 @@ RSpec.describe Dsu::Models::Project do
     described_class.new(project_name: project_name, description: description, version: version, options: options)
   end
 
-  shared_examples 'the projects are different' do
-    it 'returns false' do
-      expect(project == different_project).to be false
-    end
-  end
-
-  shared_examples 'the default project is the default project' do # rubocop:disable RSpec/MultipleMemoizedHelpers
-    let(:default_project_name) { Dsu::Models::Configuration.new.default_project }
-    let(:expected_default_project) { described_class.default_project }
-
-    it 'exists and is initialized' do
-      expect(expected_default_project.project_initialized?).to be true
-    end
-
-    it 'is the default project' do
-      expect(expected_default_project.default_project?).to be true
-    end
-
-    it 'has the default project name' do
-      expect(expected_default_project.project_name).to eq default_project_name
-    end
-  end
-
   let(:project_name) { 'Test' }
-  let(:description) { 'Test project' }
+  let(:description) { nil }
   let(:version) { nil }
   let(:options) { {} }
+  let(:default_project) { described_class.default_project }
 
   describe '#initialize' do
     context 'when the arguments are valid' do
@@ -111,6 +89,12 @@ RSpec.describe Dsu::Models::Project do
   end
 
   describe '#==' do
+    shared_examples 'the projects are different' do
+      it 'returns false' do
+        expect(project == different_project).to be false
+      end
+    end
+
     context 'when the projects are equal' do
       it 'returns true' do
         expect(project == project.clone).to be true
@@ -153,6 +137,63 @@ RSpec.describe Dsu::Models::Project do
 
         it_behaves_like 'the projects are different'
       end
+    end
+  end
+
+  describe 'can_delete?' do
+    shared_examples 'the project can be deleted' do
+      before do
+        project.save!
+      end
+
+      it 'is not the only project' do
+        expect(described_class.count).to be > 1
+      end
+
+      it 'returns true' do
+        expect(project.can_delete?).to be true
+      end
+    end
+
+    shared_examples "the project can't be deleted" do
+      it 'returns false' do
+        expect(project.can_delete?).to be false
+      end
+    end
+
+    # rubocop:disable RSpec/RepeatedExampleGroupBody
+    context 'when the project exists' do
+      it_behaves_like 'the project can be deleted'
+    end
+
+    context 'when there is more than one project' do
+      it_behaves_like 'the project can be deleted'
+    end
+
+    context 'when the project is not the default project' do
+      it_behaves_like 'the project can be deleted'
+    end
+    # rubocop:enable RSpec/RepeatedExampleGroupBody
+
+    context 'when the project does not exist' do
+      it_behaves_like "the project can't be deleted"
+    end
+
+    context 'when there is only one project' do
+      before do
+        project_folder = default_project.project_folder
+        FileUtils.rm_rf(project_folder) if project_folder.start_with?(temp_folder)
+
+        project.save!
+      end
+
+      it_behaves_like "the project can't be deleted"
+    end
+
+    context 'when the project is the default project' do
+      subject(:project) { default_project }
+
+      it_behaves_like "the project can't be deleted"
     end
   end
 
@@ -281,6 +322,133 @@ RSpec.describe Dsu::Models::Project do
     end
   end
 
+  describe '#delete' do
+    context 'when the project exists' do
+      before do
+        project.save!
+      end
+
+      it 'exists' do
+        expect(project.exist?).to be true
+      end
+
+      it 'returns true' do
+        expect(project.delete).to be true
+      end
+
+      it 'deletes the project' do
+        project.delete
+        expect(project.exist?).to be false
+      end
+    end
+
+    context 'when the project does not exist' do
+      it 'does not exist' do
+        expect(project.exist?).to be false
+      end
+
+      it 'returns false' do
+        expect(project.delete).to be false
+      end
+    end
+
+    context 'when trying to delete the only project' do
+      it 'exists' do
+        expect(default_project.exist?).to be true
+      end
+
+      it 'is the default project' do
+        expect(default_project.default_project?).to be true
+      end
+
+      it 'returns false' do
+        expect(default_project.delete).to be false
+      end
+
+      it 'does not delete the project' do
+        default_project.delete
+        expect(default_project.exist?).to be true
+      end
+    end
+
+    context 'when trying to delete the default project' do
+      before do
+        project.save!
+        project.default!
+      end
+
+      it 'is the default project' do
+        expect(project.default_project?).to be true
+      end
+
+      it 'returns false' do
+        expect(project.delete).to be false
+      end
+
+      it 'does not delete the project' do
+        project.delete
+        expect(project.exist?).to be true
+      end
+    end
+  end
+
+  describe '#delete!' do
+    shared_examples "the project can't be deleted" do
+      it 'cannot delete the project' do
+        expect { project.delete! }.to raise_error(expected_error)
+      end
+    end
+
+    context 'when deleting a project that exists' do
+      before do
+        project.save!
+      end
+
+      it 'exists' do
+        expect(project.exist?).to be true
+      end
+
+      it 'returns true' do
+        expect(project.delete!).to be true
+      end
+
+      it 'deletes the project' do
+        project.delete!
+        expect(project.exist?).to be false
+      end
+    end
+
+    context 'when trying to delete a project that does not exist' do
+      let(:expected_error) { /'#{project.project_name}' does not exist/ }
+
+      it_behaves_like "the project can't be deleted"
+    end
+
+    context 'when trying to delete the only project' do
+      before do
+        project_folder = default_project.project_folder
+        FileUtils.rm_rf(project_folder) if project_folder.start_with?(temp_folder)
+
+        project.save!
+      end
+
+      let(:expected_error) { /'#{project.project_name}' is the only project/ }
+
+      it_behaves_like "the project can't be deleted"
+    end
+
+    context 'when trying to delete the default project' do
+      before do
+        project.save!
+        project.default!
+      end
+
+      let(:expected_error) { /'#{project.project_name}' is the default project/ }
+
+      it_behaves_like "the project can't be deleted"
+    end
+  end
+
   describe '#description' do
     context 'when the description is blank' do
       it "returns '<project name> project' capitalized" do
@@ -356,6 +524,23 @@ RSpec.describe Dsu::Models::Project do
   # end
 
   describe 'class methods' do
+    shared_examples 'the default project is the default project' do # rubocop:disable RSpec/MultipleMemoizedHelpers
+      let(:default_project_name) { Dsu::Models::Configuration.new.default_project }
+      let(:expected_default_project) { described_class.default_project }
+
+      it 'exists and is initialized' do
+        expect(expected_default_project.project_initialized?).to be true
+      end
+
+      it 'is the default project' do
+        expect(expected_default_project.default_project?).to be true
+      end
+
+      it 'has the default project name' do
+        expect(expected_default_project.project_name).to eq default_project_name
+      end
+    end
+
     describe '.all' do
       context 'when there are is only the default project' do
         it 'returns an empty Array' do
