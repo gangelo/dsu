@@ -22,9 +22,8 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
   spec.required_ruby_version = ['>= 3.0.1', '< 4.0']
 
-  # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
-
   spec.metadata['homepage_uri'] = spec.homepage
+  spec.metadata['documentation_uri'] = 'https://github.com/gangelo/dsu/wiki'
   spec.metadata['source_code_uri'] = spec.homepage
   spec.metadata['changelog_uri'] = 'https://github.com/gangelo/dsu/blob/main/CHANGELOG.md'
 
