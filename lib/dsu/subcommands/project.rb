@@ -3,9 +3,11 @@
 require_relative '../presenters/project/create_presenter'
 require_relative '../presenters/project/delete_presenter'
 require_relative '../presenters/project/list_presenter'
+require_relative '../presenters/project/use_by_number_presenter'
 require_relative '../presenters/project/use_presenter'
 require_relative '../views/project/create'
 require_relative '../views/project/use'
+require_relative '../views/project/use_by_number'
 require_relative '../views/shared/error'
 require_relative 'base_subcommand'
 
@@ -65,9 +67,31 @@ module Dsu
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def use(project_name_or_number = nil)
         options = configuration.to_h.merge(self.options).with_indifferent_access
-        presenter = Presenters::Project::UsePresenter.new(project_name_or_number: project_name_or_number,
-          options: options)
-        Views::Project::Use.new(presenter: presenter, options: options).render
+        presenter = use_presenter_for(project_name_or_number, options: options)
+        use_view_for(project_name_or_number, presenter: presenter, options: options).render
+      end
+
+      private
+
+      def use_view_for(project_name, presenter:, options:)
+        if project_number?(project_name)
+          Views::Project::UseByNumber.new(presenter: presenter, options: options)
+        else
+          Views::Project::Use.new(presenter: presenter, options: options)
+        end
+      end
+
+      def use_presenter_for(project_name, options:)
+        if project_number?(project_name)
+          Presenters::Project::UseByNumberPresenter.new(project_number: project_name.to_i, options: options)
+        else
+          project_name = Models::Project.default_project_name if project_name.blank?
+          Presenters::Project::UsePresenter.new(project_name: project_name, options: options)
+        end
+      end
+
+      def project_number?(project_name)
+        /^[+-]?\d+(\.\d+)?$/.match?(project_name.to_s)
       end
     end
   end

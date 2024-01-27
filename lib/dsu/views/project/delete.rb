@@ -71,14 +71,14 @@ module Dsu
         end
 
         def display_deleted_project_message
-          message = I18n.t('subcommands.project.delete.messages.using_project',
+          message = I18n.t('subcommands.project.delete.messages.deleted_project',
             project_name: presenter.project_name_or_number)
           puts apply_theme(message, theme_color: color_theme.success)
         end
 
         def delete_prompt
           I18n.t('subcommands.project.delete.prompts.delete_confirm',
-            project_name: presenter.project_name_or_number, description: presenter.project_description)
+            project_name: presenter.project_name, description: presenter.project_description)
         end
 
         def delete_prompt_options
