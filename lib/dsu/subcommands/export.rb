@@ -23,7 +23,8 @@ module Dsu
       long_desc I18n.t('subcommands.export.all.long_desc')
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def all
-        Views::Export.new(presenter: all_presenter(options: options)).render
+        options = configuration.to_h.merge(self.options).with_indifferent_access
+        Views::Export.new(presenter: all_presenter(options: options), options: options).render
       end
 
       desc I18n.t('subcommands.export.dates.desc'), I18n.t('subcommands.export.dates.usage')
@@ -41,7 +42,8 @@ module Dsu
           return
         end
 
-        Views::Export.new(presenter: dates_presenter_for(from: times.min, to: times.max, options: options)).render
+        Views::Export.new(presenter:
+          dates_presenter_for(from: times.min, to: times.max, options: options), options: options).render
       rescue ArgumentError => e
         Views::Shared::Error.new(messages: e.message).render
       end
