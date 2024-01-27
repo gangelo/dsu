@@ -6,7 +6,7 @@ require_relative '../base_presenter_ex'
 module Dsu
   module Presenters
     module Project
-      class UsePresenter < BasePresenterEx
+      class DeletePresenter < BasePresenterEx
         attr_writer :project_name_or_number
 
         def initialize(project_name_or_number:, options: {})
@@ -19,6 +19,10 @@ module Dsu
           return false unless response
 
           project.delete! if project&.present?
+        end
+
+        def project_name
+          project.project_name
         end
 
         def project_name_or_number
@@ -76,11 +80,11 @@ module Dsu
           project&.invalid?
         end
 
-        def project_name
-          return unless delete_by_project_name?
+        # def project_name
+        #   return unless delete_by_project_name?
 
-          @project_name_or_number
-        end
+        #   @project_name_or_number
+        # end
 
         def project_number
           return -1 unless delete_by_project_number?

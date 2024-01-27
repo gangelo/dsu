@@ -132,10 +132,6 @@ module Dsu
           end
         end
 
-        # def any?
-        #   project_metadata.any?
-        # end
-
         def can_delete?(project_name:)
           exist?(project_name: project_name) &&
             # Cannot delete the last project.
@@ -217,20 +213,20 @@ module Dsu
             raise I18n.t('models.project.errors.does_not_exist', project_name: project_name)
           end
 
-          project_file_path = project_file_for(project_name: project_name)
+          project_file = project_file_for(project_name: project_name)
 
           unless project_file_exist?(project_name: project_name)
-            raise I18n.t('models.project.errors.project_file_not_exist', project_file: project_file_path)
+            raise I18n.t('models.project.errors.project_file_not_exist', project_file: project_file)
           end
 
-          project_hash = Crud::JsonFile.read!(file_path: project_file_path)
+          project_hash = Crud::JsonFile.read!(file_path: project_file)
           Services::Project::HydratorService.new(project_hash: project_hash).call
         end
 
         # project_number is 1 based.
         def find_by_number(project_number:)
           project = project_metadata.find do |metadata|
-            metadata[:project_number] == project_number
+            metadata[:project_number] == project_number.to_i
           end
           return unless project
 
@@ -239,26 +235,17 @@ module Dsu
 
         # def find_or_create(project_name:)
         #   find_or_initialize(project_name: project_name).tap do |project|
-        #     project.write! unless project.persisted?
+        #     project.save! unless project.persisted?
         #   end
         # end
 
-        # def find_or_initialize(project_name:)
-        #   project_path = project_folder_for(project_name: project_name)
-        #   # Dif.exist?(project_path) do |project_hash|
-        #   #   Services::Project::HydratorService.new(project_hash: project_hash).call
-        #   # end || new(project_name: project_name)
-        #   if Dir.exist?(project_path)
-        #     Crud::JsonFile.read!(file_path: project_path).fetch(:project).tap do |project_name|
-        #       # description = "#{project_name.capitalize} project}"
-        #       # unless project_exist?(project_name: project_name)
-        #       #   create!(project_name: project_name, description: description)
-        #       # end
-        #     end
-        #   else
-        #     # TODO: Create
-        #   end
-        # end
+        def find_or_initialize(project_name:)
+          return Models::Project.new(project_name: project_name) unless project_file_exist?(project_name: project_name)
+
+          project_file = project_file_for(project_name: project_name)
+          project_hash = Crud::JsonFile.read!(file_path: project_file)
+          Services::Project::HydratorService.new(project_hash: project_hash).call
+        end
 
         # def update(project_name:, description:, version:, options:)
         #   # TODO: Update the project

@@ -525,6 +525,13 @@ en:
           $ dsu project delete -n "My project"
 
           $ dsu p d -n "My project"
+        messages:
+          deleted: Deleted project "%{project_name}".
+        prompts:
+          delete_confirm: Delete project "%{project_name}"?
+          delete_options:
+            - y
+            - n
       list:
         desc: list|l
         usage: Lists all the DSU projects
@@ -592,7 +599,7 @@ en:
         messages:
           using_project: Now using project "%{project_name}".
         prompts:
-          use_confirm: "Use project %{project_name}: \"%{description}\"?"
+          use_confirm: "Use project \"%{project_name} - %{description}\"?"
           use_options:
             - y
             - n
