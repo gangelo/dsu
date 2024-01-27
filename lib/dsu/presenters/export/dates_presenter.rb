@@ -1,20 +1,14 @@
 # frozen_string_literal: true
 
 require_relative '../../models/entry_group'
-require_relative '../../support/ask'
+require_relative '../../services/entry_group/exporter_service'
 require_relative '../base_presenter_ex'
-require_relative 'messages'
-require_relative 'nothing_to_export'
-require_relative 'service_callable'
 
 module Dsu
   module Presenters
     module Export
       class DatesPresenter < BasePresenterEx
-        include Messages
-        include NothingToExport
-        include ServiceCallable
-        include Support::Ask
+        attr_reader :export_file_path
 
         def initialize(from:, to:, options: {})
           super(options: options)
@@ -23,17 +17,18 @@ module Dsu
           @to = to
         end
 
-        def render(response:)
-          return display_cancelled_message unless response
+        def respond(response:)
+          return false unless response
 
-          export_file_path = exporter_service_call
-
-          display_exported_message
-          display_exported_to_message(file_path: export_file_path)
+          @export_file_path = exporter_service.call
         end
 
-        def display_export_prompt
-          yes?(prompt_with_options(prompt: export_prompt, options: export_prompt_options), options: options)
+        def nothing_to_export?
+          entry_groups.empty?
+        end
+
+        def entry_group_count
+          entry_groups&.count || 0
         end
 
         private
@@ -49,8 +44,8 @@ module Dsu
             from: from.to_date, to: to.to_date, count: entry_groups.count)
         end
 
-        def export_prompt_options
-          I18n.t('subcommands.export.prompts.options')
+        def exporter_service
+          Services::EntryGroup::ExporterService.new(entry_groups: entry_groups, options: options)
         end
       end
     end
