@@ -547,25 +547,6 @@ en:
           $ dsu project list
 
           $ dsu p l
-      show:
-        desc: show|s OPTIONS
-        usage: Shows the DSU project indicated by the given OPTIONS
-        long_desc: |
-          Show the DSU project indicated by the given OPTIONS.
-
-          dsu project show OPTIONS
-
-          dsu p s OPTIONS
-
-          OPTIONS:
-
-          -n|--name PROJECT_NAME: The name of the project to show.
-
-          EXAMPLES:
-
-          $ dsu project show -n "My project"
-
-          $ dsu p s -n "My project"
       use:
         desc: use|u [PROJECT_NAME|PROJECT_NUMBER]
         usage: Selects the DSU project to use, based on the given PROJECT_NAME or PROJECT_NUMBER
