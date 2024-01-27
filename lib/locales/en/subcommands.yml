@@ -530,7 +530,7 @@ en:
         prompts:
           delete_confirm: Delete project "%{project_name}"?
           delete_options:
-            - y
+            - Y
             - n
       list:
         desc: list|l
