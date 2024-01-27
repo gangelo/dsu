@@ -136,12 +136,11 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
 
     context 'when the project does not exist' do
       before do
-        create(:project, :current_project, project_name: project_name, options: options)
         allow(presenter).to receive(:project_does_not_exist?).and_return(true)
       end
 
       let(:presenter) do
-        build(:use_by_number_presenter, :with_project_number, options: options)
+        build(:use_by_number_presenter, options: options)
       end
       let(:response) { 'unused' }
 

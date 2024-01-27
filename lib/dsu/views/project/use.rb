@@ -21,7 +21,7 @@ module Dsu
         end
 
         def render
-          return display_project_does_not_exists if presenter.project_does_not_exist?
+          return display_project_does_not_exist if presenter.project_does_not_exist?
           return display_project_errors if presenter.project_errors.any?
 
           response = display_project_use_prompt
@@ -59,7 +59,7 @@ module Dsu
           puts apply_theme(errors, theme_color: color_theme.error)
         end
 
-        def display_project_does_not_exists
+        def display_project_does_not_exist
           message = I18n.t('subcommands.project.messages.does_not_exist',
             project_name: presenter.project_name)
           puts apply_theme(message, theme_color: color_theme.error)
