@@ -39,9 +39,8 @@ module Dsu
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def delete(project_name_or_number = nil)
         options = configuration.to_h.merge(self.options).with_indifferent_access
-        presenter = Presenters::Project::DeletePresenter.new(project_name_or_number: project_name_or_number,
-          options: options)
-        Views::Project::Delete.new(presenter: presenter, options: options).render
+        presenter = delete_presenter_for(project_name_or_number, options: options)
+        delete_view_for(project_name_or_number, presenter: presenter, options: options).render
       end
 
       desc I18n.t('subcommands.project.list.desc'), I18n.t('subcommands.project.list.usage')
@@ -72,6 +71,23 @@ module Dsu
       end
 
       private
+
+      def delete_view_for(project_name, presenter:, options:)
+        if project_number?(project_name)
+          Views::Project::DeleteByNumber.new(presenter: presenter, options: options)
+        else
+          Views::Project::Delete.new(presenter: presenter, options: options)
+        end
+      end
+
+      def delete_presenter_for(project_name, options:)
+        if project_number?(project_name)
+          Presenters::Project::DeleteByNumberPresenter.new(project_number: project_name.to_i, options: options)
+        else
+          project_name = Models::Project.default_project_name if project_name.blank?
+          Presenters::Project::DeletePresenter.new(project_name: project_name, options: options)
+        end
+      end
 
       def use_view_for(project_name, presenter:, options:)
         if project_number?(project_name)

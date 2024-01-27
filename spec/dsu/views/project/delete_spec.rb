@@ -5,15 +5,15 @@ RSpec.describe Dsu::Views::Project::Delete do
     described_class.new(presenter: presenter, options: options)
   end
 
-  shared_examples 'the project is the current project' do
-    it 'is the current project' do
-      expect(Dsu::Models::Project.current_project.project_name).to eq(project_name)
+  shared_examples 'the project does not exist' do
+    it 'does not exist' do
+      expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(false)
     end
   end
 
-  shared_examples 'the project is not the current project' do
-    it 'is not the current project' do
-      expect(Dsu::Models::Project.current_project.project_name).to_not eq(project_name)
+  shared_examples 'the project exists' do
+    it 'exists' do
+      expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(true)
     end
   end
 
@@ -25,97 +25,37 @@ RSpec.describe Dsu::Views::Project::Delete do
   let(:project_name) { 'xyz' }
 
   describe '#render' do
-    context 'when using a project name' do
-      let(:presenter) do
-        build(:delete_presenter, :with_project_name, project_name_or_number: project_name, options: options)
-      end
-
-      context "when the user confirmation is 'y'" do
-        let(:response) { 'y' }
-
-        it_behaves_like 'the project is not the current project'
-
-        it 'deletes the project and sets it to the current project' do
-          delete_view.render
-          expect(Dsu::Models::Project.current_project.project_name).to eq(project_name)
-        end
-      end
-
-      context "when the user confirmation is 'n'" do
-        let(:response) { 'n' }
-
-        it_behaves_like 'the project is not the current project'
-
-        it 'does not delete the project and does not change the current project' do
-          delete_view.render
-          expect(Dsu::Models::Project.current_project.project_name).to_not eq(project_name)
-        end
-      end
+    let(:presenter) do
+      build(:delete_presenter, project_name: project_name, options: options)
     end
 
-    context 'when using a project number' do
-      let(:presenter) do
-        build(:delete_presenter, :with_project_number, project_name_or_number: project_name, options: options)
-      end
-
-      context "when using a project number and user confirmation is 'y'" do
-        let(:project_name) { 'Xyz' }
-        let(:response) { 'y' }
-
-        it_behaves_like 'the project is not the current project'
-
-        it 'deletes the project and sets it to the current project' do
-          delete_view.render
-          expect(Dsu::Models::Project.current_project.project_name).to eq(project_name)
-        end
-      end
-
-      context "when using a project number and user confirmation is 'n'" do
-        let(:project_name) { 'Xyz' }
-        let(:response) { 'n' }
-
-        it_behaves_like 'the project is not the current project'
-
-        it 'does not delete the project and does not change the current project' do
-          delete_view.render
-          expect(Dsu::Models::Project.current_project.project_name).to_not eq(project_name)
-        end
-      end
-    end
-
-    context 'when not using a project name or project number' do
+    context "when the user confirmation is 'Y'" do
       before do
-        project
+        create(:project, project_name: project_name, options: options)
       end
 
-      let(:project) do
-        create(:project, :current_project, project_name: project_name, options: options)
+      let(:response) { 'Y' }
+
+      it_behaves_like 'the project exists'
+
+      it 'deletes the project' do
+        delete_view.render
+        expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(false)
       end
-      let(:presenter) do
-        build(:delete_presenter, :without_project_name, options: options)
-      end
+    end
 
-      context "when the user confirmation is 'y'" do
-        let(:response) { 'y' }
-
-        it_behaves_like 'the project is the current project'
-
-        it 'deletes the default project and sets it to the current project' do
-          delete_view.render
-          default_project_name = Dsu::Models::Configuration.new.default_project
-          expect(Dsu::Models::Project.current_project.project_name).to eq(default_project_name)
-        end
+    context "when the user confirmation is 'n'" do
+      before do
+        create(:project, project_name: project_name, options: options)
       end
 
-      context "when the user confirmation is 'n'" do
-        let(:response) { 'n' }
+      let(:response) { 'n' }
 
-        it_behaves_like 'the project is the current project'
+      it_behaves_like 'the project exists'
 
-        it 'does not delete the project and does not change the current project' do
-          delete_view.render
-          expect(Dsu::Models::Project.current_project.project_name).to eq(project_name)
-        end
+      it 'does not delete the project' do
+        delete_view.render
+        expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(true)
       end
     end
 
@@ -126,7 +66,7 @@ RSpec.describe Dsu::Views::Project::Delete do
       end
 
       let(:presenter) do
-        build(:delete_presenter, :with_project_name, project_name_or_number: project_name, options: options)
+        build(:delete_presenter, :with_project, project_name: project_name, options: options)
       end
       let(:response) { 'unused' }
       let(:expected_errors) do
@@ -149,7 +89,7 @@ RSpec.describe Dsu::Views::Project::Delete do
       end
 
       let(:presenter) do
-        build(:delete_presenter, :with_project_name, project_name_or_number: project_name, options: options)
+        build(:delete_presenter, project_name: project_name, options: options)
       end
       let(:response) { 'unused' }
       let(:expected_error) { 'Test error' }
@@ -167,23 +107,11 @@ RSpec.describe Dsu::Views::Project::Delete do
       end
 
       let(:presenter) do
-        build(:delete_presenter, :with_project_name, project_name_or_number: project_name, options: options)
+        build(:delete_presenter, project_name: project_name, options: options)
       end
       let(:response) { 'unused' }
 
-      context 'when the presenter is using a project number' do
-        before do
-          allow(presenter).to receive(:delete_by_project_number?).and_return(true)
-        end
-
-        let(:expected_error) { 'A project for number 0 does not exist.' }
-
-        it 'displays the error' do
-          expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
-            delete_view.render
-          end.chomp)).to include(expected_error)
-        end
-      end
+      it_behaves_like 'the project does not exist'
 
       context 'when the presenter is using a project that is not the default' do
         let(:expected_error) do
@@ -199,10 +127,10 @@ RSpec.describe Dsu::Views::Project::Delete do
 
       context 'when the presenter is using the default project' do
         let(:presenter) do
-          build(:delete_presenter, :without_project_name, options: options)
+          build(:delete_presenter, :with_default_project, options: options)
         end
         let(:expected_error) do
-          "Project \"#{presenter.project_name_or_number}\" does not exist."
+          "Project \"#{presenter.project_name}\" does not exist."
         end
 
         it 'displays the error' do

@@ -50,7 +50,7 @@ module Dsu
         end
 
         def display_delete_project_cancelled_message
-          message = I18n.t('subcommands.project.messages.cancelled', project_name: presenter.project_name_or_number)
+          message = I18n.t('subcommands.project.messages.cancelled', project_name: presenter.project_name)
           puts apply_theme(message, theme_color: color_theme.info)
         end
 
@@ -60,19 +60,14 @@ module Dsu
         end
 
         def display_project_does_not_exists
-          message = if presenter.delete_by_project_number?
-            I18n.t('subcommands.project.messages.number_does_not_exist',
-              project_number: presenter.project_name_or_number)
-          else
-            I18n.t('subcommands.project.messages.does_not_exist',
-              project_name: presenter.project_name_or_number)
-          end
+          message = I18n.t('subcommands.project.messages.does_not_exist',
+            project_name: presenter.project_name)
           puts apply_theme(message, theme_color: color_theme.error)
         end
 
         def display_deleted_project_message
           message = I18n.t('subcommands.project.delete.messages.deleted_project',
-            project_name: presenter.project_name_or_number)
+            project_name: presenter.project_name)
           puts apply_theme(message, theme_color: color_theme.success)
         end
 

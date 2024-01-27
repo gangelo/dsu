@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'use'
+require_relative 'delete'
 
 module Dsu
   module Views
     module Project
-      class UseByNumber < Use
+      class DeleteByNumber < Delete
         private
 
         def display_project_does_not_exists

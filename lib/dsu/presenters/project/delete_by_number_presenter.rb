@@ -6,17 +6,18 @@ require_relative '../base_presenter_ex'
 module Dsu
   module Presenters
     module Project
-      class DeletePresenter < BasePresenterEx
-        attr_reader :project_name
+      class DeleteByNumberPresenter < BasePresenterEx
+        attr_reader :project_number
 
+        delegate :project_name, to: :project, allow_nil: true
         delegate :description, to: :project, prefix: true, allow_nil: true
 
-        def initialize(project_name:, options: {})
+        def initialize(project_number:, options: {})
           super(options: options)
 
-          raise ArgumentError, 'project_name is blank' if project_name.blank?
+          raise ArgumentError, 'project_number is blank' if project_number.blank?
 
-          self.project_name = project_name
+          self.project_number = project_number
         end
 
         def respond(response:)
@@ -26,21 +27,21 @@ module Dsu
         end
 
         def project_does_not_exist?
-          !project.exist?
+          !project&.exist?
         end
 
         def project_errors
-          return false unless project.persisted?
+          return false unless project&.persisted?
 
           project.errors.full_messages
         end
 
         private
 
-        attr_writer :project_name
+        attr_writer :project_number
 
         def project
-          @project ||= Models::Project.find_or_initialize(project_name: project_name)
+          @project ||= Models::Project.find_by_number(project_number: project_number)
         end
       end
     end
