@@ -74,7 +74,6 @@ module Dsu
         #        "#{project_desc_detail_data(project_desc)}"
         # end
 
-
         def display_footer
           footer = "\nTotal projects: #{presenter.projects.count}"
           puts apply_theme(footer, theme_color: color_theme.footer)

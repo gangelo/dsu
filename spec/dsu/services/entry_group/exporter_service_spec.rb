@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 RSpec.describe Dsu::Services::EntryGroup::ExporterService do
-  subject(:service) { described_class.new(entry_groups: entry_groups, options: options) }
+  subject(:service) { described_class.new(project_name: project_name, entry_groups: entry_groups, options: options) }
 
   shared_examples 'an entry_groups argument error is raised' do
     it_behaves_like 'an error is raised'
   end
 
   let(:times) { times_for_week_of(Time.now.localtime) }
+  let(:project_name) { 'Project name' }
   let(:entry_groups) { nil }
   let(:options) { {} }
 
@@ -58,9 +59,9 @@ RSpec.describe Dsu::Services::EntryGroup::ExporterService do
     end
     let(:expected_csv_contents) do
       <<~CSV
-        version,entry_group,entry_no,total_entries,entry_group_entry
-        #{entry_groups[0].version},#{entry_groups[0].time_yyyy_mm_dd},1,1,#{entry_groups[0].entries[0].description}
-        #{entry_groups[1].version},#{entry_groups[1].time_yyyy_mm_dd},1,1,#{entry_groups[1].entries[0].description}
+        project_name,version,entry_group,entry_no,total_entries,entry_group_entry
+        #{project_name},#{entry_groups[0].version},#{entry_groups[0].time_yyyy_mm_dd},1,1,#{entry_groups[0].entries[0].description}
+        #{project_name},#{entry_groups[1].version},#{entry_groups[1].time_yyyy_mm_dd},1,1,#{entry_groups[1].entries[0].description}
       CSV
     end
 

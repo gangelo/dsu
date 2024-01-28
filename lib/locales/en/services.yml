@@ -8,3 +8,7 @@ en:
           Run `dsu help config` for more information.
       messages:
         editing: "Editing entry group %{formatted_time}..."
+    entry_group:
+      importer_service:
+        errors:
+          project_mismatch: The current project "%{current_project_name}" does not match the project "%{import_project_name}" being imported.
