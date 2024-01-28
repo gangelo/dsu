@@ -483,11 +483,11 @@ en:
 
           dsu p c PROJECT_NAME [OPTIONS]
 
-          PROJECT_NAME:
+          PROJECT_NAME
 
           The name of the project to create. PROJECT_NAME must be between 2 and 12 characters (inclusive) in length.
 
-          OPTIONS:
+          OPTIONS
 
           -d|--description DESCRIPTION: Optional. The description of the project. DESCRIPTION must be between 2 and 256 characters (inclusive) in length. If DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
 
@@ -519,11 +519,11 @@ en:
 
           dsu p d [PROJECT_NAME | PROJECT_NUMBER]
 
-          PROJECT_NAME:
+          PROJECT_NAME
 
           The name of the project to delete.
 
-          PROJECT_NUMBER:
+          PROJECT_NUMBER
 
           The number of the project to delete. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
 
@@ -580,6 +580,14 @@ en:
 
           dsu p u [PROJECT_NAME|PROJECT_NUMBER]
 
+          PROJECT_NAME
+
+          The name of the project to use.
+
+          PROJECT_NUMBER
+
+          The number of the project to use. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
+
           NOTES
 
           PROJECT_NAME|PROJECT_NUMBER are optional. The project name or project number of the project to use. If PRONECT_NAME is not provided, the default project will be used. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
@@ -587,16 +595,19 @@ en:
           EXAMPLES:
 
           These will use the default project.
+
           $ dsu project use
 
           $ dsu p u
 
           These will use the project named "My project".
+
           $ dsu project use "My project"
 
           $ dsu p u "My project"
 
           These will use the 2nd project in the list of projects.
+
           $ dsu project use 2
 
           $ dsu p u 2
