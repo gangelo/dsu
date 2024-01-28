@@ -3,19 +3,23 @@
 require 'csv'
 require_relative '../../models/entry_group'
 require_relative '../../support/fileable'
+require_relative '../../support/transform_project_name'
 
 module Dsu
   module Services
     module EntryGroup
       class ExporterService
         include Support::Fileable
+        include Support::TransformProjectName
 
-        def initialize(entry_groups:, options: {})
+        def initialize(project_name:, entry_groups:, options: {})
+          raise ArgumentError, 'Argument project_name is blank' if project_name.blank?
           raise ArgumentError, 'Argument entry_groups is blank' if entry_groups.blank?
           raise ArgumentError, 'Argument entry_groups are not all valid' unless entry_groups.all?(&:valid?)
 
           validate_entry_group_entries_present! entry_groups
 
+          @project_name = project_name
           @entry_groups = entry_groups
           @options = options
         end
@@ -38,10 +42,11 @@ module Dsu
 
         private
 
-        attr_reader :entry_groups, :options
+        attr_reader :project_name, :entry_groups, :options
 
         def export_entry_data(entry_group:, entry:, entry_index:)
           [
+            project_name,
             entry_group.version,
             entry_group.time.to_date,
             entry_index + 1,
@@ -57,7 +62,8 @@ module Dsu
         end
 
         def export_file_name
-          "dsu-#{timestamp}-#{times.min.to_date}-thru-#{times.max.to_date}.csv"
+          transformed_file_name = transform_project_name project_name, options: options
+          "dsu-#{transformed_file_name}-#{timestamp}-#{times.min.to_date}-thru-#{times.max.to_date}.csv"
         end
 
         def times
