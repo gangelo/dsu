@@ -17,7 +17,7 @@ module Dsu
         end
 
         def nothing_to_export?
-          entry_groups.empty?
+          entry_group_count.zero?
         end
 
         def entry_group_count
