@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.4] - 2024-01-28
+### Changes
+[x] Update ruby gems.
+
 ## [2.4.3] - 2024-01-07
 ### Changes
 [x] Code refactors, nothing discernable to the end user.
