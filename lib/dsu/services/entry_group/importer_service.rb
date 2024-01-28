@@ -2,6 +2,7 @@
 
 require 'csv'
 require_relative '../../models/entry_group'
+require_relative '../../models/project'
 
 module Dsu
   module Services
@@ -15,20 +16,24 @@ module Dsu
       class ImporterService
         include Support::Fileable
 
-        def initialize(import_entry_groups:, options: {})
+        def initialize(project_name:, import_entry_groups:, options: {})
+          raise ArgumentError, 'Argument project_name is blank' if project_name.blank?
           raise ArgumentError, 'Argument import_entry_groups is blank' if import_entry_groups.blank?
 
+          @project_name = project_name
           @import_entry_groups = import_entry_groups
           @options = options
         end
 
         def call
+          return import_project_mismatch_messages if project_mismatch?
+
           import!
         end
 
         private
 
-        attr_reader :import_entry_groups, :options
+        attr_reader :project_name, :import_entry_groups, :options
 
         def import!
           import_entry_groups.each_pair do |entry_group_date, entry_descriptions|
@@ -77,6 +82,23 @@ module Dsu
 
         def import_messages
           @import_messages ||= {}
+        end
+
+        def project_mismatch?
+          project_name != current_project_name
+        end
+
+        def import_project_mismatch_messages
+          import_entry_groups.keys.each_with_object({}) do |entry_group_date, hash|
+            hash[entry_group_date] = [
+              I18n.t('services.entry_group.importer_service.errors.project_mismatch',
+                import_project_name: project_name, current_project_name: current_project_name)
+            ]
+          end
+        end
+
+        def current_project_name
+          @current_project_name ||= Models::Project.current_project.project_name
         end
       end
     end

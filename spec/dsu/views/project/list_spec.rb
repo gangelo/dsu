@@ -5,10 +5,6 @@ RSpec.describe Dsu::Views::Project::List do
     described_class.new(presenter: presenter, options: options)
   end
 
-  # before do
-  #   allow($stdin).to receive(:getch).and_return(response)
-  # end
-
   let(:presenter) do
     build(:list_presenter, options: options)
   end
@@ -30,7 +26,7 @@ RSpec.describe Dsu::Views::Project::List do
       let(:expected_project_list) do
         default_project = Dsu::Models::Project.default_project
         [
-          "1. #{default_project.project_name} #{default_project.description}",
+          "1. #{default_project.project_name} * * #{default_project.description}",
           '2. Test1 Test1 project',
           '3. Test2 Test2 project'
         ]

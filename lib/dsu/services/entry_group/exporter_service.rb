@@ -26,7 +26,7 @@ module Dsu
 
         def call
           CSV.open(export_file_path, 'w') do |csv|
-            csv << %i[version entry_group entry_no total_entries entry_group_entry]
+            csv << %i[project_name version entry_group entry_no total_entries entry_group_entry]
 
             entry_groups.each do |entry_group|
               export_entry_group(entry_group: entry_group, csv: csv)

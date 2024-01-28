@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Dsu::Services::EntryGroup::ImporterService do
-  subject(:service) { described_class.new(import_entry_groups: import_entry_groups, options: options) }
+  subject(:service) { described_class.new(project_name: project_name, import_entry_groups: import_entry_groups, options: options) }
 
   shared_examples 'an import_entry_groups argument error is raised' do
     it_behaves_like 'an error is raised'
@@ -13,6 +14,7 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
     end
   end
 
+  let(:project_name) { 'Project name' }
   let(:times) { times_for_week_of(Time.now.localtime) }
   let(:options) { { merge: true } }
 
@@ -33,10 +35,6 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
   end
 
   describe '#call' do
-    before do
-      service.call
-    end
-
     context 'when importing multiple entry groups that are valid and not duplicate' do
       let(:import_entry_groups) do
         {
@@ -56,29 +54,60 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
           build(:entry, description: "imported_#{entry_groups[1].entries.first.description}")
         ]
       end
-      let(:expected_messages) do
-        {
-          entry_groups[0].time_yyyy_mm_dd => [],
-          entry_groups[1].time_yyyy_mm_dd => []
-        }
+
+      context 'when the project name matches the current project name' do
+        before do
+          create(:project, :current_project, project_name: project_name)
+          service.call
+        end
+
+        let(:expected_messages) do
+          {
+            entry_groups[0].time_yyyy_mm_dd => [],
+            entry_groups[1].time_yyyy_mm_dd => []
+          }
+        end
+
+        it 'imports the first entry group and all of the entries' do
+          expected_entry_group = entry_groups[0].clone
+          expected_entry_group.entries << import_entry_group_entries[0].clone
+          expect(Dsu::Models::EntryGroup.find(time: times.min) == expected_entry_group).to be true
+        end
+
+        it 'imports the rest of the entry groups and all of their entries' do
+          expected_entry_group = entry_groups[1].clone
+          expected_entry_group.entries << import_entry_group_entries[1].clone
+          expect(Dsu::Models::EntryGroup.find(time: times.max) == expected_entry_group).to be true
+        end
+
+        it_behaves_like 'the correct messages are returned'
       end
 
-      it 'imports the first entry group and all of the entries' do
-        expected_entry_group = entry_groups[0].clone
-        expected_entry_group.entries << import_entry_group_entries[0].clone
-        expect(Dsu::Models::EntryGroup.find(time: times.min) == expected_entry_group).to be true
-      end
+      context 'when the project name does not matche the current project name' do
+        before do
+          create(:project, project_name: project_name)
+          service.call
+        end
 
-      it 'imports the rest of the entry groups and all of their entries' do
-        expected_entry_group = entry_groups[1].clone
-        expected_entry_group.entries << import_entry_group_entries[1].clone
-        expect(Dsu::Models::EntryGroup.find(time: times.max) == expected_entry_group).to be true
-      end
+        let(:expected_messages) do
+          default_project_name = Dsu::Models::Project.default_project.project_name
+          expected_message = "The current project \"#{default_project_name}\" does not match the project \"#{project_name}\" being imported."
+          {
+            entry_groups[0].time_yyyy_mm_dd => [expected_message],
+            entry_groups[1].time_yyyy_mm_dd => [expected_message]
+          }
+        end
 
-      it_behaves_like 'the correct messages are returned'
+        it_behaves_like 'the correct messages are returned'
+      end
     end
 
     context 'when importing multiple entry groups with duplicate entries' do
+      before do
+        create(:project, :current_project, project_name: project_name)
+        service.call
+      end
+
       let(:import_entry_groups) do
         {
           entry_groups[0].time_yyyy_mm_dd => [import_entry_group_entries[0].description],
@@ -146,6 +175,11 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
     end
 
     context 'when importing multiple entry groups with invalid entries' do
+      before do
+        create(:project, :current_project, project_name: project_name)
+        service.call
+      end
+
       let(:import_entry_groups) do
         {
           entry_groups[0].time_yyyy_mm_dd => [import_entry_group_entries[0].description],
@@ -189,3 +223,4 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
     end
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers

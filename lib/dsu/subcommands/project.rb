@@ -28,7 +28,9 @@ module Dsu
         description = options[:description].to_s.strip
         project_name = project_name.to_s.strip
         if project_name.blank?
-          return Views::Shared::Error.new(messages: I18n.t('subcommands.project.create.messages.project_name_blank')).render
+          return Views::Shared::Error.new(
+            messages: I18n.t('subcommands.project.create.messages.project_name_blank')
+          ).render
         end
 
         presenter = Presenters::Project::CreatePresenter.new(project_name: project_name,
