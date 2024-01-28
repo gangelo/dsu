@@ -26,7 +26,7 @@ module Dsu
         end
 
         def call
-          return import_project_mismatch_messages if project_mismatch?
+          return import_project_mismatch_messages if project_mismatch?(project_name: project_name)
 
           import!
         end
@@ -36,6 +36,7 @@ module Dsu
         attr_reader :project_name, :import_entry_groups, :options
 
         def import!
+          binding.pry
           import_entry_groups.each_pair do |entry_group_date, entry_descriptions|
             entry_group_for(entry_group_date).tap do |entry_group|
               entry_descriptions.each do |entry_description|
@@ -84,17 +85,19 @@ module Dsu
           @import_messages ||= {}
         end
 
-        def project_mismatch?
+        def project_mismatch?(project_name:)
           project_name != current_project_name
         end
 
         def import_project_mismatch_messages
           import_entry_groups.keys.each_with_object({}) do |entry_group_date, hash|
-            hash[entry_group_date] = [
-              I18n.t('services.entry_group.importer_service.errors.project_mismatch',
-                import_project_name: project_name, current_project_name: current_project_name)
-            ]
+            hash[entry_group_date] = [project_mismatch_error_message(project_name: project_name)]
           end
+        end
+
+        def project_mismatch_error_message(project_name:)
+          I18n.t('services.entry_group.importer_service.errors.project_mismatch',
+            import_project_name: project_name, current_project_name: current_project_name)
         end
 
         def current_project_name

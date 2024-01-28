@@ -25,8 +25,9 @@ module Dsu
       option :merge, type: :boolean, default: true, aliases: '-m'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def all
+        options = configuration.to_h.merge(self.options).with_indifferent_access
         Views::Import.new(presenter: all_presenter(import_file_path: options[:import_file],
-          options: options)).render
+          options: options), options: options).render
       end
 
       desc I18n.t('subcommands.import.dates.desc'), I18n.t('subcommands.import.dates.usage')
@@ -49,7 +50,7 @@ module Dsu
         Views::Import.new(presenter: dates_presenter_for(from: times.min,
           to: times.max,
           import_file_path: options[:import_file],
-          options: options)).render
+          options: options), options: options).render
       rescue ArgumentError => e
         Views::Shared::Error.new(messages: e.message).render
       end
