@@ -31,7 +31,12 @@ module Dsu
         end
 
         def exporter_service
-          Services::EntryGroup::ExporterService.new(entry_groups: entry_groups, options: options)
+          Services::EntryGroup::ExporterService.new(project_name: project_name,
+            entry_groups: entry_groups, options: options)
+        end
+
+        def project_name
+          @project_name ||= Models::Project.current_project.project_name
         end
       end
     end
