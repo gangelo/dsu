@@ -22,12 +22,15 @@ module Dsu
 
       desc I18n.t('subcommands.project.create.desc'), I18n.t('subcommands.project.create.usage')
       long_desc I18n.t('subcommands.project.create.long_desc')
-      option :project_name, type: :string, required: true, aliases: '-n', banner: 'PROJECT_NAME'
       option :description, type: :string, required: false, aliases: '-d', banner: 'DESCRIPTION'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def create
-        project_name = options[:project_name]
-        description = options[:description]
+      def create(project_name = nil)
+        description = options[:description].to_s.strip
+        project_name = project_name.to_s.strip
+        if project_name.blank?
+          return Views::Shared::Error.new(messages: I18n.t('subcommands.project.create.messages.project_name_blank')).render
+        end
+
         presenter = Presenters::Project::CreatePresenter.new(project_name: project_name,
           description: description, options: options)
         Views::Project::Create.new(presenter: presenter, options: options).render
