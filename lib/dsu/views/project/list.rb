@@ -7,9 +7,17 @@ module Dsu
     module Project
       # TODO: I18n.
       class List < Views::BaseListView
-        DETAIL_HEADER_STRING = "#{'No.'.ljust(4)} " \
-                               "#{'Project'.ljust(15)} " \
-                               "#{'Description'.ljust(10)}".freeze
+        NO_JUSTIFICATION = 4
+        PROJECT_JUSTIFICATION = 15
+        DEFAULT_JUSTIFICATION = 10
+        CURRENT_JUSTIFICATION = 10
+        DESCRIPTION_JUSTIFICATION = 10
+
+        DETAIL_HEADER_STRING = "#{'No.'.ljust(NO_JUSTIFICATION)} " \
+                               "#{'Project'.ljust(PROJECT_JUSTIFICATION)} " \
+                               "#{'Default'.center(DEFAULT_JUSTIFICATION)} " \
+                               "#{'Current'.center(CURRENT_JUSTIFICATION)} " \
+                               "#{'Description'.ljust(DESCRIPTION_JUSTIFICATION)}".freeze
 
         def render
           super do
@@ -39,6 +47,8 @@ module Dsu
             display_detail_data(
               formatted_index(index: index),
               project.project_name,
+              project.default_project?,
+              project.current_project?,
               project.description
             )
           end
@@ -48,11 +58,22 @@ module Dsu
           puts apply_theme(DETAIL_HEADER_STRING, theme_color: color_theme.index)
         end
 
-        def display_detail_data(index, project_name, project_desc)
+        def display_detail_data(index, project_name, default_project, current_project, project_desc)
           puts "#{index_detail_data(index)} " \
                "#{project_name_detail_data(project_name)} " \
+               "#{project_default_detail_data(default_project)} " \
+               "#{project_current_detail_data(current_project)} " \
                "#{project_desc_detail_data(project_desc)}"
         end
+
+        # def display_detail_data(index, project_name, default_project, current_project, project_desc)
+        #   puts "#{index_detail_data(index)}|" \
+        #        "#{project_name_detail_data(project_name)}|" \
+        #        "#{project_default_detail_data(default_project)}|" \
+        #        "#{project_current_detail_data(current_project)}|" \
+        #        "#{project_desc_detail_data(project_desc)}"
+        # end
+
 
         def display_footer
           footer = "\nTotal projects: #{presenter.projects.count}"
@@ -65,15 +86,25 @@ module Dsu
         end
 
         def index_detail_data(value)
-          apply_theme(value.to_s.ljust(4), theme_color: color_theme.index)
+          apply_theme(value.to_s.ljust(NO_JUSTIFICATION), theme_color: color_theme.index)
         end
 
         def project_name_detail_data(value)
-          apply_theme(value.to_s.ljust(15), theme_color: color_theme.body.bold!)
+          apply_theme(value.to_s.ljust(PROJECT_JUSTIFICATION), theme_color: color_theme.body.bold!)
+        end
+
+        def project_default_detail_data(value)
+          value = value ? '*' : ' '
+          apply_theme(value.to_s.center(DEFAULT_JUSTIFICATION), theme_color: color_theme.body.bold!)
+        end
+
+        def project_current_detail_data(value)
+          value = value ? '*' : ' '
+          apply_theme(value.to_s.center(CURRENT_JUSTIFICATION), theme_color: color_theme.body.bold!)
         end
 
         def project_desc_detail_data(value)
-          apply_theme(value.to_s.ljust(10), theme_color: color_theme.body)
+          apply_theme(value.to_s.ljust(DESCRIPTION_JUSTIFICATION), theme_color: color_theme.body)
         end
 
         def theme_name

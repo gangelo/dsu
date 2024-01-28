@@ -474,29 +474,32 @@ en:
           $ dsu list y
     project:
       create:
-        desc: create|c OPTIONS
-        usage: Creates a DSU project using the given OPTIONS
+        desc: create|c PROJECT_NAME [OPTIONS]
+        usage: Creates a DSU project using the given PROJECT_NAME and OPTIONS
         long_desc: |
-          Creates a DSU project using the given OPTIONS.
+          Creates a DSU project using the given PROJECT_NAME and OPTIONS.
 
-          dsu project create OPTIONS
+          dsu project create PROJECT_NAME [OPTIONS]
 
-          dsu p c OPTIONS
+          dsu p c PROJECT_NAME [OPTIONS]
+
+          PROJECT_NAME:
+
+          The name of the project to create. PROJECT_NAME must be between 2 and 12 characters (inclusive) in length.
 
           OPTIONS:
-
-          -n|--name PROJECT_NAME: The name of the project to create. PROJECT_NAME must be between 2 and 12 characters (inclusive) in length.
 
           -d|--description DESCRIPTION: Optional. The description of the project. DESCRIPTION must be between 2 and 256 characters (inclusive) in length. If DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
 
           EXAMPLES:
 
-          $ dsu project create -n "My project" -d "My project description"
+          $ dsu project create "My project" --description "My project description"
 
-          $ dsu p c -n "My project"
+          $ dsu p c "My project" -d "My project description"
         messages:
           created: Created project "%{project_name}".
           already_exists: Project "%{project_name}" already exists.
+          project_name_blank: No value provided for project name.
         prompts:
           create_confirm: Create project "%{project_name}"?
           create_options:
@@ -507,24 +510,44 @@ en:
             - y
             - n
       delete:
-        desc: delete|d OPTIONS
-        usage: Permanently deletes the DSU project indicated by the given OPTIONS
+        desc: delete|d [PROJECT_NAME | PROJECT_NUMBER]
+        usage: Permanently deletes the DSU project indicated by the optional PROJECT_NAME or PROJECT_NUMBER
         long_desc: |
-          Permanently deletes the DSU project indicated by the given OPTIONS.
+          Permanently deletes the DSU project indicated by given option PROJECT_NAME or PROJECT_NUMBER.
 
-          dsu project delete OPTIONS
+          dsu project delete [PROJECT_NAME | PROJECT_NUMBER]
 
-          dsu p d OPTIONS
+          dsu p d [PROJECT_NAME | PROJECT_NUMBER]
 
-          OPTIONS:
+          PROJECT_NAME:
 
-          -n|--name PROJECT_NAME: The name of the project to delete.
+          The name of the project to delete.
+
+          PROJECT_NUMBER:
+
+          The number of the project to delete. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
+
+          NOTES
+
+          PROJECT_NAME and PROJECT_NUMBER are optional. If neither are provided, the current, default project will be used.
 
           EXAMPLES:
 
-          $ dsu project delete -n "My project"
+          $ dsu project delete "My project"
 
-          $ dsu p d -n "My project"
+          $ dsu p d "My project"
+
+          # The below examples delete the project equating to the nth project in the list of projects (see `dsu project list`).
+
+          $ dsu project delete 2
+
+          $ dsu p d 2
+
+          # The below examples delete the current, default project.
+
+          $ dsu project delete
+
+          $ dsu p d
         messages:
           deleted: Deleted project "%{project_name}".
         prompts:
