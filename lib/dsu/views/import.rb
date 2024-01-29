@@ -21,7 +21,6 @@ module Dsu
 
         response = display_import_prompt
         if presenter.respond response: response
-          display_imported_message
           display_import_messages presenter.import_messages
         else
           display_cancelled_message
@@ -53,16 +52,13 @@ module Dsu
         puts apply_theme(I18n.t('subcommands.import.messages.cancelled'), theme_color: color_theme.info)
       end
 
-      def display_imported_message
-        puts apply_theme(I18n.t('subcommands.import.messages.imported'), theme_color: color_theme.success)
-      end
-
       def display_nothing_to_import_message
         puts apply_theme(I18n.t('subcommands.import.messages.nothing_to_import'), theme_color: color_theme.info)
       end
 
       def import_prompt
-        I18n.t('subcommands.import.prompts.import_all_confirm', count: presenter.import_entry_groups_count)
+        I18n.t('subcommands.import.prompts.import_all_confirm',
+          count: presenter.import_entry_groups_count, project: presenter.project_name)
       end
 
       def import_prompt_options
