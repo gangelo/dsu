@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0] - 2024-??-??
+
+### Enhancements
+[x] Added `dsu project` command to manage DSU projects. See `dsu help project` or the [dsu wiki](https://github.com/gangelo/dsu/wiki) for more information.
+
+### Changes
+[x] Update ruby gems.
+[x] Change `dsu export` file name for exports. When exporting all DSU entry groups for a project, the file name will be:
+
+"dsu-export-<transformed project name>-<timestamp>-all-entry-groups-<from date>-thru-<to date>.csv"
+
+When exporting DSU entry groups for a project between two given dates, the file name will be:
+
+"dsu-export-<transformed project name>-<timestamp>-entry-groups-<from date>-thru-<to date>.csv"
+
+- Where <transformed project name> = is the project name transformed to a format appropriate to be part of a file name.
+- Where <timestamp> = is the current timestamp in the format: YYYYMMDDHHMMSS
+- Where <from date> = is the from date in the format: YYYY-MM-DD
+- Where <to date> = is the to date in the format: YYYY-MM-DD
+
+When exporting all DSU entry groups for a project, the <from date> and <to date> will represent the earliest and most recent entry group dates for the project, respectfully. For example:
+
+```
+# Where current date is 2024-01-29, and the earliest entry group date is 2023-08-11 and the most recent entry group date is 2024-01-27.
+$ dsu x a
+```
+
+dsu-export-default-20240129130013-all-entry-groups-2023-08-11-thru-2024-01-27.csv
+
+When exporting DSU entry groups between a to and from date for a project, the <from date> and <to date> will represent the from and to dates entered by the user on the command line, respectfully. For example:
+
+```
+# Where current date is 2024-01-29, and the from date entered on the command line is2023-08-11 and the from date entered on the command line is 2024-01-27.
+dsu x dd -f n -t -257
+```
+
+dsu-export-default-20240129125946-entry-groups-2023-05-17-thru-2024-01-29.csv
+
+### Bug Fixes
+
+
 ## [2.4.4] - 2024-01-28
 ### Changes
 [x] Update ruby gems.
