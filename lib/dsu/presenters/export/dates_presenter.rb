@@ -39,11 +39,6 @@ module Dsu
           Models::EntryGroup.entry_groups(between: [from, to])
         end
 
-        def export_prompt
-          I18n.t('subcommands.export.prompts.export_dates_confirm',
-            from: from.to_date, to: to.to_date, count: entry_groups.count)
-        end
-
         def exporter_service
           Services::EntryGroup::ExporterService.new(project_name: project_name,
             entry_groups: entry_groups, options: options)

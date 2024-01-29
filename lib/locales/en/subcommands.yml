@@ -375,10 +375,10 @@ en:
         cancelled: Cancelled.
         file_not_exist: Import file %{file_path} does not exist.
       prompts:
-        import_all_confirm: Import all entry groups (%{count} entry groups)?
-        import_dates_confirm: Import all the entry groups for %{from} thru %{to} (%{count} entry groups)?
+        import_all_confirm: Import all entry groups (%{count} entry groups) for project "%{project}"?
+        import_dates_confirm: Import all the entry groups for %{from} thru %{to} (%{count} entry groups) for project "%{project}"?
         options:
-          - y
+          - Y
           - n
     list:
       date:

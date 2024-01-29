@@ -6,6 +6,7 @@ require_relative '../support/command_options/dsu_times'
 require_relative '../support/command_options/time_mnemonic'
 require_relative '../support/time_formatable'
 require_relative '../views/import'
+require_relative '../views/import_dates'
 require_relative '../views/shared/error'
 require_relative 'base_subcommand'
 
@@ -47,7 +48,7 @@ module Dsu
           return
         end
 
-        Views::Import.new(presenter: dates_presenter_for(from: times.min,
+        Views::ImportDates.new(presenter: dates_presenter_for(from: times.min,
           to: times.max,
           import_file_path: options[:import_file],
           options: options), options: options).render

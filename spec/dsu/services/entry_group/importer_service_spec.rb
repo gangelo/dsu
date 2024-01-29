@@ -84,24 +84,6 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
 
         it_behaves_like 'the correct messages are returned'
       end
-
-      # context 'when the project name does not matche the current project name' do
-      #   before do
-      #     create(:project, project_name: project_name)
-      #     service.call
-      #   end
-
-      #   let(:expected_messages) do
-      #     default_project_name = Dsu::Models::Project.default_project.project_name
-      #     expected_message = "The current project \"#{default_project_name}\" does not match the project \"#{project_name}\" being imported."
-      #     {
-      #       entry_groups[0].time_yyyy_mm_dd => [expected_message],
-      #       entry_groups[1].time_yyyy_mm_dd => [expected_message]
-      #     }
-      #   end
-
-      #   it_behaves_like 'the correct messages are returned'
-      # end
     end
 
     context 'when importing multiple entry groups with duplicate entries' do

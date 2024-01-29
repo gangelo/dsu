@@ -30,7 +30,11 @@ module Dsu
         end
 
         def import_entry_groups_count
-          import_entry_groups&.count || 0
+          import_entry_groups[project_name]&.count || 0
+        end
+
+        def project_name
+          @project_name ||= Models::Project.current_project.project_name
         end
 
         private
@@ -60,10 +64,6 @@ module Dsu
           @importer_service ||= Services::EntryGroup::ImporterService.new(
             import_projects: import_entry_groups, options: options
           )
-        end
-
-        def project_name
-          @project_name ||= Models::Project.current_project.project_name
         end
       end
     end
