@@ -15,6 +15,8 @@ module Dsu
 
           @from = from
           @to = to
+
+          self.options[:times] = [from, to]
         end
 
         def respond(response:)
