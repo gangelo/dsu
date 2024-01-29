@@ -63,11 +63,18 @@ module Dsu
 
         def export_file_name
           transformed_file_name = transform_project_name project_name, options: options
-          "dsu-#{transformed_file_name}-#{timestamp}-#{times.min.to_date}-thru-#{times.max.to_date}.csv"
+          "dsu-export-#{transformed_file_name}-" \
+            "#{timestamp}-#{export_scope}-#{times.min.to_date}-thru-#{times.max.to_date}.csv"
+        end
+
+        def export_scope
+          return 'all-entry-groups' unless options.fetch(:times, nil)
+
+          'entry-groups'
         end
 
         def times
-          @times ||= entry_groups.map(&:time)
+          @times ||= options.fetch(:times, entry_groups.map(&:time))
         end
 
         def timestamp

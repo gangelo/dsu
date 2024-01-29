@@ -9,7 +9,7 @@ module Dsu
 
       private
 
-      attr_reader :options
+      attr_accessor :options
     end
   end
 end
