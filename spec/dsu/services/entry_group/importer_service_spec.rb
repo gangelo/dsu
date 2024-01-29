@@ -2,9 +2,9 @@
 
 # rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe Dsu::Services::EntryGroup::ImporterService do
-  subject(:service) { described_class.new(project_name: project_name, import_entry_groups: import_entry_groups, options: options) }
+  subject(:service) { described_class.new(import_projects: import_projects, options: options) }
 
-  shared_examples 'an import_entry_groups argument error is raised' do
+  shared_examples 'an import_projects argument error is raised' do
     it_behaves_like 'an error is raised'
   end
 
@@ -19,27 +19,29 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
   let(:options) { { merge: true } }
 
   describe '#initialize' do
-    context 'when argument :import_entry_groups is nil' do
-      let(:import_entry_groups) { nil }
-      let(:expected_error) { 'Argument import_entry_groups is blank' }
+    context 'when argument :import_projects is nil' do
+      let(:import_projects) { nil }
+      let(:expected_error) { 'Argument import_projects is blank' }
 
-      it_behaves_like 'an import_entry_groups argument error is raised'
+      it_behaves_like 'an import_projects argument error is raised'
     end
 
-    context 'when argument :import_entry_groups is an empty Array' do
-      let(:import_entry_groups) { [] }
-      let(:expected_error) { 'Argument import_entry_groups is blank' }
+    context 'when argument :import_projects is an empty Array' do
+      let(:import_projects) { [] }
+      let(:expected_error) { 'Argument import_projects is blank' }
 
-      it_behaves_like 'an import_entry_groups argument error is raised'
+      it_behaves_like 'an import_projects argument error is raised'
     end
   end
 
   describe '#call' do
     context 'when importing multiple entry groups that are valid and not duplicate' do
-      let(:import_entry_groups) do
+      let(:import_projects) do
         {
-          entry_groups[0].time_yyyy_mm_dd => [import_entry_group_entries[0].description],
-          entry_groups[1].time_yyyy_mm_dd => [import_entry_group_entries[1].description]
+          project_name => {
+            entry_groups[0].time_yyyy_mm_dd => [project_entry_group_entries[0].description],
+            entry_groups[1].time_yyyy_mm_dd => [project_entry_group_entries[1].description]
+          }
         }
       end
       let(:entry_groups) do
@@ -48,7 +50,7 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
           create(:entry_group, entries: [build(:entry, description: 'entry_group_2_entry_1')], time: times.max)
         ]
       end
-      let(:import_entry_group_entries) do
+      let(:project_entry_group_entries) do
         [
           build(:entry, description: "imported_#{entry_groups[0].entries.first.description}"),
           build(:entry, description: "imported_#{entry_groups[1].entries.first.description}")
@@ -70,36 +72,36 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
 
         it 'imports the first entry group and all of the entries' do
           expected_entry_group = entry_groups[0].clone
-          expected_entry_group.entries << import_entry_group_entries[0].clone
+          expected_entry_group.entries << project_entry_group_entries[0].clone
           expect(Dsu::Models::EntryGroup.find(time: times.min) == expected_entry_group).to be true
         end
 
         it 'imports the rest of the entry groups and all of their entries' do
           expected_entry_group = entry_groups[1].clone
-          expected_entry_group.entries << import_entry_group_entries[1].clone
+          expected_entry_group.entries << project_entry_group_entries[1].clone
           expect(Dsu::Models::EntryGroup.find(time: times.max) == expected_entry_group).to be true
         end
 
         it_behaves_like 'the correct messages are returned'
       end
 
-      context 'when the project name does not matche the current project name' do
-        before do
-          create(:project, project_name: project_name)
-          service.call
-        end
+      # context 'when the project name does not matche the current project name' do
+      #   before do
+      #     create(:project, project_name: project_name)
+      #     service.call
+      #   end
 
-        let(:expected_messages) do
-          default_project_name = Dsu::Models::Project.default_project.project_name
-          expected_message = "The current project \"#{default_project_name}\" does not match the project \"#{project_name}\" being imported."
-          {
-            entry_groups[0].time_yyyy_mm_dd => [expected_message],
-            entry_groups[1].time_yyyy_mm_dd => [expected_message]
-          }
-        end
+      #   let(:expected_messages) do
+      #     default_project_name = Dsu::Models::Project.default_project.project_name
+      #     expected_message = "The current project \"#{default_project_name}\" does not match the project \"#{project_name}\" being imported."
+      #     {
+      #       entry_groups[0].time_yyyy_mm_dd => [expected_message],
+      #       entry_groups[1].time_yyyy_mm_dd => [expected_message]
+      #     }
+      #   end
 
-        it_behaves_like 'the correct messages are returned'
-      end
+      #   it_behaves_like 'the correct messages are returned'
+      # end
     end
 
     context 'when importing multiple entry groups with duplicate entries' do
@@ -108,10 +110,12 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
         service.call
       end
 
-      let(:import_entry_groups) do
+      let(:import_projects) do
         {
-          entry_groups[0].time_yyyy_mm_dd => [import_entry_group_entries[0].description],
-          entry_groups[1].time_yyyy_mm_dd => [import_entry_group_entries[1].description]
+          project_name => {
+            entry_groups[0].time_yyyy_mm_dd => [project_entry_group_entries[0].description],
+            entry_groups[1].time_yyyy_mm_dd => [project_entry_group_entries[1].description]
+          }
         }
       end
       let(:entry_groups) do
@@ -120,7 +124,7 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
           create(:entry_group, entries: [build(:entry, description: 'entry_group_2_entry_1')], time: times.max)
         ]
       end
-      let(:import_entry_group_entries) do
+      let(:project_entry_group_entries) do
         [
           entry_groups[0].entries.first.clone,
           entry_groups[1].entries.first.clone
@@ -154,13 +158,13 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
 
         it 'imports the first entry group and replaces all of the entries' do
           expected_entry_group = entry_groups[0].clone
-          expected_entry_group.entries = [import_entry_group_entries[0].clone]
+          expected_entry_group.entries = [project_entry_group_entries[0].clone]
           expect(Dsu::Models::EntryGroup.find(time: times.min) == expected_entry_group).to be true
         end
 
         it 'imports the rest of the entry groups and replaces all of their entries' do
           expected_entry_group = entry_groups[1].clone
-          expected_entry_group.entries = [import_entry_group_entries[1].clone]
+          expected_entry_group.entries = [project_entry_group_entries[1].clone]
           expect(Dsu::Models::EntryGroup.find(time: times.max) == expected_entry_group).to be true
         end
 
@@ -180,10 +184,12 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
         service.call
       end
 
-      let(:import_entry_groups) do
+      let(:import_projects) do
         {
-          entry_groups[0].time_yyyy_mm_dd => [import_entry_group_entries[0].description],
-          entry_groups[1].time_yyyy_mm_dd => [import_entry_group_entries[1].description]
+          project_name => {
+            entry_groups[0].time_yyyy_mm_dd => [project_entry_group_entries[0].description],
+            entry_groups[1].time_yyyy_mm_dd => [project_entry_group_entries[1].description]
+          }
         }
       end
       let(:entry_groups) do
@@ -192,7 +198,7 @@ RSpec.describe Dsu::Services::EntryGroup::ImporterService do
           create(:entry_group, entries: [build(:entry, description: 'entry_group_2_entry_1')], time: times.max)
         ]
       end
-      let(:import_entry_group_entries) do
+      let(:project_entry_group_entries) do
         [
           build(:entry, description: "imported_#{entry_groups[0].entries.first.description}_#{'x' * Dsu::Models::Entry::MAX_DESCRIPTION_LENGTH}"),
           build(:entry, description: "imported_#{entry_groups[1].entries.first.description}_#{'y' * Dsu::Models::Entry::MAX_DESCRIPTION_LENGTH}")

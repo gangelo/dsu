@@ -5,7 +5,6 @@ require_relative '../../services/entry_group/importer_service'
 require_relative '../base_presenter_ex'
 require_relative 'import_file'
 
-
 module Dsu
   module Presenters
     module Import
@@ -40,22 +39,26 @@ module Dsu
 
         def import_entry_groups
           @import_entry_groups ||= CSV.foreach(import_file_path,
-            headers: true).with_object({}) do |entry_group_entry, entry_groups_hash|
-            next unless entry_group_entry['version'].to_i == Dsu::Migration::VERSION
+            headers: true, header_converters: :symbol).with_object({}) do |entry_group_entry, entry_groups_hash|
+            next unless entry_group_entry[:version].to_i == Dsu::Migration::VERSION
+            # TODO: Later on, when we export/import all projects, we'll need to
+            # remove this and refactor lib/dsu/services/entry_group/importer_service.rb
+            # to import all projects.
+            next unless entry_group_entry[:project_name] == project_name
 
-            project_name = entry_group_entry['project_name']
+            project_name = entry_group_entry[:project_name]
             entry_groups_hash[project_name] = {} unless entry_groups_hash.key?(project_name)
 
-            Date.parse(entry_group_entry['entry_group']).to_s.tap do |time|
+            Date.parse(entry_group_entry[:entry_group]).to_s.tap do |time|
               entry_groups_hash[project_name][time] = [] unless entry_groups_hash.key?(time)
-              entry_groups_hash[project_name][time] << entry_group_entry['entry_group_entry']
+              entry_groups_hash[project_name][time] << entry_group_entry[:entry_group_entry]
             end
           end
         end
 
         def importer_service
           @importer_service ||= Services::EntryGroup::ImporterService.new(
-            project_name: project_name, import_entry_groups: import_entry_groups, options: options
+            import_projects: import_entry_groups, options: options
           )
         end
 

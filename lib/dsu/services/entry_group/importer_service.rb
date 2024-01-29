@@ -9,35 +9,37 @@ module Dsu
     module EntryGroup
       # Expects a hash having the following format:
       # {
-      #   "2023-12-29" => ["Entry 1 description", "Entry 2 description", ...],
-      #   "2023-12-30" => ["Entry 1 description", ...],
-      #   "2023-12-31" => ["Entry 1 description", ...]
+      # "Project 1 Name" => {
+      #     "2023-12-29" => ["Entry 1 description", "Entry 2 description", ...],
+      #     "2023-12-30" => ["Entry 1 description", ...],
+      #     "2023-12-31" => ["Entry 1 description", ...]
+      #   },
+      # "Project 2 Name" => {
+      #     "2023-12-29" => ["Entry 1 description", "Entry 2 description", ...],
+      #     "2023-12-30" => ["Entry 1 description", ...],
+      #     "2023-12-31" => ["Entry 1 description", ...]
+      #   }
       # }
       class ImporterService
         include Support::Fileable
 
-        def initialize(project_name:, import_entry_groups:, options: {})
-          raise ArgumentError, 'Argument project_name is blank' if project_name.blank?
-          raise ArgumentError, 'Argument import_entry_groups is blank' if import_entry_groups.blank?
+        def initialize(import_projects:, options: {})
+          raise ArgumentError, 'Argument import_projects is blank' if import_projects.blank?
 
-          @project_name = project_name
-          @import_entry_groups = import_entry_groups
+          @project_entry_groups = import_projects.fetch(current_project_name, {})
           @options = options
         end
 
         def call
-          return import_project_mismatch_messages if project_mismatch?(project_name: project_name)
-
           import!
         end
 
         private
 
-        attr_reader :project_name, :import_entry_groups, :options
+        attr_reader :project_entry_groups, :options
 
         def import!
-          binding.pry
-          import_entry_groups.each_pair do |entry_group_date, entry_descriptions|
+          project_entry_groups.each_pair do |entry_group_date, entry_descriptions|
             entry_group_for(entry_group_date).tap do |entry_group|
               entry_descriptions.each do |entry_description|
                 add_entry_group_entry_if(entry_group: entry_group, entry_description: entry_description)
@@ -83,21 +85,6 @@ module Dsu
 
         def import_messages
           @import_messages ||= {}
-        end
-
-        def project_mismatch?(project_name:)
-          project_name != current_project_name
-        end
-
-        def import_project_mismatch_messages
-          import_entry_groups.keys.each_with_object({}) do |entry_group_date, hash|
-            hash[entry_group_date] = [project_mismatch_error_message(project_name: project_name)]
-          end
-        end
-
-        def project_mismatch_error_message(project_name:)
-          I18n.t('services.entry_group.importer_service.errors.project_mismatch',
-            import_project_name: project_name, current_project_name: current_project_name)
         end
 
         def current_project_name
