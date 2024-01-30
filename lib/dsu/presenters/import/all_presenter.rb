@@ -11,7 +11,7 @@ module Dsu
       class AllPresenter < BasePresenterEx
         include ImportFile
 
-        attr_reader :import_messages
+        attr_reader :import_file_path, :import_messages
 
         def initialize(import_file_path:, options: {})
           super(options: options)
@@ -25,10 +25,6 @@ module Dsu
           @import_messages = importer_service.call
         end
 
-        def nothing_to_import?
-          import_entry_groups_count.zero?
-        end
-
         def import_entry_groups_count
           import_entry_groups[project_name]&.count || 0
         end
@@ -38,8 +34,6 @@ module Dsu
         end
 
         private
-
-        attr_reader :import_file_path
 
         def import_entry_groups
           @import_entry_groups ||= CSV.foreach(import_file_path,

@@ -17,6 +17,7 @@ module Dsu
       end
 
       def render
+        return display_import_file_not_exist_message unless presenter.import_file_path_exist?
         return display_nothing_to_import_message if presenter.nothing_to_import?
 
         response = display_import_prompt
@@ -33,10 +34,6 @@ module Dsu
       private
 
       attr_reader :presenter, :color_theme, :options
-
-      def project_name
-        presenter.project_name
-      end
 
       def display_import_prompt
         response = ask_while(prompt_with_options(prompt: import_prompt,
@@ -67,7 +64,7 @@ module Dsu
 
       def display_import_file_not_exist_message
         puts apply_theme(I18n.t('subcommands.import.messages.file_not_exist',
-          file_path: import_file_path), theme_color: color_theme.info)
+          file_path: presenter.import_file_path), theme_color: color_theme.info)
       end
 
       def display_import_messages(import_results)
