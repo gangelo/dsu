@@ -48,7 +48,7 @@ module Dsu
             entry_groups_hash[project_name] = {} unless entry_groups_hash.key?(project_name)
 
             Date.parse(entry_group_entry[:entry_group]).to_s.tap do |time|
-              entry_groups_hash[project_name][time] = [] unless entry_groups_hash.key?(time)
+              entry_groups_hash[project_name][time] = [] unless entry_groups_hash[project_name].key?(time)
               entry_groups_hash[project_name][time] << entry_group_entry[:entry_group_entry]
             end
           end

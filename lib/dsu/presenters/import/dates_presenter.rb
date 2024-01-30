@@ -11,7 +11,7 @@ module Dsu
       class DatesPresenter < BasePresenterEx
         include ImportFile
 
-        attr_reader :from, :to
+        attr_reader :from, :to, :import_file_path, :import_messages
 
         def initialize(from:, to:, import_file_path:, options: {})
           super(options: options)
@@ -41,8 +41,6 @@ module Dsu
 
         private
 
-        attr_reader :import_file_path
-
         def import_entry_groups
           @import_entry_groups ||= CSV.foreach(import_file_path,
             headers: true, header_converters: :symbol).with_object({}) do |entry_group_entry, entry_groups_hash|
@@ -59,7 +57,7 @@ module Dsu
             entry_groups_hash[project_name] = {} unless entry_groups_hash.key?(project_name)
 
             entry_group_time.to_date.to_s.tap do |time|
-              entry_groups_hash[project_name][time] = [] unless entry_groups_hash.key?(time)
+              entry_groups_hash[project_name][time] = [] unless entry_groups_hash[project_name].key?(time)
               entry_groups_hash[project_name][time] << entry_group_entry[:entry_group_entry]
             end
           end
@@ -67,6 +65,12 @@ module Dsu
 
         def middle_of_day_for(date_string)
           Time.parse(date_string).in_time_zone.middle_of_day
+        end
+
+        def importer_service
+          @importer_service ||= Services::EntryGroup::ImporterService.new(
+            import_projects: import_entry_groups, options: options
+          )
         end
       end
     end

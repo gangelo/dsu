@@ -370,7 +370,7 @@ en:
           $ dsu import all -i /path/to/import.csv
       messages:
         import_success: Entry group for %{date} imported successfully.
-        import_error: "Entry group for %{date} imported with an error: %{error}."
+        import_error: "Entry group for %{date} imported with an error: %{error}"
         import_error_raised: "The entry groups failed to import. The following error was raised: \"%{error}\"."
         nothing_to_import: No entry groups to import.
         cancelled: Cancelled.
