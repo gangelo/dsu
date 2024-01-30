@@ -11,7 +11,7 @@ module Dsu
         def nothing_to_import?
           return true unless import_file_path_exist?
 
-          import_entry_groups.empty?
+          import_entry_groups.count.zero?
         end
 
         def import_entry_groups
