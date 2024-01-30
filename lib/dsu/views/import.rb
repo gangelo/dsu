@@ -27,8 +27,9 @@ module Dsu
           display_cancelled_message
         end
       rescue StandardError => e
-        puts apply_theme(e.message, theme_color: color_theme.error)
         puts apply_theme(e.backtrace_locations.join("\n"), theme_color: color_theme.error) if Dsu.env.local?
+        message = I18n.t('subcommands.import.messages.import_error_raised', error: e.message)
+        puts apply_theme(message, theme_color: color_theme.error)
       end
 
       private
