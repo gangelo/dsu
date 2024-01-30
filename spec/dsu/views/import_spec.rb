@@ -4,7 +4,10 @@ RSpec.describe Dsu::Views::Import do
   subject(:import_view) { described_class.new(presenter: presenter, options: options) }
 
   let(:options) { {} }
-  let(:presenter) { instance_double(Dsu::Presenters::Import::AllPresenter) }
+  let(:import_file_path) { 'spec/fixtures/files/import.csv' }
+  let(:presenter) do
+    Dsu::Presenters::Import::AllPresenter.new(import_file_path: import_file_path, options: options)
+  end
 
   describe '#initialize' do
     it 'does not raise an error' do
@@ -14,30 +17,18 @@ RSpec.describe Dsu::Views::Import do
 
   describe '#render' do
     context 'when all entry groups are being imported' do
-      let(:presenter) { instance_double(Dsu::Presenters::Import::AllPresenter) }
-
       context 'when the import file does not exist' do
-        before do
-          allow(presenter).to receive_messages(
-            import_file_path: 'input_file.csv',
-            import_file_path_exist?: false
-          )
-        end
+        let(:import_file_path) { 'spec/fixtures/files/does-not-exist.csv' }
 
         it "displays the 'import file does not exist' message" do
           expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
             import_view.render
-          end.chomp)).to include('Import file input_file.csv does not exist.')
+          end.chomp)).to include('Import file spec/fixtures/files/does-not-exist.csv does not exist.')
         end
       end
 
       context 'when there is nothing to import' do
-        before do
-          allow(presenter).to receive_messages(
-            nothing_to_import?: true,
-            import_file_path_exist?: true
-          )
-        end
+        let(:import_file_path) { 'spec/fixtures/files/nothing-to-import.csv' }
 
         it "displays the 'nothing to import' message" do
           expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
@@ -47,57 +38,32 @@ RSpec.describe Dsu::Views::Import do
       end
 
       context 'when there is something to import' do
-        before do
-          allow($stdin).to receive(:getch).and_return(response)
-        end
-
         context 'when the user responds with "Y"' do
           before do
-            allow(presenter).to receive_messages(
-              nothing_to_import?: false,
-              import_file_path_exist?: true,
-              import_entry_groups_count: 1,
-              project_name: 'current_project_name',
-              import_messages: import_messages,
-              respond: import_messages
-            )
+            stub_import_prompt(response: 'Y')
           end
 
-          let(:response) { 'Y' }
+          let(:expected_output) do
+            <<~OUTPUT
+              Entry group for 2023-12-31 imported successfully.
+              Entry group for 2024-01-01 imported successfully.
+              Entry group for 2024-01-02 imported successfully.
+            OUTPUT
+          end
 
           context 'when all imports are successful' do
-            let(:import_messages) { { '2024-01-01' => [] } } # rubocop:disable Style/StringHashKeys
-
             it "displays the 'imported successfully' message" do
               expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
                 import_view.render
-              end.chomp)).to include('Entry group for 2024-01-01 imported successfully')
-            end
-          end
-
-          context 'when the imports have errors' do
-            let(:import_messages) { { '2024-01-01' => %w[error] } } # rubocop:disable Style/StringHashKeys
-
-            it "displays the 'imported successfully' message" do
-              expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
-                import_view.render
-              end.chomp)).to include('Entry group for 2024-01-01 imported with an error: error')
+              end.chomp)).to include(expected_output.chomp)
             end
           end
         end
 
         context 'when the user responds with "n"' do
           before do
-            allow(presenter).to receive_messages(
-              nothing_to_import?: false,
-              import_file_path_exist?: true,
-              import_entry_groups_count: 1,
-              project_name: 'current_project_name',
-              respond: false
-            )
+            stub_import_prompt(response: 'n')
           end
-
-          let(:response) { 'n' }
 
           it "displays the 'nothing to import' message" do
             expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
@@ -107,15 +73,18 @@ RSpec.describe Dsu::Views::Import do
         end
       end
 
-      context 'when the presenter raises an error' do
+      context 'when the import file has errors' do
         before do
-          allow(presenter).to receive(:import_file_path_exist?).and_raise('Boom!')
+          stub_import_prompt(response: 'Y')
         end
 
-        it 'resques and displays the error' do
+        let(:import_file_path) { 'spec/fixtures/files/import-with-errors.csv' }
+        let(:expected_output) { /The entry groups failed to import/ }
+
+        it "displays the 'imported successfully' message" do
           expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
             import_view.render
-          end.chomp)).to include('Boom!')
+          end.chomp)).to match(expected_output)
         end
       end
     end

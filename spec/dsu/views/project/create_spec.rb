@@ -6,7 +6,7 @@ RSpec.describe Dsu::Views::Project::Create do
   end
 
   before do
-    allow($stdin).to receive(:getch).and_return(response)
+    stub_import_prompt(response: response)
   end
 
   let(:presenter) do
