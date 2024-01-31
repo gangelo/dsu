@@ -26,7 +26,7 @@ module Dsu
       MIN_PROJECT_NAME_LENGTH = 2
       MAX_PROJECT_NAME_LENGTH = 12
       MIN_DESCRIPTION_LENGTH = 2
-      MAX_DESCRIPTION_LENGTH = 256
+      MAX_DESCRIPTION_LENGTH = 32
 
       attr_reader :project_name, :current_project_file, :description, :version, :options
 
