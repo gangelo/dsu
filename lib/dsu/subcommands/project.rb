@@ -18,6 +18,7 @@ module Dsu
       map %w[c] => :create
       map %w[d] => :delete
       map %w[l] => :list
+      map %w[r] => :rename
       map %w[u] => :use
 
       desc I18n.t('subcommands.project.create.desc'), I18n.t('subcommands.project.create.usage')
@@ -63,6 +64,25 @@ module Dsu
         options = configuration.to_h.merge(self.options).with_indifferent_access
         presenter = use_presenter_for(project_name_or_number, options: options)
         use_view_for(project_name_or_number, presenter: presenter, options: options).render
+      end
+
+      desc I18n.t('subcommands.project.rename.desc'), I18n.t('subcommands.project.rename.usage')
+      long_desc I18n.t('subcommands.project.rename.long_desc')
+      option :new_project_name, type: :string, required: true, aliases: '-n', banner: 'NEW_PROJECT_NAME'
+      option :description, type: :string, required: false, aliases: '-d', banner: 'DESCRIPTION'
+      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
+      def rename(project_name_or_number = nil)
+        description = options[:description].to_s.strip
+        project_name_or_number = project_name_or_number.to_s.strip
+        # if project_name_or_number.blank?
+        #   return Views::Shared::Error.new(
+        #     messages: I18n.t('subcommands.project.rename.messages.project_name_blank')
+        #   ).render
+        # end
+
+        # presenter = Presenters::Project::CreatePresenter.new(project_name: project_name,
+        #   description: description, options: options)
+        # Views::Project::Rename.new(presenter: presenter, options: options).render
       end
 
       private
