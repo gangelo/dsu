@@ -127,7 +127,7 @@ RSpec.describe Dsu::Views::Project::DeleteByNumber do
           build(:delete_by_number_presenter, :with_default_project, options: options)
         end
         let(:expected_error) do
-          "A project for number #{Dsu::Models::Project.default_project.project_number} does not exist."
+          "A project for number #{default_project.project_number} does not exist."
         end
 
         it 'displays the error' do

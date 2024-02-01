@@ -7,13 +7,13 @@ RSpec.describe Dsu::Views::Project::Use do
 
   shared_examples 'the project is the current project' do
     it 'is the current project' do
-      expect(Dsu::Models::Project.current_project.project_name).to eq(project_name)
+      expect(current_project.project_name).to eq(project_name)
     end
   end
 
   shared_examples 'the project is not the current project' do
     it 'is not the current project' do
-      expect(Dsu::Models::Project.current_project.project_name).to_not eq(project_name)
+      expect(current_project.project_name).to_not eq(project_name)
     end
   end
 
@@ -37,7 +37,7 @@ RSpec.describe Dsu::Views::Project::Use do
 
         it 'uses the project and sets it to the current project' do
           use_view.render
-          expect(Dsu::Models::Project.current_project.project_name).to eq(project_name)
+          expect(current_project.project_name).to eq(project_name)
         end
       end
 
@@ -48,7 +48,7 @@ RSpec.describe Dsu::Views::Project::Use do
 
         it 'does not use the project and does not change the current project' do
           use_view.render
-          expect(Dsu::Models::Project.current_project.project_name).to_not eq(project_name)
+          expect(current_project.project_name).to_not eq(project_name)
         end
       end
     end
