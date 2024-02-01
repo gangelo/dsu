@@ -3,12 +3,14 @@
 require_relative '../../models/entry_group'
 require_relative '../../services/entry_group/importer_service'
 require_relative '../base_presenter_ex'
+require_relative 'import_entry'
 require_relative 'import_file'
 
 module Dsu
   module Presenters
     module Import
       class AllPresenter < BasePresenterEx
+        include ImportEntry
         include ImportFile
 
         attr_reader :import_file_path, :import_messages
@@ -38,11 +40,7 @@ module Dsu
         def import_entry_groups
           @import_entry_groups ||= CSV.foreach(import_file_path,
             headers: true, header_converters: :symbol).with_object({}) do |entry_group_entry, entry_groups_hash|
-            next unless entry_group_entry[:version].to_i == Dsu::Migration::VERSION
-            # TODO: Later on, when we export/import all projects, we'll need to
-            # remove this and refactor lib/dsu/services/entry_group/importer_service.rb
-            # to import all projects.
-            next unless entry_group_entry[:project_name] == project_name
+            next unless import_entry?(entry_group_entry)
 
             project_name = entry_group_entry[:project_name]
             entry_groups_hash[project_name] = {} unless entry_groups_hash.key?(project_name)

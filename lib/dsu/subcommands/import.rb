@@ -24,6 +24,7 @@ module Dsu
       long_desc I18n.t('subcommands.import.all.long_desc')
       option :import_file, type: :string, required: true, aliases: '-i', banner: 'IMPORT_CVS_FILE'
       option :merge, type: :boolean, default: true, aliases: '-m'
+      option :override, type: :boolean, default: false, aliases: '-o'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def all
         options = configuration.to_h.merge(self.options).with_indifferent_access
@@ -39,6 +40,7 @@ module Dsu
       option :to, type: :string, required: true, aliases: '-t', banner: 'DATE|MNEMONIC'
       option :import_file, type: :string, required: true, aliases: '-i', banner: 'IMPORT_CVS_FILE'
       option :merge, type: :boolean, default: true, aliases: '-m'
+      option :override, type: :boolean, default: false, aliases: '-o'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def dates
         options = configuration.to_h.merge(self.options).with_indifferent_access

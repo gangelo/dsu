@@ -54,6 +54,7 @@ RSpec.configure do |config|
   end
 
   config.include ColorThemeHelpers
+  config.include ProjectHelpers
   config.include StdxxxHelpers
   config.include TimeHelpers
 end

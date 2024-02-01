@@ -72,8 +72,8 @@ module Dsu
       option :description, type: :string, required: false, aliases: '-d', banner: 'DESCRIPTION'
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def rename(project_name_or_number = nil)
-        description = options[:description].to_s.strip
-        project_name_or_number = project_name_or_number.to_s.strip
+        _description = options[:description].to_s.strip
+        _project_name_or_number = project_name_or_number.to_s.strip
         # if project_name_or_number.blank?
         #   return Views::Shared::Error.new(
         #     messages: I18n.t('subcommands.project.rename.messages.project_name_blank')
