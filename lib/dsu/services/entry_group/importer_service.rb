@@ -25,8 +25,11 @@ module Dsu
 
         def initialize(import_projects:, options: {})
           raise ArgumentError, 'Argument import_projects is blank' if import_projects.blank?
+          raise ArgumentError, 'Argument import_projects is not a Hash' unless import_projects.is_a?(Hash)
 
-          @project_entry_groups = import_projects.fetch(current_project_name, {})
+          raise_if_more_than_one_project(import_projects)
+
+          @import_projects = import_projects
           @options = options
         end
 
@@ -36,7 +39,7 @@ module Dsu
 
         private
 
-        attr_reader :project_entry_groups, :options
+        attr_reader :import_projects, :options
 
         def import!
           project_entry_groups.each_pair do |entry_group_date, entry_descriptions|
@@ -75,6 +78,14 @@ module Dsu
           entry_group.entries << entry
         end
 
+        def project_entry_groups
+          @project_entry_groups ||= if override_project?
+            import_projects.values.first || {}
+          else
+            import_projects.fetch(current_project_name, {})
+          end
+        end
+
         def merge?
           options.fetch(:merge, true)
         end
@@ -83,12 +94,22 @@ module Dsu
           !merge?
         end
 
+        def override_project?
+          options.fetch(:override, false)
+        end
+
         def import_messages
           @import_messages ||= {}
         end
 
         def current_project_name
           @current_project_name ||= Models::Project.current_project.project_name
+        end
+
+        def raise_if_more_than_one_project(import_projects)
+          return if import_projects.keys.one?
+
+          raise ArgumentError, 'Only one project can be imported at a time'
         end
       end
     end

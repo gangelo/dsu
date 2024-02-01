@@ -301,6 +301,8 @@ en:
 
           OPTIONS:
 
+          -o|--override true|false (default: false): If true, the import process will ignore the project name found in the import file and import the entries into the current project. If false, the import process will use the project name found in the import file.
+
           -i|--import-file IMPORT_CVS_FILE: The IMPORT_CVS_FILE file to import. IMPORT_CVS_FILE should be a fully qualified path to a file that was previously created as a result of running `dsu export`. see `dsu help export`.
 
           -m|--merge true|false (default: true): If true, imported entries will be added to the entry group if the entry group already exists. If false, the imported entries will replace all existing entries for the entry group if the entry group already exists. If the entry group does not exist, it will be created using the imported entries.
@@ -312,6 +314,12 @@ en:
           %{date_option_description}
 
           %{mnemonic_option_description}
+
+          NOTES
+
+          Entry groups in the import file whose project name does not match the current project, will be ignored (see `dsu project use`).
+
+          If the `--override` option is used, the import process will ignore the project name found in the import file and import the entries into the current project.
 
           EXAMPLES:
 
@@ -343,6 +351,10 @@ en:
           This (assuming "today" is 5/23) will import the DSU entries back 1 week from yesterday's date 5/16 to 5/22, from the import file, and merge all the entries for the respective entry groups imported:
 
           $ dsu m dd --from yesterday --to -6 -i /path/to/import.csv
+
+          This (assuming the current year is 2024) will import the DSU entries for 1/1/2024 to 3/15/2024 from the import file, and ignore the project name found in the import file and import the entries into the current project:
+
+          $ dsu m dd -f 1/1 -t 3/15 -o true -i /path/to/import.csv
       all:
         desc: all|a OPTIONS
         usage: Imports all DSU entries from a given DSU export .csv file
@@ -355,19 +367,31 @@ en:
 
           OPTIONS:
 
+          -o|--override true|false (default: false): If true, the import process will ignore the project name found in the import file and import the entries into the current project. If false, the import process will use the project name found in the import file.
+
           -i|--import-file IMPORT_CVS_FILE: The IMPORT_CVS_FILE file to import. IMPORT_CVS_FILE should be a fully qualified path to a file that was previously created as a result of running `dsu export`. see `dsu help export`.
 
           -m|--merge true|false (default: true): If true, imported entries will be added to the entry group if the entry group already exists. If false, the imported entries will replace all existing entries for the entry group if the entry group already exists. If the entry group does not exist, it will be created using the imported entries.
+
+          NOTES
+
+          Entry groups in the import file whose project name does not match the current project, will be ignored (see `dsu project use`).
+
+          If the `--override` option is used, the import process will ignore the project name found in the import file and import the entries into the current project.
 
           EXAMPLES:
 
           This will import all the DSU entries from the import file, and replace all the entries for the respective entry groups imported:
 
-          $ dsu import all -i /path/to/import.csv -m false
+          $ dsu import all -m false -i /path/to/import.csv
 
           This will import all the DSU entries from the import file, and merge all the entries for the respective entry groups imported:
 
           $ dsu import all -i /path/to/import.csv
+
+          This will import all the DSU entries from the import file, and ignore the project name found in the import file and import the entries into the current project:
+
+          $ dsu import all -o true -i /path/to/import.csv
       messages:
         import_success: Entry group for %{date} imported successfully.
         import_error: "Entry group for %{date} imported with an error: %{error}"

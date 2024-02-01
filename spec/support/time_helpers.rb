@@ -15,10 +15,12 @@ module TimeHelpers
     to_yyyymmdd_string(Time.now.in_time_zone)
   end
 
-  def to_yyyymmdd_string(time)
+  def to_yyyymmdd_string(time, include_timezone: true)
     raise ArgumentError, "time is not a Time object: \"#{time}\"" unless time.is_a?(Time)
 
-    time.in_time_zone.strftime('%Y-%m-%d %Z')
+    return time.in_time_zone.strftime('%Y-%m-%d %Z') if include_timezone
+
+    time.in_time_zone.strftime('%Y-%m-%d')
   end
 
   def to_yyyymmdd_string_array(time_array)
