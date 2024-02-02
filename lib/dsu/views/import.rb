@@ -21,11 +21,12 @@ module Dsu
         return display_nothing_to_import_message if presenter.nothing_to_import?
 
         response = display_import_prompt
-        if presenter.respond response: response
-          display_import_messages presenter.import_messages
-        else
-          display_cancelled_message
-        end
+        return display_cancelled_message unless response
+
+        response = display_project_override_prompt if presenter.overriding_project?
+        return display_cancelled_message unless response
+
+        display_import_messages presenter.respond
       rescue StandardError => e
         puts apply_theme(e.backtrace_locations.join("\n"), theme_color: color_theme.error) if Dsu.env.local?
         message = I18n.t('subcommands.import.messages.import_error_raised', error: e.message)
@@ -46,6 +47,16 @@ module Dsu
         response == import_prompt_options.first
       end
 
+      def display_project_override_prompt
+        response = ask_while(prompt_with_options(prompt: project_override_prompt,
+          options: import_prompt_options), options: options) do |input|
+          message = I18n.t('information.input.try_again', options: import_prompt_options.join(','))
+          puts apply_theme(message, theme_color: color_theme.info) unless import_prompt_options.include?(input)
+          import_prompt_options.include?(input)
+        end
+        response == import_prompt_options.first
+      end
+
       def display_cancelled_message
         puts apply_theme(I18n.t('subcommands.import.messages.cancelled'), theme_color: color_theme.info)
       end
@@ -57,6 +68,10 @@ module Dsu
       def import_prompt
         I18n.t('subcommands.import.prompts.import_all_confirm',
           count: presenter.import_entry_groups_count, project: presenter.project_name)
+      end
+
+      def project_override_prompt
+        I18n.t('subcommands.import.prompts.project_override_confirm')
       end
 
       def import_prompt_options

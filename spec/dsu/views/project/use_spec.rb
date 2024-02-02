@@ -30,8 +30,8 @@ RSpec.describe Dsu::Views::Project::Use do
         build(:use_presenter, :with_project, project_name: project_name, options: options)
       end
 
-      context "when the user confirmation is 'y'" do
-        let(:response) { 'y' }
+      context "when the user confirmation is 'Y'" do
+        let(:response) { 'Y' }
 
         it_behaves_like 'the project is not the current project'
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 shared_examples 'the import file does not exist' do
+  let(:options) { { override: false } }
+
   context 'when the import file does not exist' do
     let(:import_file_path) { 'spec/fixtures/files/does-not-exist.csv' }
 
@@ -13,6 +15,8 @@ shared_examples 'the import file does not exist' do
 end
 
 shared_examples 'there is nothing to import' do
+  let(:options) { { override: false } }
+
   context 'when there is nothing to import' do
     let(:import_file_path) { 'spec/fixtures/files/nothing-to-import.csv' }
 
@@ -25,6 +29,8 @@ shared_examples 'there is nothing to import' do
 end
 
 shared_examples 'there is something to import' do
+  let(:options) { { override: false } }
+
   context 'when the user responds with "Y"' do
     before do
       stub_import_prompt(response: 'Y')
@@ -65,6 +71,7 @@ shared_examples 'the import raises an error' do
     stub_import_prompt(response: 'Y')
   end
 
+  let(:options) { { override: false } }
   let(:import_file_path) { 'spec/fixtures/files/import-with-errors.csv' }
   let(:expected_output) { /The entry groups failed to import/ }
 
@@ -80,7 +87,7 @@ shared_examples 'the import has errors' do
     stub_import_prompt(response: 'Y')
   end
 
-  let(:options) { { merge: false } }
+  let(:options) { { override: false, merge: false } }
   let(:expected_output) do
     <<~OUTPUT
       Entry group for 2023-12-31 imported with an error: Entries array contains duplicate entry: "Entry 2023-12-31...".
@@ -95,5 +102,31 @@ shared_examples 'the import has errors' do
     expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
       import_view.render
     end.chomp)).to include(expected_output.chomp)
+  end
+end
+
+shared_examples 'the project is overridden' do
+  let(:options) { { override: true } }
+
+  context 'when the user responds with "Y"' do
+    before do
+      stub_import_prompt(response: %w[Y Y])
+    end
+
+    let(:expected_output) do
+      <<~OUTPUT
+        Entry group for 2023-12-31 imported successfully.
+        Entry group for 2024-01-01 imported successfully.
+        Entry group for 2024-01-02 imported successfully.
+      OUTPUT
+    end
+
+    context 'when all imports are successful' do
+      it "displays the 'imported successfully' message" do
+        expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+          import_view.render
+        end.chomp)).to include(expected_output.chomp)
+      end
+    end
   end
 end
