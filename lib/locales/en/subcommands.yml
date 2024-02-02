@@ -401,6 +401,7 @@ en:
         file_not_exist: Import file %{file_path} does not exist.
       prompts:
         import_all_confirm: Import all entry groups (%{count} entry groups) for project "%{project}"?
+        project_override_confirm: You have chosen to override the project found in the import file, are you sure you want to continue?
         import_dates_confirm: Import all the entry groups for %{from} thru %{to} (%{count} entry groups) for project "%{project}"?
         options:
           - Y
@@ -528,11 +529,11 @@ en:
         prompts:
           create_confirm: Create project "%{project_name}"?
           create_options:
-            - y
+            - Y
             - n
           use_confirm: Use project "%{project_name}"?
           use_options:
-            - y
+            - Y
             - n
       delete:
         desc: delete|d [PROJECT_NAME|PROJECT_NUMBER]
@@ -635,11 +636,11 @@ en:
         prompts:
           create_confirm: Create project "%{project_name}"?
           create_options:
-            - y
+            - Y
             - n
           use_confirm: Use project "%{project_name}"?
           use_options:
-            - y
+            - Y
             - n
       use:
         desc: use|u [PROJECT_NAME|PROJECT_NUMBER]
@@ -687,7 +688,7 @@ en:
         prompts:
           use_confirm: "Use project \"%{project_name} - %{description}\"?"
           use_options:
-            - y
+            - Y
             - n
       messages:
         cancelled: Cancelled.

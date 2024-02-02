@@ -23,18 +23,8 @@ module Dsu
           @import_file_path = import_file_path
         end
 
-        def respond(response:)
-          return false unless response
-
+        def respond
           @import_messages = importer_service.call
-        end
-
-        def nothing_to_import?
-          import_entry_groups_count.zero?
-        end
-
-        def import_entry_groups_count
-          import_entry_groups[project_name]&.count || 0
         end
 
         def project_name

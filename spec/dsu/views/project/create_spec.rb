@@ -42,8 +42,8 @@ RSpec.describe Dsu::Views::Project::Create do
     end
 
     context 'when the project does not exist' do
-      context "when the user confirmation is 'y'" do
-        let(:response) { 'y' }
+      context "when the user confirmation is 'Y'" do
+        let(:response) { 'Y' }
 
         it 'displays the project created message' do
           expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do

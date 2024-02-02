@@ -6,6 +6,8 @@ module StdxxxHelpers
   end
 
   def stub_import_prompt(response:)
-    allow($stdin).to receive(:getch).and_return(response)
+    allow($stdin).to receive(:getch) do
+      response.is_a?(Array) ? response.shift : response
+    end
   end
 end

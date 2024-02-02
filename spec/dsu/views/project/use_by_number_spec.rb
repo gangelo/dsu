@@ -34,8 +34,8 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
         build(:use_by_number_presenter, :with_project_number, options: options)
       end
 
-      context "when using a project number and user confirmation is 'y'" do
-        let(:response) { 'y' }
+      context "when using a project number and user confirmation is 'Y'" do
+        let(:response) { 'Y' }
 
         it_behaves_like 'the project is not the current project'
 
@@ -66,8 +66,8 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
         build(:use_by_number_presenter, :with_default_project, options: options)
       end
 
-      context "when the user confirmation is 'y'" do
-        let(:response) { 'y' }
+      context "when the user confirmation is 'Y'" do
+        let(:response) { 'Y' }
 
         it_behaves_like 'the project is the current project'
 

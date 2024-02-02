@@ -24,5 +24,6 @@ RSpec.describe Dsu::Views::ImportDates do
     it_behaves_like 'there is something to import'
     it_behaves_like 'the import raises an error'
     it_behaves_like 'the import has errors'
+    it_behaves_like 'the project is overridden'
   end
 end
