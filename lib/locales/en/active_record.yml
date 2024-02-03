@@ -3,11 +3,11 @@ en:
     project:
       errors:
         already_exists: "Project '%{project_name}' already exists."
-        does_not_exist: "Project '%{project_name}' does not exist."
         delete_default_project: "Project '%{project_name}' is the default project. Change to a different default project before deleting this project."
         delete_only_project: "Project '%{project_name}' is the only project and cannot be deleted."
+        does_not_exist: "Project '%{project_name}' does not exist."
+        new_project_already_exists: "Project cannot be renamed to '%{project_name}' because the project already exists."
         project_file_not_exist: "Project file '%{project_file}' does not exist."
-        project_not_created: "Project file '%{project_name}' could not be created."
   activerecord:
     errors:
       models:

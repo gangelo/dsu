@@ -511,7 +511,7 @@ en:
 
           PROJECT_NAME
 
-          The name of the project to create. PROJECT_NAME must be between 2 and 12 characters (inclusive) in length.
+          The name of the project to create. PROJECT_NAME must be between 2 and 24 characters (inclusive) in length.
 
           OPTIONS
 
@@ -595,38 +595,40 @@ en:
 
           $ dsu p l
       rename:
-        desc: rename|r PROJECT_NAME|PROJECT_NUMBER [OPTIONS]
-        usage: Renames a dsu project using the given PROJECT_NAME or PROJECT_NUMBER and OPTIONS
+        desc: rename|r PROJECT_NAME|PROJECT_NUMBER NEW_PROJECT_NAME [NEW_PROJECT_DESCRIPTION]
+        usage: Renames a dsu project using the given PROJECT_NAME or PROJECT_NUMBER, NEW_PROJECT_NAME and optional NEW_PROJECT_DESCRIPTION
         long_desc: |
-          Creates a dsu project using the given PROJECT_NAME or PROJECT_NUMBER and OPTIONS.
+          Renames a dsu project using the given PROJECT_NAME or PROJECT_NUMBER, NEW_PROJECT_NAME and optional NEW_PROJECT_DESCRIPTION
 
-          dsu project rename PROJECT_NAME|PROJECT_NUMBER [OPTIONS]
+          dsu project rename PROJECT_NAME|PROJECT_NUMBER NEW_PROJECT_NAME [NEW_PROJECT_DESCRIPTION]
 
-          dsu p r PROJECT_NAME|PROJECT_NUMBER [OPTIONS]
+          dsu p r PROJECT_NAME|PROJECT_NUMBER NEW_PROJECT_NAME [NEW_PROJECT_DESCRIPTION]
 
           PROJECT_NAME
 
-          The name of the project to create. PROJECT_NAME must be between 2 and 12 characters (inclusive) in length.
+          The name of the project to create. PROJECT_NAME must be between 2 and 24 characters (inclusive) in length.
 
           PROJECT_NUMBER
 
           The number of the project to rename. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
 
-          OPTIONS
+          NEW_PROJECT_NAME
 
-          -n|--new-project-name NEW_PROJECT_NAME: The new name of the project. NEW_PROJECT_NAME must be between 2 and 12 characters (inclusive) in length.
+          The new name of the project. NEW_PROJECT_NAME must be between 2 and 24 characters (inclusive) in length.
 
-          -d|--description DESCRIPTION: Optional. The description of the project. DESCRIPTION must be between 2 and 256 characters (inclusive) in length. If DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
+          NEW_PROJECT_DESCRIPTION
+
+          Optional. The description of the project. NEW_PROJECT_DESCRIPTION must be between 2 and 32 characters (inclusive) in length. If NEW_PROJECT_DESCRIPTION is not provided, the project description will be "<NEW_PROJECT_NAME> project" where <NEW_PROJECT_NAME> = the name of the project.
 
           EXAMPLES:
 
-          $ dsu project rename "My Project" --new-project-name "My New Project" --description "My new project description"
+          $ dsu project rename "My Project" "My New Project" "My new project description"
 
-          $ dsu p r "My Project" -n "My New Project" -d "My new project description"
+          $ dsu p r "My Project" "My New Project" "My new project description"
 
-          $ dsu project rename 1 --new-project-name "My New Project" --description "My new project description"
+          $ dsu project rename 1 "My New Project" "My new project description"
 
-          $ dsu p r 1 -n "My New Project" -d "My new project description"
+          $ dsu p r 1 "My New Project" "My new project description"
         messages:
           created: Created project "%{project_name}".
           already_exists: Project "%{project_name}" already exists.
