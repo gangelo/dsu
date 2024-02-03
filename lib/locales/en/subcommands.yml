@@ -628,18 +628,15 @@ en:
 
           $ dsu project rename 1 "My New Project" "My new project description"
 
-          $ dsu p r 1 "My New Project" "My new project description"
+          $ dsu p r 1   "My New Project" "My new project description"
         messages:
-          created: Created project "%{project_name}".
-          already_exists: Project "%{project_name}" already exists.
-          project_name_blank: No value provided for project name.
+          # created: Created project "%{project_name}".
+          new_project_already_exists: A project for new project name "%{new_project_name}" already exists.
+          # project_name_blank: No value provided for project name.
+          renamed_project: Renamed project "%{project_name}" to "%{new_project_name}".
         prompts:
-          create_confirm: Create project "%{project_name}"?
-          create_options:
-            - Y
-            - n
-          use_confirm: Use project "%{project_name}"?
-          use_options:
+          rename_confirm: Rename project "%{project_name}" to "%{new_project_name} - %{new_project_description}"?.
+          rename_options:
             - Y
             - n
       use:

@@ -1,26 +1,22 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Support::Descriptable, type: :module do
-  subject(:descriptable) do
-    Class.new do
-      include Dsu::Support::Descriptable
+RSpec.describe Dsu::Support::ShortString, type: :module do
+  subject(:short_string) { described_class.short_string(string: description) }
 
-      attr_reader :description
+  let(:max_desc) { described_class::SHORT_STRING_MAX_COUNT }
 
-      def initialize(description)
-        @description = description
-      end
-    end.new(description)
+  describe '::SHORT_STRING_MAX_COUNT' do
+    it 'defines the constant' do
+      expect(described_class.const_defined?(:SHORT_STRING_MAX_COUNT)).to be(true)
+    end
   end
 
-  let(:max_desc) { Dsu::Support::ShortString::SHORT_STRING_MAX_COUNT }
-
-  describe '#short_description' do
+  describe '.short_string' do
     context 'when description is nil' do
       let(:description) { nil }
 
       it 'returns an empty string' do
-        expect(descriptable.short_description).to eq('')
+        expect(short_string).to eq('')
       end
     end
 
@@ -28,7 +24,7 @@ RSpec.describe Dsu::Support::Descriptable, type: :module do
       let(:description) { '' }
 
       it 'returns an empty string' do
-        expect(descriptable.short_description).to eq('')
+        expect(short_string).to eq('')
       end
     end
 
@@ -37,7 +33,7 @@ RSpec.describe Dsu::Support::Descriptable, type: :module do
         let(:description) { 'x' * max_desc }
 
         it 'returns the shortened description' do
-          expect(descriptable.short_description).to eq(description)
+          expect(short_string).to eq(description)
         end
       end
 
@@ -45,7 +41,7 @@ RSpec.describe Dsu::Support::Descriptable, type: :module do
         let(:description) { 'x' * (max_desc - 5) }
 
         it 'returns the shortened description' do
-          expect(descriptable.short_description).to eq(description)
+          expect(short_string).to eq(description)
         end
       end
 
@@ -54,7 +50,7 @@ RSpec.describe Dsu::Support::Descriptable, type: :module do
         let(:expected_short_description) { "#{'x' * (max_desc - 3)}..." }
 
         it 'returns the shortened description' do
-          expect(descriptable.short_description).to eq(expected_short_description)
+          expect(short_string).to eq(expected_short_description)
         end
       end
     end
@@ -64,7 +60,7 @@ RSpec.describe Dsu::Support::Descriptable, type: :module do
         let(:description) { description_having }
 
         it 'returns the shortened description' do
-          expect(descriptable.short_description).to eq(description)
+          expect(short_string).to eq(description)
         end
       end
 
@@ -72,7 +68,7 @@ RSpec.describe Dsu::Support::Descriptable, type: :module do
         let(:description) { description_having(max_length: max_desc - 5) }
 
         it 'returns the shortened description' do
-          expect(descriptable.short_description).to eq(description)
+          expect(short_string).to eq(description)
         end
       end
 
@@ -80,7 +76,7 @@ RSpec.describe Dsu::Support::Descriptable, type: :module do
         let(:description) { 'This is a string of words greater than 25 chars in total' }
 
         it 'returns the shortened description without breaking up any words' do
-          expect(descriptable.short_description).to eq('This is a string of...')
+          expect(short_string).to eq('This is a string of...')
         end
       end
     end

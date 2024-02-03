@@ -295,12 +295,11 @@ module Dsu
       attr_writer :current_project_file, :options, :version
 
       def description=(value)
-        description = if value.blank?
-          "#{project_name.capitalize} project"
+        @description = if value.blank?
+          "#{project_name} project"
         else
           value
         end
-        @description = description
       end
 
       def project_name=(value)
