@@ -7,6 +7,7 @@ en:
         delete_default_project: "Project '%{project_name}' is the default project. Change to a different default project before deleting this project."
         delete_only_project: "Project '%{project_name}' is the only project and cannot be deleted."
         project_file_not_exist: "Project file '%{project_file}' does not exist."
+        project_not_created: "Project file '%{project_name}' could not be created."
   activerecord:
     errors:
       models:

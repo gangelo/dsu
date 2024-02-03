@@ -30,7 +30,7 @@ module Dsu
         project_name = project_name.to_s.strip
         if project_name.blank?
           return Views::Shared::Error.new(
-            messages: I18n.t('subcommands.project.create.messages.project_name_blank')
+            messages: I18n.t('subcommands.project.messages.project_name_blank')
           ).render
         end
 
@@ -57,6 +57,25 @@ module Dsu
         Views::Project::List.new(presenter: presenter, options: options).render
       end
 
+      desc I18n.t('subcommands.project.rename.desc'), I18n.t('subcommands.project.rename.usage')
+      long_desc I18n.t('subcommands.project.rename.long_desc')
+      option :new_project_name, type: :string, required: true, aliases: '-n', banner: 'NEW_PROJECT_NAME'
+      option :description, type: :string, required: false, aliases: '-d', banner: 'DESCRIPTION'
+      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
+      def rename(project_name_or_number = nil, new_project_name = nil)
+        description = options[:description].to_s.strip
+        project_name_or_number = project_name_or_number.to_s.strip
+        if new_project_name.blank?
+          return Views::Shared::Error.new(
+            messages: I18n.t('subcommands.project.messages.new_project_name_blank')
+          ).render
+        end
+
+        options = configuration.to_h.merge(self.options).with_indifferent_access
+        presenter = rename_presenter_for(project_name_or_number, description: description, options: options)
+        rename_view_for(project_name_or_number, presenter: presenter, options: options).render
+      end
+
       desc I18n.t('subcommands.project.use.desc'), I18n.t('subcommands.project.use.usage')
       long_desc I18n.t('subcommands.project.use.long_desc')
       option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
@@ -64,25 +83,6 @@ module Dsu
         options = configuration.to_h.merge(self.options).with_indifferent_access
         presenter = use_presenter_for(project_name_or_number, options: options)
         use_view_for(project_name_or_number, presenter: presenter, options: options).render
-      end
-
-      desc I18n.t('subcommands.project.rename.desc'), I18n.t('subcommands.project.rename.usage')
-      long_desc I18n.t('subcommands.project.rename.long_desc')
-      option :new_project_name, type: :string, required: true, aliases: '-n', banner: 'NEW_PROJECT_NAME'
-      option :description, type: :string, required: false, aliases: '-d', banner: 'DESCRIPTION'
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
-      def rename(project_name_or_number = nil)
-        _description = options[:description].to_s.strip
-        _project_name_or_number = project_name_or_number.to_s.strip
-        # if project_name_or_number.blank?
-        #   return Views::Shared::Error.new(
-        #     messages: I18n.t('subcommands.project.rename.messages.project_name_blank')
-        #   ).render
-        # end
-
-        # presenter = Presenters::Project::CreatePresenter.new(project_name: project_name,
-        #   description: description, options: options)
-        # Views::Project::Rename.new(presenter: presenter, options: options).render
       end
 
       private
@@ -101,6 +101,23 @@ module Dsu
         else
           project_name = Models::Project.default_project_name if project_name.blank?
           Presenters::Project::DeletePresenter.new(project_name: project_name, options: options)
+        end
+      end
+
+      def rename_view_for(project_name, presenter:, options:)
+        if project_number?(project_name)
+          Views::Project::RenameByNumber.new(presenter: presenter, options: options)
+        else
+          Views::Project::Rename.new(presenter: presenter, options: options)
+        end
+      end
+
+      def rename_presenter_for(project_name, description:, options:)
+        if project_number?(project_name)
+          Presenters::Project::RenameByNumberPresenter.new(project_number: project_name.to_i, description: description, options: options)
+        else
+          project_name = Models::Project.default_project_name if project_name.blank?
+          Presenters::Project::RenamePresenter.new(project_name: project_name, description: description, options: options)
         end
       end
 

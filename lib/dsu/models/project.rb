@@ -16,7 +16,7 @@ require_relative '../validators/version_validator'
 module Dsu
   module Models
     # This class represents a project. A project is a collection of entry groups.
-    class Project
+    class Project # rubocop:disable Metrics/ClassLength
       include ActiveModel::Model
       include Support::Descriptable
       include Support::Fileable
@@ -68,7 +68,7 @@ module Dsu
       alias save! create!
 
       def current_project?
-        project_name == self.class.current_project_name
+        self.class.current_project?(project_name: project_name)
       end
 
       def default!
@@ -101,6 +101,10 @@ module Dsu
         self.class.project_folder(project_name: project_name)
       end
 
+      def rename!(new_project_name:, description: nil)
+        self.class.rename!(project_name: project_name, new_project_name: new_project_name, description: description)
+      end
+
       def to_h
         {
           version: version,
@@ -124,7 +128,7 @@ module Dsu
       end
 
       class << self
-        delegate :project_folder_for, to: Support::Fileable
+        delegate :project_file_for, :project_folder_for, to: Support::Fileable
 
         def all
           project_metadata.map do |metadata|
@@ -166,6 +170,10 @@ module Dsu
 
         def current_project
           find(project_name: current_project_name)
+        end
+
+        def current_project?(project_name:)
+          current_project_name == project_name
         end
 
         def default!(project:)
@@ -245,6 +253,28 @@ module Dsu
           project_file = project_file_for(project_name: project_name)
           project_hash = Crud::JsonFile.read!(file_path: project_file)
           Services::Project::HydratorService.new(project_hash: project_hash).call
+        end
+
+        def rename!(project_name:, new_project_name:, description: nil)
+          unless project_file_exist?(project_name: project_name)
+            raise I18n.t('models.project.errors.project_file_not_exist',
+              project_file: project_file_for(project_name: project_name))
+          end
+
+          if project_file_exist?(project_name: new_project_name)
+            raise I18n.t('models.project.errors.already_exists', project_name: new_project_name)
+          end
+
+          new_project = create(project_name: new_project_name, description: description)
+
+          unless new_project.exist?
+            raise I18n.t('models.project.errors.project_not_created', project_name: new_project_name)
+          end
+
+          new_project.default! if default_project?(project_name: project_name)
+          new_project.use! if current_project?(project_name: project_name)
+
+          delete!(project_name: project_name)
         end
 
         # def update(project_name:, description:, version:, options:)

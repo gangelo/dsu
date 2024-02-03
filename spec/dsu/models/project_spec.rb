@@ -503,6 +503,52 @@ RSpec.describe Dsu::Models::Project do
     end
   end
 
+  describe '#rename!' do
+    let(:new_project_name) { 'new' }
+
+    context 'when the current project exists' do
+      before do
+        project.save!
+      end
+
+      it_behaves_like 'the project exists'
+
+      it 'renames the project and returns true' do
+        expect(project.rename!(new_project_name: new_project_name)).to be true
+        expect(described_class.exist?(project_name: new_project_name)).to be true
+        expect(project.exist?).to be false
+      end
+    end
+
+    context 'when the current project does not exist' do
+      it_behaves_like 'the project does not exist'
+
+      it 'raises an error and does not rename the project' do
+        expected_error = /Project file .+ does not exist/
+        new_project = build(:project, project_name: new_project_name)
+        expect { project.rename!(new_project_name: new_project_name) }.to raise_error(expected_error)
+        expect(new_project.exist?).to be false
+        expect(project.exist?).to be false
+      end
+    end
+
+    context 'when the new project exists' do
+      before do
+        project.save!
+      end
+
+      it_behaves_like 'the project exists'
+
+      it 'raises an error and does not rename the project' do
+        expected_error = /Project .+ already exists/
+        new_project = create(:project, project_name: new_project_name)
+        expect { project.rename!(new_project_name: new_project.project_name) }.to raise_error(expected_error)
+        expect(new_project.exist?).to be true
+        expect(project.exist?).to be true
+      end
+    end
+  end
+
   describe '#to_h' do
     let(:expected_hash) do
       {
