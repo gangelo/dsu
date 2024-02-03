@@ -7,7 +7,7 @@ module Dsu
   module Presenters
     module Project
       class RenamePresenter < BasePresenterEx
-        attr_reader :project_name, :new_project_name, :new_project_description
+        delegate :project_name, :description, to: :project
 
         def initialize(project_name:, new_project_name:, new_project_description:, options: {})
           super(options: options)
@@ -15,34 +15,42 @@ module Dsu
           raise ArgumentError, 'project_name is blank' if project_name.blank?
           raise ArgumentError, 'new_project_name is blank' if new_project_name.blank?
 
-          self.project_name = project_name.strip
-          self.new_project_name = new_project_name.strip
-          self.new_project_description = new_project_description&.strip
+          @project = Models::Project.find_or_initialize(project_name: project_name)
+
+          @new_project = Models::Project.new(project_name: new_project_name.strip,
+            description: new_project_description&.strip, options: options).tap(&:validate)
         end
 
         def respond(response:)
           return false unless response
+          return false if new_project.invalid?
 
-          project.rename(project_name: :project_name, description: description) if project_already_exists?
+          project.rename!(new_project_name: new_project_name, new_project_description: new_project_description)
         end
 
-        def project_already_exists?
-          project.exist?
+        def project_does_not_exist?
+          !project.exist?
         end
 
-        def project_errors
-          return false unless project.persisted?
+        def new_project_already_exists?
+          new_project.exist?
+        end
 
-          project.errors.full_messages
+        def new_project_name
+          new_project.project_name
+        end
+
+        def new_project_description
+          new_project.description
+        end
+
+        def new_project_errors
+          new_project.errors.full_messages
         end
 
         private
 
-        attr_writer :project_name, :description
-
-        def project
-          @project ||= Models::Project.find_or_initialize(project_name: project_name)
-        end
+        attr_reader :new_project, :project
       end
     end
   end

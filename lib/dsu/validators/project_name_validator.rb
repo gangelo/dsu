@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../support/field_errors'
+require_relative '../support/short_string'
 
 # https://guides.rubyonrails.org/active_record_validations.html#validates-with
 module Dsu
@@ -8,6 +9,7 @@ module Dsu
     # TODO: I18n.
     class ProjectNameValidator < ActiveModel::Validator
       include Support::FieldErrors
+      include Support::ShortString
 
       def validate(record)
         unless record.project_name.is_a?(String)
@@ -38,7 +40,8 @@ module Dsu
                                            "(minimum is #{min_project_name_length(record)} characters).")
         elsif project_name.length > max_project_name_length(record)
           # TODO: I18n.
-          record.errors.add(:project_name, "is too long: \"#{record.project_name}\" " \
+          short_project_name = short_string(string: project_name, count: max_project_name_length(record))
+          record.errors.add(:project_name, "is too long: \"#{short_project_name}\" " \
                                            "(maximum is #{max_project_name_length(record)} characters).")
         end
       end

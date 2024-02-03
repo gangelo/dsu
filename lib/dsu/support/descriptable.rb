@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
+require_relative 'short_string'
+
 module Dsu
   module Support
     module Descriptable
-      DESCRIPTION_MAX_COUNT = 25
-
       class << self
         def included(base)
           base.extend(ClassMethods)
@@ -18,26 +18,10 @@ module Dsu
       end
 
       module ClassMethods
-        def short_description(string:, count: DESCRIPTION_MAX_COUNT, elipsis: '...')
-          return elipsis unless string.is_a?(String)
+        include ShortString
 
-          elipsis_length = elipsis.length
-          count = elipsis_length if count.nil? || count < elipsis_length
-
-          return string if string.length <= count
-
-          tokens = string.split
-          string = ''
-
-          return "#{tokens.first[0...(count - elipsis_length)]}#{elipsis}" if tokens.count == 1
-
-          tokens.each do |token|
-            break if string.length + token.length + elipsis_length > count
-
-            string = "#{string} #{token}"
-          end
-
-          "#{string.strip}#{elipsis}"
+        def short_description(string:, count: ShortString::SHORT_STRING_MAX_COUNT, elipsis: '...')
+          short_string(string: string, count: count, elipsis: elipsis)
         end
       end
     end
