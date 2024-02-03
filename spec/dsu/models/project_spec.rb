@@ -513,10 +513,49 @@ RSpec.describe Dsu::Models::Project do
 
       it_behaves_like 'the project exists'
 
-      it 'renames the project and returns true' do
-        expect(project.rename!(new_project_name: new_project_name)).to be true
+      it 'renames the project' do
+        project.rename!(new_project_name: new_project_name)
         expect(described_class.exist?(project_name: new_project_name)).to be true
         expect(project.exist?).to be false
+      end
+
+      context 'when the project being renamed has the same name as the new project name' do
+        it 'raises an error and does not rename or delete the project' do
+          expected_error = /Project cannot be renamed to .+ because the project already exists./
+          expect { project.rename!(new_project_name: project.project_name) }.to raise_error(expected_error)
+        end
+      end
+
+      context 'when the project being renamed is the default project' do
+        before do
+          project.default!
+        end
+
+        it_behaves_like 'the project is the default project'
+
+        it 'renames the project and sets the new project as the default project' do
+          project.rename!(new_project_name: new_project_name)
+          expect(described_class.exist?(project_name: new_project_name)).to be true
+          expect(project.exist?).to be false
+          expect(project.default_project?).to be false
+          expect(described_class.default_project?(project_name: new_project_name)).to be true
+        end
+      end
+
+      context 'when the project being renamed is the current project' do
+        before do
+          project.use!
+        end
+
+        it_behaves_like 'the project is the current project'
+
+        it 'renames the project and sets the new project as the current project' do
+          project.rename!(new_project_name: new_project_name)
+          expect(described_class.exist?(project_name: new_project_name)).to be true
+          expect(project.exist?).to be false
+          expect(project.current_project?).to be false
+          expect(described_class.current_project?(project_name: new_project_name)).to be true
+        end
       end
     end
 
@@ -678,6 +717,29 @@ RSpec.describe Dsu::Models::Project do
 
         it 'returns the project' do
           expect(described_class.find_by_number(project_number: 99)).to be_nil
+        end
+      end
+    end
+
+    describe '.find_or_initialize' do
+      context 'when the project is found' do
+        before do
+          project.save!
+        end
+
+        it_behaves_like 'the project exists'
+
+        it 'returns the project' do
+          expect(described_class.find_or_initialize(project_name: project.project_name)).to eq(project)
+        end
+      end
+
+      context 'when the project is not found' do
+        it_behaves_like 'the project does not exist'
+
+        it 'returns a new project' do
+          new_project = described_class.find_or_initialize(project_name: project.project_name)
+          expect(new_project.exist?).to be false
         end
       end
     end

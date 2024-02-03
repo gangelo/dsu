@@ -198,7 +198,7 @@ RSpec/NotToNot:
     - not_to
 
 RSpec/MultipleExpectations:
-  Max: 3
+  Enabled: false
 
 RSpec/MultipleMemoizedHelpers:
   Max: 6

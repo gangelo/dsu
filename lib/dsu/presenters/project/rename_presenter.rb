@@ -7,15 +7,17 @@ module Dsu
   module Presenters
     module Project
       class RenamePresenter < BasePresenterEx
-        attr_reader :project_name, :description
+        attr_reader :project_name, :new_project_name, :new_project_description
 
-        def initialize(project_name:, description:, options: {})
+        def initialize(project_name:, new_project_name:, new_project_description:, options: {})
           super(options: options)
 
           raise ArgumentError, 'project_name is blank' if project_name.blank?
+          raise ArgumentError, 'new_project_name is blank' if new_project_name.blank?
 
-          self.project_name = project_name
-          self.description = description
+          self.project_name = project_name.strip
+          self.new_project_name = new_project_name.strip
+          self.new_project_description = new_project_description&.strip
         end
 
         def respond(response:)

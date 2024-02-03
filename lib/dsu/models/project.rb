@@ -101,8 +101,9 @@ module Dsu
         self.class.project_folder(project_name: project_name)
       end
 
-      def rename!(new_project_name:, description: nil)
-        self.class.rename!(project_name: project_name, new_project_name: new_project_name, description: description)
+      def rename!(new_project_name:, new_project_description: nil)
+        self.class.rename!(project_name: project_name,
+          new_project_name: new_project_name, new_project_description: new_project_description)
       end
 
       def to_h
@@ -255,24 +256,20 @@ module Dsu
           Services::Project::HydratorService.new(project_hash: project_hash).call
         end
 
-        def rename!(project_name:, new_project_name:, description: nil)
+        def rename!(project_name:, new_project_name:, new_project_description: nil)
           unless project_file_exist?(project_name: project_name)
             raise I18n.t('models.project.errors.project_file_not_exist',
               project_file: project_file_for(project_name: project_name))
           end
 
           if project_file_exist?(project_name: new_project_name)
-            raise I18n.t('models.project.errors.already_exists', project_name: new_project_name)
+            raise I18n.t('models.project.errors.new_project_already_exists', project_name: new_project_name)
           end
 
-          new_project = create(project_name: new_project_name, description: description)
-
-          unless new_project.exist?
-            raise I18n.t('models.project.errors.project_not_created', project_name: new_project_name)
+          create(project_name: new_project_name, description: new_project_description).tap do |new_project|
+            new_project.default! if default_project?(project_name: project_name)
+            new_project.use! if current_project?(project_name: project_name)
           end
-
-          new_project.default! if default_project?(project_name: project_name)
-          new_project.use! if current_project?(project_name: project_name)
 
           delete!(project_name: project_name)
         end
