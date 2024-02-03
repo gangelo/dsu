@@ -66,7 +66,7 @@ module Dsu
         end
 
         def display_project_already_exists
-          message = I18n.t('subcommands.project.create.messages.already_exists', project_name: project_name)
+          message = I18n.t('subcommands.project.messages.already_exists', project_name: project_name)
           puts apply_theme(message, theme_color: color_theme.error)
         end
 

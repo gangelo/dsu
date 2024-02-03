@@ -524,8 +524,6 @@ en:
           $ dsu p c "My project" -d "My project description"
         messages:
           created: Created project "%{project_name}".
-          already_exists: Project "%{project_name}" already exists.
-          project_name_blank: No value provided for project name.
         prompts:
           create_confirm: Create project "%{project_name}"?
           create_options:
@@ -695,6 +693,9 @@ en:
         does_not_exist: Project "%{project_name}" does not exist.
         no_projects: No projects are available to list.
         number_does_not_exist: A project for number %{project_number} does not exist.
+        already_exists: Project "%{project_name}" already exists.
+        project_name_blank: No value provided for project name.
+        new_project_name_blank: No value provided for new project name.
     theme:
       create:
         desc: create THEME_NAME [OPTIONS]
