@@ -695,6 +695,7 @@ en:
         already_exists: Project "%{project_name}" already exists.
         project_name_blank: No value provided for project name.
         new_project_name_blank: No value provided for new project name.
+        already_current_project: Project "%{project_name}" is already the current project.
     theme:
       create:
         desc: create THEME_NAME [OPTIONS]

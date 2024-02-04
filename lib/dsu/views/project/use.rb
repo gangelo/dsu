@@ -22,6 +22,7 @@ module Dsu
 
         def render
           return display_project_does_not_exist if presenter.project_does_not_exist?
+          return display_project_already_current_project if presenter.already_current_project?
           return display_project_errors if presenter.project_errors.any?
 
           response = display_project_use_prompt
@@ -67,6 +68,12 @@ module Dsu
 
         def display_using_project_message
           message = I18n.t('subcommands.project.use.messages.using_project',
+            project_name: presenter.project_name)
+          puts apply_theme(message, theme_color: color_theme.success)
+        end
+
+        def display_project_already_current_project
+          message = I18n.t('subcommands.project.messages.already_current_project',
             project_name: presenter.project_name)
           puts apply_theme(message, theme_color: color_theme.success)
         end
