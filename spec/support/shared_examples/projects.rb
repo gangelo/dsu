@@ -33,3 +33,14 @@ shared_examples 'the project is the current project' do
     expect(project.project_name).to eq(current_project_name)
   end
 end
+
+shared_examples 'the project is not the current project' do
+  let(:current_project_name) { Dsu::Models::Project.current_project_name }
+
+  it_behaves_like 'the project exists'
+
+  it 'is not the current project' do
+    expect(project.current_project?).to be false
+    expect(project.project_name).to_not eq(current_project_name)
+  end
+end

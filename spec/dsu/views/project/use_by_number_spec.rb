@@ -5,33 +5,17 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
     described_class.new(presenter: presenter, options: options)
   end
 
-  shared_examples 'the project is the current project' do
-    it 'is the current project' do
-      expect(current_project.project_name).to eq(project_name)
-    end
-  end
-
-  shared_examples 'the project is not the current project' do
-    it 'is not the current project' do
-      expect(current_project.project_name).to_not eq(project_name)
-    end
-  end
-
   before do
     stub_import_prompt(response: response)
   end
 
-  let(:project_name) { 'xyz' }
   let(:options) { nil }
+  let(:project) { create(:project, project_name: 'xyz', options: options) }
 
   describe '#render' do
     context 'when the project exists' do
-      before do
-        create(:project, project_name: project_name, options: options)
-      end
-
       let(:presenter) do
-        build(:use_by_number_presenter, :with_project_number, options: options)
+        build(:use_by_number_presenter, project_number: project.project_number, options: options)
       end
 
       context "when using a project number and user confirmation is 'Y'" do
@@ -41,7 +25,7 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
 
         it 'uses the project and sets it to the current project' do
           use_by_number_view.render
-          expect(current_project.project_name).to eq(project_name)
+          expect(project.current_project?).to be true
         end
       end
 
@@ -52,7 +36,7 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
 
         it 'does not use the project and does not change the current project' do
           use_by_number_view.render
-          expect(current_project.project_name).to_not eq(project_name)
+          expect(project.current_project?).to be false
         end
       end
 
@@ -62,20 +46,18 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
         it 'displays the project is already the current project message' do
           expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
             use_by_number_view.render
-          end.chomp)).to eq("Project \"#{project_name}\" is already the current project.")
+          end.chomp)).to eq("Project \"#{project.project_name}\" is already the current project.")
         end
       end
     end
 
     context 'when the project returns errors' do
       before do
-        create(:project, :current_project, project_name: project_name, options: options)
-        allow(presenter).to receive_messages(project_errors?: true,
-          project_errors: expected_errors)
+        allow(presenter).to receive_messages(project_errors?: true, project_errors: expected_errors)
       end
 
       let(:presenter) do
-        build(:use_by_number_presenter, :with_project_number, options: options)
+        build(:use_by_number_presenter, project_number: project.project_number, options: options)
       end
       let(:response) { 'unused' }
       let(:expected_errors) do
@@ -94,12 +76,11 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
 
     context 'when an error is raised that is not rescued' do
       before do
-        create(:project, :current_project, project_name: project_name, options: options)
         allow(presenter).to receive(:project_does_not_exist?).and_raise(StandardError, expected_error)
       end
 
       let(:presenter) do
-        build(:use_by_number_presenter, :with_project_number, options: options)
+        build(:use_by_number_presenter, project_number: project.project_number, options: options)
       end
       let(:response) { 'unused' }
       let(:expected_error) { 'Test error' }
@@ -116,9 +97,7 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
         allow(presenter).to receive(:project_does_not_exist?).and_return(true)
       end
 
-      let(:presenter) do
-        build(:use_by_number_presenter, options: options)
-      end
+      let(:presenter) { build(:use_by_number_presenter, options: options) }
       let(:response) { 'unused' }
 
       context 'when the presenter is using a project number' do

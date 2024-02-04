@@ -5,29 +5,17 @@ RSpec.describe Dsu::Views::Project::Use do
     described_class.new(presenter: presenter, options: options)
   end
 
-  shared_examples 'the project is the current project' do
-    it 'is the current project' do
-      expect(current_project.project_name).to eq(project_name)
-    end
-  end
-
-  shared_examples 'the project is not the current project' do
-    it 'is not the current project' do
-      expect(current_project.project_name).to_not eq(project_name)
-    end
-  end
-
   before do
     stub_import_prompt(response: response)
   end
 
   let(:options) { nil }
-  let(:project_name) { 'xyz' }
+  let(:project) { create(:project, project_name: 'xyz', options: options) }
 
   describe '#render' do
     context 'when the project exists' do
       let(:presenter) do
-        build(:use_presenter, :with_project, project_name: project_name, options: options)
+        build(:use_presenter, :with_project, project_name: project.project_name, options: options)
       end
 
       context "when the user confirmation is 'Y'" do
@@ -37,7 +25,7 @@ RSpec.describe Dsu::Views::Project::Use do
 
         it 'uses the project and sets it to the current project' do
           use_view.render
-          expect(current_project.project_name).to eq(project_name)
+          expect(project.current_project?).to be true
         end
       end
 
@@ -48,7 +36,7 @@ RSpec.describe Dsu::Views::Project::Use do
 
         it 'does not use the project and does not change the current project' do
           use_view.render
-          expect(current_project.project_name).to_not eq(project_name)
+          expect(project.current_project?).to be false
         end
       end
 
@@ -58,7 +46,7 @@ RSpec.describe Dsu::Views::Project::Use do
         it 'displays the project is already the current project message' do
           expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
             use_view.render
-          end.chomp)).to eq("Project \"#{project_name}\" is already the current project.")
+          end.chomp)).to eq("Project \"#{project.project_name}\" is already the current project.")
         end
       end
     end
@@ -70,7 +58,7 @@ RSpec.describe Dsu::Views::Project::Use do
       end
 
       let(:presenter) do
-        build(:use_presenter, :with_project, project_name: project_name, options: options)
+        build(:use_presenter, :with_project, project_name: project.project_name, options: options)
       end
       let(:response) { 'unused' }
       let(:expected_errors) do
@@ -93,7 +81,7 @@ RSpec.describe Dsu::Views::Project::Use do
       end
 
       let(:presenter) do
-        build(:use_presenter, :with_project, project_name: project_name, options: options)
+        build(:use_presenter, :with_project, project_name: project.project_name, options: options)
       end
       let(:response) { 'unused' }
       let(:expected_error) { 'Test error' }
@@ -111,13 +99,13 @@ RSpec.describe Dsu::Views::Project::Use do
       end
 
       let(:presenter) do
-        build(:use_presenter, :with_project, project_name: project_name, options: options)
+        build(:use_presenter, :with_project, project_name: project.project_name, options: options)
       end
       let(:response) { 'unused' }
 
       context 'when the presenter is using a project that is not the default' do
         let(:expected_error) do
-          "Project \"#{project_name}\" does not exist."
+          "Project \"#{project.project_name}\" does not exist."
         end
 
         it 'displays the error' do
@@ -132,7 +120,7 @@ RSpec.describe Dsu::Views::Project::Use do
           build(:use_presenter, :with_default_project, options: options)
         end
         let(:expected_error) do
-          "Project \"#{presenter.project_name}\" does not exist."
+          "Project \"#{default_project.project_name}\" does not exist."
         end
 
         it 'displays the error' do
