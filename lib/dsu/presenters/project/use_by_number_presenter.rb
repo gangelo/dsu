@@ -26,6 +26,10 @@ module Dsu
           project.use! if project&.present?
         end
 
+        def already_current_project?
+          project&.current_project?
+        end
+
         def project_does_not_exist?
           !project&.exist?
         end

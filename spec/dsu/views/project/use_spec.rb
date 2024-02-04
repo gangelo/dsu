@@ -41,6 +41,10 @@ RSpec.describe Dsu::Views::Project::Use do
       end
 
       context 'when trying to use the current project' do
+        before do
+          project.use!
+        end
+
         let(:response) { 'Y' }
 
         it 'displays the project is already the current project message' do
