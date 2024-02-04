@@ -25,7 +25,7 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
   let(:options) { nil }
 
   describe '#render' do
-    context 'when using a project number' do
+    context 'when the project exists' do
       before do
         create(:project, project_name: project_name, options: options)
       end
@@ -55,37 +55,14 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
           expect(current_project.project_name).to_not eq(project_name)
         end
       end
-    end
 
-    context 'when not using a project number' do
-      before do
-        create(:project, :current_project, project_name: project_name, options: options)
-      end
-
-      let(:presenter) do
-        build(:use_by_number_presenter, :with_default_project, options: options)
-      end
-
-      context "when the user confirmation is 'Y'" do
+      context 'when trying to use the current project' do
         let(:response) { 'Y' }
 
-        it_behaves_like 'the project is the current project'
-
-        it 'uses the default project and sets it to the current project' do
-          use_by_number_view.render
-          default_project_name = Dsu::Models::Configuration.new.default_project
-          expect(current_project.project_name).to eq(default_project_name)
-        end
-      end
-
-      context "when the user confirmation is 'n'" do
-        let(:response) { 'n' }
-
-        it_behaves_like 'the project is the current project'
-
-        it 'does not use the project and does not change the current project' do
-          use_by_number_view.render
-          expect(current_project.project_name).to eq(project_name)
+        it 'displays the project is already the current project message' do
+          expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+            use_by_number_view.render
+          end.chomp)).to eq("Project \"#{project_name}\" is already the current project.")
         end
       end
     end

@@ -25,7 +25,7 @@ RSpec.describe Dsu::Views::Project::Use do
   let(:project_name) { 'xyz' }
 
   describe '#render' do
-    context 'when using a project name' do
+    context 'when the project exists' do
       let(:presenter) do
         build(:use_presenter, :with_project, project_name: project_name, options: options)
       end
@@ -49,6 +49,16 @@ RSpec.describe Dsu::Views::Project::Use do
         it 'does not use the project and does not change the current project' do
           use_view.render
           expect(current_project.project_name).to_not eq(project_name)
+        end
+      end
+
+      context 'when trying to use the current project' do
+        let(:response) { 'Y' }
+
+        it 'displays the project is already the current project message' do
+          expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+            use_view.render
+          end.chomp)).to eq("Project \"#{project_name}\" is already the current project.")
         end
       end
     end
