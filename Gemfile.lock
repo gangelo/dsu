@@ -64,7 +64,7 @@ GEM
       dry-inflector (~> 1.0)
       dry-logic (~> 1.4)
       zeitwerk (~> 2.6)
-    factory_bot (6.4.5)
+    factory_bot (6.4.6)
       activesupport (>= 5.0.0)
     ffaker (2.23.0)
     i18n (1.14.1)
@@ -155,7 +155,7 @@ PLATFORMS
 DEPENDENCIES
   dotenv (~> 2.8, >= 2.8.1)
   dsu!
-  factory_bot (~> 6.3)
+  factory_bot (~> 6.4)
   ffaker (~> 2.21)
   pry-byebug (~> 3.9)
   rake (~> 13.0)
