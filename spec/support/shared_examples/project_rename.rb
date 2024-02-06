@@ -18,7 +18,7 @@ shared_examples 'a message is displayed when the new project already exists' do
   end
 end
 
-shared_examples 'errors are displayd when the new project name or description has errors' do
+shared_examples 'errors are displayed when the new project name or description has errors' do
   context 'when the new project has errors' do
     let(:new_project) do
       build(:project, project_name: 'New project', description: 'x' * (Dsu::Models::Project::MAX_DESCRIPTION_LENGTH + 1))
@@ -79,6 +79,37 @@ shared_examples 'the error is displayed when an error is raised' do
     it 'displays the error' do
       expected_error = 'Boom!'
       expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call { rename_view.render }.chomp)).to match(expected_error)
+    end
+  end
+end
+
+shared_examples 'the project entry groups are moved to the new project' do
+  context 'when there are entry groups for the project' do
+    before do
+      entry_groups
+    end
+
+    let(:times) { times_for_week_of(Time.zone.now) }
+    let(:entry_groups) do
+      times.each_with_object([]) do |time, array|
+        array << create(:entry_group, :with_entries, time: time)
+      end
+    end
+    let(:response) { 'Y' }
+
+    it_behaves_like 'the project exists'
+
+    it 'renames the project' do
+      expected_output = "Renamed project \"#{project.project_name}\" to \"#{new_project.project_name}\"."
+      expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call { rename_view.render }.chomp)).to match(expected_output)
+      expect(project.exist?).to be false
+      expect(new_project.exist?).to be true
+    end
+
+    it 'moves the entry groups to the new project' do
+      rename_view.render
+      new_project.use!
+      expect(Dsu::Models::EntryGroup.all.count).to eq(entry_groups.count)
     end
   end
 end
