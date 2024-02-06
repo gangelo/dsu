@@ -37,9 +37,10 @@ RSpec.describe Dsu::Views::Project::RenameByNumber do
   end
 
   it_behaves_like 'a message is displayed when the new project already exists'
-  it_behaves_like 'errors are displayd when the new project name or description has errors'
+  it_behaves_like 'errors are displayed when the new project name or description has errors'
   it_behaves_like "the project is renamed when the user responds 'Y' to the confirmation"
   it_behaves_like "the project is not renamed when the user responds 'n' to the confirmation"
   it_behaves_like 'the error is displayed when an error is raised'
+  it_behaves_like 'the project entry groups are moved to the new project'
 end
 # rubocop:enable RSpec/MultipleMemoizedHelpers

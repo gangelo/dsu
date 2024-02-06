@@ -6,6 +6,7 @@ require_relative '../crud/json_file'
 require_relative '../migration/version'
 require_relative '../models/configuration'
 require_relative '../services/project/hydrator_service'
+require_relative '../services/project/rename_service'
 require_relative '../support/descriptable'
 require_relative '../support/fileable'
 require_relative '../support/project_file_system'
@@ -16,7 +17,7 @@ require_relative '../validators/version_validator'
 module Dsu
   module Models
     # This class represents a project. A project is a collection of entry groups.
-    class Project # rubocop:disable Metrics/ClassLength
+    class Project
       include ActiveModel::Model
       include Support::Descriptable
       include Support::Fileable
@@ -103,7 +104,7 @@ module Dsu
 
       def rename!(new_project_name:, new_project_description: nil)
         self.class.rename!(project_name: project_name,
-          new_project_name: new_project_name, new_project_description: new_project_description)
+          new_project_name: new_project_name, new_project_description: new_project_description, options: options)
       end
 
       def to_h
@@ -160,6 +161,7 @@ module Dsu
               file_path: project_file_for(project_name: project_name))
           end
         end
+        alias update create
 
         def create!(project_name:, description: nil, options: {})
           if exist?(project_name: project_name)
@@ -168,6 +170,7 @@ module Dsu
 
           create(project_name: project_name, description: description, options: options)
         end
+        alias update! create!
 
         def current_project
           find(project_name: current_project_name)
@@ -256,31 +259,10 @@ module Dsu
           Services::Project::HydratorService.new(project_hash: project_hash).call
         end
 
-        def rename!(project_name:, new_project_name:, new_project_description: nil)
-          unless project_file_exist?(project_name: project_name)
-            raise I18n.t('models.project.errors.project_file_not_exist',
-              project_file: project_file_for(project_name: project_name))
-          end
-
-          if project_file_exist?(project_name: new_project_name)
-            raise I18n.t('models.project.errors.new_project_already_exists', project_name: new_project_name)
-          end
-
-          create(project_name: new_project_name, description: new_project_description).tap do |new_project|
-            new_project.default! if default_project?(project_name: project_name)
-            new_project.use! if current_project?(project_name: project_name)
-          end
-
-          delete!(project_name: project_name)
+        def rename!(project_name:, new_project_name:, new_project_description: nil, options: {})
+          Services::Project::RenameService.new(from_project_name: project_name,
+            to_project_name: new_project_name, to_project_description: new_project_description, options: options).call
         end
-
-        # def update(project_name:, description:, version:, options:)
-        #   # TODO: Update the project
-        # end
-
-        # def update!(project_name:, description:, version:, options:)
-        #   # TODO: Update the project
-        # end
 
         def use!(project:)
           project.validate!

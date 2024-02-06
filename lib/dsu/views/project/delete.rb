@@ -66,7 +66,7 @@ module Dsu
         end
 
         def display_deleted_project_message
-          message = I18n.t('subcommands.project.delete.messages.deleted_project',
+          message = I18n.t('subcommands.project.delete.messages.deleted',
             project_name: presenter.project_name)
           puts apply_theme(message, theme_color: color_theme.success)
         end
