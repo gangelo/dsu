@@ -8,6 +8,10 @@ require_relative '../../support/transform_project_name'
 module Dsu
   module Services
     module EntryGroup
+      # ExporterService exports entry groups to a CSV file.
+      # NOTE: This class exports all entries passed to it. It does not filter
+      # entries based on optional options[:time] that may be passed to it.
+      # Rather, times are used to determine the export file name only.
       class ExporterService
         include Support::Fileable
         include Support::TransformProjectName

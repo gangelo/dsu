@@ -7,10 +7,11 @@ RSpec.describe Dsu::Services::EntryGroup::ExporterService do
     it_behaves_like 'an error is raised'
   end
 
-  let(:times) { times_for_week_of(Time.now.localtime) }
+  let(:options) { {} }
+  let(:time) { Time.now.localtime }
+  let(:times) { times_for_week_of(time) }
   let(:project_name) { 'Project name' }
   let(:entry_groups) { nil }
-  let(:options) { {} }
 
   describe '#initialize' do
     context 'when argument :entry_groups is nil' do
@@ -49,28 +50,54 @@ RSpec.describe Dsu::Services::EntryGroup::ExporterService do
   end
 
   describe '#call' do
+    shared_examples 'an exported entry group file is created' do
+      let(:expected_csv_contents) do
+        csv_contents = []
+        csv_contents << 'project_name,version,entry_group,entry_no,total_entries,entry_group_entry'
+        csv_contents << times.each_with_index.map do |_time, entry_group_index|
+          total_entries = entry_groups[entry_group_index].entries.count
+          entry_groups[entry_group_index].entries.each_with_index.map do |_entry, entry_index|
+            "#{project_name},#{entry_groups[entry_group_index].version},#{entry_groups[entry_group_index].time_yyyy_mm_dd},#{entry_index + 1},#{total_entries},#{entry_groups[entry_group_index].entries[entry_index].description}"
+          end
+        end
+        csv_contents.flatten.join("\n")
+      end
+
+      it do
+        expect(File.exist?(service.call)).to be true
+      end
+
+      it 'exports a CSV file with all of the entry groups' do
+        expect(File.read(service.call).chomp).to eq(expected_csv_contents)
+      end
+    end
+
     let(:entry_groups) do
-      entry_group_1_entries = build(:entry, description: 'entry_group_1_entry_1')
-      entry_group_2_entries = build(:entry, description: 'entry_group_2_entry_1')
-      [
-        create(:entry_group, entries: [entry_group_1_entries], time: times.min),
-        create(:entry_group, entries: [entry_group_2_entries], time: times.max)
-      ]
-    end
-    let(:expected_csv_contents) do
-      <<~CSV
-        project_name,version,entry_group,entry_no,total_entries,entry_group_entry
-        #{project_name},#{entry_groups[0].version},#{entry_groups[0].time_yyyy_mm_dd},1,1,#{entry_groups[0].entries[0].description}
-        #{project_name},#{entry_groups[1].version},#{entry_groups[1].time_yyyy_mm_dd},1,1,#{entry_groups[1].entries[0].description}
-      CSV
+      times.map do |time|
+        entries = []
+        entries << build(:entry, description: "entry_group_#{time.to_date}_entry_1")
+        entries << build(:entry, description: "entry_group_#{time.to_date}_entry_2")
+        create(:entry_group, time: time, entries: entries)
+      end
     end
 
-    it do
-      expect(File.exist?(service.call)).to be true
+    context 'when exporting all entry groups' do
+      it_behaves_like 'an exported entry group file is created'
+
+      it 'produces an export file name name with the exported dates' do
+        expect(service.call).to include("all-entry-groups-#{times.min.to_date}-thru-#{times.max.to_date}.csv")
+      end
     end
 
-    it 'exports a CSV file with all of the entry groups' do
-      expect(File.read(service.call)).to eq(expected_csv_contents)
+    context 'when exporting time-filtered entry groups' do
+      let(:options) { { times: times } }
+      let(:times) { times_for_week_of(time)[1..-2] }
+
+      it_behaves_like 'an exported entry group file is created'
+
+      it 'produces an export file name name with the exported dates' do
+        expect(service.call).to include("entry-groups-#{times.min.to_date}-thru-#{times.max.to_date}.csv")
+      end
     end
   end
 end
