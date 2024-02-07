@@ -22,12 +22,17 @@ module Dsu
 
         def respond(response:)
           return false unless response
+          return false if project_does_not_exist? || project_default?
 
           project.delete! if project&.present?
         end
 
         def project_does_not_exist?
           !project&.exist?
+        end
+
+        def project_default?
+          project&.default_project?
         end
 
         def project_errors

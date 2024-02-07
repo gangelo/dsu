@@ -23,6 +23,7 @@ module Dsu
         def render
           return display_project_does_not_exists if presenter.project_does_not_exist?
           return display_project_errors if presenter.project_errors.any?
+          return display_project_is_default if presenter.project_default?
 
           response = display_project_delete_prompt
           if presenter.respond response: response
@@ -61,6 +62,12 @@ module Dsu
 
         def display_project_does_not_exists
           message = I18n.t('subcommands.project.messages.does_not_exist',
+            project_name: presenter.project_name)
+          puts apply_theme(message, theme_color: color_theme.error)
+        end
+
+        def display_project_is_default
+          message = I18n.t('models.project.errors.delete_default_project',
             project_name: presenter.project_name)
           puts apply_theme(message, theme_color: color_theme.error)
         end

@@ -575,7 +575,7 @@ en:
         messages:
           deleted: Deleted project "%{project_name}".
         prompts:
-          delete_confirm: Delete project "%{project_name}"?
+          delete_confirm: Delete project "%{project_name} - %{description}"?
           delete_options:
             - Y
             - n
