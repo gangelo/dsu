@@ -10,4 +10,8 @@ module StdxxxHelpers
       response.is_a?(Array) ? response.shift : response
     end
   end
+
+  def capture_stdout_and_strip_escapes(&block)
+    strip_escapes(Dsu::Services::StdoutRedirectorService.call(&block).chomp)
+  end
 end

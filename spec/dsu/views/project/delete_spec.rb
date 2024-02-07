@@ -5,24 +5,9 @@ RSpec.describe Dsu::Views::Project::Delete do
     described_class.new(presenter: presenter, options: options)
   end
 
-  shared_examples 'the project does not exist' do
-    it 'does not exist' do
-      expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(false)
-    end
-  end
-
-  shared_examples 'the project exists' do
-    it 'exists' do
-      expect(Dsu::Models::Project.exist?(project_name: project_name)).to be(true)
-    end
-  end
-
-  before do
-    stub_import_prompt(response: response)
-  end
-
   let(:options) { nil }
   let(:project_name) { 'xyz' }
+  let(:project) { build(:project, project_name: project_name, options: options) }
 
   describe '#render' do
     let(:presenter) do
@@ -31,7 +16,8 @@ RSpec.describe Dsu::Views::Project::Delete do
 
     context "when the user confirmation is 'Y'" do
       before do
-        create(:project, project_name: project_name, options: options)
+        project.save!
+        stub_import_prompt(response: response)
       end
 
       let(:response) { 'Y' }
@@ -46,7 +32,8 @@ RSpec.describe Dsu::Views::Project::Delete do
 
     context "when the user confirmation is 'n'" do
       before do
-        create(:project, project_name: project_name, options: options)
+        project.save!
+        stub_import_prompt(response: response)
       end
 
       let(:response) { 'n' }
@@ -77,9 +64,9 @@ RSpec.describe Dsu::Views::Project::Delete do
       end
 
       it 'displays the errors' do
-        expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+        expect(capture_stdout_and_strip_escapes do
           delete_view.render
-        end.chomp)).to eq(expected_errors.join("\n"))
+        end.chomp).to eq(expected_errors.join("\n"))
       end
     end
 
@@ -91,13 +78,12 @@ RSpec.describe Dsu::Views::Project::Delete do
       let(:presenter) do
         build(:delete_presenter, project_name: project_name, options: options)
       end
-      let(:response) { 'unused' }
       let(:expected_error) { 'Test error' }
 
       it 'captures and displays the error' do
-        expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+        expect(capture_stdout_and_strip_escapes do
           delete_view.render
-        end.chomp)).to include(expected_error)
+        end.chomp).to include(expected_error)
       end
     end
 
@@ -109,7 +95,6 @@ RSpec.describe Dsu::Views::Project::Delete do
       let(:presenter) do
         build(:delete_presenter, project_name: project_name, options: options)
       end
-      let(:response) { 'unused' }
 
       it_behaves_like 'the project does not exist'
 
@@ -119,9 +104,9 @@ RSpec.describe Dsu::Views::Project::Delete do
         end
 
         it 'displays the error' do
-          expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+          expect(capture_stdout_and_strip_escapes do
             delete_view.render
-          end.chomp)).to include(expected_error)
+          end.chomp).to include(expected_error)
         end
       end
 
@@ -134,10 +119,27 @@ RSpec.describe Dsu::Views::Project::Delete do
         end
 
         it 'displays the error' do
-          expect(strip_escapes(Dsu::Services::StdoutRedirectorService.call do
+          expect(capture_stdout_and_strip_escapes do
             delete_view.render
-          end.chomp)).to include(expected_error)
+          end.chomp).to include(expected_error)
         end
+      end
+    end
+
+    context 'when the project is the default project' do
+      before do
+        project
+      end
+
+      let(:project) { create(:project, :default_project, project_name: project_name, options: options) }
+
+      it_behaves_like 'the project exists'
+
+      it "displays the 'cannot delete the default project' message" do
+        expect(capture_stdout_and_strip_escapes do
+          delete_view.render
+        end).to match(/Project '#{project_name}' is the default project.+ Change to a different default project/)
+        expect(project.exist?).to be(true)
       end
     end
   end
