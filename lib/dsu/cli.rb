@@ -13,11 +13,16 @@ require_relative 'subcommands/import'
 require_relative 'subcommands/list'
 require_relative 'subcommands/project'
 require_relative 'subcommands/theme'
+require_relative 'support/command_options/time_mnemonic'
+require_relative 'support/time_formatable'
 require_relative 'views/entry_group/list'
 
 module Dsu
   # The `dsu` command.
   class CLI < BaseCLI
+    include Support::CommandOptions::TimeMnemonic
+    include Support::TimeFormatable
+
     map I18n.t('commands.add.key_mappings') => :add
     map I18n.t('commands.browse.key_mappings') => :browse
     map I18n.t('commands.config.key_mappings') => :config
@@ -39,20 +44,27 @@ module Dsu
     option I18n.t('options.yesterday.name'), aliases: I18n.t('options.yesterday.aliases'), type: :boolean
     option I18n.t('options.today.name'), aliases: I18n.t('options.today.aliases'), type: :boolean, default: true
     def add(description)
-      time = if options[I18n.t('options.date.name')].present?
-        Time.parse(options[I18n.t('options.date.name')])
+      date_or_mnemonic = if options[I18n.t('options.date.name')].present?
+        options[I18n.t('options.date.name')]
       elsif options[I18n.t('options.tomorrow.name')].present?
-        Time.now.tomorrow
+        I18n.t('options.tomorrow.name')
       elsif options[I18n.t('options.yesterday.name')].present?
-        Time.now.yesterday
+        I18n.t('options.yesterday.name')
       elsif options[I18n.t('options.today.name')].present?
-        Time.now
+        I18n.t('options.today.name')
+      end
+      time = if time_mnemonic?(date_or_mnemonic)
+        time_from_mnemonic(command_option: date_or_mnemonic)
+      else
+        Time.parse(date_or_mnemonic)
       end
       entry = Models::Entry.new(description: description)
       CommandServices::AddEntryService.new(entry: entry, time: time).call
       presenter = Presenters::EntryGroup::List::DatePresenter.new(times: [time], options: options)
       # TODO: Refactor View::EntryGroup::Show to accept a presenter and use it here
       Views::EntryGroup::List.new(presenter: presenter).render
+    rescue ArgumentError => e
+      Views::Shared::Error.new(messages: e.message).render
     end
 
     desc I18n.t('commands.browse.desc'), I18n.t('commands.browse.usage')
