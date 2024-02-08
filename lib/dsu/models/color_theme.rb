@@ -76,7 +76,7 @@ module Dsu
         @theme_name = theme_name
         @options = options || {}
 
-        super(self.class.send(:themes_path_for, theme_name: @theme_name))
+        super(self.class.send(:themes_path, theme_name: @theme_name))
 
         theme_hash ||= DEFAULT_THEME.merge(description: "#{@theme_name.capitalize} theme")
 
@@ -112,6 +112,8 @@ module Dsu
       end
 
       class << self
+        delegate :themes_folder, :themes_path, to: Support::Fileable
+
         def all
           Dir.glob("#{themes_folder}/*").map do |file_path|
             theme_name = File.basename(file_path, '.*')
@@ -141,11 +143,11 @@ module Dsu
         end
 
         def delete(theme_name:)
-          superclass.delete(file_path: themes_path_for(theme_name: theme_name))
+          superclass.delete(file_path: themes_path(theme_name: theme_name))
         end
 
         def delete!(theme_name:)
-          superclass.delete!(file_path: themes_path_for(theme_name: theme_name))
+          superclass.delete!(file_path: themes_path(theme_name: theme_name))
         end
 
         def ensure_color_theme_color_defaults_for(theme_hash: DEFAULT_THEME)
@@ -160,11 +162,11 @@ module Dsu
         end
 
         def exist?(theme_name:)
-          superclass.file_exist?(file_path: themes_path_for(theme_name: theme_name))
+          superclass.file_exist?(file_path: themes_path(theme_name: theme_name))
         end
 
         def find(theme_name:)
-          theme_hash = read!(file_path: themes_path_for(theme_name: theme_name))
+          theme_hash = read!(file_path: themes_path(theme_name: theme_name))
           Services::ColorTheme::HydratorService.new(theme_name: theme_name, theme_hash: theme_hash).call
         end
 
@@ -180,68 +182,16 @@ module Dsu
           new(theme_name: theme_name)
         end
 
-        # TODO: Unused?
-        # def build_color_theme(theme_name:, base_color:, description:)
-        #   theme_hash = Models::ColorTheme.send(:replace, color_theme: default,
-        #     replace_color: :cyan, with_color: base_color).tap do |hash|
-        #     hash[:description] = description
-        #   end
-        #   new(theme_name: theme_name, theme_hash: theme_hash)
-        # end
-
         private
 
         def default_theme_color_keys
           DEFAULT_THEME_COLORS.keys
-        end
-
-        def replace(color_theme:, replace_color:, with_color:)
-          colors_theme_hash = color_theme.to_theme_colors_h.tap do |hash|
-            hash.each_key do |key|
-              hash[key] = replace_color(theme_color: hash[key],
-                replace_color: replace_color, with_color: with_color)
-            end
-          end
-          DEFAULT_THEME.merge(colors_theme_hash)
-        end
-
-        def replace_color(theme_color:, replace_color:, with_color:)
-          %i[color background].each do |color_type|
-            color = theme_color[color_type].to_s.sub(replace_color.to_s, with_color.to_s)
-            theme_color[color_type] = color.sub('light_light_', 'light_').to_sym
-          end
-          theme_color
-        end
-
-        # If the color theme is deleted (deleted_theme_name) and the current
-        # theme_name in the configuration is the same as the deleted theme,
-        # we need to reset the configuration theme to the default theme.
-        def reset_default_configuration_color_theme_if!(deleted_theme_name:)
-          config = configuration
-          return if config.theme_name == self::DEFAULT_THEME_NAME
-          return unless config.theme_name == deleted_theme_name
-          return unless config.exist?
-
-          config.theme_name = self::DEFAULT_THEME_NAME
-          config.write!
-        end
-
-        def themes_path_for(theme_name:)
-          Support::Fileable.themes_path(theme_name: theme_name)
         end
       end
 
       def to_h
         {}.tap do |hash|
           DEFAULT_THEME.each_key do |key|
-            hash[key] = public_send(key)
-          end
-        end
-      end
-
-      def to_theme_colors_h
-        {}.tap do |hash|
-          DEFAULT_THEME_COLORS.each_key do |key|
             hash[key] = public_send(key)
           end
         end
