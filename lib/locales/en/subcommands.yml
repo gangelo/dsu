@@ -41,7 +41,7 @@ en:
         long_desc: |
           Deletes the configuration file.
 
-          EXAMPLES:
+          EXAMPLES
 
           dsu config delete
 
@@ -54,7 +54,7 @@ en:
         long_desc: |
           Displays information about this gem configuration.
 
-          EXAMPLES:
+          EXAMPLES
 
           $ dsu config info
       init:
@@ -63,7 +63,7 @@ en:
         long_desc: |
           Creates and initializes a .dsu file in your home folder (%{home_folder}) that may be edited.
 
-          EXAMPLES:
+          EXAMPLES
 
           $ dsu config init
 
@@ -132,7 +132,7 @@ en:
 
           %{mnemonic_option_description}
 
-          EXAMPLES:
+          EXAMPLES
 
           NOTE: All examples can substitute their respective short form options (e.g. `-f`, `-t`, etc. for `--from`, `--to`, etc.).
 
@@ -238,7 +238,7 @@ en:
 
           %{mnemonic_option_description}
 
-          EXAMPLES:
+          EXAMPLES
 
           NOTE: All examples can substitute their respective short form options (e.g. `-f`, `-t`, etc. for `--from`, `--to`, etc.).
 
@@ -321,7 +321,7 @@ en:
 
           If the `--override` option is used, the import process will ignore the project name found in the import file and import the entries into the current project.
 
-          EXAMPLES:
+          EXAMPLES
 
           NOTE: All examples can substitute their respective short form options (e.g. `-f`, `-t`, etc. for `--from`, `--to`, etc.).
 
@@ -379,7 +379,7 @@ en:
 
           If the `--override` option is used, the import process will ignore the project name found in the import file and import the entries into the current project.
 
-          EXAMPLES:
+          EXAMPLES
 
           This will import all the DSU entries from the import file, and replace all the entries for the respective entry groups imported:
 
@@ -438,7 +438,7 @@ en:
 
           %{mnemonic_option_description}
 
-          EXAMPLES:
+          EXAMPLES
 
           NOTE: All example results are subject to the `--include-all|-a` option.
 
@@ -500,28 +500,32 @@ en:
           $ dsu list y
     project:
       create:
-        desc: create|c PROJECT_NAME [OPTIONS]
-        usage: Creates a dsu project using the given PROJECT_NAME and OPTIONS
+        desc: create|c PROJECT_NAME [PROJECT_DESCRIPTION]
+        usage: Creates a dsu project using the given PROJECT_NAME and optional PROJECT_DESCRIPTION
         long_desc: |
-          Creates a dsu project using the given PROJECT_NAME and OPTIONS.
+          Creates a dsu project using the given PROJECT_NAME and optional PROJECT_DESCRIPTION.
 
-          dsu project create PROJECT_NAME [OPTIONS]
+          dsu project create PROJECT_NAME [PROJECT_DESCRIPTION]
 
-          dsu p c PROJECT_NAME [OPTIONS]
+          dsu p c PROJECT_NAME [PROJECT_DESCRIPTION]
 
           PROJECT_NAME
 
           The name of the project to create. PROJECT_NAME must be between 2 and 24 characters (inclusive) in length.
 
-          OPTIONS
+          PROJECT_DESCRIPTION
 
-          -d|--description DESCRIPTION: Optional. The description of the project. DESCRIPTION must be between 2 and 256 characters (inclusive) in length. If DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
+          Optional. The description of the project. PROJECT_DESCRIPTION must be between 2 and 32 characters (inclusive) in length. If PROJECT_DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
 
-          EXAMPLES:
+          EXAMPLES
 
-          $ dsu project create "My project" --description "My project description"
+          $ dsu project create "My project" "My project description"
 
-          $ dsu p c "My project" -d "My project description"
+          $ dsu p c "My project" "My project description"
+
+          The below example will create a project called "Alpa" with the description "Alpa project".
+
+          $ dsu p c "Alpha"
         messages:
           created: Created project "%{project_name}".
         prompts:
@@ -555,19 +559,19 @@ en:
 
           PROJECT_NAME and PROJECT_NUMBER are optional. If neither are provided, the current, default project will be used.
 
-          EXAMPLES:
+          EXAMPLES
 
           $ dsu project delete "My project"
 
           $ dsu p d "My project"
 
-          # The below examples delete the project equating to the nth project in the list of projects (see `dsu project list`).
+          The below examples delete the project equating to the nth project in the list of projects (see `dsu project list`).
 
           $ dsu project delete 2
 
           $ dsu p d 2
 
-          # The below examples delete the current, default project.
+          The below examples delete the current, default project.
 
           $ dsu project delete
 
@@ -589,7 +593,7 @@ en:
 
           dsu p l
 
-          EXAMPLES:
+          EXAMPLES
 
           $ dsu project list
 
@@ -620,7 +624,7 @@ en:
 
           Optional. The description of the project. NEW_PROJECT_DESCRIPTION must be between 2 and 32 characters (inclusive) in length. If NEW_PROJECT_DESCRIPTION is not provided, the project description will be "<NEW_PROJECT_NAME> project" where <NEW_PROJECT_NAME> = the name of the project.
 
-          EXAMPLES:
+          EXAMPLES
 
           $ dsu project rename "My Project" "My New Project" "My new project description"
 
@@ -628,7 +632,11 @@ en:
 
           $ dsu project rename 1 "My New Project" "My new project description"
 
-          $ dsu p r 1   "My New Project" "My new project description"
+          $ dsu p r 1 "My New Project" "My new project description"
+
+          The below example will rename the project called "Alpa" with the "Beta" and add the description "Beta project".
+
+          $ dsu p r Alpha Beta
         messages:
           # created: Created project "%{project_name}".
           new_project_already_exists: A project for new project name "%{new_project_name}" already exists.
@@ -661,7 +669,7 @@ en:
 
           PROJECT_NAME|PROJECT_NUMBER are optional. The project name or project number of the project to use. If PRONECT_NAME is not provided, the default project will be used. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
 
-          EXAMPLES:
+          EXAMPLES
 
           These will use the default project.
 
