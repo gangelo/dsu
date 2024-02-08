@@ -114,6 +114,9 @@ module Dsu
         end
 
         def write!(file_data:, file_path:)
+          # TODO: Should we be raising an error if the file does not exist?
+          # raise file_does_not_exist_message(file_path: file_path) unless file_exist?(file_path: file_path)
+
           write(file_data: file_data, file_path: file_path)
         end
 

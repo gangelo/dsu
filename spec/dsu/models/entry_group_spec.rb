@@ -91,6 +91,67 @@ RSpec.describe Dsu::Models::EntryGroup do
     end
   end
 
+  describe '#delete' do
+    context 'when the entry group file exists' do
+      before do
+        create(:entry_group, :with_entries, time: time)
+      end
+
+      it 'deletes the entry group along with the entries' do
+        expect(entry_group.delete).to eq(entry_group.entries)
+        expect(entry_group.exist?).to be false
+        expect(File.exist?(entry_group.file_path)).to be false
+      end
+    end
+
+    context 'when the entry group file does NOT exist' do
+      before do
+        build(:entry_group, :with_entries, time: time)
+      end
+
+      it 'returns the entry group entries if any' do
+        expect(entry_group.delete).to eq(entry_group.entries)
+      end
+    end
+  end
+
+  describe '#delete!' do
+    context 'when the entry group file exists' do
+      before do
+        create(:entry_group, :with_entries, time: time)
+      end
+
+      it 'deletes the entry group along with the entries' do
+        expect(entry_group.delete!).to eq(entry_group.entries)
+        expect(entry_group.exist?).to be false
+        expect(File.exist?(entry_group.file_path)).to be false
+      end
+    end
+
+    context 'when the entry group file does NOT exist' do
+      before do
+        build(:entry_group, :with_entries, time: time)
+      end
+
+      it 'raises an error' do
+        expect { entry_group.delete! }.to raise_error(/File .+ does not exist/)
+      end
+    end
+  end
+
+  describe '#hash' do
+    let(:expected_hash) do
+      entry_group.entries.map(&:hash).tap do |hashes|
+        hashes << entry_group.version.hash
+        hashes << Dsu::Support::TimeComparable.time_equal_compare_string_for(time: entry_group.time)
+      end.hash
+    end
+
+    it 'returns the entry group hash' do
+      expect(entry_group.hash).to eq expected_hash
+    end
+  end
+
   describe '#time' do
     context 'when time is nil?' do
       before do
@@ -121,6 +182,12 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
 
       it_behaves_like 'the validation fails'
+    end
+  end
+
+  describe '#time_yyyy_mm_dd' do
+    it 'returns the time formatted as yyyy-mm-dd' do
+      expect(entry_group.time_yyyy_mm_dd).to eq entry_group.time.strftime('%Y-%m-%d')
     end
   end
 
@@ -220,6 +287,48 @@ RSpec.describe Dsu::Models::EntryGroup do
   end
 
   describe 'class methods' do
+    describe '.all' do
+      subject(:all_entry_groups) { described_class.all }
+
+      context 'when there are entry group files' do
+        before do
+          create(:entry_group, :with_entries, time: time.yesterday)
+          create(:entry_group, :with_entries, time: time)
+          create(:entry_group, :with_entries, time: time.tomorrow)
+        end
+
+        it 'returns all the entry groups' do
+          expect(all_entry_groups.count).to eq 3
+        end
+      end
+
+      context 'when there are NO entry groups' do
+        it 'returns an empty Array' do
+          expect(all_entry_groups).to eq []
+        end
+      end
+    end
+
+    describe '.any' do
+      subject(:any_entry_groups) { described_class.any? }
+
+      context 'when there are entry group files' do
+        before do
+          create(:entry_group, :with_entries, time: time)
+        end
+
+        it 'returns true' do
+          expect(any_entry_groups).to be true
+        end
+      end
+
+      context 'when there are NO entry groups' do
+        it 'returns false' do
+          expect(any_entry_groups).to be false
+        end
+      end
+    end
+
     describe '.delete' do
       context 'when an entry group file exists for :time' do
         before do
@@ -278,6 +387,58 @@ RSpec.describe Dsu::Models::EntryGroup do
       end
     end
 
+    describe '.entry_groups' do
+      let(:times) { times_for_week_of(Time.now.localtime) }
+
+      context 'when there are entry groups' do
+        before do
+          entry_groups
+        end
+
+        let(:entry_groups) do
+          times.map do |time|
+            create(:entry_group, :with_entries, time: time)
+          end
+        end
+
+        it 'returns the entry groups' do
+          expected_entry_groups = entry_groups[1..-2]
+          expect(described_class.entry_groups(between: times[1..-2])).to match_array(expected_entry_groups)
+        end
+      end
+
+      context 'when there are no entry groups' do
+        it 'returns an empty array' do
+          expect(described_class.entry_groups(between: times[1..-2])).to eq []
+        end
+      end
+    end
+
+    describe '.entry_group_times' do
+      context 'when there are entry groups' do
+        before do
+          times.map do |time|
+            create(:entry_group, :with_entries, time: time)
+          end
+        end
+
+        let(:times) { times_for_week_of(Time.now.localtime) }
+
+        it 'returns the entry group times' do
+          expected_times = times[1..-2].map { |time| time.to_date.to_s }
+          expect(described_class.entry_group_times(between: times[1..-2])).to match_array(expected_times)
+        end
+      end
+
+      context 'when there are no entry groups' do
+        let(:times) { times_for_week_of(Time.now.localtime) }
+
+        it 'returns an empty array' do
+          expect(described_class.entry_group_times(between: times)).to eq []
+        end
+      end
+    end
+
     describe '.find' do
       subject(:entry_group) { described_class.find(time: time) }
 
@@ -297,6 +458,118 @@ RSpec.describe Dsu::Models::EntryGroup do
         let(:expected_error) { /File ".+" does not exist/ }
 
         it_behaves_like 'an error is raised'
+      end
+    end
+
+    describe '.find_or_initialize' do
+      context 'when the entry group file exists' do
+        before do
+          entry_group
+          allow(described_class).to receive(:find_or_initialize).and_call_original
+        end
+
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { create(:entry_group, :with_entries, time: time) }
+
+        it 'returns the existing entry group' do
+          expect(described_class.find_or_initialize(time: time)).to eq entry_group
+          expect(described_class).to have_received(:find_or_initialize).exactly(1).times
+        end
+      end
+
+      context 'when the entry group file does NOT exist' do
+        before do
+          entry_group
+          allow(described_class).to receive(:new).and_call_original
+        end
+
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { build(:entry_group, :with_entries, time: time) }
+
+        it 'returns the created entry group' do
+          expect(described_class.find_or_initialize(time: time).time).to eq time
+          expect(described_class).to have_received(:new).exactly(1).times
+          expect(entry_group.exist?).to be false
+        end
+      end
+    end
+
+    describe '.write' do
+      subject(:entry_group_write) do
+        file_data = entry_group.to_h
+        file_path = entry_group.file_path
+        described_class.write(file_data: file_data, file_path: file_path)
+      end
+
+      context 'when the entry group file exists and there are entries' do
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { create(:entry_group, :with_entries, time: time) }
+
+        it 'writes the entry group to disk' do
+          expect { entry_group_write }.to_not raise_error
+          expect(entry_group.exist?).to be true
+        end
+      end
+
+      context 'when the entry group file exists and there are no entries' do
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { create(:entry_group, :with_entries, time: time) }
+
+        it 'deletes the entry group file' do
+          entry_group.entries = []
+          expect { entry_group_write }.to_not raise_error
+          expect(entry_group.exist?).to be false
+        end
+      end
+
+      context 'when the entry group does not exist and has no entries' do
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { build(:entry_group, time: time) }
+
+        it 'does not write the entry group file to disk' do
+          expect { entry_group_write }.to_not raise_error
+          expect(entry_group.exist?).to be false
+        end
+      end
+    end
+
+    describe '.write!' do
+      subject(:entry_group_write) do
+        file_data = entry_group.to_h
+        file_path = entry_group.file_path
+        described_class.write!(file_data: file_data, file_path: file_path)
+      end
+
+      context 'when the entry group file exists and there are entries' do
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { create(:entry_group, :with_entries, time: time) }
+
+        it 'writes the entry group to disk' do
+          expect { entry_group_write }.to_not raise_error
+          expect(entry_group.exist?).to be true
+        end
+      end
+
+      context 'when the entry group file exists and there are no entries' do
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { create(:entry_group, :with_entries, time: time) }
+
+        it 'delets the entry group file' do
+          entry_group.entries = []
+          expect { entry_group_write }.to_not raise_error
+          expect(entry_group.exist?).to be false
+        end
+      end
+
+      context 'when the entry group file does not exist and there are no entries' do
+        let(:time) { Time.now.localtime }
+        let(:entry_group) { build(:entry_group, :with_entries, time: time) }
+
+        it 'raises an error and does not write the entry group file to disk' do
+          entry_group.entries = []
+          expect { entry_group_write }.to raise_error(/File .+ does not exist/)
+          expect(entry_group.exist?).to be false
+        end
       end
     end
   end
