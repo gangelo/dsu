@@ -163,6 +163,21 @@ RSpec.describe 'Dsu theme features', type: :feature do
     end
 
     context 'when the color theme file does not exist' do
+      context 'when not running locally and the color theme does not exist' do
+        before do
+          allow(Dsu.env).to receive(:local?).and_return(false)
+        end
+
+        let(:theme_name) { 'Does not exist' }
+        let(:args) { ['theme', 'use', theme_name] }
+
+        it "displays the 'theme does not exist' message to the console" do
+          expect(capture_stderr_and_strip_escapes { cli }).to match(/Color theme "#{theme_name}" does not exist./)
+        end
+
+        it_behaves_like 'the color theme does not exist'
+      end
+
       context 'when the user does not want to create the color theme' do
         before do
           color_theme = create(:color_theme)
