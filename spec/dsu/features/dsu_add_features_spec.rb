@@ -190,5 +190,21 @@ RSpec.describe 'Dsu add features', type: :feature do
 
       it_behaves_like 'the expected output is displayed'
     end
+
+    context 'when an error is raised' do
+      subject(:cli) do
+        capture_stderr_and_strip_escapes { Dsu::CLI.start(args) }
+      end
+
+      before do
+        allow(Dsu::Models::Entry).to receive(:new).and_raise(ArgumentError, 'Boom!')
+      end
+
+      let(:args) { ['add', '--date', '2023-06-15', 'This is a test'] }
+
+      it 'displays the error message' do
+        expect(cli).to include('Boom!')
+      end
+    end
   end
 end
