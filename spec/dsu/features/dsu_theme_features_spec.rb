@@ -118,6 +118,19 @@ RSpec.describe 'Dsu theme features', type: :feature do
         expect { cli }.to output(color_theme_regex_for(theme_names: theme_names)).to_stdout
       end
     end
+
+    context 'when the default color theme does not exist' do
+      before do
+        theme_names.each { |theme_name| create(:color_theme, theme_name: theme_name) }
+        allow(Dsu::Models::ColorTheme).to receive(:exist?).with(theme_name: Dsu::Models::ColorTheme::DEFAULT_THEME_NAME).and_return(false)
+      end
+
+      let(:theme_names) { [theme_name, 'b_test', 'c_test'] }
+
+      it 'displays the color theme' do
+        expect { cli }.to output(color_theme_regex_for(theme_names: theme_names)).to_stdout
+      end
+    end
   end
 
   describe '#use' do
