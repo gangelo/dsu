@@ -177,12 +177,6 @@ module Dsu
           Services::EntryGroup::HydratorService.new(entry_group_hash: entry_group_hash).call
         end
 
-        def find_or_create(time:)
-          find_or_initialize(time: time).tap do |entry_group|
-            entry_group.write! unless entry_group.exist?
-          end
-        end
-
         def find_or_initialize(time:)
           file_path = entries_path_for(time: time)
           read(file_path: file_path) do |entry_group_hash|

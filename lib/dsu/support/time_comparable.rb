@@ -5,6 +5,8 @@ module Dsu
     module TimeComparable
       TIME_COMPARABLE_FORMAT_SPECIFIER = '%Y%m%d'
 
+      module_function
+
       def time_equal?(other_time:)
         time_equal_compare_string_for(time: time) == time_equal_compare_string_for(time: other_time)
       end
