@@ -194,6 +194,63 @@ RSpec.describe Dsu::Models::ColorTheme do
         end
       end
     end
+
+    describe '#delete!' do
+      before do
+        color_theme.write
+      end
+
+      it 'deletes the theme file' do
+        color_theme.delete!
+        expect(color_theme.exist?).to be false
+      end
+
+      context 'when the theme is the current theme in the configuration' do
+        before do
+          create(:configuration).tap do |configuration|
+            configuration.theme_name = theme_name
+            configuration.write
+          end
+        end
+
+        let(:theme_name) { 'test' }
+
+        it_behaves_like 'the color theme is the current color theme in the configuration'
+
+        it_behaves_like 'the color theme exists'
+
+        it 'deletes the theme file' do
+          color_theme.delete!
+          theme_path = Dsu::Support::Fileable.themes_path(theme_name: theme_name)
+          expect(File.exist?(theme_path)).to be(false)
+        end
+      end
+
+      context 'when the theme is not the current theme in the configuration' do
+        before do
+          big_red = described_class.find_or_create(theme_name: 'big_red')
+          create(:configuration).tap do |configuration|
+            configuration.theme_name = big_red.theme_name
+            configuration.write
+          end
+        end
+
+        let(:theme_name) { 'test' }
+
+        it_behaves_like 'the color theme is not the current color theme in the configuration'
+
+        it_behaves_like 'the color theme exists'
+
+        it 'deletes the theme file' do
+          color_theme.delete!
+          expect(color_theme.exist?).to be(false)
+        end
+
+        it 'does not change the current theme in the configuration' do
+          expect(create(:configuration).theme_name).to eq('big_red')
+        end
+      end
+    end
   end
 
   describe 'class constants' do
@@ -235,6 +292,25 @@ RSpec.describe Dsu::Models::ColorTheme do
   end
 
   describe 'class methods' do
+    describe '.all' do
+      context 'when there are no color themes' do
+        before do
+          themes_folder = Dsu::Support::Fileable.themes_folder
+          allow(Dir).to receive(:glob).with("#{themes_folder}/*").and_return([])
+        end
+
+        it 'returns an empty array' do
+          expect(described_class.all).to eq([])
+        end
+      end
+
+      context 'when there are color themes' do
+        it 'returns an array of color themes' do
+          expect(described_class.all).to contain_exactly(described_class.default)
+        end
+      end
+    end
+
     describe '.current_or_default' do
       context 'when the configuration theme is set to the default theme' do
         before do
@@ -272,6 +348,32 @@ RSpec.describe Dsu::Models::ColorTheme do
 
       it 'returns the default color theme' do
         expect(described_class.default).to eq(expected_default_color_theme)
+      end
+    end
+
+    describe '.find_or_initialize' do
+      context 'when the theme exists' do
+        let(:expected_color_theme) do
+          create(:color_theme, theme_name: 'Exists')
+        end
+
+        it 'returns the color theme' do
+          theme_name = expected_color_theme.theme_name
+          expect(described_class.find_or_initialize(theme_name: theme_name)).to eq(expected_color_theme)
+          expect(expected_color_theme.exist?).to be true
+        end
+      end
+
+      context 'when the theme does not exist' do
+        let(:expected_color_theme) do
+          build(:color_theme, theme_name: 'Does not exist')
+        end
+
+        it 'returns the color theme' do
+          theme_name = expected_color_theme.theme_name
+          expect(described_class.find_or_initialize(theme_name: theme_name)).to eq(expected_color_theme)
+          expect(expected_color_theme.exist?).to be false
+        end
       end
     end
   end
