@@ -2,7 +2,7 @@
 
 RSpec.describe 'Dsu add features', type: :feature do
   subject(:cli) do
-    strip_escapes(Dsu::Services::StdoutRedirectorService.call { Dsu::CLI.start(args) })
+    capture_stdout_and_strip_escapes { Dsu::CLI.start(args) }
   end
 
   let(:args) { %w[add] }
@@ -36,34 +36,6 @@ RSpec.describe 'Dsu add features', type: :feature do
 
     it 'displays the entry group date' do
       expect(cli).to include(expected_date)
-    end
-
-    it 'displays the description that was added' do
-      expect(cli).to include(entry_description)
-    end
-  end
-
-  context "when 'dsu add --date=DATE' is called" do
-    before do
-      with_entries
-    end
-
-    let(:args) { ['add', '--date', entry_date, entry_description] }
-    let(:entry_date) { '2023-06-16' }
-    let(:entry_description) { 'This is a test' }
-    let(:expected_date) do
-      Dsu::Support::TimeFormatable.formatted_time(time: Time.parse(entry_date))
-    end
-
-    it 'displays the entry group date' do
-      expect(cli).to include(expected_date)
-    end
-
-    it 'displays the entries already existing in the group' do
-      expected_entry_descriptions = ['20230616 description 0', '20230616 description 1']
-      expected_entry_descriptions.each do |entry_description|
-        expect(cli).to include(entry_description)
-      end
     end
 
     it 'displays the description that was added' do
@@ -155,6 +127,68 @@ RSpec.describe 'Dsu add features', type: :feature do
 
     it 'displays the description that was added' do
       expect(cli).to include(entry_description)
+    end
+  end
+
+  context "when 'dsu add --date=DATE' is called" do
+    before do
+      with_entries
+    end
+
+    shared_examples 'the expected output is displayed' do
+      it 'displays the expected output' do
+        expect(cli.split("\n")[0..4].map(&:squish).reject(&:blank?)).to eq(expected_output.split("\n"))
+      end
+    end
+
+    let(:expected_output) do
+      <<~OUTPUT
+        #{expected_date}
+        1. #{entry_date.tr('-', '')} description 0
+        2. #{entry_date.tr('-', '')} description 1
+        3. #{entry_description}
+      OUTPUT
+    end
+
+    context 'when using option --date' do
+      let(:args) { ['add', '--date', entry_date, entry_description] }
+      let(:entry_date) { '2023-06-16' }
+      let(:entry_description) { 'This is a test' }
+      let(:expected_date) do
+        Dsu::Support::TimeFormatable.formatted_time(time: Time.parse(entry_date))
+      end
+
+      it_behaves_like 'the expected output is displayed'
+    end
+
+    context 'when using --date with a positive relative date mnemonic' do
+      before do
+        freeze_time_at(time_string: '2023-06-16')
+      end
+
+      let(:args) { ['add', '--date', '+1', entry_description] }
+      let(:entry_date) { '2023-06-17' }
+      let(:entry_description) { 'This is a test' }
+      let(:expected_date) do
+        Dsu::Support::TimeFormatable.formatted_time(time: Time.parse(entry_date))
+      end
+
+      it_behaves_like 'the expected output is displayed'
+    end
+
+    context 'when using --date with a negative relative date mnemonic' do
+      before do
+        freeze_time_at(time_string: '2023-06-16')
+      end
+
+      let(:args) { ['add', '--date', '-1', entry_description] }
+      let(:entry_date) { '2023-06-15' }
+      let(:entry_description) { 'This is a test' }
+      let(:expected_date) do
+        Dsu::Support::TimeFormatable.formatted_time(time: Time.parse(entry_date))
+      end
+
+      it_behaves_like 'the expected output is displayed'
     end
   end
 end

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Enhancements
 [x] Added `dsu project` command to manage DSU projects. See `dsu help project` or the [dsu wiki](https://github.com/gangelo/dsu/wiki) for more information.
+[x] The `dsu add` command how allows you to add entries using mnemonics and relative date mnemonics (RDMs) in addition to absolute dates. For example, `dsu add -d -7 "My entry"` will add an entry one week in the past from the current day. See `dsu help add` for more information.
 
 ### Changes
 [x] Update ruby gems.
