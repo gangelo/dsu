@@ -30,15 +30,17 @@ en:
       long_desc: |
         Will add a DSU entry having DESCRIPTION to the date associated with the given OPTION.
 
-        $ dsu add [-d DATE|-n|-t|-y] DESCRIPTION
+        $ dsu add [-d DATE|MNEMONIC|-n|-t|-y] DESCRIPTION
 
-        $ dsu a [-d DATE|-n|-t|-y] DESCRIPTION
+        $ dsu a [-d DATE|MNEMONIC|-n|-t|-y] DESCRIPTION
 
         OPTIONS:
 
-        -d DATE: Adds a DSU entry having DESCRIPTION to the DATE.
+        -d DATE|MNEMONIC: Adds a DSU entry having DESCRIPTION to the DATE or date referenced by the MNEMONIC.
 
         %{date_option_description}
+
+        %{mnemonic_option_description}
 
         -n: Adds a DSU entry having DESCRIPTION to today's date (`Time.now`).
 
