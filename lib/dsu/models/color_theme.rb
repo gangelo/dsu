@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'json'
 require_relative '../crud/json_file'
 require_relative '../migration/version'
 require_relative '../support/color_themable'

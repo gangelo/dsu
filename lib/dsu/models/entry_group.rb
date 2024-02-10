@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_model'
 require_relative '../crud/json_file'
 require_relative '../migration/version'
 require_relative '../services/entry_group/editor_service'
