@@ -31,7 +31,7 @@ module Dsu
 
       class << self
         def run_migrations?
-          Models::MigrationVersion.new.version < Dsu::Migration::VERSION
+          Models::MigrationVersion.new.version < 20230613121411 # rubocop:disable Style/NumericLiterals
         end
       end
 

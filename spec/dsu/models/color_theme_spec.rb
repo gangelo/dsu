@@ -75,7 +75,7 @@ RSpec.describe Dsu::Models::ColorTheme do
 
   describe 'constants' do
     it 'defines VERSION' do
-      expect(described_class::VERSION).to eq 20230613121411 # rubocop:disable Style/NumericLiterals
+      expect(described_class::VERSION).to eq 20240210161248 # rubocop:disable Style/NumericLiterals
     end
 
     it_behaves_like 'the version is a valid version'
