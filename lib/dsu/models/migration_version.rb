@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'active_model'
 require_relative '../crud/json_file'
 require_relative '../services/migration_version/hydrator_service'
 require_relative '../validators/version_validator'

@@ -47,9 +47,9 @@ RSpec.describe Dsu::Migration::Service do
         end
       end
 
-      context 'when the migration version less than the current version' do
+      context 'when the migration version less than 20230613121411' do
         before do
-          create(:migration_version, version: Dsu::Migration::VERSION - 1)
+          create(:migration_version, version: 20230613121411 - 1) # rubocop:disable Style/NumericLiterals
         end
 
         it 'returns true' do
