@@ -55,6 +55,7 @@ RSpec.configure do |config|
 
   config.include ColorThemeHelpers
   config.include DescriptionStringHelpers
+  config.include MockMigrationVersionHepers, type: :migration
   config.include ProjectHelpers
   config.include StdxxxHelpers
   config.include TimeHelpers

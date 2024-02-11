@@ -29,3 +29,4 @@ todo.txt
 migration_version.yml
 
 .DS_Store
+current_project.bak

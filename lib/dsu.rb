@@ -25,6 +25,8 @@ Dir.glob("#{__dir__}/dsu/**/*.rb").each do |file|
 end
 
 unless Dsu.env.test? || Dsu.env.development?
+  # TODO: This is upgrading from migrations version 0 to 20230613121411
+  # Move this to to its own class and call from Migration::Factory.
   if Dsu::Migration::Service.run_migrations?
     begin
       Dsu::Migration::Service.new.call
@@ -34,5 +36,5 @@ unless Dsu.env.test? || Dsu.env.development?
     end
   end
 
-  Dsu::Migration::Factory.migrate_if!
+  Dsu::Migration::Factory.migrate_if!(options: { pretend: false })
 end

@@ -39,6 +39,8 @@ module Dsu
         end
 
         def default_project_name
+          return Models::Configuration::DEFAULT_CONFIGURATION[:default_project] unless Models::Configuration.exist?
+
           Models::Configuration.new.default_project
         end
 

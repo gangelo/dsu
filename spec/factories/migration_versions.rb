@@ -9,6 +9,12 @@ FactoryBot.define do
       version { Dsu::Migration::VERSION }
     end
 
-    initialize_with { Dsu::Models::MigrationVersion.new(version: version, options: options) }
+    initialize_with do
+      Dsu::Models::MigrationVersion.new(version: version, options: options)
+    end
+
+    after(:create) do |migration_version, _evaluator|
+      migration_version.save!
+    end
   end
 end
