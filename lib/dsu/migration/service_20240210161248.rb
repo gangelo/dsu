@@ -3,16 +3,9 @@
 require_relative '../support/fileable'
 require_relative 'version'
 
-# TODO: Read raw configuration .json file
-# If default_project is not set...
-#   - Add default_project to configuration .json file and write it out.
-#   - Reload the configuration file.
-#   - Create a Models::Project object for the default project and initialize/save it.
-#   - Move the old entries folder into the default project folder.
-# TODO: Add default_project to configuration .json file
 module Dsu
   module Migration
-    class Service20230613121411
+    class Service20240210161248
       include Support::Fileable
 
       def initialize(options: {})
@@ -31,13 +24,13 @@ module Dsu
         puts
 
         add_new_color_themes
-        backup
+        create_backup
         create_default_project
         update_configuration
         update_entry_groups
         update_color_themes
+        update_migration_version
         delete_old_entry_folder
-        delete_old_theme_folder
 
         puts 'Migration completed successfully.'
       end
@@ -56,15 +49,16 @@ module Dsu
 
         %w[light.json christmas.json].each do |theme_file|
           destination_theme_file_path = File.join(Dsu::Support::Fileable.themes_folder, theme_file)
-          next if File.exist?(destination_theme_file_path)
+          # next if File.exist?(destination_theme_file_path)
 
           source_theme_file_path = File.join(Dsu::Support::Fileable.seed_data_folder, 'themes', theme_file)
           FileUtils.cp(source_theme_file_path, destination_theme_file_path) unless pretend?
-          puts I18n.t('migrations.information.theme_copied', from: source_theme_file_path, to: destination_theme_file_path)
+          puts I18n.t('migrations.information.theme_copied',
+            from: source_theme_file_path, to: destination_theme_file_path)
         end
       end
 
-      def backup
+      def create_backup
         return if Dir.exist?(backup_folder)
 
         puts 'Creating backup...'
@@ -87,14 +81,19 @@ module Dsu
         puts 'Updating configuration...'
         puts
 
-        Models::Configuration.new.write! unless pretend?
+        return if pretend?
+
+        Models::Configuration.new.tap do |configuration|
+          configuration.version = Dsu::Migration::VERSION
+          configuration.write!
+        end
       end
 
       def update_entry_groups
         puts 'Updating entry groups...'
         puts
 
-        return if Dir.exist?(entries_folder) || pretend?
+        return if pretend? || Dir.exist?(entries_folder)
 
         puts 'Copying entries to default project...'
         puts
@@ -116,22 +115,31 @@ module Dsu
         puts 'Updating color themes...'
         puts
 
-        return if Dir.exist?(themes_folder) || pretend?
-
         puts 'Copying color themes...'
         puts
 
-        FileUtils.mkdir_p(themes_folder)
-        FileUtils.cp_r(File.join(backup_folder, 'themes', '.'), themes_folder)
+        unless pretend?
+          FileUtils.mkdir_p(themes_folder)
+          FileUtils.cp_r(File.join(backup_folder, 'themes', '.'), themes_folder)
+        end
 
         puts 'Updating color theme version...'
         puts
 
         Models::ColorTheme.all.each do |color_theme|
           puts "Updating color theme version: #{color_theme.theme_name}..."
-          color_theme.version = Dsu::Migration::VERSION
+          color_theme.update_version!
           color_theme.save! unless pretend?
         end
+      end
+
+      def update_migration_version
+        puts 'Updating migration version...'
+        puts
+
+        return if pretend? || migration_version == Migration::VERSION
+
+        Models::MigrationVersion.new(version: Migration::VERSION).save!
       end
 
       def delete_old_entry_folder
@@ -141,15 +149,8 @@ module Dsu
         FileUtils.rm_rf(File.join(dsu_folder, 'entries')) unless pretend?
       end
 
-      def delete_old_theme_folder
-        puts 'Cleaning up old themes...'
-        puts
-
-        FileUtils.rm_rf(File.join(dsu_folder, 'themes')) unless pretend?
-      end
-
       def backup_folder
-        @backup_folder ||= File.join(dsu_folder, target_migration_version.to_s)
+        @backup_folder ||= File.join(root_folder, "dsu-#{target_migration_version}-backup")
       end
 
       def target_migration_version

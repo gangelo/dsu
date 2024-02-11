@@ -1,65 +1,65 @@
 {
   "version": 20230613121411,
-  "description": "Theme for Light backgrounds",
+  "description": "Matrix color theme",
   "help": {
-    "color": "default",
+    "color": "green",
     "mode": "default",
     "background": "default"
   },
   "dsu_header": {
     "color": "white",
     "mode": "bold",
-    "background": "black"
+    "background": "green"
   },
   "dsu_footer": {
-    "color": "default",
+    "color": "green",
     "mode": "default",
     "background": "default"
   },
   "header": {
-    "color": "default",
+    "color": "green",
     "mode": "bold",
     "background": "default"
   },
   "subheader": {
-    "color": "default",
+    "color": "green",
     "mode": "underline",
     "background": "default"
   },
   "body": {
-    "color": "default",
+    "color": "green",
     "mode": "default",
     "background": "default"
   },
   "footer": {
-    "color": "default",
+    "color": "light_green",
     "mode": "default",
     "background": "default"
   },
   "date": {
-    "color": "default",
+    "color": "green",
     "mode": "bold",
     "background": "default"
   },
   "index": {
-    "color": "default",
-    "mode": "italic",
+    "color": "light_green",
+    "mode": "default",
     "background": "default"
   },
   "info": {
-    "color": "white",
-    "mode": "bold",
-    "background": "blue"
+    "color": "green",
+    "mode": "default",
+    "background": "default"
   },
   "success": {
-    "color": "white",
-    "mode": "bold",
-    "background": "green"
+    "color": "green",
+    "mode": "default",
+    "background": "default"
   },
   "warning": {
-    "color": "default",
-    "mode": "bold",
-    "background": "yellow"
+    "color": "yellow",
+    "mode": "default",
+    "background": "default"
   },
   "error": {
     "color": "light_yellow",
@@ -67,12 +67,12 @@
     "background": "red"
   },
   "prompt": {
-    "color": "default",
+    "color": "green",
     "mode": "bold",
     "background": "default"
   },
   "prompt_options": {
-    "color": "default",
+    "color": "white",
     "mode": "bold",
     "background": "default"
   }

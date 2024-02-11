@@ -1,55 +1,55 @@
 {
   "version": 20230613121411,
-  "description": "Theme for Light backgrounds",
+  "description": "Christmas theme ho ho ho!",
   "help": {
-    "color": "default",
+    "color": "red",
     "mode": "default",
     "background": "default"
   },
   "dsu_header": {
     "color": "white",
     "mode": "bold",
-    "background": "black"
+    "background": "red"
   },
   "dsu_footer": {
-    "color": "default",
+    "color": "red",
     "mode": "default",
     "background": "default"
   },
   "header": {
-    "color": "default",
+    "color": "light_green",
     "mode": "bold",
-    "background": "default"
+    "background": "red"
   },
   "subheader": {
-    "color": "default",
+    "color": "red",
     "mode": "underline",
     "background": "default"
   },
   "body": {
-    "color": "default",
-    "mode": "default",
+    "color": "red",
+    "mode": "italic",
     "background": "default"
   },
   "footer": {
-    "color": "default",
-    "mode": "default",
+    "color": "red",
+    "mode": "italic",
     "background": "default"
   },
   "date": {
-    "color": "default",
+    "color": "white",
     "mode": "bold",
-    "background": "default"
+    "background": "green"
   },
   "index": {
-    "color": "default",
-    "mode": "italic",
-    "background": "default"
+    "color": "white",
+    "mode": "bold",
+    "background": "red"
   },
   "info": {
     "color": "white",
     "mode": "bold",
-    "background": "blue"
+    "background": "light_red"
   },
   "success": {
     "color": "white",
@@ -67,12 +67,12 @@
     "background": "red"
   },
   "prompt": {
-    "color": "default",
+    "color": "white",
     "mode": "bold",
-    "background": "default"
+    "background": "green"
   },
   "prompt_options": {
-    "color": "default",
+    "color": "red",
     "mode": "bold",
     "background": "default"
   }

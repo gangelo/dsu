@@ -81,6 +81,12 @@ module Dsu
         write! unless exist?
       end
 
+      class << self
+        def exist?
+          File.exist?(Support::Fileable.config_path)
+        end
+      end
+
       # Temporarily sets the configuration to the given config_hash.
       # To reset the configuration to its original state, call #reload
       def replace!(config_hash: {})

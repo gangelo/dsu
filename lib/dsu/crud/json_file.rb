@@ -2,6 +2,7 @@
 
 require 'active_model'
 require 'json'
+require_relative '../migration/version'
 
 module Dsu
   module Crud
@@ -12,6 +13,10 @@ module Dsu
 
       def initialize(file_path)
         @file_path = file_path
+      end
+
+      def update_version!
+        @version = Migration::VERSION
       end
 
       def delete
