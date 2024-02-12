@@ -77,5 +77,7 @@ Gem::Specification.new do |spec|
     Thank you!
 
     <3 Gene
+
+    dsu now uses "Projects"! Run `dsu help project` to get started.
   POST_INSTALL
 end

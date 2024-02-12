@@ -511,11 +511,11 @@ en:
 
           PROJECT_NAME
 
-          The name of the project to create. PROJECT_NAME must be between 2 and 24 characters (inclusive) in length.
+          The name of the project to create. PROJECT_NAME must be between 2 and 32 characters (inclusive) in length.
 
           PROJECT_DESCRIPTION
 
-          Optional. The description of the project. PROJECT_DESCRIPTION must be between 2 and 32 characters (inclusive) in length. If PROJECT_DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
+          Optional. The description of the project. PROJECT_DESCRIPTION must be between 2 and 64 characters (inclusive) in length. If PROJECT_DESCRIPTION is not provided, the project description will be "<PROJECT_NAME> project" where <PROJECT_NAME> = the name of the project.
 
           EXAMPLES
 
@@ -610,7 +610,7 @@ en:
 
           PROJECT_NAME
 
-          The name of the project to create. PROJECT_NAME must be between 2 and 24 characters (inclusive) in length.
+          The name of the project to create. PROJECT_NAME must be between 2 and 32 characters (inclusive) in length.
 
           PROJECT_NUMBER
 
@@ -618,11 +618,11 @@ en:
 
           NEW_PROJECT_NAME
 
-          The new name of the project. NEW_PROJECT_NAME must be between 2 and 24 characters (inclusive) in length.
+          The new name of the project. NEW_PROJECT_NAME must be between 2 and 32 characters (inclusive) in length.
 
           NEW_PROJECT_DESCRIPTION
 
-          Optional. The description of the project. NEW_PROJECT_DESCRIPTION must be between 2 and 32 characters (inclusive) in length. If NEW_PROJECT_DESCRIPTION is not provided, the project description will be "<NEW_PROJECT_NAME> project" where <NEW_PROJECT_NAME> = the name of the project.
+          Optional. The description of the project. NEW_PROJECT_DESCRIPTION must be between 2 and 64 characters (inclusive) in length. If NEW_PROJECT_DESCRIPTION is not provided, the project description will be "<NEW_PROJECT_NAME> project" where <NEW_PROJECT_NAME> = the name of the project.
 
           EXAMPLES
 

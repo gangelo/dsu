@@ -8,10 +8,10 @@ module Dsu
       # TODO: I18n.
       class List < Views::BaseListView
         NO_JUSTIFICATION = 4
-        PROJECT_JUSTIFICATION = 15
-        DEFAULT_JUSTIFICATION = 10
-        CURRENT_JUSTIFICATION = 10
-        DESCRIPTION_JUSTIFICATION = 10
+        PROJECT_JUSTIFICATION = 15 + 10
+        DEFAULT_JUSTIFICATION = 10 + 10
+        CURRENT_JUSTIFICATION = 10 + 10
+        DESCRIPTION_JUSTIFICATION = 10 + 10
 
         DETAIL_HEADER_STRING = "#{'No.'.ljust(NO_JUSTIFICATION)} " \
                                "#{'Project'.ljust(PROJECT_JUSTIFICATION)} " \
