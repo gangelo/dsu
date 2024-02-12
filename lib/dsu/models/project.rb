@@ -25,9 +25,9 @@ module Dsu
 
       VERSION = Migration::VERSION
       MIN_PROJECT_NAME_LENGTH = 2
-      MAX_PROJECT_NAME_LENGTH = 24
+      MAX_PROJECT_NAME_LENGTH = 32
       MIN_DESCRIPTION_LENGTH = 2
-      MAX_DESCRIPTION_LENGTH = 32
+      MAX_DESCRIPTION_LENGTH = 64
 
       attr_reader :project_name, :current_project_file, :description, :version, :options
 
