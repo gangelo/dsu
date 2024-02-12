@@ -2,11 +2,14 @@
 
 require_relative '../../models/project'
 require_relative '../base_presenter_ex'
+require_relative 'defaultable'
 
 module Dsu
   module Presenters
     module Project
       class UsePresenter < BasePresenterEx
+        include Defaultable
+
         attr_reader :project_name
 
         delegate :description, to: :project, prefix: true, allow_nil: true
@@ -22,6 +25,7 @@ module Dsu
         def respond(response:)
           return false unless response
 
+          project.default! if make_default? && project&.present?
           project.use! if project&.present?
         end
 

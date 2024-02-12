@@ -29,6 +29,20 @@ RSpec.describe Dsu::Views::Project::UseByNumber do
         end
       end
 
+      context 'when option --default is true' do
+        let(:response) { 'Y' }
+        let(:options) { { default: true } }
+
+        it_behaves_like 'the project is not the current project'
+        it_behaves_like 'the project is not the default project'
+
+        it 'makes the project the default project' do
+          use_by_number_view.render
+          expect(project.current_project?).to be true
+          expect(project.default_project?).to be true
+        end
+      end
+
       context "when using a project number and user confirmation is 'n'" do
         let(:response) { 'n' }
 
