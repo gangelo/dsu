@@ -23,6 +23,17 @@ shared_examples 'the project is the default project' do
   end
 end
 
+shared_examples 'the project is not the default project' do
+  let(:default_project_name) { Dsu::Models::Configuration.new.default_project }
+
+  it_behaves_like 'the project exists'
+
+  it 'is not the default project' do
+    expect(project.default_project?).to be false
+    expect(project.project_name).to_not eq(default_project_name)
+  end
+end
+
 shared_examples 'the project is the current project' do
   let(:current_project_name) { Dsu::Models::Project.current_project_name }
 

@@ -23,7 +23,6 @@ module Dsu
 
       desc I18n.t('subcommands.project.create.desc'), I18n.t('subcommands.project.create.usage')
       long_desc I18n.t('subcommands.project.create.long_desc')
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def create(project_name = nil, description = nil)
         project_name = project_name.to_s.strip
         description = description.to_s.strip
@@ -41,7 +40,6 @@ module Dsu
 
       desc I18n.t('subcommands.project.delete.desc'), I18n.t('subcommands.project.delete.usage')
       long_desc I18n.t('subcommands.project.delete.long_desc')
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def delete(project_name_or_number = nil)
         options = configuration.to_h.merge(self.options).with_indifferent_access
         presenter = delete_presenter_for(project_name_or_number, options: options)
@@ -50,7 +48,6 @@ module Dsu
 
       desc I18n.t('subcommands.project.list.desc'), I18n.t('subcommands.project.list.usage')
       long_desc I18n.t('subcommands.project.list.long_desc')
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def list
         options = configuration.to_h.merge(self.options).with_indifferent_access
         presenter = Presenters::Project::ListPresenter.new(options: options)
@@ -59,7 +56,6 @@ module Dsu
 
       desc I18n.t('subcommands.project.rename.desc'), I18n.t('subcommands.project.rename.usage')
       long_desc I18n.t('subcommands.project.rename.long_desc')
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
       def rename(project_name_or_number = nil, new_project_name = nil, new_project_description = nil)
         project_name_or_number = project_name_or_number.to_s.strip
         new_project_name = new_project_name&.to_s&.strip
@@ -77,9 +73,10 @@ module Dsu
         rename_view_for(project_name_or_number, presenter: presenter, options: options).render
       end
 
-      desc I18n.t('subcommands.project.use.desc'), I18n.t('subcommands.project.use.usage')
+      desc I18n.t('subcommands.project.use.desc'),
+        I18n.t('subcommands.project.use.usage')
       long_desc I18n.t('subcommands.project.use.long_desc')
-      option :prompts, type: :hash, default: {}, hide: true, aliases: '-p'
+      option :default, type: :boolean, required: false, default: false, aliases: '-d', banner: 'DEFAULT_PROJECT'
       def use(project_name_or_number = nil)
         options = configuration.to_h.merge(self.options).with_indifferent_access
         presenter = use_presenter_for(project_name_or_number, options: options)
