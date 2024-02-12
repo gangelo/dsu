@@ -553,11 +553,11 @@ en:
 
           PROJECT_NUMBER
 
-          The number of the project to delete. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
+          The number of the project to delete. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be deleted (see `dsu project list`).
 
           NOTES
 
-          PROJECT_NAME and PROJECT_NUMBER are optional. If neither are provided, the current, default project will be used.
+          PROJECT_NAME and PROJECT_NUMBER are optional. If neither are provided, the current, default project will be deleted.
 
           EXAMPLES
 
@@ -614,7 +614,7 @@ en:
 
           PROJECT_NUMBER
 
-          The number of the project to rename. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be used (see `dsu project list`).
+          The number of the project to rename. If PROJECT_NUMBER is used, the project equating to the nth project in the list of projects will be renamed (see `dsu project list`).
 
           NEW_PROJECT_NAME
 
@@ -648,14 +648,18 @@ en:
             - Y
             - n
       use:
-        desc: use|u [PROJECT_NAME|PROJECT_NUMBER]
+        desc: use|u [OPTIONS] [PROJECT_NAME|PROJECT_NUMBER]
         usage: Selects the DSU project to use, based on the given PROJECT_NAME or PROJECT_NUMBER
         long_desc: |
           Selects the DSU project to use, based on the given PROJECT_NAME or PROJECT_NUMBER.
 
-          dsu project use [PROJECT_NAME|PROJECT_NUMBER]
+          dsu project use [OPTIONS] [PROJECT_NAME|PROJECT_NUMBER]
 
-          dsu p u [PROJECT_NAME|PROJECT_NUMBER]
+          dsu p u [OPTIONS] [PROJECT_NAME|PROJECT_NUMBER]
+
+          OPTIONS:
+
+          -d|--default true|false (default: false): If true, the PROJECT_NAME|PROJECT_NUMBER will become the default project.
 
           PROJECT_NAME
 
@@ -688,6 +692,12 @@ en:
           $ dsu project use 2
 
           $ dsu p u 2
+
+          These will use "Project A" and make it the default project if it is not the default project.
+
+          $ dsu project use --default "Project A"
+
+          $ dsu p u -d "Project A"
         messages:
           using_project: Now using project "%{project_name}".
         prompts:
