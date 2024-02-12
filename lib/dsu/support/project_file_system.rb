@@ -80,11 +80,6 @@ module Dsu
         end
         alias current_project_file_persisted? current_project_file_exist?
 
-        # Does dsu/projects folder exist?
-        def projects_folder_exist?
-          Dir.exist?(projects_folder)
-        end
-
         # Does dsu/projects/<project_name> folder exist?
         def project_folder_exist?(project_name:)
           Dir.exist?(project_folder_for(project_name: project_name))
