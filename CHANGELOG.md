@@ -42,6 +42,7 @@ dsu x dd -f n -t -257
 dsu-export-default-20240129125946-entry-groups-2023-05-17-thru-2024-01-29.csv
 
 ### Bug Fixes
+[x] Fix bug that did not gracefully handle invalid DATEs for the `dsu add --date DATE` command.
 
 
 ## [2.4.4] - 2024-01-28
