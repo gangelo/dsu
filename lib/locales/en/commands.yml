@@ -120,6 +120,10 @@ en:
     date:
       aliases: -d
       name: 'date'
+    date_or_mnemonic:
+      aliases: -d
+      name: 'date'
+      banner: 'DATE|MNEMONIC'
     today:
       aliases: -n
       name: 'today'
