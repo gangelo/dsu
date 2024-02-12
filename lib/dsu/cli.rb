@@ -40,7 +40,8 @@ module Dsu
     desc I18n.t('commands.add.desc'), I18n.t('commands.add.usage')
     long_desc I18n.t('commands.add.long_desc',
       date_option_description: date_option_description, mnemonic_option_description: mnemonic_option_description)
-    option I18n.t('options.date.name'), aliases: I18n.t('options.date.aliases'), type: :string
+    option I18n.t('options.date_or_mnemonic.name'), aliases: I18n.t('options.date_or_mnemonic.aliases'),
+      type: :string, banner: I18n.t('options.date_or_mnemonic.banner')
     option I18n.t('options.tomorrow.name'), aliases: I18n.t('options.tomorrow.aliases'), type: :boolean
     option I18n.t('options.yesterday.name'), aliases: I18n.t('options.yesterday.aliases'), type: :boolean
     option I18n.t('options.today.name'), aliases: I18n.t('options.today.aliases'), type: :boolean, default: true
