@@ -9,15 +9,36 @@ module MockMigrationVersionHepers
 
     create_mock_dsu_folder_for(version)
     create_mock_dsu_configuration_for(version)
-
-    create(:migration_version, version: version)
+    create_migration_version_for_if(version)
   end
 
-  def dsu_folders_match(expected:, actual:)
-    dsu_folder_contents(expected) == dsu_folder_contents(actual)
+  def dsu_folders_match?(expected:, actual:)
+    #dsu_folder_contents(expected) == dsu_folder_contents(actual)
+    dsu_folder_contents_match?(expected: expected, actual: actual)
+  end
+
+  def dsu_folder_contents_match?(expected:, actual:)
+    return false unless dsu_folder_contents(expected) == dsu_folder_contents(actual)
+
+    expected_files = dsu_folder_contents(expected)
+    actual_files = dsu_folder_contents(actual)
+
+    expected_files.each_with_index do |expected_file, index|
+      next if File.directory?(File.join(expected, expected_file))
+
+      match = files_match?(expected_file: File.join(expected, expected_file),
+        actual_file: File.join(actual, actual_files[index]))
+      return false unless match
+    end
+
+    true
   end
 
   private
+
+  def files_match?(expected_file:, actual_file:)
+    File.read(expected_file).chomp == File.read(actual_file).chomp
+  end
 
   def dsu_folder_contents(folder, exclude_files = ['.DS_Store'])
     root_path = Pathname.new(folder)
@@ -46,8 +67,13 @@ module MockMigrationVersionHepers
   end
 
   def create_mock_dsu_configuration_for(migration_version)
-    source_file = File.join('spec', 'fixtures', 'files', 'configurations', "#{migration_version}.json")
+    ext = migration_version.zero? ? 'yaml' : 'json'
+    source_file = File.join('spec', 'fixtures', 'files', 'configurations', "#{migration_version}.#{ext}")
     FileUtils.cp(source_file, temp_folder)
+  end
+
+  def create_migration_version_for_if(version)
+    create(:migration_version, version: version) unless version.zero?
   end
 
   def remove_mock_dsu_folder_and_configuration(migration_version)

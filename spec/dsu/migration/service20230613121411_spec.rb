@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Dsu::Migration::Service do
+RSpec.describe Dsu::Migration::Service20230613121411 do
   subject(:service) { described_class.new(options: options) }
 
   shared_examples 'the migration is successful' do

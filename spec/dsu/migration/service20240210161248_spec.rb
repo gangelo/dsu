@@ -16,22 +16,28 @@ RSpec.describe Dsu::Migration::Service20240210161248, type: :migration do
     it_behaves_like 'no error is raised'
   end
 
-  describe '#migrate!' do
-    subject(:service_migrate) { service.migrate! }
+  describe '#migrate_if!' do
+    subject(:service_migrate_if) { service.migrate_if! }
 
     context 'when the migration version is not 20230613121411' do
-      let(:migration_version) { 0 }
-      let(:expected_error) do
-        /Actual migration version .+ is not the expected migration version 20230613121411/
+      before do
+        mock_migration_version_for(version: migration_version)
+        service_migrate_if
       end
 
-      it_behaves_like 'an error is raised'
+      let(:migration_version) { 0 }
+      let(:expected) { File.join('spec', 'fixtures', 'folders', migration_version.to_s) }
+      let(:actual) { Dsu::Support::Fileable.dsu_folder }
+
+      it 'does not make any changes to the dsu folder structure or configuration file' do
+        expect(dsu_folders_match?(expected: expected, actual: actual)).to be(true)
+      end
     end
 
     context 'when the migration version is 20230613121411' do
       before do
         mock_migration_version_for(version: migration_version)
-        service_migrate
+        service_migrate_if
       end
 
       shared_examples 'the migration was run in pretend mode' do
@@ -39,7 +45,7 @@ RSpec.describe Dsu::Migration::Service20240210161248, type: :migration do
         let(:actual) { Dsu::Support::Fileable.dsu_folder }
 
         it 'does not make any changes to the dsu folder structure or configuration file' do
-          expect(dsu_folders_match(expected: expected, actual: actual)).to be(true)
+          expect(dsu_folders_match?(expected: expected, actual: actual)).to be(true)
         end
       end
 
@@ -59,7 +65,7 @@ RSpec.describe Dsu::Migration::Service20240210161248, type: :migration do
         let(:actual) { Dsu::Support::Fileable.dsu_folder }
 
         it 'migrates the dsu folder structure and configuration file' do
-          expect(dsu_folders_match(expected: expected, actual: actual)).to be(true)
+          expect(dsu_folders_match?(expected: expected, actual: actual)).to be(true)
         end
 
         it 'sets all the entry group versions to the correct migration version' do
