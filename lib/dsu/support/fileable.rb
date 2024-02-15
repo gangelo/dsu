@@ -83,10 +83,14 @@ module Dsu
         File.join(dsu_folder, 'backup', version.to_s)
       end
 
-      # Seed data folders
+      # Seed data files and folders
 
-      def seed_data_folder
-        File.join(gem_dir, 'lib/seed_data')
+      def seed_data_dsu_folder_for(migration_version:)
+        File.join(gem_dir, 'lib/seed_data', migration_version.to_s, 'dsu')
+      end
+
+      def seed_data_dsu_configuration_for(migration_version:)
+        File.join(gem_dir, 'lib/seed_data', migration_version.to_s, '.dsu')
       end
 
       # Projects

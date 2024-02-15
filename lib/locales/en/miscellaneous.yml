@@ -25,6 +25,5 @@ en:
       try_again: "Please try again. Valid options are [%{options}]."
   migrations:
     error:
+      missing_current_migration_service: "No migration service handles the current migration: %{migration_version}."
       failed: "Error running migrations: %{message}"
-    information:
-      theme_copied: Theme copied from %{from} to %{to}.
