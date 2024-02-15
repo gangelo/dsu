@@ -1,46 +1,32 @@
 # frozen_string_literal: true
 
-require_relative '../support/fileable'
+require_relative 'service'
 require_relative 'version'
 
 module Dsu
   module Migration
-    class Service20240210161248
-      include Support::Fileable
+    class Service20240210161248 < Service
+      private
 
-      def initialize(options: {})
-        @options = options || {}
-      end
-
-      def migrate!
-        puts 'Running migrations...'
-        puts
-
-        puts "options[:pretend] is true\n" if pretend?
-
-        raise_wrong_migration_version_error_if!
-
-        puts "Migrating from: #{target_migration_version} to version: #{Migration::VERSION}"
-        puts
+      def run_migration!
+        super
 
         add_new_color_themes
-        create_backup
         create_default_project
         update_configuration
         update_entry_groups
         update_color_themes
-        update_migration_version
         delete_old_entry_folder
 
         puts 'Migration completed successfully.'
       end
 
-      private
+      def from_migration_version
+        20230613121411 # rubocop:disable Style/NumericLiterals
+      end
 
-      attr_reader :options
-
-      def pretend?
-        options.fetch(:pretend, true)
+      def to_migration_version
+        20240210161248 # rubocop:disable Style/NumericLiterals
       end
 
       def add_new_color_themes
@@ -56,15 +42,6 @@ module Dsu
           puts I18n.t('migrations.information.theme_copied',
             from: source_theme_file_path, to: destination_theme_file_path)
         end
-      end
-
-      def create_backup
-        return if Dir.exist?(backup_folder)
-
-        puts 'Creating backup...'
-        puts
-
-        FileUtils.cp_r(dsu_folder, backup_folder) unless pretend?
       end
 
       def create_default_project
@@ -133,39 +110,11 @@ module Dsu
         end
       end
 
-      def update_migration_version
-        puts 'Updating migration version...'
-        puts
-
-        return if pretend? || migration_version == Migration::VERSION
-
-        Models::MigrationVersion.new(version: Migration::VERSION).save!
-      end
-
       def delete_old_entry_folder
         puts 'Cleaning up old entries...'
         puts
 
         FileUtils.rm_rf(File.join(dsu_folder, 'entries')) unless pretend?
-      end
-
-      def backup_folder
-        @backup_folder ||= File.join(root_folder, "dsu-#{target_migration_version}-backup")
-      end
-
-      def target_migration_version
-        20230613121411 # rubocop:disable Style/NumericLiterals
-      end
-
-      def raise_wrong_migration_version_error_if!
-        return if migration_version == target_migration_version
-
-        raise "Actual migration version #{migration_version} " \
-              "is not the expected migration version #{target_migration_version}."
-      end
-
-      def migration_version
-        @migration_version ||= Models::MigrationVersion.new.version
       end
     end
   end
