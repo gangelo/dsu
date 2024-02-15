@@ -20,6 +20,8 @@ module Dsu
       include Support::Fileable
       include Support::Presentable
 
+      THEME_FILE_NAME_REGEX = /.+.json/
+
       VERSION = Migration::VERSION
 
       DEFAULT_THEME_NAME = 'default'
