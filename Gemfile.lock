@@ -128,6 +128,8 @@ GEM
     rubocop-performance (1.20.2)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.30.0, < 2.0)
+    rubocop-rake (0.6.0)
+      rubocop (~> 1.0)
     rubocop-rspec (2.26.1)
       rubocop (~> 1.40)
       rubocop-capybara (~> 2.17)
@@ -163,6 +165,7 @@ DEPENDENCIES
   rspec (~> 3.0)
   rubocop (~> 1.50, >= 1.50.2)
   rubocop-performance (~> 1.19)
+  rubocop-rake (~> 0.6.0)
   rubocop-rspec (~> 2.23)
   simplecov (~> 0.22.0)
 
