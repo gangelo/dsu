@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [3.0.0] - 2024-??-??
+## [3.0.0] - 2024-02-17
 
 ### Enhancements
 [x] Added `dsu project` command to manage DSU projects. See `dsu help project` or the [dsu wiki](https://github.com/gangelo/dsu/wiki) for more information.
@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changes
 [x] Update ruby gems.
+[x] Major updates to the migration process.
 [x] `dsu import` now has the --override true|false (default: false) OPTION. If true, the import process will ignore the project name found in the import file and import the entries into the current project. If false, the import process will use the project name found in the import file.
 [x] Change `dsu export` file name for exports. When exporting all DSU entry groups for a project, the file name will be:
 
