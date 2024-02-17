@@ -75,12 +75,6 @@ RSpec.describe Dsu::Migration::V20230613121411::Service, type: :migration do
   end
 
   def known_deleted_files
-    # %w[
-    #   entries/2023-12-28.json
-    #   entries/2023-12-29.json
-    #   entries/2024-01-01.json
-    #   entries/2024-01-02.json
-    # ]
     []
   end
 

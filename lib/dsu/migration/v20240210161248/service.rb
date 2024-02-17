@@ -39,10 +39,6 @@ module Dsu
           puts 'Migration completed successfully.'
         end
 
-        def config_file_from
-          File.join(root_folder, '.dsu')
-        end
-
         def dsu_folder_from
           File.join(root_folder, 'dsu')
         end

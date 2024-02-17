@@ -77,12 +77,6 @@ module Dsu
         Gem.loaded_specs['dsu'].gem_dir
       end
 
-      # Back up folder
-
-      def backup_folder(version:)
-        File.join(dsu_folder, 'backup', version.to_s)
-      end
-
       # Seed data files and folders
 
       def seed_data_dsu_folder_for(migration_version:)
@@ -129,6 +123,12 @@ module Dsu
         File.join(project_folder, 'project.json')
       end
       alias project_file project_file_for
+
+      # Backup folders
+
+      def backup_folder_for(migration_version:)
+        File.join(root_folder, "dsu-#{migration_version}-backup")
+      end
 
       extend self # rubocop:disable Style/ModuleFunction
     end

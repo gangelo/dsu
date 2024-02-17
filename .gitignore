@@ -16,7 +16,7 @@
 /.vscode/
 *.code-workspace
 
-.dsu
+#.dsu
 scratch*.rb
 snippets.rb
 readme.txt
