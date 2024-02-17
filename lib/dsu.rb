@@ -26,8 +26,8 @@ unless Dsu.env.test? || Dsu.env.development?
   # NOTE: Add a new migration service to the array whenever a new migration is created.
   options = { pretend: false }
   migration_services = [
-    V20230613121411::Service.new(options: options),
-    V20240210161248::Service.new(options: options)
+    Dsu::Migration::V20230613121411::Service.new(options: options),
+    Dsu::Migration::V20240210161248::Service.new(options: options)
   ]
   Dsu::Migration::Migrator.migrate_if!(migration_services: migration_services)
 end

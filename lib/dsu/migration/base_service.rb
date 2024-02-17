@@ -91,7 +91,7 @@ module Dsu
       end
 
       def backup_folder
-        @backup_folder ||= File.join(root_folder, "dsu-#{from_migration_version}-backup")
+        @backup_folder ||= backup_folder_for(migration_version: from_migration_version)
       end
 
       def update_migration_version!
