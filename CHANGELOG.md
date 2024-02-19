@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.1] - 2024-02-19
+
+### Changes
+[x] Update ruby gems.
+[x] Update Gemfile to include gem groups for development and testing.
+[x] Update .gemspec file post_install_message to include wiki link for new dsu project command.
+
 ## [3.0.0] - 2024-02-17
 
 ### Enhancements

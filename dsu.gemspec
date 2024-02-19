@@ -78,6 +78,6 @@ Gem::Specification.new do |spec|
 
     <3 Gene
 
-    dsu now uses "Projects"! Run `dsu help project` to get started.
+    dsu now uses "Projects"! Run `dsu help project` to get started. Or, visit the dsu wiki for more information: https://github.com/gangelo/dsu/wiki/Managing-dsu-Projects
   POST_INSTALL
 end
