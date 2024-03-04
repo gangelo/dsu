@@ -22,7 +22,7 @@ group :test do
 end
 
 group :development, :test do
-  gem 'dotenv', '>= 2.8', '< 3.0'
+  gem 'dotenv', '>= 2.8', '< 4.0'
   gem 'factory_bot', '~> 6.3'
   gem 'ffaker', '~> 2.21'
   gem 'pry-byebug', '>= 3.9', '< 4.0'

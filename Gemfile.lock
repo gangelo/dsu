@@ -34,7 +34,7 @@ GEM
     connection_pool (2.4.1)
     diff-lcs (1.5.1)
     docile (1.4.0)
-    dotenv (2.8.1)
+    dotenv (3.1.0)
     drb (2.2.0)
       ruby2_keywords
     dry-configurable (1.1.0)
@@ -156,7 +156,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (>= 2.5, < 3.0)
-  dotenv (>= 2.8, < 3.0)
+  dotenv (>= 2.8, < 4.0)
   dsu!
   factory_bot (~> 6.3)
   ffaker (~> 2.21)
