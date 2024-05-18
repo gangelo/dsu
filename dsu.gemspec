@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   DESC
   spec.homepage = 'https://github.com/gangelo/dsu'
   spec.license = 'MIT'
-  spec.required_ruby_version = ['>= 3.0.1', '< 4.0']
+  spec.required_ruby_version = ['>= 3.0.7', '< 4.0']
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['documentation_uri'] = 'https://github.com/gangelo/dsu/wiki'
@@ -44,6 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'os', '>= 1.1', '< 2.0'
   spec.add_dependency 'thor', '>= 1.2', '< 2.0'
   spec.add_dependency 'thor_nested_subcommand', '>= 1.0', '< 2.0'
+  spec.add_dependency 'tzinfo-data', '~> 1.2024', '>= 1.2024.1'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 

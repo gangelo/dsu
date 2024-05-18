@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.2] - 2024-05-18
+
+### Changes
+[x] Update ruby gems.
+[x] Update GitHub Actions to include testing against ruby versions '3.0.7', '3.1', '3.2' and '3.3' on ubuntu-latest, macos-latest and windows-latest.
+
 ## [3.0.1] - 2024-02-19
 
 ### Changes

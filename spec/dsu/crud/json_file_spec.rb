@@ -20,7 +20,8 @@ RSpec.describe Dsu::Crud::JsonFile do
   end
 
   before do
-    File.delete(temp_file)
+    temp_file.close
+    File.delete(temp_file.path)
   end
 
   let(:input_file) { 'spec/fixtures/files/json_file.json' }
