@@ -29,10 +29,10 @@ The [dsu wiki](https://github.com/gangelo/dsu/wiki) is currently the gold standa
 * Visit the [How I use dsu daily as an Agile developer](https://github.com/gangelo/dsu/wiki/How-I-use-dsu-daily-as-an-Agile-developer) wiki for examples of how _I_ use `dsu` on a daily basis.
 
 # Supported ruby versions
-`dsu` _should_ work with any ruby version `['>= 3.0.1', '< 4.0']`; however, `dsu` is currently tested against the following ruby versions:
-- 3.0.1
-- 3.0.6
-- 3.1.4
-- 3.2.2
+`dsu` _should_ work with any ruby version `['>= 3.0.7', '< 4.0']`; however, `dsu` is currently tested against the ubuntu-latest, macos-latest and windows-latest platforms, using the following ruby versions:
+- 3.0.7
+- 3.1
+- 3.2
+- 3.3
 
 Copyright (c) 2023-2024 Gene Angelo. See [LICENSE](https://github.com/gangelo/dsu/blob/main/LICENSE.txt) for details.
