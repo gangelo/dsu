@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.3] - 2024-08-03
+
+### Changes
+[x] Update ruby gems.
+[x] Update rexml gem to patch CVE.
+
 ## [3.0.2] - 2024-05-18
 
 ### Changes

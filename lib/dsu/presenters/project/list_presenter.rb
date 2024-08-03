@@ -8,7 +8,7 @@ module Dsu
     module Project
       class ListPresenter < BasePresenterEx
         def initialize(options: {})
-          super(options: options)
+          super
         end
 
         def projects

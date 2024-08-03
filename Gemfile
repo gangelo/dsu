@@ -10,10 +10,11 @@ gem 'rake', '>= 13.0', '< 14.0'
 
 group :development do
   gem 'reek', '>= 6.1', '< 7.0'
-  gem 'rubocop', '>= 1.35', '< 2.0'
-  gem 'rubocop-performance', '>= 1.14', '< 2.0'
+  gem 'rubocop', '>= 1.65', '< 2.0'
+  gem 'rubocop-factory_bot', '~> 2.26', '>= 2.26.1'
+  gem 'rubocop-performance', '>= 1.21.1', '< 2.0'
   gem 'rubocop-rake', '>= 0.6', '< 1.0'
-  gem 'rubocop-rspec', '>= 2.12', '< 3.0'
+  gem 'rubocop-rspec', '~> 3.0', '>= 3.0.3'
 end
 
 group :test do
@@ -22,7 +23,7 @@ group :test do
 end
 
 group :development, :test do
-  gem 'dotenv', '>= 2.8', '< 4.0'
+  gem 'dotenv', '~> 3.1', '>= 3.1.2'
   gem 'factory_bot', '~> 6.3'
   gem 'ffaker', '~> 2.21'
   gem 'pry-byebug', '>= 3.9', '< 4.0'

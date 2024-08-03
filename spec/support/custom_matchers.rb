@@ -22,7 +22,7 @@ RSpec::Matchers.define :validate_with_validator do |validator_class|
   end
 
   failure_message_when_negated do |model|
-    "expected #{model.class} to not validate attribute #{attribute} with #{validator_class}" if on_attribute?
+    return "expected #{model.class} to not validate attribute #{attribute} with #{validator_class}" if on_attribute?
 
     "expected #{model.class} to not validate with #{validator_class}"
   end
