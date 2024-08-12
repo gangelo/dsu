@@ -13,25 +13,26 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (7.1.3.4)
-      activesupport (= 7.1.3.4)
-    activesupport (7.1.3.4)
+    activemodel (7.2.0)
+      activesupport (= 7.2.0)
+    activesupport (7.2.0)
       base64
       bigdecimal
-      concurrent-ruby (~> 1.0, >= 1.0.2)
+      concurrent-ruby (~> 1.0, >= 1.3.1)
       connection_pool (>= 2.2.5)
       drb
       i18n (>= 1.6, < 2)
+      logger (>= 1.4.2)
       minitest (>= 5.1)
-      mutex_m
-      tzinfo (~> 2.0)
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0, >= 2.0.5)
     ast (2.4.2)
     base64 (0.2.0)
     bigdecimal (3.1.8)
     byebug (11.1.3)
     coderay (1.1.3)
     colorize (1.1.0)
-    concurrent-ruby (1.3.3)
+    concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
     diff-lcs (1.5.1)
     docile (1.4.1)
@@ -71,9 +72,9 @@ GEM
       concurrent-ruby (~> 1.0)
     json (2.7.2)
     language_server-protocol (3.17.0.3)
+    logger (1.6.0)
     method_source (1.1.0)
     minitest (5.24.1)
-    mutex_m (0.2.0)
     os (1.1.4)
     parallel (1.25.1)
     parser (3.3.4.0)
@@ -132,6 +133,7 @@ GEM
     rubocop-rspec (3.0.3)
       rubocop (~> 1.61)
     ruby-progressbar (1.13.0)
+    securerandom (0.3.1)
     simplecov (0.22.0)
       docile (~> 1.1)
       simplecov-html (~> 0.11)
