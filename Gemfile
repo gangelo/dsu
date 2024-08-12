@@ -14,7 +14,7 @@ group :development do
   gem 'rubocop-factory_bot', '~> 2.26', '>= 2.26.1'
   gem 'rubocop-performance', '>= 1.21.1', '< 2.0'
   gem 'rubocop-rake', '>= 0.6', '< 1.0'
-  gem 'rubocop-rspec', '~> 3.0', '>= 3.0.3'
+  gem 'rubocop-rspec', '~> 3.0'
 end
 
 group :test do
