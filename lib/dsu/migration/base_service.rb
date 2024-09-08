@@ -82,8 +82,17 @@ module Dsu
 
         return puts "\tSkipping: backup already exists." if backup_exist?
 
-        FileUtils.cp_r(dsu_folder, backup_folder)
-        FileUtils.cp(config_path, backup_folder)
+        if Dir.exist?(dsu_folder)
+          FileUtils.cp_r(dsu_folder, backup_folder)
+        else
+          puts "\tSkipping: dsu folder \"#{dsu_folder}\" does not exists."
+        end
+
+        if File.exist?(config_path)
+          FileUtils.cp(config_path, backup_folder)
+        else
+          puts "\tSkipping: config path \"#{config_path}\" does not exists."
+        end
       end
 
       def backup_exist?
