@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.4] - 2024-09-08
+
+### Changes
+[x] Update ruby gems.
+
+### Bug Fixes
+[x] Fix bug that fails to install dsu for first time users.
+
 ## [3.0.3] - 2024-08-03
 
 ### Changes

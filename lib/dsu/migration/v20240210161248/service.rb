@@ -106,7 +106,12 @@ module Dsu
           puts "\tCopying entries to default project \"#{default_project_name}\"..."
 
           entries_folder_to = File.join(dsu_folder, 'projects', default_project_name, 'entries')
-          FileUtils.cp_r(File.join(entries_folder_from, '.'), entries_folder_to)
+          if Dir.exist?(entries_folder_from)
+            FileUtils.cp_r(File.join(entries_folder_from, '.'), entries_folder_to)
+          else
+            puts "\tSkipping: entries folder \"#{entries_folder_from}\" does not exists."
+            FileUtils.mkdir_p(entries_folder_to)
+          end
 
           puts "\tUpdating entry group version..."
 
