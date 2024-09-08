@@ -30,7 +30,6 @@ The [dsu wiki](https://github.com/gangelo/dsu/wiki) is currently the gold standa
 
 # Supported ruby versions
 `dsu` _should_ work with any ruby version `['>= 3.0.7', '< 4.0']`; however, `dsu` is currently tested against the ubuntu-latest, macos-latest and windows-latest platforms, using the following ruby versions:
-- 3.0.7
 - 3.1
 - 3.2
 - 3.3
