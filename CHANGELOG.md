@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.5] - 2024-09-08
+
+### Changes
+[x] Update activerecord and activemodel.
+
 ## [3.0.4] - 2024-09-08
 
 ### Changes

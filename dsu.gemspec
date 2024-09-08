@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   DESC
   spec.homepage = 'https://github.com/gangelo/dsu'
   spec.license = 'MIT'
-  spec.required_ruby_version = ['>= 3.0.7', '< 4.0']
+  spec.required_ruby_version = ['>= 3.1.0', '< 4.0']
 
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['documentation_uri'] = 'https://github.com/gangelo/dsu/wiki'
@@ -38,8 +38,8 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  spec.add_dependency 'activesupport', '>= 7.0.8', '< 8.0'
-  spec.add_dependency 'activemodel', '>= 7.0.8', '< 8.0'
+  spec.add_dependency 'activesupport', '>= 7.2.1', '< 8.0'
+  spec.add_dependency 'activemodel', '>= 7.2.1', '< 8.0'
   spec.add_dependency 'colorize', '>= 1.1', '< 2.0'
   spec.add_dependency 'os', '>= 1.1', '< 2.0'
   spec.add_dependency 'thor', '>= 1.2', '< 2.0'
