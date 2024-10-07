@@ -128,7 +128,7 @@ GEM
       rubocop-ast (>= 1.31.1, < 2.0)
     rubocop-rake (0.6.0)
       rubocop (~> 1.0)
-    rubocop-rspec (3.0.5)
+    rubocop-rspec (3.1.0)
       rubocop (~> 1.61)
     ruby-progressbar (1.13.0)
     securerandom (0.3.1)
@@ -144,7 +144,7 @@ GEM
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2024.2)
       tzinfo (>= 1.0.0)
-    unicode-display_width (2.5.0)
+    unicode-display_width (2.6.0)
     zeitwerk (2.6.18)
 
 PLATFORMS
@@ -171,7 +171,7 @@ DEPENDENCIES
   rubocop-factory_bot (~> 2.26, >= 2.26.1)
   rubocop-performance (>= 1.21.1, < 2.0)
   rubocop-rake (>= 0.6, < 1.0)
-  rubocop-rspec (~> 3.0, >= 3.0.3)
+  rubocop-rspec (~> 3.1)
   simplecov (>= 0.22.0, < 1.0)
 
 BUNDLED WITH
