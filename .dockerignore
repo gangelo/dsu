@@ -1,0 +1,9 @@
+# See https://docs.docker.com/reference/dockerfile/#dockerignore-file
+
+.env
+.env.development
+*.log
+tmp/
+coverage/
+node_modules/
+.DS_Store

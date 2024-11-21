@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Enable BuildKit
+export DOCKER_BUILDKIT=1
+
+# Stop and remove specific container and image
+# if the container doesn't exist, ignore the error
+docker stop dsu-cli-container 2>/dev/null || true
+docker rm dsu-cli-container 2>/dev/null || true
+docker rmi dsu-cli --force 2>/dev/null || true
+
+# Rebuild with BuildKit enabled
+DOCKER_BUILDKIT=1 docker build -t dsu-cli . --progress=plain
+
+# Run the container if "run" argument is provided
+if [ "$1" == "run" ]; then
+  docker run --name dsu-cli-container dsu-cli
+fi

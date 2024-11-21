@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+if [ "$(docker ps -aq -f name=dsu-cli-container)" ]; then
+    # Container exists
+    if [ "$(docker ps -q -f name=dsu-cli-container)" ]; then
+        # Container is running
+        echo "Container is already running"
+        docker attach dsu-cli-container
+    else
+        # Container exists but is not running
+        echo "Starting existing container"
+        docker start dsu-cli-container
+        docker attach dsu-cli-container
+    fi
+else
+    # Container doesn't exist, create and run it
+    echo "Creating new container"
+    docker run -it --name dsu-cli-container dsu-cli
+fi
